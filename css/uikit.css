@@ -12550,3 +12550,12 @@ input:focus{
     
     
 }
+
+
+
+
+@media screen and (min-device-width: 767px) and (orientation: landscape) {
+  .uk-grid-divider {
+   flex: 1;
+   min-width: 1px;
+  }
