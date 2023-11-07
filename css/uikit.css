@@ -12551,8 +12551,9 @@ input:focus{
 
 
 @media screen and (min-device-width: 767px) and (orientation: portrait) {
-  .uk-grid-divider {
+  .uk-grid {
    width: 100%;
+   flex:1;
   }
 
 }
