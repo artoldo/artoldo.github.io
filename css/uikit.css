@@ -12552,7 +12552,7 @@ input:focus{
 
 @media screen and (min-device-width: 767px) and (orientation: portrait) {
   .uk-grid {
-   width: 50%;
+   width: 100%;
   }
 
 }
