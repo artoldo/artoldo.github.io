@@ -368,7 +368,7 @@ blockquote footer {
   color: #000;
 }
 blockquote footer::before {
-  content: "— ";
+  content: "â€” ";
 }
 /* Preformatted text
  ========================================================================== */
@@ -773,7 +773,7 @@ a.uk-link-reset,
   content: counter(decimal, decimal) '\200A.\00A0';
 }
 .uk-list-hyphen > ::before {
-  content: '–\00A0\00A0';
+  content: 'â€“\00A0\00A0';
 }
 /*
  * Color modifiers
@@ -6428,6 +6428,7 @@ ul.uk-nav-sub {
   height: 50px;
   background: rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.7);
+  border-radius: 100%;
   /* 1 */
   display: inline-flex;
   justify-content: center;
@@ -6446,8 +6447,8 @@ ul.uk-nav-sub {
 /* Iframe
  ========================================================================== */
 .uk-lightbox-iframe {
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
 }
 /* ========================================================================
    Component: Animation
