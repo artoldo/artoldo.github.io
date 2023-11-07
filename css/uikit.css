@@ -12546,16 +12546,13 @@ input:focus {
 input:focus{
    border: transparent !important;
 }
-
-    
     
 }
 
 
-
-
-@media screen and (min-device-width: 767px) and (orientation: landscape) {
+@media screen and (min-device-width: 767px) and (orientation: portrait) {
   .uk-grid-divider {
-   flex: 1;
-   min-width: 1px;
+   width: 50%;
   }
+
+}
