@@ -154,10 +154,12 @@
 		    Explore the private rare book collection of C.G. Jung and his personal handwritten excerpts. Discover the secrets of alchemy and psychology. 
 		    Filmed at amazing locations like the House of C. G. Jung, Eranos and other mystic places in Switzerland...</p>
                     </div>
-		        <div uk-lightbox>
+		        <div uk-lightbox uk-visible@m>
                  	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
 		 	href="./jung/index.html" data-caption="C. G. Jung on Alchemy" data-type="iframe">Watch Now</a>
                         </div uk-lightbox>
+			<a uk-hidden@m uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
+		 	href="./jung/index.html" target="_blank">Watch Now</a>
                 </div>
             </div>
         </li>
@@ -1474,34 +1476,21 @@
 
         <div class="uk-modal-body" uk-overflow-auto>
 
-        <form action="https://formspree.io/f/xbjvweqp" method="POST">
-    	<fieldset class="uk-fieldset">
-
-        <legend class="uk-legend">Contact us</legend>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="text" placeholder="Name" name="name" aria-label="Name" required>
-        </div>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="email" placeholder="Email" name="email" aria-label="Email" required>
-        </div>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="tel" placeholder="Phone" name="phone" aria-label="Phone">
-        </div>
-
-        <div class="uk-margin">
-            <textarea class="uk-textarea uk-border-rounded" rows="5" placeholder="Message" name="message" aria-label="Message" required></textarea>
-        </div>
-
-        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-            <label><input class="uk-checkbox uk-border-rounded" type="checkbox" name="privacy" checked required> I agree to the <a href="#imprint" uk-toggle>Privacy Policy</a>.</label>
-            <label><input class="uk-checkbox uk-border-rounded" type="checkbox" name="newsletter"> I want to join the Mailing list.</label>
-        </div>
-
-    	</fieldset>
-	</form>
+        <form
+  action="https://formspree.io/f/xbjvweqp"
+  method="POST"
+>
+  <label>
+    Your email:
+    <input type="email" name="email">
+  </label>
+  <label>
+    Your message:
+    <textarea name="message"></textarea>
+  </label>
+  <!-- your other form fields go here -->
+  <button type="submit">Send</button>
+</form>
 
         </div>
 
