@@ -12520,13 +12520,3 @@ button:active {
 	-o-outline: 0 !important;
 	-webkit-outline: 0 !important;
 }
-
-
-/* Portrait */
-
-@media screen and (min-device-width: 767px) and (orientation: portrait) {
-
-  .portrait > * {
-    width: 50%;
-  }
-}
