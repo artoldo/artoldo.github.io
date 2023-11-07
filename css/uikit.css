@@ -12551,8 +12551,8 @@ input:focus{
 
 
 @media screen and (min-device-width: 767px) and (orientation: portrait) {
-  .uk-child-width-expand\@l > * {
-    width: 50%;
+  .uk-grid {
+    display: block;
   }
 
 }
