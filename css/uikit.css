@@ -12513,7 +12513,6 @@ html {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-
 button:focus,
 button:active {
 	-moz-outline: 0 !important;
@@ -12523,30 +12522,11 @@ button:active {
 }
 
 
-@media screen and (-webkit-min-device-pixel-ratio:0)
-{
-    
-     :focus {
-	outline: 0 !important;
+/* Portrait */
+
+@media screen and (max-device-width: 767px) and (orientation: portrait) {
+
+  .uk-child-width-1-2\@p > * {
+    width: 50%;
+  }
 }
-
-
-.form-control:focus {
-  border-color: inherit !important;
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-}
-
-
-input:focus {
-	outline:none !important;
-}
-
-
-input:focus{
-   border: transparent !important;
-}
-    
-}
-
-
