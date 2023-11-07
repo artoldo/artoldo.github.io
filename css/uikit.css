@@ -12526,7 +12526,7 @@ button:active {
 
 @media screen and (min-device-width: 767px) and (orientation: portrait) {
 
-  .uk-child-width-1-2@p > * {
+  .portrait > * {
     width: 50%;
   }
 }
