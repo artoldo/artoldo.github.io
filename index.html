@@ -1468,21 +1468,7 @@
 
         <button class="uk-modal-close-default" type="button" uk-close></button>
 
-	    <form
-  action="https://formspree.io/f/xbjvweqp"
-  method="POST"
->
-  <label>
-    Your email:
-    <input type="email" name="email">
-  </label>
-  <label>
-    Your message:
-    <textarea name="message"></textarea>
-  </label>
-  <!-- your other form fields go here -->
-  <button type="submit">Send</button>
-</form>
+
 
         <div class="uk-modal-header">
             <h2 class="uk-modal-title">Get in Touch</h2>
@@ -1490,42 +1476,31 @@
 
         <div class="uk-modal-body" uk-overflow-auto>
 
-        <form action="https://formspree.io/f/xbjvweqp" method="POST">
-    	<fieldset class="uk-fieldset">
-
         <legend class="uk-legend">Contact us</legend>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="text" placeholder="Name" name="name" aria-label="Name" required>
-        </div>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="email" placeholder="Email" name="email" aria-label="Email" required>
-        </div>
-
-        <div class="uk-margin">
-            <input class="uk-input uk-border-rounded" type="tel" placeholder="Phone" name="phone" aria-label="Phone">
-        </div>
-
-        <div class="uk-margin">
-            <textarea class="uk-textarea uk-border-rounded" rows="5" placeholder="Message" name="message" aria-label="Message" required></textarea>
-        </div>
-
-        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-            <label><input class="uk-checkbox uk-border-rounded" type="checkbox" name="privacy" checked required> I agree to the <a href="#imprint" uk-toggle>Privacy Policy</a>.</label>
-            <label><input class="uk-checkbox uk-border-rounded" type="checkbox" name="newsletter"> I want to join the Mailing list.</label>
-        </div>
-
-    	</fieldset>
-	</form>
-
-        </div>
-
-        <div class="uk-modal-footer uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close uk-border-rounded" type="button">Cancel</button>
-            <button class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</button>
-        </div>
-
+<form id="fs-frm" name="complaint-form" accept-charset="utf-8" action="https://formspree.io/f/{form_id}" method="post">
+  <fieldset id="fs-frm-inputs">
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" type="text" name="name" id="full-name" placeholder="Name" required="">
+    </div>
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" type="email" name="_replyto" id="email-address" placeholder="Email Address" required="">
+    </div>
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" type="telephone" name="telephone" id="telephone" placeholder="Phone">
+    </div>
+    <div class="uk-margin">
+    <textarea class="uk-input uk-border-rounded" rows="6" name="message" id="message" placeholder="Message" required=""></textarea>
+    </div>
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded" type="hidden" name="_subject" id="email-subject" value="Contact Form Artoldo">
+    </div>
+  </fieldset>
+    <div class="uk-modal-footer uk-text-right">
+    <button class="uk-button uk-button-default uk-modal-close uk-border-rounded" type="button">Cancel</button>
+    <input class="uk-button uk-button-primary uk-border-rounded" type="submit">Submit</input>
+    </div>
+</form>
+		
     </div>
 </div>
 
