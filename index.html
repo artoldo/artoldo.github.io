@@ -37,7 +37,6 @@
     <script src="./js/uikit.js"></script>
     <script src="./js/uikit-icons.js"></script>
 
-
 </head>
 <body>
 
@@ -91,14 +90,15 @@
               </div>
 
               <div class="uk-navbar-right" >
-                <div class="uk-visible@m"> 
+                <div class="uk-visible@m">
+                      
     		<a href="#contact" uk-toggle><span class="uk-margin-small-right" uk-icon="icon: mail; ratio: 1.5"></a>
             	<a href="#imprint" uk-toggle><span class="uk-margin-small-right" uk-icon="icon: info; ratio: 1.5"></a>
                 <a href="#donate"  uk-toggle><span class="uk-margin-small-right" uk-icon="icon: heart; ratio: 1.5"></a>
 		</div>
-		 <a href="#donate" uk-toggle><button class="uk-button 
-		 uk-button-secondary uk-border-pill uk-visible@m">Support us</button></a>
+		<a href="#donate" uk-toggle><button class="uk-button uk-button-secondary uk-border-pill uk-visible@m">Support us</button></a>
                 <a class="uk-navbar-toggle uk-navbar-toggle-animate uk-hidden@m" uk-navbar-toggle-icon uk-toggle="target:#offcanvas-nav-primary" href="#"></a>
+
             </div>
           </div>
         </nav>
@@ -110,6 +110,9 @@
 
 <div id="offcanvas-nav-primary" uk-offcanvas="mode: slide; overlay: true">
     <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+                <center>
+		<img src="./images/artoldo.jpeg" class="uk-border-circle" width="50%" height="auto">
+	        </center>
 
         <ul class="uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical">
                   <li> 
@@ -144,7 +147,7 @@
     <ul class="uk-slideshow-items uk-background-cover" uk-height-viewport>
         <li>
             <video class="uk-visible@m" poster="./images/jung-excerpts.jpeg" src="./images/1.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/jung-poster.jpeg" style="filter: blur(5px);"uk-cover>
+            <img class="uk-hidden@m" src="./images/jung-excerpts.jpeg" uk-cover>
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.7, 0.7, 0.7; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
@@ -158,17 +161,16 @@
                  	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
 		 	href="./jung/index.html" data-type="iframe">Watch Now</a>
                         </div uk-lightbox>
-			<span class="uk-hidden@m"><br><br><br><br><br><br></span>
                 </div>
             </div>
         </li>
 	<li>
             <video class="uk-visible@m" poster=".././images/ritmanlibrary.jpeg" src="./images/2.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/ritmanlibrary.jpeg" style="filter: blur(5px);" uk-cover>
+            <img class="uk-hidden@m" src="./images/ritmanlibrary.jpeg" uk-cover>
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.7, 0.7, 0.7; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
-                    <h1 class="uk-text-lighter" uk-slideshow-parallax="x: 200,0,0">The Ritman Library<br>Amsterdam</h1>
+                    <h1 class="uk-text-lighter" uk-slideshow-parallax="x: 200,0,0">The Ritman Library</h1>
 		    <div class="uk-width-large uk-text-center">
                     <p style="color:#ffffff;" class="uk-text-justify" uk-slideshow-parallax="x: 400,0,0;">
 		    Discover a library with over 23.000 books in the fields of Alchemy, Hermetica, Cabala, Magic, Rosicrucianism, and Mystic! 
@@ -178,13 +180,12 @@
                  	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
 		 	href="https://projektor.com/u/artoldo/ritmanlibrary" data-type="iframe">Watch Now</a>
                         </div uk-lightbox>
-			<span class="uk-hidden@m"><br><br><br><br><br><br></span>
                 </div>
             </div>
         </li>
 	<li>
             <video class="uk-visible@m" poster="./images/ugodossi.jpeg" src="./images/3.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/ugodossi.jpeg" style="filter: blur(5px);" uk-cover>
+            <img class="uk-hidden@m" src="./images/ugodossi.jpeg" uk-cover>
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.7, 0.7, 0.7; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
@@ -198,15 +199,14 @@
                  	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
 		 	href="https://projektor.com/u/artoldo/ugo-dossi" data-type="iframe">Watch Now</a>
                         </div uk-lightbox>
-			<span class="uk-hidden@m"><br><br><br><br><br><br></span>
                 </div>
             </div>
         </li> 
     </ul>
 
-    <a class="uk-position-center-left uk-visible@m uk-position-small uk-hidden-hover uk-slidenav-large" href uk-slidenav-previous uk-slideshow-item="previous"></a>
-    <a class="uk-position-center-right uk-visible@m uk-position-small uk-hidden-hover uk-slidenav-large" href uk-slidenav-next uk-slideshow-item="next"></a>
-    <a class="uk-position-bottom-center uk-visible@m" style="bottom:100 px;" href="./index.html#about"  uk-icon="chevron-down; ratio: 2.0" uk-scroll></a>
+    <a class="uk-position-center-left uk-position-small uk-hidden-hover uk-slidenav-large uk-visible@m" href uk-slidenav-previous uk-slideshow-item="previous"></a>
+    <a class="uk-position-center-right uk-position-small uk-hidden-hover uk-slidenav-large uk-visible@m" href uk-slidenav-next uk-slideshow-item="next"></a>
+    <a class="uk-position-bottom-center" style="bottom:100px;" href="./index.html#about"  uk-icon="chevron-down" uk-scroll></a>
 
 </div>
 
@@ -217,7 +217,7 @@
 <div id="about" class="uk-section uk-section-muted uk-section-medium uk-flex uk-flex-center uk-flex-middle uk-text-center">
     <div class="uk-container">
        <div class="uk-width-1-2@m uk-text-center uk-margin-auto uk-margin-auto-vertical uk-animation-toggle" itemscope itemtype="http://schema.org/Person">
-        <span><br><br></span>
+        <span class="uk-visible@m"><br><br></span>
 	<h1 class="uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">About</h1>
         <p class="uk-dropcap uk-text-large uk-text-justify uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;"><span itemprop="name">Artoldo</span> (Est. <span 		itemprop="description">2015</span>) is an international award-winning <span itemprop="jobTitle">creative collective</span> founded by renowned film directors and new media artists, Sara Ferro and Chris Weil.  	Their works have been screened at film festivals, in galleries and museums around the world.</p>
 	<img itemprop="image" src="./images/artoldo.jpg" style="bottom: -200px; left: 200px;" 
@@ -231,7 +231,7 @@
 <!-- Awards -->
 
 
-<div class="uk-section uk-section-primary uk-section-small uk-flex uk-flex-center uk-flex-middle uk-text-center" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">
+<div class="uk-section uk-section-primary uk-section-small uk-flex uk-flex-center uk-flex-middle uk-text-center uk-position-z-index-negative" uk-sticky="media: @m; position: bottom; overflow-flip: true; start: -100%; end: 0">
             
 
 <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider autoplay="true" autoplay-interval="5000" pause-on-hover="false">
@@ -632,7 +632,7 @@
                 <div class="uk-position-center uk-panel">
                 	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
                         <span>Group Exhibition</span><br>
-                        <span class="uk-text-large uk-text-bold">GRRL Telephone<br>Photo and Video<br>Exhibit</span><br>
+                        <span class="uk-text-large uk-text-bold">GRRL Telephone<br>Photo + Video<br>Exhibit</span><br>
                         <span class="uk-text-lighter">Berlin 2021</span>
 			</div>        
 		</div>
@@ -1054,9 +1054,12 @@
     <div class="uk-section uk-section-primary">
         <div class="uk-inline uk-light uk-animation-slide-top">
             <img src="./images/map.svg" width="1800" height="1200" alt="" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;">
-            <a class="uk-position-absolute uk-transform-center" style="left: 18%; top: 35%" href="#north-america" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
-            <a class="uk-position-absolute uk-transform-center" style="left: 48%; top: 31%" href="#europe" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
-            <a class="uk-position-absolute uk-transform-center" style="left: 75%; top: 43%" href="#asia" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
+            <a class="uk-position-absolute uk-transform-center" style="left: 18%; top: 35%" 
+		href="#north-america" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
+            <a class="uk-position-absolute uk-transform-center" style="left: 48%; top: 31%" 
+		href="#europe" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
+            <a class="uk-position-absolute uk-transform-center" style="left: 75%; top: 43%" 
+		href="#asia" uk-toggle uk-marker uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 70vh + 50%;"></a>
         </div>
     </div>
 
@@ -1065,6 +1068,65 @@
 
 
 <div id="north-america" class="uk-modal-full" uk-modal>
+    <div class="uk-modal-dialog">
+        <div uk-sticky><button class="uk-modal-close-full uk-close-large" uk-close type="button"></button></div>
+        
+	<div class="uk-grid-collapse uk-flex-middle uk-flex-center" uk-grid>
+                
+		<div class="uk-section-xlarge" uk-scrollspy="target: > div; cls: uk-animation-fade; delay: 500; repeat: true;">		
+
+                <div class="uk-padding">
+                <h1 class="uk-text-lighter">North America</h1> 
+		<a href="#asia" uk-toggle class="uk-icon-button uk-margin-small-center" uk-icon="chevron-left"></a>
+		<a href="#europe" uk-toggle class="uk-icon-button uk-margin-small-center" uk-icon="chevron-right"></a>
+                </div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle3;">
+		        <hr class="uk-divider-icon">
+                	<p class="uk-text-lighter">
+			Saturday 01 October 2022  -  Monday 31 October 2022 <sup><span class="uk-badge">Solo Show</span></sup>
+			</p>
+			<h2 class="uk-text-lighter">Satanic Panic - The Luther Blissett Legacy</h2>
+                        <h3 class="uk-text-lighter">Venue: The Gallery, Decentraland - Metaverse (USA)</h3>
+	        </div>
+
+		<span class="toggle3"></span>
+		<div class="toggle3 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Featured artist: Artoldo crypto</h3>
+            	<p class="uk-text-justify uk-text-lighter">The retrospective "Satanic Panic" invites the visitor to explore a handpicked selection from the 428 NFT video artworks of the Luther Blissett Legacy 		collection created by ARTOLDO crypto in memory of the super folk hero Luther Blissett (1994-1999). The exhibition reflects on the different selves of the Luther Blissett pseudonym which was used by 		hundreds of left-wing artists in Europe to produce art, perform pranks, and publish books. Their most famous novel "Q" may have been abused by right-wing renegades as inspiration for their conspiracy 		theory of QAnon.</p>
+
+		<div uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill" 
+		href="https://youtu.be/QLa4X7lO1FQ" data-attrs="width: 1280; height: 720;"
+		data-caption="Satanic Panic - The Luther Blissett Legacy">Watch Exhibition Video</a>
+        	</div>
+
+		</div>
+		</div>
+
+	        <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" style="transform: rotate(-5deg);">
+			<hr class="uk-divider-icon">
+                	<p class="uk-text-lighter">Monday 08 March 2021  -  Sunday 28 March 2021 <sup><span class="uk-badge">Group Show</span></sup></p>
+			<h2 class="uk-text-lighter">ROMAN SUSAN Streetlight</h2>
+			<h3 class="uk-text-lighter">Venue: Roman Susan - Chicago (USA)</h3>
+	        </div>
+
+	        <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" style="transform: rotate(5deg);">
+			 <hr class="uk-divider-icon">
+                	<p class="uk-text-lighter">Saturday 18 July 2020  -  Tuesday 15 September 2020 <sup><span class="uk-badge">Group Show</span></sup></p>
+			<h2 class="uk-text-lighter">The 7 Memorials for Humanity - Darkroom</h2>
+			<h3 class="uk-text-lighter">Venue: Torrance Art Museum - Los Angeles (USA)</h3>
+	        </div>
+
+              </div>
+         </div>
+    </div>
+</div>
+
+
+<div id="north-americaX" class="uk-modal-full" uk-modal>
     <div class="uk-modal-dialog">
         <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
         <div class="uk-grid-collapse uk-child-width-1-2@s uk-flex-middle" uk-grid>
@@ -1367,7 +1429,7 @@
 <div uk-lightbox>
 
         <ul class="uk-slider-items uk-child-width-1-2@s uk-grid">
-            <a href="./jung/index.html" data-caption="C. G. Jung on Alchemy" data-type="iframe">
+            <a href="./jung/index.html" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
                     <div class="uk-card-media-top uk-overflow-hidden">
@@ -1381,7 +1443,7 @@
                 </div>
             </li>
             </a>
-	    <a href="https://projektor.com/u/artoldo/ritmanlibrary" data-caption="The Ritman Library - Amsterdam" data-type="iframe">
+	    <a href="https://projektor.com/u/artoldo/ritmanlibrary" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
                     <div class="uk-card-media-top uk-overflow-hidden">
@@ -1395,7 +1457,7 @@
                 </div>
             </li>
             </a>
-	    <a href="https://projektor.com/u/artoldo/ugo-dossi" data-caption="Ugo Dossi - Art and Space" data-type="iframe">
+	    <a href="https://projektor.com/u/artoldo/ugo-dossi" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
                     <div class="uk-card-media-top uk-overflow-hidden">
@@ -1409,7 +1471,7 @@
                 </div>
             </li>
 	    </a>
-	    <a href="https://projektor.com/u/artoldo/micrognosing" data-caption="MicroGnosing" data-type="iframe">
+	    <a href="https://projektor.com/u/artoldo/micrognosing" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
                     <div class="uk-card-media-top uk-overflow-hidden">
@@ -1423,7 +1485,7 @@
                 </div>
             </li>
             </a>
-	    <a href="https://projektor.com/u/artoldo/hauntology" data-caption="Hauntology of the Retrodromomania" data-type="iframe">
+	    <a href="https://projektor.com/u/artoldo/hauntology" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
                     <div class="uk-card-media-top uk-overflow-hidden">
@@ -1477,25 +1539,25 @@
 
         <div class="uk-modal-body" uk-overflow-auto>
         <div class="uk-margin">
-        <legend class="uk-legend uk-text-lighter">Contact us</legend>
+        <legend class="uk-legend">Contact us</legend>
 	</div>
 		
 <form name="Contact - Artoldo" accept-charset="utf-8" action="https://formspree.io/f/xbjvweqp" method="post">
   <fieldset class="uk-fieldset">
     <div class="uk-margin">
-    <input class="uk-input uk-border-rounded uk-text-lighter" type="text" name="Name" id="full-name" placeholder="Name" required="">
+    <input class="uk-input uk-border-rounded" type="text" name="Name" id="full-name" placeholder="Name" required="">
     </div>
     <div class="uk-margin">
-    <input class="uk-input uk-border-rounded uk-text-lighter" type="email" name="Reply to" id="email-address" placeholder="Email Address" required="">
+    <input class="uk-input uk-border-rounded" type="email" name="Reply to" id="email-address" placeholder="Email Address" required="">
     </div>
     <div class="uk-margin">
-    <input class="uk-input uk-border-rounded uk-text-lighter" type="telephone" name="Telephone" id="telephone" placeholder="Phone">
+    <input class="uk-input uk-border-rounded" type="telephone" name="Telephone" id="telephone" placeholder="Phone">
     </div>
     <div class="uk-margin">
-    <textarea class="uk-textarea uk-border-rounded uk-text-lighter" rows="5" rows="6" name="Message" id="message" placeholder="Message" required=""></textarea>
+    <textarea class="uk-textarea uk-border-rounded" rows="5" rows="6" name="Message" id="message" placeholder="Message" required=""></textarea>
     </div>
     <div class="uk-margin">
-    <input class="uk-input uk-border-rounded uk-text-lighter" type="hidden" name="Subject" id="email-subject" value="Contact Form Artoldo">
+    <input class="uk-input uk-border-rounded" type="hidden" name="Subject" id="email-subject" value="Contact Form Artoldo">
     </div>
   </fieldset>
     <div class="uk-modal-footer uk-text-right">
@@ -1518,7 +1580,7 @@
         <button class="uk-modal-close-default" type="button" uk-close></button>
 
         <div class="uk-modal-header">
-            <h2 class="uk-modal-title uk-text-lighter">Imprint</h2>
+            <h2 class="uk-text-lighter" class="uk-modal-title">Imprint</h2>
         </div>
 
         <div class="uk-modal-body" uk-overflow-auto>
@@ -1538,13 +1600,13 @@
         <a class="uk-accordion-title" href>Priavcy Policy</a>
         <div class="uk-accordion-content">
 
-<h2>Priavcy Policy</h2>
+<h2 class="uk-text-lighter">Priavcy Policy</h2>
 
 <p>At Artoldo, accessible from <a href="https://www.artoldo.com/">https://www.artoldo.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Artoldo and how we use it.</p>
 
 <p>If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us through email at <a href="mailto:support@artoldo.com">support@artoldo.com</a></p>
 
-<h2>General Data Protection Regulation (GDPR)</h2>
+<h2 class="uk-text-lighter">General Data Protection Regulation (GDPR)</h2>
 
 <p>We are a Data Controller of your information.</p>
 
@@ -1572,37 +1634,37 @@
 <li>The right to withdraw consent</li>
 </ul>
 
-<h2>Log Files</h2>
+<h2 class="uk-text-lighter">Log Files</h2>
 
 <p>Artoldo follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services’ analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users’ movement on the website, and gathering demographic information.</p>
 
-<h2>Cookies and Web Beacons</h2>
+<h2 class="uk-text-lighter">Cookies and Web Beacons</h2>
 
 <p>Like any other website, Artoldo uses ‘cookies’. These cookies are used to store information including visitors’ preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users’ experience by customizing our web page content based on visitors’ browser type and/or other information.</p>
 
-<h2>Privacy Policies</h2>
+<h2 class="uk-text-lighter">Privacy Policies</h2>
 
 <p>Third-party Video servers or Video networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective Videos and Films that appear on Artoldo , which are sent directly to users’ browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their Videos and/or to personalize the Video content that you see on websites that you visit.</p>
 
 <p>Note that Artoldo has no access to or control over these cookies that are used by third-party Video Service Providers.</p>
 
-<h2>Third Party Privacy Policies</h2>
+<h2 class="uk-text-lighter">Third Party Privacy Policies</h2>
 
 <p>Artoldo’s Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options. You may find a complete list of these Privacy Policies and their links here.</p>
 
 <p>You can choose to disable cookies through your individual browser options. To know more detailed information about cookie management with specific web browsers, it can be found at the browsers’ respective websites. What Are Cookies?</p>
 
-<h2>Children’s Information</h2>
+<h2 class="uk-text-lighter">Children’s Information</h2>
 
 <p>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.</p>
 
 <p>Artoldo does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</p>
 
-<h2>Online Privacy Policy Only</h2>
+<h2 class="uk-text-lighter">Online Privacy Policy Only</h2>
 
 <p>Our Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in Artoldo. This policy is not applicable to any information collected offline or via channels other than this website.</p>
 
-<h2>Consent</h2>
+<h2 class="uk-text-lighter">Consent</h2>
 
 <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</p>
 
@@ -1611,7 +1673,7 @@
     <li>
         <a class="uk-accordion-title" href>Terms of Use</a>
         <div class="uk-accordion-content">
-<h2>Terms of Use</h2>
+<h2 class="uk-text-lighter">Terms of Use</h2>
 
 <p>Last updated: 24/10/2023</p>
 
@@ -1621,7 +1683,7 @@
 
 <p>By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.</p>
 
-<h2>Accounts</h2>
+<h2 class="uk-text-lighter">Accounts</h2>
 
 <p>When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</p>
 
@@ -1629,17 +1691,17 @@
 
 <p>You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</p>
 
-<h2>Intellectual Property</h2>
+<h2 class="uk-text-lighter">Intellectual Property</h2>
 
 <p>The Service and its original content, features, and functionality are and will remain the exclusive property of artoldo.com and its licensors, networks, and partners. All companies and logos are ® registered trademarks and © copyright protected.</p>
 
-<h2>Links To Other Web Sites</h2>
+<h2 class="uk-text-lighter">Links To Other Web Sites</h2>
 
 <p>Our Service may contain links to third-party web sites or services that are not owned or controlled by artoldo.com, has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that artoldo.com shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.</p>
 
 <p>We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.</p>
 
-<h2>Termination</h2>
+<h2 class="uk-text-lighter">Termination</h2>
 
 <p>We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
 
@@ -1651,23 +1713,23 @@
 
 <p>All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations of liability.</p>
 
-<h2>Disclaimer</h2>
+<h2 class="uk-text-lighter">Disclaimer</h2>
 
 <p>Your use of the Service is at your sole risk. The Service is provided on an “AS IS” and “AS AVAILABLE” basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.</p>
 
-<h2>Governing Law</h2>
+<h2 class="uk-text-lighter">Governing Law</h2>
 
 <p>These Terms shall be governed and construed in accordance with the laws of Italy without regard to its conflict of law provisions.</p>
 
 <p>Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service.</p>
 
-<h2>Changes</h2>
+<h2 class="uk-text-lighter">Changes</h2>
 
 <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
 
 <p>By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.</p>
 
-<h2>Contact Us</h2>
+<h2 class="uk-text-lighter">Contact Us</h2>
 
 <p>If you have any questions about these Terms, please contact us: <a href="mailto:support@artoldo.com">support@artoldo.com</a></p>
 
@@ -1691,12 +1753,12 @@
         <button class="uk-modal-close-default" type="button" uk-close></button>
 
         <div class="uk-modal-header">
-            <h2 class="uk-modal-title">Support us</h2>
+            <h2 class="uk-modal-title uk-text-lighter">Support us</h2>
         </div>
-        <p class="uk-text-center"> Your donation helps us to continue our work - Thank you very much!</p>
+        <p class="uk-text-center uk-text-lighter"> Your donation helps us to continue our work - Thank you very much!</p>
 	<div class="uk-modal-container" uk-overflow-auto>
             <div class="uk-flex uk-flex-center">
-		<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/artoldo" name="donorbox" 
+		<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/artoldo" class="uk-border-rounded" name="donorbox" 
 		allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="auto" width="400px"></iframe>
             </div>
 	</div>
