@@ -38,7 +38,38 @@
     <script src="./js/uikit-icons.js"></script>
 
 </head>
+
+	
+<style>
+.container {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.bar1, .bar2 {
+  width: 36px;
+  height: 2px;
+  background-color: #fff;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+.change .bar1 {
+  transform: translate(0, 4px) rotate(-45deg);
+}
+
+.change .bar2 {
+  transform: translate(0, -4px) rotate(45deg);
+}
+</style>
+
 <body>
+
+<script>
+function myFunction(x) {
+  x.classList.toggle("change");
+}
+</script>	
 
 <script type="application/ld+json">
 {
@@ -98,6 +129,11 @@
 		</div>
 		<a href="#donate" uk-toggle><button class="uk-button uk-button-secondary uk-border-pill uk-visible@m">Support us</button></a>
                 <a class="uk-navbar-toggle uk-navbar-toggle-animate uk-hidden@m" uk-navbar-toggle-icon uk-toggle="target:#offcanvas-nav-primary" href="#"></a>
+		      
+ <div class="container" onclick="myFunction(this)">
+  <div class="bar1"></div> 
+  <div class="bar2"></div>
+</div>      
 
             </div>
           </div>
