@@ -174,7 +174,6 @@ img:not([src]) {
  */
 iframe {
   border: 0;
-  border-radius:15px;
 }
 /* Block elements
  ========================================================================== */
@@ -368,7 +367,7 @@ blockquote footer {
   color: #000;
 }
 blockquote footer::before {
-  content: "â€” ";
+  content: "— ";
 }
 /* Preformatted text
  ========================================================================== */
@@ -773,7 +772,7 @@ a.uk-link-reset,
   content: counter(decimal, decimal) '\200A.\00A0';
 }
 .uk-list-hyphen > ::before {
-  content: 'â€“\00A0\00A0';
+  content: '–\00A0\00A0';
 }
 /*
  * Color modifiers
@@ -4412,11 +4411,11 @@ select.uk-form-width-xsmall {
   /* 4 */
   box-sizing: border-box;
   max-width: 200px;
-  padding: 3px 6px;
+  padding: 6px 12px;
   /* 5 */
-  background: #000;
-  border-radius: 2px;
-  color: #fff;
+  background: #fff;
+  border-radius: 15px;
+  color: #AD9A00;
   font-size: 12px;
 }
 /* Show */
@@ -6399,7 +6398,7 @@ ul.uk-nav-sub {
  ========================================================================== */
 .uk-lightbox-toolbar {
   padding: 10px 10px;
-  background: rgba(0, 0, 0, 0.3);
+  background: transparent;
   color: rgba(255, 255, 255, 0.7);
 }
 .uk-lightbox-toolbar > * {
@@ -6408,8 +6407,16 @@ ul.uk-nav-sub {
 /* Toolbar Icon (Close)
  ========================================================================== */
 .uk-lightbox-toolbar-icon {
-  padding: 5px;
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
   color: rgba(255, 255, 255, 0.7);
+  border-radius: 100%;
+  /* 1 */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 /*
  * Hover
@@ -11105,7 +11112,7 @@ iframe[data-uk-cover] {
 .uk-card-secondary > :not([class*='uk-card-media']) .uk-marker:hover,
 .uk-overlay-primary .uk-marker:hover,
 .uk-offcanvas-bar .uk-marker:hover {
-  background: transparent;
+  background: #AD9A00;
   color: #fff;
 }
 .uk-light .uk-badge,
@@ -12521,6 +12528,3 @@ button:active {
 	-o-outline: 0 !important;
 	-webkit-outline: 0 !important;
 }
-
-
-
