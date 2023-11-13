@@ -1986,36 +1986,32 @@
             <h2 class="uk-modal-title uk-text-lighter">Get in Touch</h2>
         </div>
 
-        <div class="uk-modal-body" uk-overflow-auto>
-        <div class="uk-margin">
-        <legend class="uk-legend">Contact us</legend>
-	</div>
-		
-<form name="Contact - Artoldo" accept-charset="utf-8" action="https://formspree.io/f/xbjvweqp" method="post">
-  <fieldset class="uk-fieldset">
-    <div class="uk-margin">
-    <input class="uk-input uk-border-rounded" type="text" name="Name" id="full-name" placeholder="Name" required="">
-    </div>
-    <div class="uk-margin">
-    <input class="uk-input uk-border-rounded" type="email" name="Reply to" id="email-address" placeholder="Email Address" required="">
-    </div>
-    <div class="uk-margin">
-    <input class="uk-input uk-border-rounded" type="telephone" name="Telephone" id="telephone" placeholder="Phone">
-    </div>
-    <div class="uk-margin">
-    <textarea class="uk-textarea uk-border-rounded" rows="5" rows="6" name="Message" id="message" placeholder="Message" required=""></textarea>
-    </div>
-    <div class="uk-margin">
-    <input class="uk-input uk-border-rounded" type="hidden" name="Subject" id="email-subject" value="Contact Form Artoldo">
-    </div>
-  </fieldset>
-    <div class="uk-modal-footer uk-text-right">
-    <input class="uk-button uk-button-primary uk-border-pill" type="submit"></input>
-    </div>
-</form>
+        <div class="uk-modal-body uk-text-lighter" uk-overflow-auto>
 
-		
-	  </div>	
+        <form action="mailto:contact@artoldo.com?subject=Contact-Form-Artoldo" method="get" enctype="text/plain" onsubmit="location.href='index.html';">
+    	<fieldset class="uk-fieldset uk-text-lighter">
+
+        <legend class="uk-legend uk-text-lighter">Contact us</legend>
+
+        <div class="uk-margin uk-text-lighter">
+            <textarea class="uk-textarea uk-border-rounded" rows="5" placeholder="Message" name="message" aria-label="Message" required></textarea>
+        </div>
+
+        <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid uk-text-lighter">
+            <label><input class="uk-checkbox uk-border-rounded uk-text-lighter" type="checkbox" name="privacy" checked required> I agree to the <a href="#imprint" uk-toggle>Privacy Policy</a>.</label>
+            <label><input class="uk-checkbox uk-border-rounded uk-text-lighter" type="checkbox" name="newsletter"> I want to join the Mailing list.</label>
+        </div>
+
+	<div class="uk-modal-footer uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close uk-border-rounded" type="button">Cancel</button>
+            <input type="submit" class="uk-button uk-button-primary uk-border-rounded"value="Send">
+        </div>
+
+    	</fieldset>
+	</form>
+
+        </div>
+
     </div>
 </div>
 
