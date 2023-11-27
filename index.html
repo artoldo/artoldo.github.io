@@ -252,15 +252,15 @@
 
 <!-- Navigation -->
 
-<div id="transparent-dropbar" uk-sticky class="uk-section-secondary uk-preserve-color">
-    <div class="tm-header">
+<div uk-sticky>
+    <div class="header">
       <div uk-sticky>
         <nav class="uk-navbar-container">
           <div class="uk-container uk-container-expand">
             <div uk-navbar>
               <div class="uk-navbar-left">
                 <a uk-scroll class="uk-navbar-item uk-logo" href="./index.html#spotlight"><img class="uk-light" src="./images/artoldo.svg" 
-		width="200" vheight="auto" alt="Artoldo logo"></a>
+		width="200" vheight="auto" alt="Artoldo logo" style="filter: invert(0)"></a>
                 <ul class="uk-navbar-nav uk-visible@m"  uk-scrollspy-nav="closest: li; scroll: true">
                   <li>
                     <a class="uk-text-large" href="./index.html#spotlight"></a>
@@ -305,16 +305,16 @@
 
         <ul class="uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical">
                   <li> 
-                    <a href="./index.html#spotlight"></a>
+                    <a class="uk-text-lighter" href="./index.html#spotlight"></a>
                   </li>
                   <li>
-                    <a uk-scroll href="./index.html#about">About</a>
+                    <a class="uk-text-lighter" uk-scroll href="./index.html#about">About</a>
                   </li>  
                   <li>
-                    <a uk-scroll href="./index.html#exhibitions">Exhibitions</a>
+                    <a class="uk-text-lighter" uk-scroll href="./index.html#exhibitions">Exhibitions</a>
                   </li> 
                   <li>
-                    <a uk-scroll href="./index.html#works">Works</a>
+                    <a class="uk-text-lighter" uk-scroll href="./index.html#works">Works</a>
                   </li> 
             <li class="uk-nav-header"></li>
             <li class="uk-nav-divider"></li>
@@ -337,7 +337,7 @@
     <ul class="uk-slideshow-items uk-background-cover" uk-height-viewport>
         <li>
             <video class="uk-visible@m" poster="./images/jung.jpeg" src="./images/1.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/jung-excerpts.jpeg" uk-cover>
+            <img class="uk-hidden@m" src="./images/jung-excerpts.jpeg" uk-cover style="filter: blur(15px);">
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
@@ -356,7 +356,7 @@
         </li>
 	<li>
             <video class="uk-visible@m" poster=".././images/ritmanlibrary.jpeg" src="./images/2.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/ritmanlibrary.jpeg" uk-cover>
+            <img class="uk-hidden@m" src="./images/ritmanlibrary.jpeg" uk-cover style="filter: blur(15px);">
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
@@ -375,7 +375,7 @@
         </li>
 	<li>
             <video class="uk-visible@m" poster="./images/ugodossi.jpeg" src="./images/3.mp4"  loop muted playsinline uk-cover uk-video="autoplay: inview"></video>
-            <img class="uk-hidden@m" src="./images/ugodossi.jpeg" uk-cover>
+            <img class="uk-hidden@m" src="./images/ugodossi.jpeg" uk-cover style="filter: blur(15px);">
 	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
             <div class="uk-position-center uk-position-medium uk-text-center">
                 <div uk-slideshow-parallax="scale: 1,1,0.8">
