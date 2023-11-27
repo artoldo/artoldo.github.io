@@ -254,27 +254,26 @@
 
 <div id="transparent-dropbar" uk-sticky class="uk-section-secondary uk-preserve-color">
     <div class="tm-header">
-      <div uk-sticky="start: 200000000000000; end: #transparent-dropbar; show-on-up: true; animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; 
-           cls-inactive: uk-navbar-transparent uk-light">
+      <div uk-sticky>
         <nav class="uk-navbar-container">
           <div class="uk-container uk-container-expand">
-            <div uk-navbar="target-y: !.uk-navbar-container; dropbar: true; dropbar-anchor: !.uk-navbar-container">
+            <div uk-navbar>
               <div class="uk-navbar-left">
                 <a uk-scroll class="uk-navbar-item uk-logo" href="./index.html#spotlight"><img class="uk-light" src="./images/artoldo.svg" 
-		width="200" vheight="auto" alt="Artoldo logo" style="filter: invert(1);"></a>
+		width="200" vheight="auto" alt="Artoldo logo"></a>
                 <ul class="uk-navbar-nav uk-visible@m"  uk-scrollspy-nav="closest: li; scroll: true">
                   <li>
-                    <a href="./index.html#spotlight"></a>
+                    <a class="uk-text-large" href="./index.html#spotlight"></a>
                   </li>
                   <li>
-                    <a uk-scroll href="./index.html#about">About</a>
+                    <a class="uk-text-large" uk-scroll href="./index.html#about">About</a>
                   </li>  
                   <li>
-                    <a uk-scroll href="./index.html#exhibitions">Exhibitions</a>
+                    <a class="uk-text-large" uk-scroll href="./index.html#exhibitions">Exhibitions</a>
                   </li> 
                   <li>
-                    <a uk-scroll href="./index.html#works">Works</a>
-                  </li> 
+                    <a class="uk-text-large" uk-scroll href="./index.html#works">Works</a>
+                  </li>
                 </ul>
               </div>
 
@@ -412,6 +411,8 @@
 	<h1 class="uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">About</h1>
         <p class="uk-dropcap uk-text-large uk-text-justify uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;">
 	Artoldo (Est.2015) is an international award-winning creative collective founded by renowned film directors and new media artists, Sara Ferro and Chris Weil. Their works have been screened at film festivals, 	in galleries and museums around the world.</p>
+	<img src="./images/artoldo.jpg" style="bottom: -200px; left: 200px;" 
+	alt="Artoldo" class=" uk-position-relative uk-position-z-index uk-border-rounded" uk-parallax="target: #about; y: -400; x: -300 easing: 100; rotate: -120;">
        </div>
      </div>
 </div>
@@ -2068,7 +2069,7 @@
 
 <div uk-lightbox>
 
-        <ul class="uk-slider-items uk-child-width-1-2@s uk-grid">
+        <ul class="uk-slider-items uk-child-width-1-3@s uk-grid">
             <a href="./jung/index.html" data-type="iframe">
             <li class="uk-transition-toggle">
                 <div class="uk-card uk-card-default uk-border-rounded">
