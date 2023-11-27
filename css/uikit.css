@@ -1206,8 +1206,8 @@ button.uk-icon:not(:disabled) {
 }
 /* Hover */
 .uk-icon-button:hover {
-  background-color: #ebebeb;
-  color: #000;
+  background-color: #000;
+  color: #fff;
 }
 /* OnClick + Active */
 .uk-icon-button:active,
@@ -1996,8 +1996,8 @@ select.uk-form-width-xsmall {
 }
 /* Hover */
 .uk-button-secondary:hover {
-  background-color: #fff;
-  color: #AD9A00;
+  background-color: #000;
+  color: #fff;
 }
 /* OnClick + Active */
 .uk-button-secondary:active,
@@ -4041,7 +4041,7 @@ select.uk-form-width-xsmall {
   box-sizing: border-box;
   width: 270px;
   padding: 20px 20px;
-  background: #222;
+  background: #AD9A00;
   /* 3 */
   overflow-y: auto;
 }
@@ -5021,7 +5021,7 @@ ul.uk-nav-sub {
  * Items
  */
 .uk-nav-primary > li > a {
-  color: #999;
+  color: #fff;
 }
 /* Hover */
 .uk-nav-primary > li > a:hover {
@@ -5294,7 +5294,7 @@ ul.uk-nav-sub {
  */
 .uk-navbar-nav > li > a {
   padding: 0 0;
-  color: #999;
+  color: #AD9A00;
   text-transform: uppercase;
   transition: 0.1s ease-in-out;
   transition-property: color, background-color;
@@ -5306,14 +5306,16 @@ ul.uk-nav-sub {
 .uk-navbar-nav > li:hover > a,
 .uk-navbar-nav > li > a[aria-expanded="true"] {
   color: #000;
+  text-decoration:underline;
 }
 /* OnClick */
 .uk-navbar-nav > li > a:active {
-  color: #333;
+  color: #AD9A00;
 }
 /* Active */
 .uk-navbar-nav > li.uk-active > a {
-  color: #333;
+  color: #AD9A00;
+  text-decoration:overline;
 }
 /* Parent icon modifier
  ========================================================================== */
