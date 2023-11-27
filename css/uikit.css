@@ -1194,8 +1194,8 @@ button.uk-icon:not(:disabled) {
   width: 36px;
   height: 36px;
   border-radius: 500px;
-  background: #FFFFFF;
-  color: #999;
+  background: #AD9A00;
+  color: #fff;
   vertical-align: middle;
   /* 1 */
   display: inline-flex;
@@ -1212,8 +1212,8 @@ button.uk-icon:not(:disabled) {
 /* OnClick + Active */
 .uk-icon-button:active,
 .uk-active > .uk-icon-button {
-  background-color: #dfdfdf;
-  color: #000;
+  background-color: #AD9A00;
+  color: #fff;
 }
 /* ========================================================================
    Component: Form Range
