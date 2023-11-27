@@ -4041,7 +4041,7 @@ select.uk-form-width-xsmall {
   box-sizing: border-box;
   width: 270px;
   padding: 20px 20px;
-  background: #AD9A00;
+  background: #fff;
   /* 3 */
   overflow-y: auto;
 }
@@ -4175,7 +4175,7 @@ select.uk-form-width-xsmall {
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.8);
   /* 2 */
   opacity: 0;
   transition: opacity 0.15s linear;
