@@ -2009,21 +2009,22 @@ select.uk-form-width-xsmall {
  * Danger
  */
 .uk-button-danger {
-  background-color: #AD9A00;
-  color: #fff;
-  border: 0px solid transparent;
+  background-color: transparent;
+  color: #AD9A00;
+  border: 1px solid #AD9A00;
 }
 /* Hover */
 .uk-button-danger:hover {
-  background-color: #fff;
-  color: #AD9A00;
-  border: 0px solid #AD9A00;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #000;
 }
 /* OnClick + Active */
 .uk-button-danger:active,
 .uk-button-danger.uk-active {
-  background-color: #AD9A00;
-  color: #fff;
+  background-color: transparent;
+  color: #AD9A00;
+  border: 1px solid #AD9A00;
 }
 /*
  * Disabled
