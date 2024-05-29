@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTOLDO - Indie Cinema + Media Art: Sara Ferro & Chris Weil</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Artoldo pushes the boundaries of visual storytelling. With a passion for Avant-garde cinema, Moving Images Arts and New Media, their portfolio includes a diverse range of works, 			              such as Digital Art, Experimental Films, Feature Documentaries, Immersive Experiences (VR), Net Art, Soundscapes and Video Art Installations.">
+    <meta name="keywords" content="Artoldo, Sara Ferro, Chris Weil, art, cinema, film, documentary, moving images arts, new media, virtual reality, video, video art">
+    <meta name="author" content="ARTOLDO">
+
+    <!-- Favicon -->
+    <link rel="icon" href="./images/artoldo.jpeg" type="image">
+    
+    <!-- Open Graph Meta Tags (Facebook, WhatsApp, Signal, WeChat, Telegram) -->
+    <meta property="og:title" content="ARTOLDO">
+    <meta property="og:description" content="Indie Cinema + Media Art - Sara Ferro & Chris Weil">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://artoldo.github.io">
+    <meta property="og:image" content="https://artoldo.github.io/images/artoldo.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter Card Meta Tags (Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ARTOLDO">
+    <meta name="twitter:description" content="Indie Cinema + Media Art - Sara Ferro & Chris Weil">
+    <meta name="twitter:url" content="https://artoldo.github.io">
+    <meta name="twitter:image" content="https://artoldo.github.io/images/artoldo.jpg">
+    
+    <!-- Additional meta tags can be added as needed -->
+    
+    <!-- Stylesheets, scripts, and other resources go here -->
+    <link rel="stylesheet" type="text/css" href="./css/uikit.css" />
+    <link rel="stylesheet" type="text/css" href="./custom.css" /> 
+    <script src="./js/uikit.js"></script>
+    <script src="./js/uikit-icons.js"></script>
+
+<!-- Lightbox -->
+
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+</script>
+
+
+</head>
+
+<body>
+
+<!-- Nav -->
+
+<div class="uk-background-secondary uk-position-z-index uk-flex uk-flex-center uk-padding-small" uk-sticky>
+
+<div class="uk-navbar-left">
+
+<a href="#" uk-icon="menu" uk-toggle="target:#nav-1" style="color:white;"></a>
+
+</div>
+
+<div class="uk-navbar-center">
+	<span style="color:white;" class="uk-visible@m"> &nbsp;  &nbsp; &nbsp;
+	<a class="uk-button uk-button-text" style="color:white;" uk-scroll href="#about" uk-scrollspy="cls: uk-animation-slide-top;">About</a> | 
+	<a class="uk-button uk-button-text uk-visible@m" style="color:white; border:0px;" uk-scroll href="#contact" uk-toggle uk-scrollspy="cls: uk-animation-slide-top;">Contact</a>
+	</span>
+	<img class="uk-padding-small" src="./images/logo.svg" alt="Artoldo logo" width="200px" uk-scrollspy="cls: uk-animation-slide-top;" />
+	<span style="color:white;" class="uk-visible@m">
+	<a class="uk-button uk-button-text" style="color:white;" uk-scroll href="#exhibitions" uk-scrollspy="cls: uk-animation-slide-top;">Exhibitions</a> |
+	<a class="uk-button uk-button-text uk-visible@m" style="color:white;" uk-scroll href="#works" uk-scrollspy="cls: uk-animation-slide-top;">Works</a>
+	</span>
+</div>
+
+<div class="uk-navbar-right">
+
+<a href="#donate" uk-toggle uk-scrollspy="cls: uk-animation-slide-right; repeat: true"><button class="uk-button uk-button-primary uk-border-pill uk-visible@m">Support us</button></a>
+
+<span class="uk-hidden@m" uk-icon="more" uk-toggle="target:#nav-2" style="color:white;"></span>
+	
+</div>
+
+</div>
+
+<!-- Nav End -->
+
+
+<!-- Mobile Navigation -->
+
+
+<div id="nav-1" uk-offcanvas="mode: push; flip: false; overlay: true">
+    <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+
+
+       <ul class="uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical">
+
+<li><img src="./images/artoldo.jpeg" class="uk-border-circle" width="20%" height="auto" alt="Artoldo icon"></li>
+
+<h4>Filmography</h4>
+
+<li uk-lightbox><a href="./jung/index.html" class="uk-text-lighter uk-text-small" data-type="iframe">C. G. Jung on Alchemy</a></li>
+<li uk-lightbox><a href="./ritmanlibrary/index.html" class="uk-text-lighter uk-text-small" data-type="iframe">The Ritman Library - Amsterdam</a></li>
+<li uk-lightbox><a href="./ugodossi/index.html" class="uk-text-lighter uk-text-small" data-type="iframe">Ugo Dossi - Art and Space</a></li>
+
+
+<h4>Virtual Reality</h4>
+
+<li uk-lightbox><a href="https://artoldo.github.io/kaltcaldo/" class="uk-text-lighter uk-text-small" data-type="iframe">kaltcaldo</a></li>
+<li uk-lightbox><a href="https://artoldo.github.io/otium/" class="uk-text-lighter uk-text-small" data-type="iframe">Otium & The City</a></li>
+<li uk-lightbox><a href="https://artoldo.github.io/zoroaster/bowie/" class="uk-text-lighter uk-text-small" data-type="iframe">Zoroaster Superstar - David Bowie</a></li>
+<li uk-lightbox><a href="https://artoldo.github.io/zoroaster/mercury/" class="uk-text-lighter uk-text-small" data-type="iframe">Zoroaster Superstar - Freddie Mercury</a></li>
+<li uk-lightbox><a href="https://artoldo.github.io/zoroaster/casanova/" class="uk-text-lighter uk-text-small" data-type="iframe">Zoroaster Superstar - Casanova</a></li>
+<li uk-lightbox><a href="https://redmagicblue.github.io/falling/" class="uk-text-lighter uk-text-small" data-type="iframe">FALL!NG</a></li>
+<li uk-lightbox><a href="https://redmagicblue.github.io/notimenospace/" class="uk-text-lighter uk-text-small" data-type="iframe">NO T!ME NO SPACE</a></li>
+<li uk-lightbox><a href="https://redmagicblue.github.io/a-cinema/" class="uk-text-lighter uk-text-small" data-type="iframe">A-Cinema</a></li>
+<li uk-lightbox><a href="https://redmagicblue.github.io/achtung-banditen/" class="uk-text-lighter uk-text-small" data-type="iframe">Achtung Banditen?!</a></li>
+
+        </ul>
+
+    </div>
+</div>
+
+
+<div id="nav-2" uk-offcanvas="mode: slide; flip: true; overlay: true">
+    <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+
+
+       <ul class="uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical">
+
+<li><a href="#contact" uk-toggle><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: mail; ratio: 2.0"></span></a></li>
+
+<li><a href="#donate" uk-toggle><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: heart; ratio: 2.0"></span></a></li>
+
+<li><a href="#imprint" uk-toggle><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: info; ratio: 2.0"></span></a></li>
+        
+        </ul>
+
+    </div>
+</div>
+
+<!-- Mobile Navigation End -->
+
+
+<!-- Banner -->
+
+<div id="spotlight" class="uk-overflow-hidden">
+<div class="uk-position-relative uk-visible-toggle uk-light" uk-slideshow="ratio: false; animation: slide; autoplay:true; pause-on-hover:true">
+    
+    <ul class="uk-slideshow-items uk-background-cover" uk-height-viewport>
+        <li>
+            <img src="./images/rarebook-jung.webp" class="uk-animation-kenburns" uk-cover alt="C. G. Jung on Alchemy">
+	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
+            <div class="uk-position-center uk-position-medium uk-text-center">
+                <div uk-slideshow-parallax="scale: 1,1,0.8">
+                    <h1 class="uk-text-lighter" uk-slideshow-parallax="x: 200,0,0">C. G. Jung on Alchemy</h1>
+		    <div class="uk-width-large uk-text-center">
+                    <p style="color:#ffffff;" class="uk-text-justify" uk-slideshow-parallax="x: 400,0,0;">
+		    Explore the private rare book collection of Carl Gustav Jung and his personal handwritten excerpts. Uncover the secrets of alchemy and psychology. 
+		    Filmed at amazing locations like the House of C. G. Jung, Eranos and other mystic places in Switzerland...</p>
+                    </div>
+		        <span uk-lightbox>
+                 	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
+		 	href="./jung/index.html" data-type="iframe">Watch Now</a>
+			</span>
+			<a href="#about" uk-scroll uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-default uk-border-pill">Learn more</a><br><br><br><br><br>
+                </div>
+            </div>
+        </li>
+	<li>
+            <img src="./images/ritman-library.webp" class="uk-animation-kenburns" uk-cover alt="The Ritman Library - Amsterdam">
+	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
+            <div class="uk-position-center uk-position-medium uk-text-center">
+                <div uk-slideshow-parallax="scale: 1,1,0.8">
+                    <h1 class="uk-text-lighter" uk-slideshow-parallax="x: 200,0,0">The Ritman Library</h1>
+		    <div class="uk-width-large uk-text-center">
+                    <p style="color:#ffffff;" class="uk-text-justify" uk-slideshow-parallax="x: 400,0,0;">
+		    Discover a library with over 23.000 books in the fields of Alchemy, Hermetica, Cabala, Magic, Rosicrucianism, and Mystic! 
+		    Watch legendary first editions, rare books, manuscripts and learn more about the hidden stories and secret symbols of Esotericism...</p>
+                    </div>
+                        <span uk-lightbox>
+                 	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
+		 	href="./ritmanlibrary/index.html" data-type="iframe">Watch Now</a>
+                        </span>
+			<a href="#about" uk-scroll uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-default uk-border-pill">Learn more</a><br><br><br><br><br>
+                </div>
+            </div>
+        </li>
+	<li>
+            <img src="./images/ugo-dossi.webp" class="uk-animation-kenburns" uk-cover alt="Ugo Dossi - Art and Space">
+	    <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.3, 0.3, 0.3; backgroundColor: #000,#000"></div>
+            <div class="uk-position-center uk-position-medium uk-text-center">
+                <div uk-slideshow-parallax="scale: 1,1,0.8">
+                    <h1 class="uk-text-lighter" uk-slideshow-parallax="x: 200,0,0">Ugo Dossi<br>Art and Space</h1>
+                    <div class="uk-width-large uk-text-center">
+                    <p style="color:#ffffff;"class="uk-text-justify" uk-slideshow-parallax="x: 400,0,0;">
+		    The figurative artist Ugo Dossi presents his works in the field of tarot, automatic drawing, metaphysics, astronomy and the cosmos, 
+		    hypnosis, telepathy, and alchemy, with incursions into the collective subconscious and the thought of Franz Anton Mesmer and Wilhelm Reich.</p>
+                    </div>
+                        <span uk-lightbox>
+                 	<a uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-secondary uk-border-pill" 
+		 	href="./ugodossi/index.html" data-type="iframe">Watch Now</a>
+                        </span>
+			<a href="#about" uk-scroll uk-slideshow-parallax="x: 600,0,0;" class="uk-button uk-button-default uk-border-pill">Learn more</a><br><br><br><br><br>
+                </div>
+            </div>
+        </li> 
+
+    </ul>
+
+    <a class="uk-position-center-left uk-position-small uk-hidden-hover uk-slidenav uk-visible@m" href uk-slidenav-previous uk-slideshow-item="previous"></a>
+    <a class="uk-position-center-right uk-position-small uk-hidden-hover uk-slidenav uk-visible@m" href uk-slidenav-next uk-slideshow-item="next"></a>
+
+</div>
+</div>
+
+<!-- Banner End -->
+
+
+<!-- About -->
+
+<div id="about" class="uk-section uk-section-muted uk-section-medium uk-flex uk-flex-center uk-flex-middle uk-text-center">
+    <div class="uk-container">
+       <div class="uk-width-1-2@m uk-text-center uk-margin-auto uk-margin-auto-vertical uk-animation-toggle">
+        <p></p>
+	<h1 class="uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">About</h1>
+        <p class="uk-dropcap uk-text-large uk-text-justify uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;">
+	Artoldo (est. 2015) is an international award-winning creative collective founded by renowned film directors and new media artists, Sara Ferro and Chris Weil. Their works have been screened at film festivals, in galleries and museums around the world.</p>
+	<img src="./images/artoldo.jpg" style="bottom: -200px; left: 200px;" 
+	alt="Artoldo" class=" uk-position-relative uk-position-z-index uk-border-rounded" uk-parallax="target: #about; y: -400; x: -300 easing: 100; rotate: -120;">
+       </div>
+     </div>
+</div>
+
+<!-- About End -->
+
+
+<!-- Awards -->
+
+<div class="uk-overflow-hidden">
+
+<div class="uk-section uk-section-primary uk-section-medium uk-flex uk-flex-center uk-flex-middle uk-text-center">
+           
+<div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider autoplay="true" autoplay-interval="5000" pause-on-hover="true">
+
+    <ul class="uk-slider-items uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l" style="cursor:grab;">
+        
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+               <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Star Cinema<br>DECENTRALAND<br>Metaverse</span><br>
+                        <span class="uk-text-lighter">USA 2024</span>
+			</div>           
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+               <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">ProToPost<br>International</span><br>
+                        <span class="uk-text-lighter">Italy 2023</span>
+			</div>
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Winner</span><br>
+                        <span class="uk-text-large uk-text-bold">Lift-Off<br>Audience<br>Award</span><br>
+                        <span class="uk-text-lighter">London 2023</span>
+			</div>
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Innuendo<br>International<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Italy 2023</span>
+			</div>
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Ros<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Alicante 2023</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Hermetic<br>International<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Italy 2023</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">- 20 di mare -<br>Galata Museo<br>del Mare</span><br>
+                        <span class="uk-text-lighter">Genoa 2023</span>
+			</div>            
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Nominee</span><br>
+                        <span class="uk-text-large uk-text-bold">Festival<br>del Cinema<br>di Cefalù</span><br>
+                        <span class="uk-text-lighter">Sicily 2023</span>
+			</div>           
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Biennale<br>le Latitudini<br>dell’arte</span><br>
+                        <span class="uk-text-lighter">Berlin 2023</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">- Otium -<br>Terme di Como<br>Romana</span><br>
+                        <span class="uk-text-lighter">Italy 2023</span>
+			</div>          
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Solo Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">ATB Gallery<br>Associazione<br>Culturale</span><br>
+                        <span class="uk-text-lighter">Turin 2023</span>
+			</div>           
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Iran<br>Germany<br>Italy</span><br>
+                        <span class="uk-text-lighter">2023</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Lift-Off<br>Global<br>Network</span><br>
+                        <span class="uk-text-lighter">London 2022</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Submission</span><br>
+                        <span class="uk-text-large uk-text-bold">- 7DFPS -<br>Game Jam</span><br>
+                        <span class="uk-text-lighter">2022</span>
+			</div>    
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Submission</span><br>
+                        <span class="uk-text-large uk-text-bold">- Game Off -<br>Game Jam</span><br>
+                        <span class="uk-text-lighter">2022</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">The Lift-Off<br>Sessions</span><br>
+                        <span class="uk-text-lighter">London 2022</span>
+			</div>        
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">MOSAIC<br>on Paper</span><br>
+                        <span class="uk-text-lighter">Amsterdam 2022</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Semi-Finalist</span><br>
+                        <span class="uk-text-large uk-text-bold">ESMoA<br>Video Art<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">USA 2022</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Solo Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">- THE GALLERY -<br>Metaverse<br>Decentraland</span><br>
+                        <span class="uk-text-lighter">USA 2022</span>
+			</div>           
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">LABOCINE</span><br>
+                        <span class="uk-text-lighter">New York 2022</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Winner</span><br>
+                        <span class="uk-text-large uk-text-bold">Venus<br>Community<br>Awards</span><br>
+                        <span class="uk-text-lighter">Istanbul 2022</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">- FLIGHT -<br>Mostra<br>Internazionale<br>del Cinema</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>          
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Star Cinema<br>DECENTRALAND<br>Metaverse</span><br>
+                        <span class="uk-text-lighter">USA 2022</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">One Earth<br>Awards</span><br>
+                        <span class="uk-text-lighter">India 2022</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">mim</span><br>
+                        <span class="uk-text-lighter">Munich 2022</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Breed Art<br>Studios</span><br>
+                        <span class="uk-text-lighter">Amsterdam 2022</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Estensioni<br>Oltre<br>Lo Spazio</span><br>
+                        <span class="uk-text-lighter">Carrara 2022</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Palazzo<br>Doria Tursi</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>          
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">LABA<br>Accademia di<br>Belle Arti</span><br>
+                        <span class="uk-text-lighter">Brescia 2022</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Galata Museo<br>del Mare</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">La Fabbrica<br>del Vedere</span><br>
+                        <span class="uk-text-lighter">Venice 2022</span>
+			</div>  
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-medium uk-text-bold">CasermArcheologica<br>Sansepolcro</span><br>
+                        <span class="uk-text-lighter">Italy 2022</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Spazio 46</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-medium uk-text-bold">AdAC<br>Archivio D'arte<br>Contemporanea<br>Università degli<br>Studi Di Genova</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>        
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Segrete<br>Tracce di<br>Memoria</span><br>
+                        <span class="uk-text-lighter">Genoa 2022</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Castello<br>d’Albertis<br>Code War</span><br>
+                        <span class="uk-text-lighter">Genoa 2021</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">GutterCast</span><br>
+                        <span class="uk-text-lighter">2021</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">CONCRETO</span><br>
+                        <span class="uk-text-lighter">Turin 2021</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Façade<br>Video Festival</span><br>
+                        <span class="uk-text-lighter">Plovdiv 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Showcased at</span><br>
+                        <span class="uk-text-large uk-text-bold">International<br>Summer<br>Academy of<br>Fine Arts</span><br>
+                        <span class="uk-text-lighter">Salzburg 2021</span>
+			</div>        
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Solo Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Palazzo Ducale<br>Etherea<br>Art Gallery</span><br>
+                        <span class="uk-text-lighter">Genoa 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">- MAKE8ELIEVE -<br>Night Terrors</span><br>
+                        <span class="uk-text-lighter">2021</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">GRRL Telephone<br>Photo + Video<br>Exhibit</span><br>
+                        <span class="uk-text-lighter">Berlin 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Finalist</span><br>
+                        <span class="uk-text-large uk-text-bold">Sezze<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Italy 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">International<br>Nature<br>Film Festival<br>Gödöllő</span><br>
+                        <span class="uk-text-lighter">Hungary 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-medium uk-text-bold">FINNOF<br>International<br>Festival of<br>New Nonfiction<br>Narratives</span><br>
+                        <span class="uk-text-lighter">Argentina 2021</span>
+			</div>        
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Featured on</span><br>
+                        <span class="uk-text-large uk-text-bold">Arte<br>Laguna<br>World</span><br>
+                        <span class="uk-text-lighter">2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Semi-Finalist</span><br>
+                        <span class="uk-text-large uk-text-bold">Festival<br>del Cinema<br>di Cefalù</span><br>
+                        <span class="uk-text-lighter">Sicily 2021</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Invited Artist</span><br>
+                        <span class="uk-text-large uk-text-bold">Centrale<br>Festival<br>Around</span><br>
+                        <span class="uk-text-lighter">Italy 2021</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">ROMAN SUSAN<br>Streetlight</span><br>
+                        <span class="uk-text-lighter">Chicago 2021</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-medium uk-text-bold">Itsliquid<br>International<br>Art Fair<br>Palazzo<br>Albrizzi-Capello</span><br>
+                        <span class="uk-text-lighter">Venice 2021</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-medium uk-text-bold">Contemporary<br>Venice<br>The Room<br>Contemporary<br>Art Space</span><br>
+                        <span class="uk-text-lighter">Venice 2021</span>
+			</div>       
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">New Generation<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Serbia 2020</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">MINK FESTIVAL<br>A Zoo of<br>the Pandemic</span><br>
+                        <span class="uk-text-lighter">Greece 2020</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Showcased on</span><br>
+                        <span class="uk-text-medium uk-text-bold">Trinity<br>Square Video<br>the Imaginary and<br>the Synchronous</span><br>
+                        <span class="uk-text-lighter">Toronto 2020</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Featured on</span><br>
+                        <span class="uk-text-large uk-text-bold">Magmart<br>International<br>Video Art<br>Festival</span><br>
+                        <span class="uk-text-lighter">Naples 2020</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Chippendale<br>Studio<br>Nello Spazio<br>Fa Freddo</span><br>
+                        <span class="uk-text-lighter">Milan 2020</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Portobello<br>Film Festival<br>Muse Gallery</span><br>
+                        <span class="uk-text-lighter">London 2020</span>
+			</div>        
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">TAM<br>Torrance<br>Art Museum<br>- Darkroom -</span><br>
+                        <span class="uk-text-lighter">Los Angeles 2020</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">New Media Fest</span><br>
+                        <span class="uk-text-lighter">Cologne 2020</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Finalist</span><br>
+                        <span class="uk-text-large uk-text-bold">Lisbon Film<br>Rendezvous</span><br>
+                        <span class="uk-text-lighter">Portugal 2020</span>
+			</div>    
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Group Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">CICA Museum<br>Experimental<br>Film and Video</span><br>
+                        <span class="uk-text-lighter">Seoul 2020</span>
+			</div>          
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Solo Exhibition</span><br>
+                        <span class="uk-text-large uk-text-bold">Palazzo<br>Albrizzi<br>Capello</span><br>
+                        <span class="uk-text-lighter">Venice 2020</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Wotisart<br>Magazine 35</span><br>
+                        <span class="uk-text-lighter">London 2020</span>
+			</div>         
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">The Lift-Off<br>Sessions</span><br>
+                        <span class="uk-text-lighter">London 2020</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-medium uk-text-bold">ART AND PSYCHE<br>CONFERENCE IV<br>Pacifica Graduate<br>Institute</span><br>
+                        <span class="uk-text-lighter">Santa Barbara 2019</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Darkroom<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">London 2019</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">The Lift-Off<br>Sessions</span><br>
+                        <span class="uk-text-lighter">London 2019</span>
+			</div>         
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Teatro Bloser</span><br>
+                        <span class="uk-text-lighter">Genoa 2018</span>
+			</div>        
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Alexandre<br>Trauner<br>ART / Film<br>Festival</span><br>
+                        <span class="uk-text-lighter">Szolnok 2018</span>
+			</div>      
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Nominee</span><br>
+                        <span class="uk-text-large uk-text-bold">Best Film</span><br>
+                        <span class="uk-text-lighter">AIFF 2018</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Nominee</span><br>
+                        <span class="uk-text-large uk-text-bold">Best Story</span><br>
+                        <span class="uk-text-lighter">AIFF 2018</span>
+			</div>      
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Nominee</span><br>
+                        <span class="uk-text-large uk-text-bold">Best Director<br>of a Feature<br>Documentary</span><br>
+                        <span class="uk-text-lighter">AIFF 2018</span>
+			</div>   
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Nominee</span><br>
+                        <span class="uk-text-large uk-text-bold">Scientific<br>Educational<br>Award</span><br>
+                        <span class="uk-text-lighter">AIFF 2018</span>
+			</div>       
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Amsterdam<br>International<br>Filmmaker<br>Festival</span><br>
+                        <span class="uk-text-lighter">AIFF 2018</span>
+			</div>  
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Cosmopolis<br>Film Awards</span><br>
+                        <span class="uk-text-lighter">Rome 2017</span>
+			</div> 
+		</div>
+        </li>
+	<li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Special Screening</span><br>
+                        <span class="uk-text-large uk-text-bold">Oerol</span><br>
+                        <span class="uk-text-lighter">Terschelling 2017</span>
+			</div>     
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">DOCfeed<br>Documentary<br>Festival</span><br>
+                        <span class="uk-text-lighter">Eindhoven 2017</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">Miami<br>Independent<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">2017</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">ARFF Berlin<br>International<br>Awards</span><br>
+                        <span class="uk-text-lighter">2017</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Winner</span><br>
+                        <span class="uk-text-large uk-text-bold">Best Project<br>MedFF</span><br>
+                        <span class="uk-text-lighter">Siracusa 2016</span>
+			</div>
+		</div>
+        </li>
+        <li>
+            <img src="./images/laurel.png" width="400" height="600" alt="">
+                <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                	<div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                        <span>Official Selection</span><br>
+                        <span class="uk-text-large uk-text-bold">International<br>Monthly<br>Film Festival</span><br>
+                        <span class="uk-text-lighter">Copenhagen 2016</span>
+			</div>
+		</div>
+        </li>
+    </ul>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Awards End -->
+
+
+<!-- Exhibitions -->
+
+
+<div class="uk-section uk-section-muted uk-section-medium uk-dark uk-flex">
+ <div id="exhibitions" class="uk-container">
+    <div class="uk-width-1-2@m uk-text-center uk-margin-auto uk-margin-auto-vertical">
+        <span class="uk-visible@m"><br><br></span>
+	<h1 class="uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">Exhibitions</h1>
+        <p class="uk-dropcap uk-text-large uk-text-justify uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;">Artoldo is a german, italian ultra-contemporary artist 	couple, mainly 	associated with Virtual art, consisting of Sara Ferro and Chris Weil. Artoldo is most frequently exhibited in Italy, but also in North America, Europe and Asia.</p>
+    </div>
+ </div>
+</div>
+
+<div class="uk-section-priamary uk-overflow-hidden">
+<div class="uk-grid-collapse uk-flex-middle uk-flex-center uk-background-primary uk-padding-large" uk-grid>
+                
+	<div class="uk-section" uk-scrollspy="media: @m; target: > div; cls: uk-animation-fade; delay: 500; repeat: false;">	
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle4;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">MOSAIC on Paper - 20 di MARE <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Galata Museo del Mare, Glass Space - Genoa (Italy)</h3>
+	        </div>
+
+		<span class="toggle4"></span>
+		<div class="toggle4 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Thursday 12 September - Monday 13 November 2023</h3>
+            	<p class="uk-text-justify uk-text-lighter">Art Commission APS in collaboration with the Genoa Sea Museums Promoters Association presents Mosaic on Paper, a group installation of 20×20 artist 			multiples on fine art paper, at Galata Museo del Mare. This is the first stage dedicated to museums of the special themed editions as part of the traveling project that has been presented in several 		European and Italian cities in recent years. The theme of this special edition is, of course, the sea in all its forms. The collective installation will be set up from Sept. 12 to Nov. 13 in an 		unprecedented space for exhibitions, identified by the curators thanks to the collaboration of Anna Dentoni, the Glass Space, on the fourth floor of the Galata: a very special space, an "inside" and 		at the same time an "outside," a splendid interior terrace overlooking the city and the Darsena. Lorenzo Mortara writes, in the critical text dedicated to the exhibition:
+		<q>...In this artistic adventure more of the soul than of the body, we have to abandon all fixed points, make a tabula rasa, revise our knowledge and points of view, abandon preconceived ideas and 		clichés, and as Kandinsky would say, actively participate with one's mind in the visual contact with the multiples, that is, enter inside the works, also because as Machado finely says: There is no 		path, the path is made by going...</q>
+
+		<q>...How to reflect on the symbol of the sea, primordial event, generator of life but also destroyer and bringer of misfortune and annihilation? How to allow ourselves to be fully engaged in the 		reading of this collective? How to decipher the inner silence that generates its vision? Symbol in Greek is Symballein, and this leads us to the concept of uniting, that is, putting together many 		different works with multiple meanings, artist fragments that though minute and infinitesimal are messengers of a deep, wise and ancient yet postmodern feeling...</q>
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="./images/raggio-artwork.jpeg"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil - Raggio d'acciaio №44 | Fine Art Print">View Artwork</a>
+        	</span>
+
+		</div>
+		</div>
+	
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle5;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Biennale - Le latitudini dell'arte <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Kunstquartier Bethanien, Studio 1 - Berlin (Germany)</h3>
+	        </div>
+
+		<span class="toggle5"></span>
+		<div class="toggle5 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Saturday 03 June - Sunday 18 June 2023</h3>
+            	<p class="uk-text-justify uk-text-lighter">Curator: Virginia Monteverde | Featured Artists: 
+		ARTOLDO - Sara Ferro & Chris Weil with their VR work <i>kaltcaldo</i> (for Desktop, Smartphone and Tablet), Connie Bellantonio, Mats Bergquist, Cristian Biasci, Stefano Bigazzi, 		Andreas 		Blank, Julia Bornefeld, Babette Brühl , Andreas Burger, Virginia Cafiero, Stefano Cagol, Francesco Candeloro, Cristiano Cesolari, Max Coor, Miro Craemer, Pier Giorgio De Pinto, Theo Eissens, 			Brice Esso, Maike Freess, Daniele Galliano, Armida Gandini, Lory Ginedumont, GODISART, Gian Luca Groppi, Tanja Hirschfeld, Fukushi Ito, Friederike Just, Vladimir Kartashov, PierPaolo Koss, Jan Kuck, 		Raquel Maulwurf, Giuseppe Negro, Davide Ragazzi, Fried Rosenstock, Enzo Rovella, Anne Schubert, Niels Schubert, Daniele Sigalot, Nina Staehli, Günter Stangelmayer, Marco Tagliafico, Anne-Claire van 		den Elshout, Aaron van Erp, Johannes Vetter, Alessandra Vinotto, Alessandro Zannier, Stefano Mario Zatti, Maya Zignone...
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate"
+		href="https://artoldo.github.io/kaltcaldo/" data-type="iframe"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: kaltcaldo [VR]">Enter Virtual Reality</a>
+		</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/IZYKajLVm84?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: kaltcaldo - Biennale - Le latitudini dell'arte">Watch Show</a>
+		</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle6;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Otium <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Terme di Como Romana, Como (Italy)</h3>
+	        </div>
+
+		<span class="toggle6"></span>
+		<div class="toggle6 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Saturday 3 June - Sunday 30 July 2023</h3>
+            	<p class="uk-text-justify uk-text-lighter">Curator: Carla Tocchetti | Featured Artists: Luisella Abbondi, ARTOLDO - Sara Ferro & Chris Weil with their AR work <i>Otium & The City</i> (for Smartphone 		and Tablet), Alberto Baj, Doriam Battaglia, Germana Bedont, Stefania Benedetti, Claudia Beulke, Roberto Biondi, Maria Donata Bitondo, Maria Teresa Bolis, Anna Buono, Lorena Calligola, Francesco 		Cucci, Franca D’Alfonso, Hanna Fitsner, Anastasia Golubova, Carlo Mauri, Marzia Mauri, Elisabetta Meneghello, Leda Michelini, Tiziana Mucchiani, Oscar Pennacino, Elisa Pina, Davide Romanò, 			Marcella Rupcich, Edoardo Spolidoro e Mara Zuliani. Special guest: Adrian Novakov
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://artoldo.github.io/otium/" data-type="iframe"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Otium & The City [AR]">Enter Augmented Reality</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle7;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Clavis Artis on the Cloud - In Zarathustra We Trust <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: ATB Gallery - Turin (Italy)</h3>
+	        </div>
+
+		<span class="toggle7"></span>
+		<div class="toggle7 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Wednesday 15 March - Thursday 23 March 2023</h3>
+            	<p class="uk-text-justify uk-text-lighter">Curator: Alessandro Allocco | Featured Artists: ARTOLDO - Sara Ferro & Chris Weil with their Virtual Reality installation <i>Zoroaster Superstar VR</i> (for 		Desktop, Smartphone and Tablet), about Zoroaster: Friedrich Nietzsche, David Bowie (Ziggy Stardust), Freddie Mercury (Queen) and Il Casanova di Federico Fellini feat. Nino Rota. 
+		<br><br>Stardust Zoroaster Superstar: Zaradast Zerdust Zerrdast - In Zarathustra We Trust<br><br> ARTOLDO's artist statement: From the epochal 'And Thus Spoke Zarathustra' onward, his descent from 		the mountain of the most inapt prophet has not been halted, actualizing at every turn, where pop icons like David Bowie aka Ziggy Stardust have projected the prophetic Nietzsche into the new 			millennium, unsuspected Zoroastrians like the missed but already more than real Sir, Queen of the Night and King of Queen, the rock star Freddie Mercury with his stage costumes and emblematic lyrics 		manifested arcane symbols of his faith unbeknownst to a worldwide audience, undisputed geniuses such as Federico Fellini and Nino Rota in their interpretation of Casanova, spasmodic master in all the 		most sublime arts and adept of the Magician of the Magi, created new worlds traversed by that magic that both each in his own exquisite way and at the same time bewitched and inspired. Worlds that 		the ARTOLDO art collective can 	now bring to life in a virtual reality, inviting you to travel through Bowie's universe, Mercury's spiritual stage and Casanova's fantastical and magical Venice to 		discover there not only holograms of these gigantic personalities, but also messages concealed in brands such as Tesla, Mazda, Zadig & Voltaire and other references to Zoroastrianism as the cultural 		matrix religion of so much of what exists.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://artoldo.github.io/clavisartisinthecloud/" data-type="iframe"
+		data-caption="">Enter Virtual Reality</a>
+		</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/V4t2rF33BGo?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Clavis Artis On The Cloud - Casanova">Play video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle21;">
+			<hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Iran Germany Italy - International Exhibition <sup><span class="uk-badge">Group Show</span></sup></h2>
+			<h3 class="uk-text-lighter">Venue: Online</h3>
+	        </div>
+
+		<span class="toggle21"></span>
+		<div class="toggle21 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">TUESDAY 28 FEBRUARY - FRIDAY 31 MARCH 2023</h3>
+            	
+		<p class="uk-text-justify uk-text-lighter">Fine art / Photography / Sculpture</p>
+
+		<p class="uk-text-justify uk-text-lighter uk-text-uppercase">Iran</p>
+
+		<p class="uk-text-justify uk-text-lighter">Curators: Abdolreza Rabeti, Afsaneh Haji Moradi</p>
+
+		<p class="uk-text-justify uk-text-lighter">Featured Artists: (1) Abdolreze Rabeti, (2) Afsoon Ararooti, (3) Ali Khamesi, (4) Arghavan Naserkhaki, (5) Delaram Sadeghi, (6) Elahe Faraji, (7) Elham 		Noori Monem, (8) Faezeh Shojaie, (9) Farzaneh Tayebi, (10) Fatemeh, Mozhdeh, Hasani, (11) Fatemeh Rezaei, (12) Ghazal Alavi, (13) Hamid Tajlifard, (14) Mahdie Dibaee, (15) Mahmanzar Peiravi, (16) 		Maliheh Rahmani, (17) Marjan Niyati, (18) Maryam Sheikhbahaei, (19) Marzieh Namdar, (20) Mehdi Daneshvar, (21) Mehdi Mahakipour, (22) Mehrangiz Talaiezadeh, (23) Mozhgan Imani, (24) Pegah Bavarsad 		Ahmadpour, (25) Sahar Eskandari, (26) Sakine [Sahar] Hosseinzadeh, (27) Sedigheh Parisa, Ghasemi Javeh, (28) Sepideh Hajebifard, (29) Shaghayegh Mashhadai Farahani, (30) Shohreh Esmaeili, (31) Sonya 		Pedram, (32) Yousef Khorrami</p>
+
+		<p class="uk-text-justify uk-text-lighter uk-text-uppercase">Germany</p>
+
+		<p class="uk-text-justify uk-text-lighter">Curator: Aksana Yakimova Steffan</p>
+
+		<p class="uk-text-justify uk-text-lighter">Featured Artists: (1) Aksana Yakimova Steffan, (2) Anastasia Klinger, (3) Anna Nilova, (4) Ara Avetisyan, (5) Arnav Raj Singh, (6) Gerhard Bauer, (7) Gunter 		Schmidt, (8) Irene Schneider, (9) Klaudyna Kiełek, (10) Lana Strothkamp, (11) Marijana Vukovic, (12) Niemann Oksana, (13) Sandra Rafaela Seiler, (14) Sebastian Lutz, (15) Simonette Schmalz</p>
+
+		<p class="uk-text-justify uk-text-lighter uk-text-uppercase">Italy</p>
+
+		<p class="uk-text-justify uk-text-lighter">Curators: Alessandro & Damiana Allocco</p>
+
+		<p class="uk-text-justify uk-text-lighter">Featured Artists: (1) Angela Betta Casale, (2) Eroverety, (3) Fernando Monta’, (4) Lucia Orlando, (5) Maria Erovereti, (6) Mariella Bogliacino, (7) Marta 		Valls, (8) Maurizio Limongelli, (9) Riccardo Surace, (10) Rosa Sorda, (11) Samuel Dossi e Marta de Lorenzis, 
+		(12) ARTOLDO - Sara Ferro & Chris Weil with their work <i>Mascara Cartridge Déjà War</i>
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/G8yJY7Ln2II?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Mascara Cartridge Déjà War">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle8;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Clavis Artis - Video Art <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: ATB Gallery - Turin (Italy)</h3>
+	        </div>
+
+		<span class="toggle8"></span>
+		<div class="toggle8 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 24 February - Friday 10 March 2023</h3>
+            	<p class="uk-text-justify uk-text-lighter">Curator: Alessandro Allocco | Featured Artists: ARTOLDO - Sara Ferro & Chris Weil with their Video Art installation <i>Clavis Artis</i>. 
+		A Thousand and No More Thousand and One Nights moving images arts projected in a video installation, presented in a virtual space and accompanied by a crypto project, invite the viewer 			to discover secret representations and procedures in the alchemical work Clavis Artis, with the illuminations contained therein elaborated by the ARTOLDO collective inspired by Zoroastro, Casanova, 		Nietzsche, Nino Rota, Franco Battiato and many other mystical talents each in his profession.
+		</p>
+		<p class="uk-text-justify uk-text-lighter">
+                Algorithmic recombination of more than 800 video artworks created by ARTOLDO based on the alchemical Clavis Artis, inspired by Zarathustra, reunited in more than 700.000 possible different video 		loops of 78 min each.
+		</p>
+		<p class="uk-text-justify uk-text-lighter">
+		ARTOLDO's artist statement: The illuminations of Clavis artis, even the most incuptuous ones because they apparently depict upside-down brats about to be cooked, mademoliselles devoured by 
+		rapacious beings with eyes as boiled and sad as if in a trance, ladies skewered at the kidneys, sweet little dragons caught in spiked clavades, represent instead an iconographically alchemical 		journey as in the best tradition also with surprisingly exotic elements despite the fact that the whole Hermetic fable and chronology is already under the banner of the greatest hodgepodge - albeit 		with its own severe andnrigorous contradiction all internal to an iron reasoning and stringent concatenations also of occult reasoning and hidden, concealed and concealed principles.
+		In the work around the opus portrayed there, we wanted to highlight the amused bewilderment that the vision of such images provokes, in turn provoking further contemporary disturbances with a 		postmodern recomposition of the usual wedding couples or other alchemical amenities. The imprint of seduction must have been left by Casanova on those images, and we today, through allusions 			functioning according to the medieval principle of sympathy, find its imprint also in the graphic elaborations that are the subject of our digital composition.
+		Zoroaster, the most magician among magi, seduced other Venetians coeval with the great seducer, only that with the first, Casanova, Zoroaster ended up in a tragedy, with the second, Goldoni, in a 		comedy. The fil rouge unravels all the way to the great maestro Nino Rota, the one who found the Clavis artis for real, at a Frankfurt antique dealer and who pulled the strings all the way to 		Fellini's portrayal of Madame D'Urfè and her fleeting but intense but otherwise disinterested relationship with Casanova as an expert in the magical arts. Between Maretz, aqua roris Majalis & aqua 		grandinis, Batzlach or Alazagi, Abizar Salt of fire, Alacedach, Magnesia, Algir stone or gravelly stone, Achium and what it does, Alatacha amber, Aazoc or Albetira (also a python/Python, but as a 		flesh-and-blood crawler or programming language?), Alatron, Adamic Microcosms, Asophol- Celuvialatel, Lachamai Asophol, Alneat and what it does, Hadit and Phosphoros and as well their secret Alazagi 		or Bazlach, Aladcipi and what they like, of vertigo of the list there is something for everyone - what if these arcane words contained in the alchemical tome are nothing but the nicknames, the pet 		names of the graceful fierce creatures of the Clavis?</p>
+		<p class="uk-text-justify uk-text-lighter">
+		A collection of "a thousand and no more thousand" clips with the specific technique of functioning as GIFs from graphic elaborations of images from one of the most intriguing alchemical manuscripts 		ever unearthed. The leading idea was to depict the bewilderment with which humanistic scientific research is confronted by fortuitous finds of the Nag Hammadi Codices type, for example, or at any 		rate by avenues of research that are colored in some way with greater mystery when the object is itself already mysterious as often with rare books, with legendary figures between the literary, the 		pseudo-epigraphic and the historiographical or when in any case arcane issues and esoteric themes are involved as well as with ethnological and philological knots, ethnographic issues or those of 		religious studies or, again, when doubts about authorship, verisimilitude and hidden, occult meanings are involved. All of this is then further seasoned by the very essence of the texts, all of which 		are infused with coded or plain-text messages to "true adepts" along with the disavowal of supposed charlatans and various sophists.</p>
+		<p class="uk-text-justify uk-text-lighter">
+		The intention was to develop a kind of facsimile corpus consisting of a series of graphic variations on the theme of each illumination as if they were these additional finds and artifacts-not 		coincidentally, we speak of divergent images between the two copies so much so that it is unclear whether the two works were gems of a single disappearance or models for each other, with the added 		mystery of missing and/or mismatched images. In fact, in the illuminations of the manuscripts in question, they are basically crossings that bring together classical Greco-Roman mythology already 		hybrid with Indo-European inspirations and in turn mixed with medieval Italic and Teutonic mythologies. Lo and behold, the elaborations in question have often given rise to novel figures, hybrid and 		pregnant with other similarities and allusive to other meanings. Sometimes the serpent-dragon-dragons have been transformed into figures from settings almost of Hindu or Brahamanic ambience, others 		seem to revert to Babylonian likenesses, still others seem almost of alien provenance, and further, a whole series of little faces and facets, might have been created by George Maciunas in a Fluxus 		act. Couples united by alchemical nuptials have been dismembered and proposed other liaisons resulting in other menages.</p>
+		<p class="uk-text-justify uk-text-lighter">
+		Classically alchemical but less fanciful animals than dragons, such as lions or colorful birds became feathered almost comic book or childhood illustrations, turned into frogs, camels, wolves, teddy 		bears-accomplice to the grotesque features of the watercolors, where the illustrator's skill was certainly not at the level of the Italian tradition, as practically by default in manuscripts and 		prints from beyond the Alps, where the focus was not on artistic "skill" but on the transmission of a tradition in a manner that despite the conservatism inherent in all that is believed to be 		"perennial" and is thus situated in the current of thought of Perennialism, had in itself by definition also the need for a certain amount of originality and innovation (in tradition, certainly), 		otherwise how to get to the Stone? , i.e., the true boast at the bottom of every alchemist worthy of the name! in spite of the pseudonym. "Clavis artis, even more puzzling..." precisely to indicate 		the Chinese-box dimension of bibliographic research around works of such reams and complexity.</p>
+		<p class="uk-text-justify uk-text-lighter">
+		As well as the fact that the cultural object itself is also the object of appropriation by popular culture starting from certain subcultures that call themselves occult or even just that feel 		inspired by a certain iconology (as often in hard rock/heavy metal music) or, again, in the context of a trivialization that in any case is always appropriation (even if with different dynamics from 		the countercultural one, which often astonishes for alacrity and thoroughness although in the context perhaps of a distortion or misrepresentation sought or naive, amateurish) and rewriting even of 		the visual with meanings for example carrying even political messages of a "liberating" sign (with hymns in fact to the "liberation of the masses" through the alchemical secrets, "now the prerogative 		of the people," as one reads in many blogs or sub-routes in comments first in internet forums and now ubiquitously practically not even more surprisingly on the most generalist social channels).
+		The "thousand GIFs and one night" have been placed in synthetic worlds accessible through mechanisms proper to virtual reality where a kind of signage also appears made up of Pinterest, Tumblr, 		Wikipedia signs i.e., the hyperuranic cloud, a true open and accessible repository for the dissemination of such images (dissemination that began as an editorial and curatorial enterprise, one thinks 		of the first spills at the Venice Biennale with Mino Gabriele) that with good grace of the segregated and sealed library institutions and their custodians are to all intents and purposes the trait 		d'union with the collective consciousness and unconsciousness at times for discourses that are in any case high-brow even if almost always lacking scientific rigor. Certainly it is that 			decontextualization that too often is mere naked trivialization can also become sophisticated artistic use - who knows if Franco Battiato has ever quoted Zoroaster, but here, just for the sake of 		argument, other good examples of that ream will surely be found by looking for them in the vicinity of interstices between high and popular culture. Returning to VR, the artificial landscape is made 		penetrable to move within it even without the aid of the appropriate visor, but rather by exploiting the possibilities of the specific motion sensors of each digital device used.</p>
+		<p class="uk-text-justify uk-text-lighter">
+		Since one of the two Clavis artis, the Roman, now Lyncean, was part of the collection put together by maestro Nino Rota and the erudite high school teacher and scholar of things alchemical Vinci 		Verginelli, it 	seemed only healthy and right to build the sound scaping around excerpts from a 1962 cantata in which Rota celebrates the early Gospels and in which topoi such as the Christmas of the 		Innocents recur, in a way also sublimated in an illumination of the manuscript, as it seems we might suppose, and so it was not, anyway because the oratorio cannot have fallen on this earth very far 		from the inspirations that the alchemical collection now library fund instilled in the Maestro.</p>
+		<p class="uk-text-justify uk-text-lighter">
+		The petal-like floral planting that appears in some of the geometries of the installations on solids with animated GIFs alludes to Rosicrucian milieu attributions that some scholars have speculated 		given some recurrences in the text of the manuscript and some artifacts traceable to the Rosicrucians. Clearly found online the alchemical illuminations of the Trieste Ms-2-27 and the Roman MS. 		Verginelli-Rota were subjected to graphic processing by which they were created around the one thousand videos running in a loop starting with the Hortis copy and then moving on to the Lincei copy 		with a similar also different visual effect. The collection of about a thousand and no longer a thousand clips has the technical specification of functioning as GIFs, a format chosen because the 		cyberculture of the first hour had a whiff of the arcane and winked at occult references.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/AjGR9t8XZ-c?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Clavis Artis Video Art">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle9;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">MOSAIC on Paper <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Breed Art Studios - Amsterdam (The Netherlands)</h3>
+	        </div>
+
+		<span class="toggle9"></span>
+		<div class="toggle9 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Sunday 20 November - Sunday 04 December 2022</h3>
+            	<p class="uk-text-justify uk-text-lighter">The group exhibition includes 80 works on paper and limited-edition fine art prints. The collection is presented to the public as a collective installation 		in special exhibitions and events and as a side event in international installations and exhibitions.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="./images/whimseacall-artwork.jpeg"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall | Fine Art Print">View Artwork</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle3;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Satanic Panic - The Luther Blissett Legacy <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: The Gallery, Decentraland - Metaverse (USA)</h3>
+	        </div>
+
+		<span class="toggle3"></span>
+		<div class="toggle3 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Saturday 01 October - Monday 31 October 2022</h3>
+            	<p class="uk-text-justify uk-text-lighter">The retrospective "Satanic Panic" invites the visitor to explore a handpicked selection from the 428 NFT video artworks of the Luther Blissett Legacy 		collection created by ARTOLDO crypto in memory of the super folk hero Luther Blissett (1994-1999). The exhibition reflects on the different selves of the Luther Blissett pseudonym which was used by 		hundreds of left-wing artists in Europe to produce art, perform pranks, and publish books. Their most famous novel "Q" may have been abused by right-wing renegades as inspiration for their conspiracy 		theory of QAnon.</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/QLa4X7lO1FQ?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO crypto: Satanic Panic - The Luther Blissett Legacy - Metaverse Exhibition">Play Video</a>
+		</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="https://lutherblissettlegacy.github.io/collection" data-type="iframe"
+		data-caption="ARTOLDO crypto: The Luther Blissett Legacy - NFT Collection">View NFT Collection</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle10;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">No War <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Palazzo Ducale, Spazio 46 - Genoa (Italy)</h3>
+	        </div>
+
+		<span class="toggle10"></span>
+		<div class="toggle10 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Thursday 03 March - Sunday 13 March 2022</h3>
+            	<p class="uk-text-justify uk-text-lighter">NO WAR - <i>SEGRETE</i> artists against war. From 6 p.m. to 10 p.m. screening of all the contributions - The artists who have participated in <i>SEGRETE - 		Traces of Memory</i> over the past fourteen years, in an alliance to keep alive the memory of the tragedy of the Shoah, in the face of a scenario that brings the atrocities of war back to Europe, 		stand up forcefully in defense of peace, using the evocative and communicative power of art.
+		</p>
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil with their work <i>Dio No NO War</i>, Felice Ardito,  Aqua Aura,  Federica Barcellona,  Danila Barone,  Stefano Bigazzi,  Federico Bonelli,  		Gregorio Botta,  Andreas Burger,  Stefano Cagol,  Gianluca Capozzi,  Paolo Cavinato,  Tiziana Cera Rosco,  Antonella Cinelli,  Gianluigi Colin,  Davide Coltro,  Isabel Consigliere,  Miro Craemer,  		Carla Crosio,  Maurizio D’Usio,  Roberto De Pol,  Elisabetta Di Sopra,  Lino Di Vinci,  Adriano Engelbrecht,  Manuel Felisi,  Davide Francesca,  Loredana Galante,  Giuliano Galletta,  Armida Gandini,  		Roberto Ghezzi,  Mauro Ghiglione,  Giorgia Ghione,  Lory Ginedumont,  Pier Giorgio De Pinto,  Giovanni Giulianelli,  Carla Iacono,  Fukushi Ito,  Michel Kiwic,  Jan Kuck,  Margherita Levo Rosenberg,  		Alessandro Lupi,  Federica Marangoni,  Giancarlo Marcali,  Ilaria Margutti,  Christian Masuero,  Luisa Mazza,  Erik Mittasch,  Virginia Monteverde,  Virginia Monteverde,  Silvio Monti,  Giuseppe 		Negro,  Marco Nereo Rotelli,  Stefanie Oberneder,  Mimmo Padovano,  Mauro Panichella e Giulia Vasta,  Max Parazzini,  Paolo Piano,  Alex Pinna,  Annalisa Pisoni Cimelli,  Angelo Pretolani,  Davide 		Ragazzi,  Alessandra Raggi,  Silvano Repetto,  Fried Rosenstock,  Roberto Rossini,  Andrea Sanvittore,  Joseph Sassoon Semah,  Leardo Sciacoviello,  Nina Staehli,  Silvano Tessarollo,  Lidia 			Treccani,  Cristina Treppo,  Theo van Keulen,  Gloria Veronica Lavagnini,  Alessandra Vinotto,  Marilena Vita,  Francesco Vullo,  Maya Zignone.
+	
+		<p class="uk-text-justify uk-text-lighter">A clear, simple message in an inscription that rejects a universal and indispensable concept of sensitivity in the various creative forms of their own 		artistic modus operandi: "NO WAR" curated by Virginia Monteverde.
+		</p>
+		<p class="uk-text-justify uk-text-lighter">Further screenings will take place in Amsterdam (Breed Art Studios), Munich (mim), Venice (La Fabbrica del Vedere) and many other places in Italy: 			CasermArcheologica, Galata Museo del Mare, Palazzo Tursi, LABA Accademia di Belle Arti, Estensioni oltre lo spazio, several schools and many more.</p>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/H4hyjSFaP3U?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Dio No No War">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle11;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">SEGRETE Tracce di Memoria XIV <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Palazzo Ducale, <br>Antiche Carceri della Torre Grimaldina - Genoa (Italy)</h3>
+	        </div>
+
+		<span class="toggle11"></span>
+		<div class="toggle11 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Thursday 20 January - Sunday 06 February 2022</h3>
+            	<p class="uk-text-justify uk-text-lighter">SEGRETE Tracce di Memoria - Alliance of artists in memory of the Shoah.
+		The exhibition, conceived and curated by Virginia Monteverde, born with the aim of remembering the Shoah, is realized every year (since 2011) in the ancient prisons of the Grimaldina Tower of Palazzo 		Ducale in Genoa. The ancient cells host site-specific installations by international artists, creating an exhibition of strong emotional impact. In addition to the group show, the exhibition hosts 		topic related meetings, conferences and performances.</p>
+
+		<p class="uk-text-justify uk-text-lighter">Featured Artists in the cells of the ancient prisons of the Grimaldina Tower (First floor):<br>
+		Miro Craemer,   Manuel Felisi,   Roberto Ghezzi,   Luisa Mazza,   Stefanie Oberneder,   Andrea Sanvittore,   Francesco Vullo.</p>
+
+		<p class="uk-text-justify uk-text-lighter">Featured Artists of the <i>Young Artists Project</i> in the the Grimaldina Tower (Second floor) curated by Gloria Veronica Lavagnini:<br>
+		Elisabeth Perro, Diego Rimaos.</p>
+		
+		<p class="uk-text-justify uk-text-lighter">Featured Artists of multimedia projects in the Grimaldina Tower (Third floor):<br> 
+		ARTOLDO - Sara Ferro & Chris Weil with their Virtual Reality installation <i>Achtung Banditen?!</i> (for Desktop, Smartphone and Tablet), Giò Gagliano.</p>
+
+		<p class="uk-text-justify uk-text-lighter">ARTOLDO's artist statement: During the Liberation War from Nazi-Fascism, spanning from September 3, 1943, to May 2, 1945, following the Cassibile armistice 		between Italy and the Allied forces until the surrender of German troops in the Italian theater of war, approximately 11,400 Italian military personnel, 44,720 partisans, and 9,180 civilians, 		including children, women, and men, were killed by the retreating German armed forces. This virtual installation serves as a symbolic and digital memorial for the Italian victims of Nazi-Fascist 		reprisals, who have yet to receive proper justice, particularly from the German side. This lack of justice stems from the failure to acknowledge Italian court verdicts beyond the Alps, denying both 		criminals due process and victims full human justice.</p>
+		
+		<p class="uk-text-justify uk-text-lighter">The memorial metaphorically and digitally reimagines Berlin's "Memorial for the Murdered Jews of Europe," incorporating various Italian landscapes 			devastated by war, including mountains, valleys, and urban areas, reminiscent of the Apuan Alps. The sky, once vibrant, now reflects a reddish glow, symbolizing the violence of war. Through an 		interactive electronic timeline, visitors can explore the atrocities committed against Italian civilians, province by province, using smartphones, tablets, or PCs. Motion sensors guide visitors 		through the desolate landscape, marked by gravestones and plaques of massacres.</p>
+		
+		<p class="uk-text-justify uk-text-lighter">The once green mountains now appear as scorched earth, a testament to the devastation wrought by conflict. Against a sky devoid of its usual brightness, 		symbols like the "Ro-Ber-To" and "Schwarze Sonne" evoke the darkness of war. Amidst this bleakness, the hope of resistance and renewal persists, embodied by references to General Winter and the 		eventual return of spring.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">The cowardly attempts by invaders to justify their brutality with propaganda slogans like "gang fight" are condemned, as they sought to terrorize the 		population and enforce racial ideologies. Collaborators, including former fascists, aided in these atrocities, leading to massacres like Sant'Anna di Stazzema. The memorial stands as a rebuke to 		these atrocities, challenging the audacity of the real perpetrators to label others as bandits.</p>
+
+		<p class="uk-text-justify uk-text-lighter">They used to write 'Achtung! Banditen!' on walls, marking targeted village houses in flagrant disregard for criminal and international law norms. This act 		served the sole purpose of terrorizing the population and seeking revenge for what the German side perceived as a betrayal. It was driven by the deadly logic of race ideology, aiming to secure living 		space for the believed Aryan race and to eradicate everything deemed non-Germanic.</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Despite the passage of time, disbelief and indignation remain at the forefront, particularly in the face of denialism. This denialism, fueled by the banality of evil, seeks to distort historical 		truths and perpetuate the horrors of Nazifascism.</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://redmagicblue.github.io/achtung-banditen/" data-type="iframe"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Achtung Banditen?! [VR]">Enter Virtual Reality</a>
+		</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/T2-sQgo0klk?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Achtung Banditen?!">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle12;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Anticorpi in corpisan(t)i <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Online</h3>
+	        </div>
+
+		<span class="toggle12"></span>
+		<div class="toggle12 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Monday 01 November - Sunday 28 November 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil
+		</p>
+		<p class="uk-text-justify uk-text-lighter">
+		More than 400 constantly mutating viral videos: Anticorpi in corpisan(t)i - Anticorps in healthy/holy bodies is a rocambole in the pandemic-induced shambles, a kaleidoscopic hodgepodge of piecemeal 		invented and misrepresented metaphors, a pandemonic matteria in a visual key, though probably pendant to analogies of historicizing inactuality. Like the no faxes with their stomach-churning 			reminders - though badly and ill-timed, astonishingly unheard of, and in their ignorant unscrupulousness of an unbelievable revisionism precisely because it is so ridiculous - the authors of the work 		have indulged in a parallelism between a phenomenon of a given historical moment, viz, the authors of the work have indulged in a parallelism between a phenomenon of a given historical moment, namely 		the fabrication of so-called "holy bodies" in the late Baroque period, and that which the entire ranks of the losers of the forced "no" vote see in the fabrication, in their own words, of "a 			conspiratorial matrix" inherent in the green passport device.
+		</p>
+		
+		<p class="uk-text-justify uk-text-lighter">The work is substantiated by 5 video channels:</p>
+
+		<p class="uk-text-justify uk-text-lighter">1 channel with the ceroplast corpus from San Prospero in Dolcedo (IM).</p>
+
+		<p class="uk-text-justify uk-text-lighter">1 channel that begins with the monogram of Christ and, through explanatory tableaux, leads to an understanding of the secretly discovered correlation 		between the prerequisites of the corpse excavated from the catacombs and eligible for sainthood and the mechanism underlying the Green Pass tool.</p>
+
+		<p class="uk-text-justify uk-text-lighter">3 channels with a programmed randomization of the loop in a 2x2 and 3x3 grid of generative videos precisely on the theme of the similarity between the 		"green passport" and the "palmette" (one of the emblems of the sanctified and ceroplastized relic), "Technical-Scientific Committee" and "Pontifical Archaeological Commission" (the one that 			established the requirements for the bodies that could aspire to become relics), "serological test" and "vaso sanguinis" (the balm bowl that accompanied the holy bodies in the coffins), "devotional 		culture" and "antibody culture", "martyrs of faith" and "martyrs of scientism".</p>
+
+		<p class="uk-text-justify uk-text-lighter">Perhaps, like Melina Riccio, we too are adopted children of "Zena", and therefore a certain similarity in spelling has been centrifuged, although the 		similarities end there, with her epiphanically analog and ours digital, but in a false form, in certain cycles still recognizable as a human rhythm interacting with the circus-generating machine.</p>
+		
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/vtAz-NJVDXI?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Anticorpi in corpisan(t)i - P come Pandemia">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle16;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">ITSLIQUID International Art Fair <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: THE ROOM Contemporary Art Space + Palazzo Albrizzi Capello - Venice (Italy)</h3>
+	        </div>
+
+		<span class="toggle16"></span>
+		<div class="toggle16 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 03 September - Saturday 03 October 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">
+		ITSLIQUID Group, in collaboration with Venice Events and  ACIT Venice - Italian-German Cultural Association, is pleased to announce CONTEMPORARY VENICE 2021 - ITSLIQUID International Art Fair, 		international exhibition of photography, painting, video art, installation/sculpture and performance art, that will be held in Venice at THE ROOM Contemporary Art Space and at Palazzo Albrizzi-		Capello.<br>
+		The seventh edition of CONTEMPORARY VENICE will be focused on the theme of IDENTITIES and on the relationship between man, society and contemporary cities. The exhibition will explore the lifestyles 		and the ways of being that run on a parallel level of our ordinary life. Everyday behaviors are the actual reflection of cities and societies we have created and that have developed a personal 		identity. This new city character becomes the new order that modifies our everyday life. All artists are invited to reflect on the theme and present works related to it.
+		</p>
+		
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists at THE ROOM Contemporary Art Space:
+		Micaela Aljovín . Perú | Cecilia Álvarez . Mexico | Maria Aparici . Spain | ARTOLDO - Sara Ferro & Chris Weil . Italy / Germany (with their works <i>AT MOre SPHERES</i>, <i>Timor Panicus</i> and 		<i>TempoRally</i> | Hugo Auler, Jr . USA | Iva Bialopiotrowicz . Poland | Erwin Blase . Germany | Bea Blousson . Argentina | Cristie Boff . Italy | Daniel Cevallos Andrade . Ecuador | Kg Augenstern 		Christiane Prehn and Wolfgang Meyer . Germany | Elena Cichetti & Su Türktekin Özdemir . UK | Elisha Nadene Clark . Australia | Narelle Delle Baite . Australia | Sonia Dias . Brazil | Andreas Ender . 		Austria | Elena Gastón Nicolás . USA | George Houndalas . Greece | Andrea Kanishi . Japan | Irina Kassabova . Bulgaria / USA | Dmytro Kataiev . Ukraine | Kojun . Japan | Alexandra Kordas . Germany | 		Don Kosta . Germany | Sybille Lampe . Germany | Gudrun Latten . Germany | Haerim Lee . USA | Lorenzo Li Greci & MetGen . Finland | Lisha Liang . China | Liz Stubbs & Penny Treese . USA | Donglai 		Meng . China | Fares Micue . Spain | Gera O’Shio . Switzerland | 12PM . Italy | Gianluca Pollini . Italy | Renée Rauchalles . Germany | Molly Richards . UK | Zizi Rincolisky . Belgium | Rh+ 			Rodenhäuser Holstein . Switzerland | Yolanda Santa Cruz . Cuba | Tomas Savrda . USA | Greta Schnall . Germany | Kathrin Schweizer . Switzerland | Gary Setzer . USA | Gabi Simon . France | Maria 		Stamati . Greece | Lorna Stovall . USA | Zazu Swistel . USA | Aram Tahmasebi . Iran | Chih-Fen Tsai . Taiwan | Sanja Vatić . Slovenia | Irene Venetsanou . Switzerland | Gioele Vettraino . Italy | 		Jane Walker . UK | Shaun Wilson . Australia | Sirui Yang . China | Root Yarden . Israel | Sebnem Yuksel . Turkey | Majda Zorko . Slovenia
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists at Palazzo Albrizzi-Capello: John Addams . Austria |
+		 Claudia Esra Ahrens . Germany | Federico Alcaro . Italy | Micaela Aljovín . Perú | ARTOLDO - Sara Ferro & Chris Weil . Italy / Germany (with their works <i>AT MOre SPHERES</i>, 				<i>Timor Panicus</i> and <i>TempoRally</i> | Rolf Berte . Germany | Luisa Bianco . Italy | Cristie Boff . Italy | Lia Bottanelli . Italy | Sera Camas . Turkey | Roderick Camilleri . Malta | Simona 		Capitini . Italy | Caterina Casagrande . Finland | Daniel Cevallos Andrade . Ecuador | Kg Augenstern Christiane Prehn and Wolfgang Meyer . Germany | Elena Cichetti & Su Türktekin Özdemir . UK | 		Manuela Clarin . Germany | Federica De Francesco . Italy | Damir De Simone . Slovenia | Elizabeth Dillman . USA | Lucas Dinhof . Austria | Drash La Krass . France | Mar (Mar De Color) Enríquez . 		Spain | Ern(e)st_bettyzola . Italy | Hernan Escobar Saatdjian . France / Venezuela | Elena Gastón Nicolás . USA | Jasmin Genzel . France | Ozge Gurkan . Turkey | Nelya Hapchyn . Spain | Kip Harris . 		Canada | Sebastian Hoyos . France | Layla Jaleel . Germany | Nick Kacic-Miosic . USA | Katya Kan . UK | Alexandra Kordas . Germany | Lawrence Kwakye . The Netherlands | Karl Weiming Lu . Australia | 		John Maki . USA | Christopher Maxwell . The Netherlands | Donglai Meng . China | Marco Metto . Italy | Christina Mitterhuber . Austria | Tiziana Mucchiani . Switzerland | Ágnes Nagy . Hungary | Grant 		Pace . USA | Vernante Pallotti & Daniele Zen . Italy | Armando Pelliccioni . Italy | Christa Perez Bailey . USA | Valentin Pfeifhofer . Italy | Enrico Pulcinelli . Italy | Zizi Rincolisky . Belgium | 		Erwin Rios . Austria | Rh+ Rodenhäuser Holstein . Switzerland | Marco Ronga . Italy | Maria Saad . Lebanon | Toril Sæterbakken . Norway | Vittorio Sancipriano . Italy | Michael Schwan . Germany | 		Kathrin Schweizer . Switzerland | Ege Serin . Turkey | Ximena Sedano . Colombia / Switzerland | Gary Setzer . USA | Nina Stopar . Slovenia | Guillaume Thunis . Belgium | Loona Tirabassi . Italy | 		Sanja Vatić . Slovenia | Matteo Volonterio . Italy | Yiran (Rachel) Wang . China | Isha Will . Jamaica | Shaun Wilson . Australia | Peter Wirth . Austria | Root Yarden . Israel | Zeynep Yazici . 		Turkey | Sebnem Yuksel . Turkey | Marina B. Žlender . Slovenia
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/WByFUOecpQk?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Timor Panicus">Play Video</a>
+		</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="./images/interview-artoldo-itsliquid.pdf" data-type="iframe"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Interview">Read Interview</a>
+        	</span>
+
+		</div>
+		</div>
+
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle13;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">GRRL Telephone: PHOTO + VIDEO EXHIBIT <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Ilali Studio - Berlin (Germany)</h3>
+	        </div>
+
+		<span class="toggle13"></span>
+		<div class="toggle13 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 03 September - Saturday 04 September 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil with their work <I>VE®NICE69</i>, Indrani Ashe, Zha Babaieva, Sarah Boulter,  Kannetha Brown, Tara Campling, Darkreconstruction Kiki Febriyanti, 		Brittonie Fletcher, Lauren Grudzien, Charmaine de Heij, Kate Jessop, Eili Bråstad Johannessen, Cara Kuball, Molly Leebove, Melanie Light, Marija Lucic, Aubane Berthommé Martinez, Ana Minujin, Monika 		Estrella Negra, Samera Paz, Olivia& Madeleine Peters,  Jess Pittman, Jenny Plante, Colette Pomerleau, Shay Revolver, Allison Tanenhaus, Oona Taper, Kristina Tokar, Eva-Maria Unglaube, Maria De Paula-		Vázquez, Juliane Vowinckel, Vincy Wang, Keren Zaltz.
+		</p>
+		
+		<p class="uk-text-justify uk-text-lighter">
+		A visual game of "telephone"<br>
+		The game rules:<br>
+		-Artists received an image or micro short and then made an image or micro short in response to the piece they received.<br>
+		-Artists had a week to respond.
+		</p>
+
+		
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/30PqKuf7naI?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: VE®NICE69">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle15;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">DEAD as a DODO <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Online</h3>
+	        </div>
+
+		<span class="toggle15"></span>
+		<div class="toggle15 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 06 August - Saturday 28 August 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil
+		</p>
+		
+		<p class="uk-text-justify uk-text-lighter">
+		<i>From the series Natura Morta - Yet Still Life</i>
+
+		<br>DEAD as a DODO<br>
+
+		The ultimative taxidermic mausoleum:<br>
+		A permanent online exhibition for Dodos, Stuffed Shirts and other reactionary folks Quit ultraconservative die-hard taxidermia Embrace revolutionary movements and REVOLT ONLINE!<br>
+		Restfully on Screen - Interact with the dead and preview the afterlife of ancient regime and capitalism.
+		</p>
+
+		
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://deadasadodo.000webhostapp.com/ipanorama/virtualtour/taxidrome" data-type="iframe"
+		data-caption="">Enter 360° Show</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle14;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Once upon a time<br>Castello Raggio: nel loop della memoria <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Etherea Art Gallery - Genoa (Italy)</h3>
+	        </div>
+
+		<span class="toggle14"></span>
+		<div class="toggle14 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 16 July - Saturday 31 July 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">
+		Curator: Virginia Monteverde | Featured Artists: ARTOLDO - Sara Ferro & Chris Weil
+		</p>
+		
+		<p class="uk-text-justify uk-text-lighter">
+		7 channel Video Art installation featuring more than 100 Moving Images Arts.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		ARTOLDO's artist statement: Castello Raggio, formerly an abbey, formerly a villa, formerly a powder magazine, was erected on a promontory with a view, to the west, of the <i>Sestrian</i> shipyards of 		Italian General Navigation, Europe's largest ship-owning complex, a boast for many, were it only because of working-class sentiment, let alone that of the owner. An areal that promises airports and 		other amenities as long as they were magnificent fates. To the east in the background the Lantern, a never-disused vestige, more in focus, full-cycle coastal plants. It was born art nouveau - winking 		at the Trieste Miramare - of an entrepreneurial politician, regent of a growing steel empire to spindle on sight even for him leaning on the balustrade over the waves. A belvedere then, in any sense 		you take it. After hosting a bit of <i>belmondo</i> and before becoming in retaliation a dormitory for occupying forces who by revenge of history then from the very foot of that promontory will be 		driven out first of all, it will be blown up.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		There around the fishermen, category to finish, in harmony with the bathers, they all know that they are poised between the atavistic and the new that looms and will take away the good days on the 		beach and their usual work, giving different occupation, but no more diversions, making the neighborhood of villas outside the door a record of blast furnaces, the laundry spread out in the sun 		between the buildings will be the litmus test of the toll of the passage, wanted or not by all, back or sun, down with the oven. Genoa's Ponente reduced to the city's rubbish heap, the well-wishers 		there, many kilometers away, perhaps they have passed a day away from Sestri and Cornigliano, the stench in their noses, no wonder they don't live here and this is not the real Genoa, only 			delegations, blaming the dream of Greater Genoa, who is guilty, but no less so than those who a hundred years later still make urban bipolarity the shield of higher lives.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		A Castle of the urban world still rural yes already industrial stealing the sea with its nets, ensnaring, under the motto of progress, he who sleeps the future catches no fish, which is the same as 		saying that in the future those who progress in the name of progress of fish will catch no more. It is always a matter of who defines what, the various Raggio, the various Oscar Sinigaglia with 		placid approval of Einaudi and good peace to all. Nostalgia proliferates where countryside and idyll meet the lesser evil, then the factory, certain territories are marked, especially if they are 		neither flesh nor fish. Like those fin de siècle delegations, relegated to where the sun sets, no longer village, not even really town. Suburban superiors, there where there was grass and water.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		No man's land - the end of  Genoa. The bathers, left until it dries in the shade of the last sun high over the shining castle that cast no shadows on the Gospel of progress, will not leave it even 		when there below thunder cannonballs thrown into the sea, military maneuvers a(N)saldo of the war, that make the Raggios - who shelter at other backland shores so far down the country - tremble, 		frescoes come off the walls leaving everyone stunned though under the bombs. Bagna acciuga, on that dark sea, on a solidarity beach where the Milanese used to come up, all hanging by a salty thread, 		to the bitter end never to return.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Having ended its earthly affairs, the existence of the castle now a shadow of its former self, abandoned, despoiled, blown up, continues to be a social fact in precisely so called social memory, 		which depending on how it is from time to time embodied and expressed by the individual, will emanate a different representation. Representations that are groupable into categories-just as in social 		studies, individuals into groups-and represent their worldview, <i>Weltanschauung</i>. This is how memory holds up, the regents being us, sovereigns of our destiny at least in the depiction, when the 		play of social forces gets tough and no longer gives play. Mental emanations ruled over memories, radiate rays of light, sometimes even dark, however shining, blazing, radiant.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		The Castle therefore lingers, were it only in collective memory and as there perhaps elsewhere as a possibility. As an alternative. To enrich the phenomenology of alternate realities. As hypothesis, 		counterfactual hypostasis. History and counterfactuality. As in Philip K. Dick's novel, The Man in The High Castle, in which alternate outcomes to historical events, human all too human, are all at 		once possible, for if reality exceeds fantasy, how do you deal with the fact that reality and unreality are the same thing by coinciding? Coincidences are seldom the exception in the parallel worlds 		in which the castle continues its existence.
+		What are the appearances of Castle Ray in alternate realities? This is the question that Sara Ferro and Chris Weil of the ARTOLDO duo seek to answer as part of the exhibition The Radiant Regents of 		Castle Radius at Etherea Art Gallery by Virginia Monteverde.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		In seven galaxies that the screens, as in a physics experiment make visible-they constitute the litmus test mentioned above-the worlds rectified by collective memory open up to the viewer. In each of 		these worlds different physical and social laws apply. In some the spectrum of light is mirrored in a multitude of bright and shining colors, in others the phantasmagoria of forms in continual exit 		and entry from themselves ad continuum prevails, in many something pulses, whether it is the rhythm given by the speed of movement or the flash of memory, in many the atmosphere is given by colors 		inverted as in a photographic film negative. Shadows and lights, as of social reality when it comes to politics, strong contrasts, polarities, reversals, revolts.
+		Moreover, time in addition to being relative is also subjective. In some worlds it passes more slowly, it seems almost to stop altogether, in those near the opposite it flows fast, between rapid 		accelerations.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		The interplay of the alternations between gravitation and distortion of the perspectives of inside and outside is a metaphor for one's self in past and future lives. Even when the moment appears the 		same, the same always differs from the new so that déjà-vu becomes the collective experience of the bathers. Each world is composed of five senses-number symbolized by the breakdown on the screen-		that influence emotions in memory. Feelings that could not be more different, like the universe and life itself, yet groupable because man is always the same. The Castle stands in the middle of our 		point of view, sometimes to the side, sometimes doubling back, sometimes extroverted, sometimes closing in on itself, to stronghold of bathers, headquarters of a resistance against the abominations 		perpetrated in the city. A perspective look corresponds to a different sense of reality, present, past, future.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Since nothing can be faster than light, only fragments of the projections of the different worlds reach us in this exhibition, the sound itself is lost in the journey through the cosmos already in 		the atmosphere, since the universe has no acoustics and with that echo and noise. So that the visitor is left only to let his imagination go in wondering what people in those different worlds of 		reminiscence might have thought and said, how they had experienced or still experience the moment of being in front of that Castle in the permanence and transience of it, even when the building no 		longer exists in our world. A collage of memories.
+		</p>
+		
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/lbGEQz-8iWw?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Once upon a time - Castello Raggio - nel loop della memoria">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle2;">
+			<hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">ROMAN SUSAN Streetlight <sup><span class="uk-badge">Group Show</span></sup></h2>
+			<h3 class="uk-text-lighter">Venue: Roman Susan - Chicago (USA)</h3>
+	        </div>
+
+		<span class="toggle2"></span>
+		<div class="toggle2 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Monday 08 March - Sunday 28 March 2021</h3>
+            	<p class="uk-text-justify uk-text-lighter">Projections on view directly from the street, afternoons and evenings featuring works by Lisa Armstrong, ARTOLDO - Sara Ferro & Chris Weil with their 		work <i>TempoRally</i>, Audrey Barcio, Ruth Biene and Timo Herbst, Thomas Georg Blank, Methas Chantawongs, Jiayi Chen, Hugues Clément, Javier González Pesce, Anthony Hamilton, Shir Handelsman, Lisa 		Hoffmann, Jonathan Johnson, Amay Kataria, Toby Kaufmann-Buhler, Daniel Kukla, Jasmine Lin, Jeff Mendenhall, Ruxandra Mitache, Rick Niebe, Ej Nussbaum, Labkhand Olfatmanesh, Cheryl Pagurek, 			Matthew Pell, Miloš Peškir, Susanne Layla Petersen, Erika Råberg, Clemens Reinecke, Diego Rodriguez, Hiroya Sakurai, Maxine Schoefer-Wulf, Leviticus Shand, Paulius Sliaupa, Nicko 				Straniero & SYZY GAL O00O, Allison Tanenhaus, Hi Yo To and Sally Waterman.</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/2rt0N7xEwR4?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: TempoRally">Play Video</a>
+        	</span>
+		<span uk-lightbox>
+		<a class="uk-button uk-button-default uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/odsE4nJKXys?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: TempoRally - Roman Susan Streetview">Watch Show</a>
+		</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle17;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Sfarfallii liberali 360° - Centrale Around <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Giardini Pubblici, Piazza Arrivabene - Genoa (Italy)</h3>
+	        </div>
+
+		<span class="toggle17"></span>
+		<div class="toggle17 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Wednesday 20 January - Sunday 21 February 2021</h3>
+
+		<p class="uk-text-justify uk-text-lighter">Centrale Festival will be transformed in the coming months into a "diffuse" event, while maintaining its centrality in Fano, Marche, where the twelfth 		edition is planned: June 11, 12 and 13, 2021. The Centrale Festival is committed to presenting artworks created in places close to our home, occupying spaces not directly affected by the necessary 		restrictions imposed by the covid-19 health emergency. Therefore, a series of artists have been invited to break out of the traditional logic of art, but also from the virtuality that now 			characterizes our lives, applying their visual research to different physical places, with different modes of expression, to promote the daily experience of the work of art, despite the confinement 		and limitation.</p>
+  
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil (Genoa) with their work <i>Butterfly 360°</i> for Centrale Around, Roberto Cavazzuti (Paris), Elena Franco (Brandizzo), Simone Massafra (Milan), 		Gianluca Micheletti (Costa di Mezzate),	Alessandro Modonutto (Udine), Jessica Raimondi (Anzola dell'Emilia), Angelica Ruggiero (Bologna), 
+		Antonella Sabatini (Palcano) & Demesis Tescaro (Bosisio Parini).
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		ARTOLDO's artist statement: The video work documents a long moment of a very rare phenomenon. Captured on the slopes of Mont Blanc on a beautiful morning of sunshine and clear air, such a moment 		lends itself to the idea of a 360-degree view that the viewer can make his own by moving his finger or mouse along the screen. Interacting with the work in this way, touching nature, making it one's 		own, making it less untouched? The transformation of a QR code into a video is analogous to the metamorphosis of a butterfly. The interested viewer is invited to participate in this 				transformation.<br>The 360° project tells the story of a peaceful environment featuring a rare phenomena where a swarm of butterflies is nurturing itself by eating the nectar of flowers 			showing the beauty but also the fragility of a complex ecosystem. The video installation is configured to work as an interactive 360° experience where the spectator can view the untouched 			nature by moving / grabbing / touching the nature by his / her hands (mouse) but offers also the possibility to be screened large scale as a flat video loop on a wall, building or in cinema.</br>
+		The footage was shot at a beautiful summer day in Val d'Aosta near Mont Blanc / Monte Bianco and our goal was / is to document the beauty of nature and its inhabitants paraphrasing Francisco Goya 		"The Sleep of Nature (Reason) Produces Monsters". The demons themselves are created through the kaleidoscopic effect and protect the forest against bad vibes and destructive machines by mankind.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://vimeo.com/482704311?autoplay=1&title=0&byline=0&portrait=0" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Butterfly 360°">Play 360° Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle18;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Nello Spazio Fa Freddo - It's Cold In Space <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Chippendale Studio - Milan (Italy)</h3>
+	        </div>
+
+		<span class="toggle18"></span>
+		<div class="toggle18 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Wednesday 07 October - Sunday 08 November 2020</h3>
+
+		<p class="uk-text-justify uk-text-lighter">NELLO SPAZIO FA FREDDO / IT’S COLD IN SPACE is an open multimedia project, investigating the form of the hollow half sphere as a primary symbolic structure 		of human life at a biological, cosmological, sociological and historical level.</p>
+  
+		<p class="uk-text-justify uk-text-lighter">
+		Curators: Giorgio Barbetta, Chiara Caratti, Monica Cattani, Laura Davì, Luca Panaro, Arianna Sollazzo, Ilaria Sponda
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: Viola Arduini, ARTOLDO - Sara Ferro & Chris Weil with their work <i>AT MOre SPHERES</i>, Oreste Baccolini, Luka Bagnoli, Elisa La Boria, Matteo Balduzzi, Sara Barberio, Pietro 		Belotti, Nene Bertoz, Lidia Bianchi, Paolo Bianchi, Steve Bisson, Nadia Busato, Daniele Cabri, Stefano Canetta, Bona Castagnini, Francesca Catellani, Roberto Cavazzuti, Alessandra Cecchini, Loredana 		Celano, Mara Cerantola, Perry Chan, Michele Corgnoli, Marilisa Cosello, Diana Del Franco, Martina Della Valle, Margherita Del Piano, Giuseppe De Mattia, Alfonso Emanuele, Elena Franco, Claudia 		Gaudiello, Alessandra Gellini, Gaia Giordani, Davide Glavina, Filippo Glavina, Ilaria Iaquinta, Giacomo Serra, Fiorella Iacono, Giacomo Infantino, Francesca Ruberto, Angelo Iodice, Lea Leroy, 		Valentina Loffredo, Vanessa Lopes, Paola Lumia, Ambrogio Luzzardi, Giovanni Mantovani, Francesca Marengo, Matteo Martini, Simone Massafra, Marco Menghi, Gianluca Micheletti, Antonio Miucci, Marco 		Missiroli, Sara Montrasio, Stefania Oppedisano, Luciano Perciaccante, Paolo Pizzagalli, Marisa Prete, Agnese Riccitelli, Antonio Riello, Lia Ronchi, Valerio Rocco Orlando, Saggion-paganello, Angelo 		Sicilia, Joana Skiavini, Jacopo Stofler, Maura Tagliaferri, Dario Torre, Carlo Trimarchi, Jacopo Valentini, Lorenzo Vecchi, Federico Vespignani, Amanda Vila Carbonell, Mirko Zambelli.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/P04f0w9P8WE?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: AT MOre SPHERES">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle1;">
+			<hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">The 7 Memorials for Humanity - Darkroom <sup><span class="uk-badge">Group Show</span></sup></h2>
+			<h3 class="uk-text-lighter">Venue: Torrance Art Museum - Los Angeles (USA)</h3>
+	        </div>
+
+		<span class="toggle1"></span>
+		<div class="toggle1 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Saturday 18 July - Tuesday 15 September 2020</h3>
+            	<p class="uk-text-justify uk-text-lighter">Featured artists: Amy Alexander, Antonio Alvarado 1938, ARTOLDO - Sara Ferro & Chris Weil (Germany, Italy) with their work Vespertilio Spillover, Gili 		Avissar 1980 (Israel), Tova Beck-Friedman (Israel), Marie Bismonte, Sarah Bliss, Sandra Bouguerch, Yolande Brener, Matteo Campulla, Isabel Chiara, Wilfried Agricola de Cologne, Abdoul-Ganiou Dermani 		1973 (Germany, Togo), Darko Duilo, Kokou Ekouagou, Lori Ersolmaz, Gwendolyn Audrey Foster, Robert Frankle 1965, Musical Friends, Jerry Galle 1969 (Belgium), Johannes Christopher Gerard, Werther 		Germondari 1963 (Italy), Ian Gibbons, Francesca Giuliani, Stephan Groß 1979, Finn Harvor, Bernhard Hollinger, Dee Hood, Danielle Imara, Ebba Jahn, Shivkumar KV 1982, Katya Kan, Kenji Kojima, Maria 		Felix Korporal, Igor Krasik, Ulf Kristiansen 1969 (Norway), Ellen Maiorano, Kim Maree, Lino Mocerino, Willow Morgan, Alireza Amin Mozafari, Noviki Studio, Lorenzo Papanti, Muriel Paraboni 1977 		(Brazil), Lisi Prada, Jutta Pryor, Amadeu Rodrigues, Luis Carlos Rodriguez, Roger Simian, Ronnie Sluik, Anja Strelec, Sarahjane Swan, Katherine Sweetman (United States), Erick Tapia, Eija Temisevä 		1956 (Finland), Alina Tofan, Tushar Waghela 1975 (India), Dawn Westlake, Jacqueline Williams</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/UsVyekgmG5A?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Vespertilio Spillover">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+	
+		
+	        <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle20;">
+			<hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">CICA - Experimental Film and Video <sup><span class="uk-badge">Group Show</span></sup></h2>
+			<h3 class="uk-text-lighter">Venue: CICA Museum - Seoul (South Korea)</h3>
+	        </div>
+
+		<span class="toggle20"></span>
+		<div class="toggle20 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Wednesday 27 May -  Sunday 14 June 2020</h3>
+            	<p class="uk-text-justify uk-text-lighter">Featured Artists: Barry Anderson, ARTOLDO - Sara Ferro & Chris Weil with their work <i>WhimSeaCall</i>, Denise & Gordon Asti, David Baumflek, Magdalena 		Bielesz, Kayla Cantu, Camilo Cárdenas, Methas Chantawongs, Marcos Bonisson & Khalil Charif, Hyejung Choi 최혜정, Jonghan Choi 최종한, Lisi Prada & José Cruzio, Julia Dorobinska, Rudolf Han 루돌프 한, 		Michael Hazani, Hyunseok Jeong 정현석, Tacie Jones,Avdi Hajdari-KAME, Marina Landia, Jinsoul Lee 이진솔, João Cristóvão Leitão, Justin Lincoln, Hugo Ljungbäck, Hyeyoung Maeng 맹혜영, Miodrag Manojlovic, 		Shahar Marcus, John O’Donnell, Melissa Pareja, Susanne Layla Petersen, Éanna Mac Cana & Moon Paw Print, Hande Sever, Elena Stelzer, Lisa Tolstyka</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/Kbd80xb-zm0?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;"
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall - Nocturnal Sea">Play Video</a>
+        	</span>
+
+		</div>
+		</div>
+
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle19;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">Anamorpheion - In/between Worlds <sup><span class="uk-badge">Solo Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue: Palazzo Albrizzi-Capello, Venice (Italy)</h3>
+	        </div>
+
+		<span class="toggle19"></span>
+		<div class="toggle19 uk-container uk-container-small" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+            	<h3 class="uk-card-title uk-text-lighter uk-text-uppercase">Friday 20 March - Sunday 22 March 2020</h3>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Featured Artists: ARTOLDO - Sara Ferro & Chris Weil
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		The Etruscans divided their worldview into four parts (North, South, East and West), connected by an invisible cross that united the gods, allocated in the different directions of the sky. 			'Anamorpheion - In/between Worlds' in association with Iulia Millesima is the result of a cinebition, a video art installation that interprets the Etruscans' "Via Cave" and Tomaso Buzzi's 			"Scarzuola", an ideal city, constructed in the deep heart of Umbria. Dive into an ancient dream within a dream, there is no escape.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		Presented by Nevia Pizzul-Capello, with interpretation by Giuseppe Ferro and music by Piero Pizzul, the <i>Anamorpheion</i> video art project represents a mystical journey among openly hermetic 		symbols therefore internalizable and intelligible despite their arcane being. Different dream worlds flow one into the other seamlessly i.e. eternally, as eternal are both the soul and the 			sapiential path. The character is listening to his own inner voice that he literally follows and whispers moods and vibrational states to him rather than words. The inspiration for the work 			originated from a discourse on Etruscan sacred play and those figures who, like the film's protagonist, possessing the highest knowledge in the furrow of the most complex esoteric traditions, are 		faced with the challenge of tracing that complexity back to something that brings man back to his purest essence, as such only found in nature in a play of cross-references between earth and sky, as 		in the millennia-old Hermetic tradition.<br>
+		Filmed among the Etruscan <i>Vie cave</i> in the Tuscan <i>Maremma</i> and in <i>Buzzinda</i>, an ideal city built by Tomaso Buzzi in Montegabbione d'Orvieto in a place where Francesco d'Assissi also 		apparently lived, <i>Anamorpheion</i> is a journey among sapiential dwellings declined in the complex phenomenology of variations in tuff, a geological formation whose fate, whether it has been 		excavated or made brick, is still to be swallowed again by nature, as long as it exists.
+		</p>
+
+		<p class="uk-text-justify uk-text-lighter">
+		ARTOLDO's artist statement: Anamorpheion - In/between Worlds shows a dream within a dream, an Inner and an Outer World. An expanded cinema experience based on the works of Tomaso Buzzi and Etruscan 		architects. The Etruscans imagined their heaven - <i>Zeri</i> and earth - <i>Cel</i> as being quartered by an invisible cross constructed of a north-south axis known as <i>Cardo</i> and an east-west 		line named <i>Decumanus</i>. It was the first mentioning of a possible multiverse including parallel worlds and multiple dimensions. To create this experience we developed an algorithm that allows 		us to create mirrored kaleidoscopes without losing the original motion picture.
+		</p>
+
+		<span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-text-truncate" 
+		href="https://youtu.be/xiDfxoB4qQU?autoplay=1&amp;rel=0&amp;playsinline=1" data-attrs="width: 1280; height: 720;" 
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Anamorpheion - In/between Worlds">Play Video</a>
+        	</span>
+
+		</div>
+		</div>	
+
+        </div>
+</div>
+
+</div>
+
+<!-- Exhibitions End -->
+
+
+<!-- Works -->
+
+
+<div class="uk-section uk-section-muted uk-section-medium uk-dark uk-flex">
+ <div id="works"  class="uk-container">
+    <div class="uk-width-1-2@m uk-text-center uk-margin-auto uk-margin-auto-vertical">
+        <span class="uk-visible@m"><br><br></span>
+	<h1 class="uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: -100,0; scale: 2,1; end: 50vh + 50%;">Works</h1>
+        <p class="uk-dropcap uk-text-large uk-text-justify uk-text-lighter" uk-parallax="media: @m; opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;">Artoldo pushes the boundaries of visual storytelling. With 	a passion for innovative Avant-garde cinema, Moving Images Arts and New Media, their portfolio includes a diverse range of works, such as AI Art, Crypto Art, Digital Art, Experimental Films, Feature 		Documentaries, 	Immersive Experiences [AR / VR / XR], Net Art, Sound Art and Video Art.</p>
+    </div>
+ </div>
+</div>
+
+<!-- Works End -->
+
+
+<!-- Movies -->
+
+<div class="uk-section uk-overflow-hidden uk-padding">
+
+<div class="uk-slider-container-offset" uk-slider="autoplay:false; pause-on-hover: true;">
+
+    <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
+
+        <ul class="uk-slider-items uk-child-width-1-3@s uk-grid">
+            
+            <li uk-lightbox class="uk-transition-toggle">
+	    	<a href="./jung/index.html" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top uk-overflow-hidden">
+                        <img src="images/jung.jpeg" width="1800" height="1200" alt="C. G. Jung on Alchemy">
+			<video class="uk-transition-fade uk-hidden-touch uk-position-cover" src="./images/1.mp4" loop muted playsinline uk-video="autoplay: inview"></video>
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">C. G. Jung on Alchemy</h3>
+                        <p>Docu Series | 4 episodes</p>
+                    </div>
+                </div>
+		</a>
+            </li>
+           
+            <li uk-lightbox class="uk-transition-toggle">
+		<a href="./ritmanlibrary/index.html" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top uk-overflow-hidden">
+                        <img src="images/ritmanlibrary.jpeg" width="1800" height="1200" alt="The Ritman Library - Amsterdam">
+			<video class="uk-transition-fade uk-hidden-touch uk-hidden-touch uk-position-cover" src="./images/2.mp4" loop muted playsinline uk-video="autoplay: inview"></video>
+                    </div>
+                    <div class="uk-card-body" >
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">The Ritman Library - Amsterdam</h3>
+                        <p>Feature Documentary</p>
+                    </div>
+                </div>
+		</a>
+            </li>
+	    
+            <li uk-lightbox class="uk-transition-toggle">
+	    	<a href="./ugodossi/index.html" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top uk-overflow-hidden">
+                        <img src="images/ugodossi.jpeg" width="1800" height="1200" alt="Ugo Dossi - Art and Space">
+			<video class="uk-transition-fade uk-hidden-touch uk-position-cover" src="./images/3.mp4" loop muted playsinline uk-video="autoplay: inview"></video>
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Ugo Dossi - Art and Space</h3>
+                        <p>Feature Documentary</p>
+                    </div>
+                </div>
+		 </a>
+            </li>
+	  
+        </ul>
+
+        <a class="uk-position-center-left uk-position-small uk-hidden-hover uk-slidenav" href uk-slidenav-previous uk-slider-item="previous"></a>
+        <a class="uk-position-center-right uk-position-small uk-hidden-hover uk-slidenav" href uk-slidenav-next uk-slider-item="next"></a>
+
+    </div>
+
+    <ul class="uk-slider-nav uk-dotnav uk-flex-center uk-margin"></ul>
+
+</div>
+
+</div>
+
+<!-- Movies End -->
+
+
+<!-- Virtual Reality -->
+
+<div class="uk-section uk-overflow-hidden uk-padding">
+
+<div class="uk-slider-container-offset" uk-slider="autoplay:false; pause-on-hover: true;">
+
+    <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">     
+	
+        <ul class="uk-slider-items uk-child-width-1-3@s uk-grid">
+ 
+            <li uk-lightbox>
+	      <a href="https://artoldo.github.io/kaltcaldo/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/kaltcaldo.jpeg" width="1800" height="1200" alt="kaltcaldo">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">kaltcaldo</h3>
+                        <p class="uk-text-truncate">VR | Desktop | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://artoldo.github.io/otium/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/otium.jpeg" width="1800" height="1200" alt="Otium & The City">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Otium & The City</h3>
+                        <p class="uk-text-truncate">AR | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://artoldo.github.io/zoroaster/bowie/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/zoroaster-superstar-david-bowie.jpeg" width="1800" height="1200" alt="Zoroaster Superstar - David Bowie">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Zoroaster Superstar</h3>
+                        <p class="uk-text-truncate">VR | David Bowie</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://artoldo.github.io/zoroaster/mercury/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/zoroaster-superstar-freddie-mercury.jpeg" width="1800" height="1200" alt="Zoroaster Superstar - Freddie Mercury">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Zoroaster Superstar</h3>
+                        <p class="uk-text-truncate">VR | Freddie Mercury</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+            <li uk-lightbox>
+	      <a href="https://artoldo.github.io/zoroaster/casanova/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/zoroaster-superstar-casanova.jpeg" width="1800" height="1200" alt="Zoroaster Superstar - Casanova">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Zoroaster Superstar</h3>
+                        <p class="uk-text-truncate">VR | Casanova</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://redmagicblue.github.io/falling/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/falling.jpeg" width="1800" height="1200" alt="FALL!ING">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">FALL!ING</h3>
+                        <p class="uk-text-truncate">VR | Desktop | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://redmagicblue.github.io/notimenospace/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/no-time-no-space.jpeg" width="1800" height="1200" alt="NO T!ME NO SPACE">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">NO T!ME NO SPACE</h3>
+                        <p class="uk-text-truncate">VR | Desktop | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+            <li uk-lightbox>
+	      <a href="https://redmagicblue.github.io/a-cinema/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/a-cinema.jpeg" width="1800" height="1200" alt="A-Cinema">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">A-Cinema</h3>
+                        <p class="uk-text-truncate">VR | Desktop | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>
+
+	    <li uk-lightbox>
+	      <a href="https://redmagicblue.github.io/achtung-banditen/" data-type="iframe">
+                <div class="uk-card uk-card-default uk-border-rounded uk-box-shadow-small uk-box-shadow-hover-large">
+                    <div class="uk-card-media-top" uk-img="loading: lazy">
+                        <img src="images/achtung-banditen.jpeg" width="1800" height="1200" alt="Achtung Banditen?!">
+                    </div>
+                    <div class="uk-card-body">
+                        <h3 class="uk-card-title uk-text-lighter uk-text-truncate">Achtung Banditen?!</h3>
+                        <p class="uk-text-truncate">VR | Desktop | Tablet | Smartphone</p>
+                    </div>
+                </div>
+              </a>
+            </li>																			
+           
+        </ul>
+
+      <a class="uk-position-center-left uk-position-small uk-hidden-hover uk-slidenav-small" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+      <a class="uk-position-center-right uk-position-small uk-hidden-hover uk-slidenav-small" href="#" uk-slidenav-next uk-slider-item="next"></a>
+
+    </div>
+
+  <ul class="uk-slider-nav uk-dotnav uk-flex-center uk-margin"></ul>
+
+</div>
+
+</div>
+
+<!-- Virtual Reality End -->
+
+
+<!-- Works End -->
+
+
+<!-- To Top -->
+
+<center>
+<div><br><br><br>
+    <a href="#spotlight" class="uk-icon-button uk-margin-small-center" uk-icon="chevron-up" uk-scroll></a>
+</div><br><br><br>
+</center>
+
+<!-- To Top End -->
+
+
+
+<!-- Footer -->
+
+<div class="uk-section-primary uk-grid-collapse uk-flex uk-flex-center uk-padding-large" uk-grid>
+
+<a href="#contact" uk-toggle uk-tooltip="Get in Touch"><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: mail; ratio: 2.0"></span></a>
+<a href="#donate" uk-toggle uk-tooltip="Support us"><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: heart; ratio: 2.0"></span></a>
+<a href="#imprint" uk-toggle uk-tooltip="Privacy & Terms"><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: info; ratio: 2.0"></span></a>
+<a href="https://www.vimeo.com/artoldo" target="_blank" uk-tooltip="Vimeo"><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: vimeo; ratio: 2.0"></span></a>
+<a href="https://www.youtube.com/@artoldo/community?sub_confirmation=1" target="_blank" uk-tooltip="YouTube"><span class="uk-margin-small-right" style="color: #fff;" uk-icon="icon: youtube; ratio: 2.0"></span></a>
+
+</div>
+
+<!-- Footer End -->
+
+
+
+<!-- Contact -->
+
+<div id="contact" uk-modal uk-border-rounded>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
+
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title uk-text-lighter">Get in Touch</h2>
+        </div>
+
+        <div class="uk-modal-body" uk-overflow-auto>
+        <div class="uk-margin">
+        <legend class="uk-legend uk-text-lighter">Contact us</legend>
+	</div>
+		
+<form name="Contact - Artoldo" accept-charset="utf-8" action="https://formspree.io/f/xbjvweqp" method="post">
+  <fieldset class="uk-fieldset">
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded uk-text-lighter" type="text" name="Name" id="full-name" placeholder="Name" required="">
+    </div>
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded uk-text-lighter" type="email" name="Reply to" id="email-address" placeholder="Email Address" required="">
+    </div>
+    <div class="uk-margin">
+    <input class="uk-input uk-border-rounded uk-text-lighter" type="text" inputmode="numeric" pattern="[0-9]*" name="Telephone" id="telephone" placeholder="Phone">
+    </div>
+    <div class="uk-margin">
+    <textarea class="uk-textarea uk-border-rounded uk-text-lighter" rows="5" rows="6" name="Message" id="message" placeholder="Message" required=""></textarea>
+    </div>
+    <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid uk-text-lighter">
+    <label><input class="uk-checkbox uk-border-rounded uk-text-lighter" type="checkbox" name="privacy" checked required> I agree to the <a href="#imprint" uk-toggle>Privacy Policy</a>.</label>
+    <label><input class="uk-checkbox uk-border-rounded uk-text-lighter" type="checkbox" name="newsletter"> I want to join the Mailing list.</label>
+    </div>
+
+  </fieldset>
+    <div class="uk-modal-footer uk-text-right">
+    <input class="uk-button uk-button-primary uk-border-pill" type="submit"></input>
+    </div>
+</form>
+		
+	  </div>	
+    </div>
+</div>
+
+<!-- Contact End -->
+
+
+
+<!-- Imprint -->
+
+<div id="imprint" uk-modal uk-border-rounded>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
+
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+
+        <div class="uk-modal-header">
+            <h2 class="uk-text-lighter" class="uk-modal-title">Imprint</h2>
+        </div>
+
+        <div class="uk-modal-body" uk-overflow-auto>
+
+        <form>
+    	<fieldset class="uk-fieldset">
+
+        <ul uk-accordion="collapsible: true">
+
+     <li class="uk-open">
+        <a class="uk-accordion-title" href>Copyright</a>
+        <div class="uk-accordion-content">
+            <p class="uk-text-lighter">© ARTOLDO™ - All rights reserved.</p>
+        </div>
+    </li>
+    <li>
+        <a class="uk-accordion-title" href>Priavcy Policy</a>
+        <div class="uk-accordion-content">
+
+<h2 class="uk-text-lighter">Priavcy Policy</h2>
+
+<p>At Artoldo, accessible from <a href="https://www.artoldo.com/">https://www.artoldo.com</a>, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Artoldo and how we use it.</p>
+
+<p>If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us through email at <a href="mailto:support@artoldo.com">support@artoldo.com</a></p>
+
+<h2 class="uk-text-lighter">General Data Protection Regulation (GDPR)</h2>
+
+<p>We are a Data Controller of your information.</p>
+
+<p>artoldo.com legal basis for collecting and using the personal information described in this Privacy Policy depends on the Personal Information we collect and the specific context in which we collect the information:</p>
+
+<ul>
+<li>artoldo.com needs to perform a contract with you</li>
+<li>You have given artoldo.com permission to do so</li>
+<li>Processing your personal information is in artoldo.com legitimate interests</li>
+<li>artoldo.com needs to comply with the law</li>
+</ul>
+
+<p>artoldo.com will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.</p>
+
+<p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. If you wish to be informed what Personal Information we hold about you and if you want it to be removed from our systems, please contact us.</p>
+
+<p>In certain circumstances, you have the following data protection rights:</p>
+
+<ul>
+<li>The right to access, update or to delete the information we have on you.</li>
+<li>The right of rectification.</li>
+<li>The right to object.</li>
+<li>The right of restriction.</li>
+<li>The right to data portability</li>
+<li>The right to withdraw consent</li>
+</ul>
+
+<h2 class="uk-text-lighter">Log Files</h2>
+
+<p>Artoldo follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services’ analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users’ movement on the website, and gathering demographic information.</p>
+
+<h2 class="uk-text-lighter">Cookies and Web Beacons</h2>
+
+<p>Like any other website, Artoldo uses ‘cookies’. These cookies are used to store information including visitors’ preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users’ experience by customizing our web page content based on visitors’ browser type and/or other information.</p>
+
+<h2 class="uk-text-lighter">Privacy Policies</h2>
+
+<p>Third-party Video servers or Video networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective Videos and Films that appear on Artoldo , which are sent directly to users’ browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their Videos and/or to personalize the Video content that you see on websites that you visit.</p>
+
+<p>Note that Artoldo has no access to or control over these cookies that are used by third-party Video Service Providers.</p>
+
+<h2 class="uk-text-lighter">Third Party Privacy Policies</h2>
+
+<p>Artoldo’s Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options. You may find a complete list of these Privacy Policies and their links here.</p>
+
+<p>You can choose to disable cookies through your individual browser options. To know more detailed information about cookie management with specific web browsers, it can be found at the browsers’ respective websites. What Are Cookies?</p>
+
+<h2 class="uk-text-lighter">Children’s Information</h2>
+
+<p>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.</p>
+
+<p>Artoldo does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.</p>
+
+<h2 class="uk-text-lighter">Online Privacy Policy Only</h2>
+
+<p>Our Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in Artoldo. This policy is not applicable to any information collected offline or via channels other than this website.</p>
+
+<h2 class="uk-text-lighter">Consent</h2>
+
+<p>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</p>
+
+        </div>
+    </li>
+    <li>
+        <a class="uk-accordion-title" href>Terms of Use</a>
+        <div class="uk-accordion-content">
+<h2 class="uk-text-lighter">Terms of Use</h2>
+
+<p>Last updated: 24/10/2023</p>
+
+<p>Please read these Terms of Use (“Terms”, “Terms of Use”) carefully before using the <a href="https://www.artoldo.com/">https://www.artoldo.com</a> website (the “Service”) operated by artoldo.com (“us”, “we”, or “our”).</p>
+
+<p>Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users and others who access or use the Service.</p>
+
+<p>By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.</p>
+
+<h2 class="uk-text-lighter">Accounts</h2>
+
+<p>When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</p>
+
+<p>You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password, whether your password is with our Service or a third-party service.</p>
+
+<p>You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</p>
+
+<h2 class="uk-text-lighter">Intellectual Property</h2>
+
+<p>The Service and its original content, features, and functionality are and will remain the exclusive property of artoldo.com and its licensors, networks, and partners. All companies and logos are ® registered trademarks and © copyright protected.</p>
+
+<h2 class="uk-text-lighter">Links To Other Web Sites</h2>
+
+<p>Our Service may contain links to third-party web sites or services that are not owned or controlled by artoldo.com, has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that artoldo.com shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.</p>
+
+<p>We strongly advise you to read the terms and conditions and privacy policies of any third-party web sites or services that you visit.</p>
+
+<h2 class="uk-text-lighter">Termination</h2>
+
+<p>We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+
+<p>All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations of liability.</p>
+
+<p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+
+<p>Upon termination, your right to use the Service will immediately cease. If you wish to terminate your account, you may simply discontinue using the Service.</p>
+
+<p>All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity and limitations of liability.</p>
+
+<h2 class="uk-text-lighter">Disclaimer</h2>
+
+<p>Your use of the Service is at your sole risk. The Service is provided on an “AS IS” and “AS AVAILABLE” basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement or course of performance.</p>
+
+<h2 class="uk-text-lighter">Governing Law</h2>
+
+<p>These Terms shall be governed and construed in accordance with the laws of Italy without regard to its conflict of law provisions.</p>
+
+<p>Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service.</p>
+
+<h2 class="uk-text-lighter">Changes</h2>
+
+<p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+
+<p>By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.</p>
+
+<h2 class="uk-text-lighter">Contact Us</h2>
+
+<p>If you have any questions about these Terms, please contact us: <a href="mailto:support@artoldo.com">support@artoldo.com</a></p>
+
+        </div>
+    </li>
+
+</ul>
+
+        
+
+    </div>
+</div>
+
+<!-- Imprint End -->
+
+
+<!-- Donate -->
+
+<div id="donate" uk-modal uk-border-rounded>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
+
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title uk-text-lighter">Support us</h2>
+        </div>
+        <p class="uk-text-center uk-text-lighter uk-text-justify uk-visible@m">Most of our work is available for free - Your donation helps us to continue our independent research and creation of unique content.	Thank you! :-)</p>
+	<div class="uk-modal-container" uk-overflow-auto>
+            <div class="uk-flex uk-flex-center">
+		<script src="https://donorbox.org/widget.js" paypalExpress="false"></script><iframe src="https://donorbox.org/embed/artoldo" class="uk-border-rounded" name="donorbox" 
+		allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="auto" width="400px"></iframe>
+            </div>
+	</div>
+
+    </div>
+</div>
+
+<!-- Donate End -->
+
+
+</body>
+</html>
