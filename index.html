@@ -39,6 +39,41 @@
     <script src="./js/uikit.js"></script>
     <script src="./js/uikit-icons.js"></script>
 
+    <style>
+        /* Positioning the share button */
+        .share-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        /* Dropdown styling */
+        .share-menu {
+            min-width: 200px;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        /* Status-specific styles */
+        .uk-notification-message-success {
+            background-color: #d4edda; /* Light green */
+            color: #155724; /* Dark green text */
+            border-left: 4px solid #28a745; /* Accent border */
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .uk-notification-message-danger {
+            background-color: #f8d7da; /* Light red */
+            color: #721c24; /* Dark red text */
+            border-left: 4px solid #dc3545; /* Accent border */
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+    </style>
+
 <!-- Lightbox -->
 
 <script>   
@@ -60,6 +95,58 @@
 </head>
 
 <body>
+
+<!-- Share Container -->
+    <div class="share-container uk-visible@m">
+        <!-- Share Icon Button -->
+        <a href="#" 
+           class="uk-icon-button uk-rounded" 
+           uk-icon="social" 
+           uk-toggle="target: #share-menu"></a>
+
+        <!-- Dropdown Share Menu -->
+        <div id="share-menu" 
+             class="uk-card uk-card-body uk-card-default uk-box-shadow-medium uk-animation-slide-bottom-small uk-border-rounded share-menu" 
+             hidden>
+            
+            <!-- Close Button -->
+    	    <button class="uk-close uk-position-small uk-position-top-right" uk-close onclick="document.getElementById('share-menu').hidden = true;"></button>
+
+            <ul class="uk-list uk-list-divider uk-margin-remove">
+                <li>
+                    Official website: <span onclick="copyToClipboard('https://artoldo.com')" uk-tooltip="title: Copy Link; pos: top" style="color:#AD9A00; cursor: pointer;">artoldo.com</span>
+                </li>
+                <li>
+                    Permalink: <span onclick="copyToClipboard('https://artoldo.github.io')" uk-tooltip="title: Copy Link; pos: bottom" style="color:#AD9A00; cursor: pointer;">artoldo.github.io</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                UIkit.notification({ 
+                    message: 'Link copied!', 
+                    status: 'success', 
+                    pos: 'bottom-left',
+                    timeout: 2000 
+                });
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                UIkit.notification({ 
+                    message: 'Failed to copy!', 
+                    status: 'danger', 
+                    pos: 'bottom-left', 
+                    timeout: 2000 
+                });
+            });
+        }
+    </script>
+
+<!-- Share Container End -->
+
 
 <!-- Nav -->
 
@@ -2515,7 +2602,6 @@
 </div>
 
 <!-- Donate End -->
-
 
 </body>
 </html>
