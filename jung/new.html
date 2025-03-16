@@ -58,11 +58,6 @@
             z-index: -1;
         }
 
-        /* Smooth transition */
-        #sticky-button {
-        position: relative;
-        transition: transform 0.1s ease-out; 
-
     </style>
 </head>
 <body>
@@ -70,36 +65,14 @@
 <!-- Background Video -->
 <video class="video-background" src=".././images/1.mp4" poster=".././images/rarebook-jung.webp" loop muted autoplay playsinline></video>
 
-<!-- Sticky Button  -->
-<div class="uk-text-center uk-sticky" uk-sticky="offset: 250; media: 960">
-    <a id="sticky-button" class="uk-button uk-button-primary uk-border-pill uk-text-bold" href="https://artoldo.gumroad.com/l/jung" 
-       data-gumroad-overlay-checkout="true" target="_blank">
+<!-- Sticky Button with Parallax -->
+<div class="uk-text-center uk-sticky" uk-sticky="offset: 150; media: 960">
+    <a class="uk-button uk-button-primary uk-border-pill uk-text-bold" href="https://artoldo.gumroad.com/l/jung" 
+       data-gumroad-overlay-checkout="true" target="_blank"
+       uk-parallax="y: 100, calc(100vh - 100px); viewport: 1">
        <span uk-icon="icon: play; ratio: 1.5"></span> Stream + Download <span uk-icon="icon: download; ratio: 1.5"></span>
     </a>
 </div>
-
-<script>
-  document.addEventListener("scroll", function() {
-    const button = document.getElementById("sticky-button");
-    const scrollPosition = window.scrollY; // How far you've scrolled
-
-    const windowHeight = window.innerHeight; // Height of the viewport
-    const documentHeight = document.documentElement.scrollHeight; // Total document height
-
-    const maxScroll = documentHeight - windowHeight - 50; // End 100px from the bottom
-    const minScroll = 100; // Start 100px from the top
-
-    if (scrollPosition >= minScroll && scrollPosition <= maxScroll) {
-      // Calculate the new position of the button
-      const position = scrollPosition - minScroll; // Button moves with scroll
-      button.style.transform = `translateY(${position}px)`;
-    } else if (scrollPosition < minScroll) {
-      button.style.transform = `translateY(0px)`; // Stay at the top
-    } else if (scrollPosition > maxScroll) {
-      button.style.transform = `translateY(${maxScroll - minScroll}px)`; // Stop 100px from the bottom
-    }
-  });
-</script>
 
 <!-- Content -->
 <section class="uk-section uk-background-default uk-padding-large" style="margin-top: 60vh;">
