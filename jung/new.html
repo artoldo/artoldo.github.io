@@ -58,16 +58,6 @@
             z-index: -1;
         }
 
-        /* Floating Poster - Positioned Over Video */
-        .poster {
-            position: fixed; /* Keeps poster over video */
-            top: 180px; /* Position poster 50% above the viewport height */
-            left: 120px; /* Align poster with the left edge of the content */
-            z-index: 2; /* Make sure poster is above video */
-            max-width: 250px;
-            transition: transform 0.3s ease; /* Smooth transition */
-        }
-
         /* Sticky Button */
         .sticky-button-wrapper {
             position: absolute;
@@ -82,7 +72,7 @@
         /* Content Section */
         .content-section {
             position: relative;
-            top: 50vh; /* Start content below the poster */
+            top: 50vh;
             z-index: 2;
             display: flex;
             flex-direction: column;
@@ -91,33 +81,6 @@
             padding-bottom: 50px;
         }
 
-        /* Header Title - Align to Left */
-        .uk-flex.uk-flex-center {
-            justify-content: flex-start !important; /* Ensure the title is aligned left */
-        }
-
-        .content-section h1 {
-            text-align: left; /* Align the title to the left */
-            margin-left: 0; /* Align with the content */
-            font-size: 2.5em; /* Adjust font size as needed */
-        }
-
-        /* Main Paragraph Alignment */
-        .content-section p {
-            text-align: left; /* Ensure paragraphs are aligned left */
-            margin-left: 0px; /* Remove any left margin to fully align */
-        }
-
-        /* Responsive Design */
-        @media (max-width: 767px) {
-            .poster {
-                position: fixed;
-                top: 5vh; /* Higher on small screens */
-                left: 50%;
-                transform: translateX(-50%);
-                max-width: 200px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -135,21 +98,10 @@
 
 <!-- Content Section -->
 <div class="uk-section uk-section-large uk-background-default uk-padding-large content-section">
-    <div class="uk-container content-wrap">
+    <div class="uk-container">
 
-        <!-- Floating Poster -->
-        <div class="poster" id="poster">
-            <img class="uk-border-rounded uk-visible@m" src=".././images/jung-film-poster.jpeg" width="200" height="300" alt="C. G. Jung on Alchemy - Documentary Series - Film poster">
-        </div>
-
-        <!-- Navigation -->
-        <div class="uk-background-muted uk-position-z-index uk-flex uk-flex-center uk-padding-small uk-hidden" uk-sticky>
-            <h1 class="uk-text-bold">C. G. Jung on Alchemy</h1>
-        </div>
-
-        <!-- Mobile title -->
-        <h2 class="uk-heading-large uk-text-bold  uk-text-center">C. G. Jung on Alchemy</h2>
-        <img class="uk-border-rounded uk-align-center uk-hidden@m" src=".././images/jung-film-poster.jpeg" width="200" height="300" alt="C. G. Jung on Alchemy - Documentary Series - Film poster">
+        <h1 class="uk-heading-large uk-text-bold  uk-text-center">C. G. Jung on Alchemy</h1>
+        <img class="uk-border-rounded uk-align-center uk-align-left@m" src=".././images/jung-film-poster.jpeg" width="200" height="300" alt="C. G. Jung on Alchemy - Documentary Series - Film poster">
 
         <!-- Main Content -->
         <p class="uk-text-left uk-dropcap uk-text-lighter uk-text-large uk-text-justify">
@@ -165,8 +117,8 @@
             Five years of meticulous work and research, featuring exclusive footage of rare books and manuscripts filmed at the House of C. G. Jung and Eranos.
         </p>
 
-        <img class="uk-border-rounded" src=".././images/jung.jpeg" width="400" height="200" alt="House of C. G. Jung - Zurich"> 
-	<img class="uk-border-rounded" src=".././images/jung-rarebook.jpeg" width="400" height="200" alt="C. G. Jung - Rare book collection">
+        <img class="uk-border-rounded uk-align-center uk-align-left@m" src=".././images/jung.jpeg" width="400" height="200" alt="House of C. G. Jung - Zurich"> 
+	<img class="uk-border-rounded uk-align-center uk-align-left@m" src=".././images/jung-rarebook.jpeg" width="400" height="200" alt="C. G. Jung - Rare book collection">
 
         <p class="uk-text-left uk-text-lighter uk-text-large">
             Explore C. G. Jung’s private collection and discover the secrets of alchemy and psychology.
