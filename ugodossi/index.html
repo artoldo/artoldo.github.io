@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="robots" content="index, follow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ugo Dossi - Art and Space - Documentary: Stream + Download</title>
-    
     <!-- SEO Meta Tags -->
     <meta name="description" content="Figurative artist Ugo Dossi shows his artworks in the fields of metaphysics, astronomy, cosmos, tarot, hypnosis, telepathy, alchemy, and collective subconscious.">
     <meta name="keywords" content="Ugo Dossi, documentary, streaming, download, art, space, tarot, Sara Ferro, Chris Weil,">
     <meta name="author" content="Artoldo">
-
     <!-- Favicon -->
     <link rel="icon" href=".././images/artoldo.jpeg" type="image/jpeg">
-    
     <!-- Open Graph Meta Tags (Facebook, WhatsApp, Signal, WeChat, Telegram) -->
     <meta property="og:title" content="Ugo Dossi - Art and Space">
     <meta property="og:description" content="Documentary film (Streaming + Download) - ARTOLDO">
@@ -22,312 +19,317 @@
     <meta property="og:image" content="https://artoldo.github.io/images/ugodossi.jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    
     <!-- Twitter Card Meta Tags (Twitter) -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Ugo Dossi - Art and Space">
     <meta name="twitter:description" content="Documentary film (Streaming + Download) - ARTOLDO">
     <meta name="twitter:url" content="https://artoldo.github.io/ugodossi/">
     <meta name="twitter:image" content="https://artoldo.github.io/images/ugodossi.jpeg">
-    
-    <!-- Additional meta tags can be added as needed -->
-    
-    <!-- Stylesheets, scripts, and other resources go here -->
+    <!-- Stylesheets and Scripts -->
     <link rel="stylesheet" type="text/css" href=".././css/uikit.css" />
-    <link rel="stylesheet" type="text/css" href="../custom.css" /> 
+    <link rel="stylesheet" type="text/css" href="../custom.css" />
     <script src=".././js/uikit.js"></script>
     <script src=".././js/uikit-icons.js"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Movie",
+        "name": "Ugo Dossi - Art and Space",
+        "genre": "Documentary",
+        "director": [{
+          "@type": "Person",
+          "name": "Sara Ferro"
+        }, {
+          "@type": "Person",
+          "name": "Chris Weil"
+        }]
+      }
+    </script>
+    <script>
+      UIkit.mixin({
+        data: {
+          delayControls: 86400000
+        }
+      }, 'lightbox');
+    </script>
+    <style>
+      /* Color */
+      p,
+      h1,
+      h2,
+      h3,
+      li {
+        color: black !important;
+      }
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Movie",
-  "name": "Ugo Dossi - Art and Space",
-  "genre": "Documentary",
-  "director": [
-    { "@type": "Person", "name": "Sara Ferro" },
-    { "@type": "Person", "name": "Chris Weil" }
-  ]
-}
-</script>
+      /* Background Video */
+      .video-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+      }
 
-</head>
+      /* Images */
+      .hover-scale img {
+        transition: transform 0.3s ease-in-out;
+      }
 
-<body>
+      .hover-scale:hover img {
+        transform: scale(1.1);
+      }
 
-<!-- Wrapper -->
+      /* Share */
+      .share-container {
+        position: fixed;
+        bottom: 60%;
+        right: 20px;
+        z-index: 1000;
+      }
 
-<div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slideshow="ratio: false">
+      .share-menu {
+        min-width: 200px;
+        font-size: 14px;
+        margin-top: 15px;
+      }
 
+      .uk-notification-message-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+        border-radius: 10px;
+        font-size: 15px;
+      }
 
-<!-- Logo-->
-
-<div class="uk-visible@m uk-sticky uk-position-top-left">
-<a href="https://artoldo.github.io/">
-<img src=".././images/1.png" onmouseover="this.src='.././images/2.png'" onmouseout="this.src='.././images/1.png'" alt="logo" style="width:200px;">
-</a>
-
-<script>
- // load second image
-(() => {
-	(new Image).src = ".././images/2.png";
-})();
-</script>
-
-<!-- Logo End -->
-
-
-<!-- Background -->
-
-</div>
-  
-<ul class="uk-slideshow-items uk-background-cover" uk-height-viewport>
-
-<li>
-            <video src=".././images/3.mp4" loop muted playsinline uk-cover uk-video="autoplay: inview" poster=".././images/ugo-dossi.webp"></video>
-            <div class="uk-position-cover" uk-slideshow-parallax="opacity: 0.5, 0.5, 0.5; backgroundColor: #000,#000"></div>
-            <div class="uk-position-center uk-position-large uk-text-center">
-
-<!-- Title -->
-
-<h1 class="uk-visible@m uk-text-lighter" uk-scrollspy="cls:uk-animation-slide-top; repeat:true;">Ugo Dossi - Art and Space</h1>
-<span class="uk-hidden@m"><br><br></span>
-<h1 class="uk-text-medium uk-hidden@m uk-text-lighter" uk-scrollspy="cls:uk-animation-slide-right; repeat:true;">Ugo Dossi - Art and Space</h1>
-
-<p style="color:#ffffff;" uk-scrollspy="cls:uk-animation-slide-top; repeat:true;">Get full access to the complete documentary film</p>
-
-<!-- Title End -->
-
-
-<!-- Button -->
-
-<script src="https://gumroad.com/js/gumroad.js"></script>
-
-<div uk-scrollspy="cls:uk-animation-slide-bottom; repeat:true;"><a class="uk-button uk-button-secondary uk-border-pill uk-text-bold" href="https://artoldo.gumroad.com/l/ugodossi" data-gumroad-overlay-checkout="true" target="_blank">
-<span uk-icon="icon: play; ratio: 1.5"></span> Stream + Download <span uk-icon="icon: download; ratio: 1.5"></span></a></div>
-
-<!-- Button End -->
-
-
-<!-- Tab -->
-
-<div class="uk-margin-medium-top" uk-scrollspy="cls:uk-animation-slide-bottom; repeat:true;">
-<ul class="uk-flex-center" uk-tab swiping="false">
-    <li><a href="#">Overview</a></li>
-    <li><a href="#">Details</a></li>
-</ul>
-
-
-<!-- Switcher -->
-
-<ul class="uk-switcher uk-margin uk-margin-left uk-margin-right">
-
-
-<!-- Overview -->
-
-<li>
-<div class="uk-overflow-auto uk-height-medium">
-
-<div class="uk-grid-divider uk-child-width-expand@l uk-child-width-expand@s" uk-grid>
-    <div>       
-	<img class="uk-align-center uk-align-right@m uk-margin-remove-adjacent uk-border-rounded" 
-	src=".././images/ugodossi-film-poster.jpeg" width="200" height="300" alt="Ugo Dossi - Art and Space - Film poster"> 
+      .uk-notification-message-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+        border-radius: 10px;
+        font-size: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Video -->
+    <video class="video-background" src=".././images/3.mp4" poster=".././images/ugo-dossi.webp" loop muted autoplay playsinline></video>
+    <!-- Background Video End -->
+    <!-- Sticky Buttons -->
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <div class="uk-text-center" uk-sticky="offset: 25vh; end: 40vh;">
+      <a class="uk-button uk-button-primary uk-button-large uk-border-pill uk-text-bold" href="https://artoldo.gumroad.com/l/ugodossi" data-gumroad-overlay-checkout="true" target="_blank">
+        <span uk-icon="icon: play; ratio: 1.5"></span> Stream + Download <span uk-icon="icon: download; ratio: 1.5"></span>
+      </a>
     </div>
-
-    <div>
-	<p style="color:#ffffff;" class="uk-text-center uk-text-justify@m uk-dropcap uk-text-large uk-text-lighter">
-           Ugo Dossi shows his works in the fields of <span class="uk-visible@l">metaphysics, astronomy, cosmos,</span> tarot, automatic drawing, <span class="uk-visible@l">hypnosis, telepathy,</span> alchemy and 	   collective subconscious.
-	</p>
-	
+    <div class="uk-text-center" uk-sticky="offset: 140vh; start: 90vh;">
+      <a class="uk-button uk-button-primary uk-button-large uk-border-pill uk-text-bold" href="https://artoldo.gumroad.com/l/ugodossi" data-gumroad-overlay-checkout="true" target="_blank">
+        <span uk-icon="icon: play; ratio: 1.5"></span> Stream + Download <span uk-icon="icon: download; ratio: 1.5"></span>
+      </a>
+      <br>
+      <br>
     </div>
-
-<!-- Overview End -->
-
-
-<!-- Awards-->
-
-<div>
-
-<div class="uk-section uk-section-small uk-flex uk-flex-center uk-flex-middle uk-text-center">
-<div class="uk-position-relative uk-light" tabindex="-1" uk-slider autoplay="true" autoplay-interval="5000" pause-on-hover="false">
-<ul class="uk-slider-items uk-child-width-1-1">
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Special Screening</span><br>
-	<span class="uk-text-large uk-text-bold" 	       style="color:#000000;">Hermetic<br>International<br>Film Festival</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">Italy 2023</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Special Screening</span><br>
-	<span class="uk-text-large uk-text-bold" 	       style="color:#000000;">Star Cinema<br>Decentraland<br>Metaverse</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">USA 2022</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Official Selection</span><br>
-	<span class="uk-text-large uk-text-bold" 	       style="color:#000000;">&nbsp;<br>LABOCINE<br>&nbsp;</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">New York 2022</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Official Selection</span><br>
-	<span class="uk-text-medio uk-text-bold" 	       style="color:#000000;">AdAC – ARCHIVIO<br>D'ARTE<br>CONTEMPORANEA<br>Università degli<br>Studi di Genova</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">Genoa 2022</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Official Selection</span><br>
-	<span class="uk-text-large uk-text-bold" 	       style="color:#000000;">Alexandre<br>Trauner Art<br>Film Festival</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">Szolnok 2018</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-	    style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Special Screening</span><br>
-	<span class="uk-text-large uk-text-bold" 	       style="color:#000000;">&nbsp;<br>Teatro Bloser<br>&nbsp;</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">Genoa 2018</span>
-   </p>
-</div>
-</li>
-
-<li>
-<div class="uk-background-image uk-background-contain uk-background-cover@m uk-container-expanduk-height-xlarge uk-width-xlarge uk-flex uk-flex-center uk-flex-middle" 
-            style="background-image: url(.././images/laurel.png); filter: invert(1);">
-    <p>
-	<span class="uk-text-uppercase uk-text-small"          style="color:#000000;">Official Selection</span><br>
-	<span class="uk-text-large uk-text-bold"               style="color:#000000">Cosmopolis<br>Film<br>Awards</span><br>
-	<span class="uk-text-lighter"                          style="color:#000000;">Rome 2017</span>
-    </p>
-</div>
-</li>
-      
-</ul>
-</div>
-</div>
-
-</div>
-
-<!-- Awards End -->
-
-
-<!-- Spectations -->
-
-    <div>
-	<p style="color:#ffffff;" class="uk-text-left uk-text-bold">Ugo Dossi - Art and Space</p>
-
-	<p style="color:#ffffff;" class="uk-text-left">Cast: Ugo Dossi</p>
-
-	<p style="color:#ffffff;" class="uk-text-left">Genre: Documentary</p>
-
-	<p style="color:#ffffff;" class="uk-text-left">Runtime: 60 min</p>
-
-	<p style="color:#ffffff;" class="uk-text-left"><b>Filmmakers:</b><br>Sara Ferro, Chris Weil</p> 
-
-	<p class="uk-hidden@m"><br> <br> <br> <br> <br> <br> <br> <br></p>
-    </div>
-
-</div>
-
-</div>
-</li>
-
-<!-- Spectations End -->
-
-
-<!-- Details -->
-
-<li>
-    <div style="color:#ffffff;" class="uk-overflow-auto uk-height-medium">
-
-        <p class="uk-text-left uk-dropcap uk-text-lighter uk-text-large">
-           The figurative artist Ugo Dossi presents his works on metaphysics, astronomy and the cosmos, hypnosis, telepathy, tarot, alchemy, the collective subconscious, Franz Anton Mesmer and Wilhelm Reich, 	   which have been shown twice at the Documenta in Kassel and twice at the Venice Biennale, as well as in many other international exhibitions and museums.
+    <!-- Sticky Buttons End-->
+    <!-- Content -->
+    <section class="uk-section uk-background-default" style="margin-top: 40vh;">
+      <div class="uk-container">
+        <h1 class="uk-heading-large uk-text-bold uk-text-center" uk-scrollspy="cls:uk-animation-slide-top; repeat:true;">Ugo Dossi - Art and Space</h1>
+        <h2 class="uk-heading uk-text-bold uk-text-center" uk-scrollspy="cls:uk-animation-slide-bottom; repeat:true;">Documentary Film</h2>
+        <img class="uk-border-rounded uk-align-center uk-align-left@m" src=".././images/ugodossi-film-poster.jpeg" width="200" height="300" alt="Ugo Dossi - Art and Space - Film poster" 
+	uk-scrollspy="cls:uk-animation-scale-up; repeat:true;">
+        <p class="uk-text-justify" uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;">
+          <strong>Runtime:</strong> 60 min
         </p>
-
-        <img class="uk-align-center uk-align-left@m uk-margin-remove-adjacent uk-border-rounded" src=".././images/ugo-dossi.webp" width="400" height="200" alt="Ugo Dossi - Art and Space">
-
-        <p class="uk-text-left uk-text-lighter uk-text-large">
-           The documentary offers exclusive insights into the Bavarian artist's studio and explains the deeper meaning of his works. Moreover, the film talks about the system and history of the tarot and the 	   automatic drawing method developed by the artist himself. Furthermore, it explores the issues of relative freedom and the ego in relation to the overall view of the universe.
+        <p uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;">
+          <strong>Filmmakers:</strong> Sara Ferro & Chris Weil
         </p>
-
-        <p class="uk-text-left uk-text-lighter uk-text-large">
-           Ugo Dossi - Art and Space is about an Italo-German artist who has delved into the world of tarot in his work, giving back the deck visually without many incrustations brought about by time, but also 	   remaining faithful to the original tarot. His whole way of thinking is influenced by magic, he just believes that art is a tool to enter into a cosmic understanding of our being part of everything and 	   it's also a kind of gnostic world view that he has, he also has key figures of esotericism like Mesmer or Reich in his artistic pantheon. Most of his work has been made under and through the 	    	   concept and practice of collective automatic drawing, collected during séances or by means of telepathy. 
+        <p uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;">
+          <strong>Featuring:</strong> Ugo Dossi
         </p>
-
-        <p class="uk-hidden@m"><br> <br> <br> <br> <br> <br> <br> <br></p>
-       
+        <p class="uk-dropcap uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">Ugo Dossi shows his works in the fields of <span class="uk-visible@l">metaphysics, astronomy, 	cosmos,</span> tarot, automatic drawing, <span class="uk-visible@l">hypnosis, telepathy,</span> alchemy and collective subconscious. </p>
+        <p class="uk-text-lighter uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">The figurative artist Ugo Dossi presents his works on metaphysics, astronomy and the cosmos, 	hypnosis, telepathy, tarot, alchemy, the collective subconscious, Franz Anton Mesmer and Wilhelm Reich, which have been shown twice at the Documenta in Kassel and twice at the Venice Biennale, as well as in 	many other international exhibitions and museums. </p>
+        <p class="uk-text-lighter uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">The documentary offers exclusive insights into the Bavarian artist's studio and explains the 	deeper meaning of his works. Moreover, the film talks about the system and history of the tarot and the automatic drawing method developed by the artist himself. Furthermore, it explores the issues of 	relative freedom and the ego in relation to the overall view of the universe.</p>
+        <p class="uk-text-lighter uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">Ugo Dossi - Art and Space is about an Italo-German artist who has delved into the world of 	tarot in his work, giving back the deck visually without many incrustations brought about by time, but also remaining faithful to the original tarot. His whole way of thinking is influenced by magic, he just 	believes that art is a tool to enter into a cosmic understanding of our being part of everything and it's also a kind of gnostic world view that he has, he also has key figures of esotericism like Mesmer or 	Reich in his artistic pantheon. Most of his work has been made under and through the concept and practice of collective automatic drawing, collected during séances or by means of telepathy. </p>
+        <!-- Gallery -->
+        <div uk-lightbox uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">
+          <div uk-slider="sets: false; autoplay: true" tabindex="-1">
+            <div class="uk-position-relative uk-visible-toggle uk-light uk-padding uk-padding-remove-horizontal uk-padding-remove-top">
+              <div class="uk-slider-items uk-child-width-1-1 uk-child-width-1-3@m uk-grid uk-flex uk-flex-middle">
+                <!-- Awards -->
+                <div class="uk-background-muted uk-flex uk-flex-center uk-flex-middle uk-text-center">
+                  <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider autoplay="true" autoplay-interval="5000" pause-on-hover="true">
+                    <ul class="uk-section uk-slider-items uk-child-width-1-1 uk-child-width-1-1@s uk-child-width-1-1@m uk-child-width-1-1@l" style="cursor:grab;">
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Official Selection</span>
+                            <br>
+                            <span class="uk-text-large uk-text-bold">LABOCINE</span>
+                            <br>
+                            <span class="uk-text-lighter">New York 2022</span>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Special Screening</span>
+                            <br>
+                            <span class="uk-text-large uk-text-bold">Star Cinema <br>DECENTRALAND <br>Metaverse </span>
+                            <br>
+                            <span class="uk-text-lighter">USA 2022</span>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Official Selection</span>
+                            <br>
+                            <span class="uk-text-medium uk-text-bold">AdAC <br>Archivio D'arte <br>Contemporanea <br>Università degli <br>Studi Di Genova </span>
+                            <br>
+                            <span class="uk-text-lighter">Genoa 2022</span>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Special Screening</span>
+                            <br>
+                            <span class="uk-text-large uk-text-bold">Teatro Bloser</span>
+                            <br>
+                            <span class="uk-text-lighter">Genoa 2018</span>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Official Selection</span>
+                            <br>
+                            <span class="uk-text-large uk-text-bold">Alexandre <br>Trauner <br>ART / Film <br>Festival </span>
+                            <br>
+                            <span class="uk-text-lighter">Szolnok 2018</span>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <img src="./../images/laurel.png" width="400" height="600" alt="">
+                        <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+                          <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+                            <span>Official Selection</span>
+                            <br>
+                            <span class="uk-text-large uk-text-bold">Cosmopolis <br>Film Awards </span>
+                            <br>
+                            <span class="uk-text-lighter">Rome 2017</span>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <!-- Awards End -->
+                <!-- Images -->
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi.webp" width="600" height="400" alt="Ugo Dossi - Art and Space - Documentary" class="uk-border-rounded">
+                  </a>
+                </div>
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi-1.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi-1.webp" width="600" height="400" alt="Ugo Dossi" class="uk-border-rounded">
+                  </a>
+                </div>
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi-2.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi-2.webp" width="600" height="400" alt="Ugo Dossi" class="uk-border-rounded">
+                  </a>
+                </div>
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi-3.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi-3.webp" width="600" height="400" alt="Ugo Dossi" class="uk-border-rounded">
+                  </a>
+                </div>
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi-4.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi-4.webp" width="600" height="400" alt="Ugo Dossi" class="uk-border-rounded">
+                  </a>
+                </div>
+                <div class="hover-scale">
+                  <a href=".././images/ugo-dossi-5.webp" data-caption="Ugo Dossi - Art and Space - Documentary">
+                    <img src=".././images/ugo-dossi-5.webp" width="600" height="400" alt="Ugo Dossi" class="uk-border-rounded">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Images End-->
+        <!-- Gallery End -->
+      </div>
+    </section>
+    <!-- Content End -->
+    <!-- Logo -->
+    <div class="uk-visible@m uk-sticky uk-position-top-left">
+      <a href="https://artoldo.github.io/">
+        <img src=".././images/1.png" onmouseover="this.src='.././images/2.png'" onmouseout="this.src='.././images/1.png'" alt="logo" style="width:200px;">
+      </a>
     </div>
-</li>
-
-<!-- Details End -->
-
-
-</ul>
-
-<!-- Switcher End -->
-
-
-</div>
-
-<!-- Tab End -->
-
-
-           </div>
-        </li>
-    </ul>
-
-<!-- Background End -->
-
-
-<!-- Share -->
-
-<div class="uk-position-bottom-center uk-padding-small">
-<div class="a2a_kit a2a_kit_size_32 a2a_default_style" data-a2a-icon-color="#AD9A00";>
-    <a class="a2a_button_facebook"></a>
-    <a class="a2a_button_x"></a>
-    <a class="a2a_button_reddit"></a>
-    <a class="a2a_button_whatsapp"></a>
-    <a class="a2a_button_telegram"></a>
-    <a class="a2a_button_email"></a>
-    <a class="a2a_button_copy_link"></a>
-</div>
-<script async src="https://static.addtoany.com/menu/page.js"></script>
-</div>
-
-<!-- Share End -->
-
-
-</div>
-
-<!-- Wrapper End -->
-
-
-</body>
+    <script>
+      // Preload second image
+      (() => {
+        (new Image).src = ".././images/2.png";
+      })();
+    </script>
+    <!-- Logo End -->
+    <!-- Share Container -->
+    <div class="share-container uk-visible@m">
+      <!-- Share Icon Button -->
+      <a href="#" class="uk-icon-button uk-rounded" uk-icon="social" uk-toggle="target: #share-menu"></a>
+      <!-- Dropdown Share Menu -->
+      <div id="share-menu" class="uk-card uk-card-body uk-card-default uk-box-shadow-medium uk-animation-slide-bottom-small uk-border-rounded share-menu" hidden>
+        <!-- Close Button -->
+        <button class="uk-close uk-position-small uk-position-top-right" uk-close onclick="document.getElementById('share-menu').hidden = true;"></button>
+        <ul class="uk-list uk-list-divider uk-margin-remove">
+          <li>
+            <strong>Share this page</strong>
+          </li>
+          <li> Official website: <span onclick="copyToClipboard('https://artoldo.com/ugodossi')" uk-tooltip="title: Copy Link; pos: top" style="color:#AD9A00; cursor: pointer;">artoldo.com/ugodossi</span>
+          </li>
+          <li> Permalink: <span onclick="copyToClipboard('https://artoldo.github.io/ugodossi')" uk-tooltip="title: Copy Link; pos: bottom" style="color:#AD9A00; cursor: pointer;">artoldo.github.io/ugodossi</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      // Function to copy text to clipboard
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          UIkit.notification({
+            message: 'Link copied!',
+            status: 'success',
+            pos: 'bottom-left',
+            timeout: 2000
+          });
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+          UIkit.notification({
+            message: 'Failed to copy!',
+            status: 'danger',
+            pos: 'bottom-left',
+            timeout: 2000
+          });
+        });
+      }
+    </script>
+    <!-- Share Container End -->
+  </body>
 </html>
