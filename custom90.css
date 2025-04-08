@@ -321,6 +321,7 @@ color: #fff;
   width: 90%;
   height: 90%;
   border-radius: 25px;
+  border: 1px solid black;
 }
 
 .uk-lightbox-toolbar {
