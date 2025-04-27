@@ -290,9 +290,9 @@ color: #fff;
   max-width: 200px;
   padding: 6px 12px;
   /* 5 */
-  background: #fff;
+  background: #000;
   border-radius: 15px;
-  color: #AD9A00;
+  color: #fff;
   font-size: 12px;
 }
 
