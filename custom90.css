@@ -318,22 +318,21 @@ color: #fff;
 }
 
 .uk-lightbox-iframe {
-  border-radius: 0; /* Default: no rounding for Chrome, Brave, etc. */
   width: 90%;
   height: 90%;
+  border: 0px solid black;
+  border-radius: 0; /* Default: no rounding for Chrome, Brave, etc. */
 }
 
 /* Safari-only override */
 @supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
   .uk-lightbox-iframe {
     border-radius: 25px;
-    width: 90%;
-    height: 90%;
   }
 }
 
 .uk-lightbox-toolbar {
-  padding: 10px 10px;
+  padding: 5px 5px;
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
 }
