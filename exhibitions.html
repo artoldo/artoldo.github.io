@@ -30,6 +30,56 @@
     }, 'lightbox');
 </script>
 
+<style>
+
+      /* Color */
+      p,
+      h1,
+      h2,
+      h3,
+      li {
+        color: black !important;
+      }
+
+      .white {
+       color: white !important;
+      }
+      
+
+        /* Positioning the share button */
+        .share-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        /* Dropdown styling */
+        .share-menu {
+            min-width: 200px;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        /* Status-specific styles */
+        .uk-notification-message-success {
+            background-color: #d4edda; /* Light green */
+            color: #155724; /* Dark green text */
+            border-left: 4px solid #28a745; /* Accent border */
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .uk-notification-message-danger {
+            background-color: #f8d7da; /* Light red */
+            color: #721c24; /* Dark red text */
+            border-left: 4px solid #dc3545; /* Accent border */
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+    </style>
+
   </head>
   <body>
 
@@ -49,6 +99,46 @@
 <div class="uk-grid-collapse uk-flex-middle uk-flex-center uk-background-primary uk-padding" uk-grid>
                 
 	<div class="uk-section uk-width-1-1@s uk-width-3-4@m" uk-scrollspy="media: @m; target: > div; cls: uk-animation-fade; delay: 250; repeat: false;">
+
+                <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
+		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle24;">
+		        <hr class="uk-divider-icon">
+			<h2 class="uk-text-lighter">No Weapon World – Genoa <sup><span class="uk-badge">Group Show</span></sup></h2>
+                        <h3 class="uk-text-lighter">Venue:  Biblioteca Universitaria di Genova (Italy)</h3>
+	        </div>
+
+		<span class="toggle24"></span>
+		<div class="toggle24 uk-width-1-1" hidden>
+		<div class="uk-card uk-card-default uk-card-large uk-card-body uk-border-rounded">
+
+		<div class="uk-padding-large uk-padding-remove-left">
+                <span uk-lightbox>
+		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" href="./images/artoldo-no-weapon-world.jpg"
+		data-caption="Mascara Cartridge Déjà War | Poster"><span class="uk-visible@m">View ARTOLDO's </span>Artwork</a>
+        	</span>
+                </div>
+
+		<p class="uk-card-title uk-text-lighter uk-text-uppercase">Sat 15 Mar - Sat 22 Mar 2025</p>
+
+            	<span class="uk-text-justify">
+
+		<p>The jury of NoWeapon.World has selected the following artists for the first public art poster exhibition in Genoa:</p>
+
+		<p class="uk-dropcap">
+		Call#1: 
+		ARTOLDO – Sara Ferro & Chris Weil, Federica Barcellona, Stefano Bonacci, Attilio Brancaccio, Cristiano Cesolari, Michele Chiossi, Andrea Columbu, Luca Costantini, Valeria Dardano, 
+		Mateusz Domeradzki, Kitty Doomernik, Andrea Famà, Lidia Fiabane, Fernando Garbellotto, Riccardo Garolla, Lory Ginedumont, Serge Gualini, Maria Hanl, Carla Iacono, Pierpaolo Koss, Gloria Veronica 		Lavagnini, Giusi Lorelli, Filippo Moroni, Mauro Pipani, Annalisa Pisoni Cimelli, Noémia Prada, Roberta Orio, Sona Sahakian, Tenedle, Alessandra Vinotto, Henk Wijnen, Stefania Zambon
+		</p>
+		<p class="uk-dropcap">
+		Call#2:  
+		Eliana Adorno, Francesco Impellizzeri, Giuseppe Piccione, Carla Crosio, Aleksander Willemse, Angelo Pretolani, Barbara Trommeter, Bruno Anitori, Carla Sabrina Marenco Cerino, Christine Laprell, 		Claudia Virginia Vitari, Danilo Fiorucci, Luisa Mazza, Manuela Bedeschi, Marko Vojnic, Margherita Levo Rosenberg, Melarance, Mimmo Padovano, Monica Penna,
+		Paola Mongelli, Alice Musacco, Roberto Rossini, Roberto Rustichelli, Rosa Quint, Samanta Malavasi, Simona Muzzeddu, Nina Staehli, Stefano Bigazzi, Virginia Ryan, Vytautas Buinevicius, Emo Risaliti, 		Valentin Bakardajev
+		</p>
+
+		</span>
+
+		</div>
+		</div>	
 
                 <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
 		style="transform: rotate(-5deg); cursor: pointer;" uk-toggle="target: .toggle25;">
@@ -71,7 +161,7 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom" 
 		href="https://youtu.be/No_439hKn6Y?autoplay=1&rel=0&modestbranding=1&playsinline=1&color=white&iv_load_policy=3" data-attrs="width: 1280; height: 720;" 
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Artifashion Intelligence™ – The Virtual Journey of the Mask">Watch Trailer</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Artifashion Intelligence™ – The Virtual Journey of the Mask">Play Trailer</a>
 		</span>
                 <span uk-lightbox>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom uk-visible@l"
@@ -104,7 +194,7 @@
                 <div class="uk-card uk-card-default uk-card-large uk-card-body uk-box-shadow-small uk-box-shadow-hover-large uk-padding uk-border-rounded" 
 		style="transform: rotate(5deg); cursor: pointer;" uk-toggle="target: .toggle24;">
 		        <hr class="uk-divider-icon">
-			<h2 class="uk-text-lighter">No Weapon World <sup><span class="uk-badge">Group Show</span></sup></h2>
+			<h2 class="uk-text-lighter">No Weapon World – Venice <sup><span class="uk-badge">Group Show</span></sup></h2>
                         <h3 class="uk-text-lighter">Venue:  Emergency, Venice-Giudecca (Italy)</h3>
 	        </div>
 
@@ -115,7 +205,7 @@
 		<div class="uk-padding-large uk-padding-remove-left">
                 <span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" href="./images/artoldo-no-weapon-world.jpg"
-		data-caption="Mascara Cartridge Déjà War | Poster">View <span class="uk-visible@m">ARTOLDO's</span> Artwork</a>
+		data-caption="Mascara Cartridge Déjà War | Poster"><span class="uk-visible@m">View ARTOLDO's </span>Artwork</a>
         	</span>
                 </div>
 
@@ -146,10 +236,10 @@
                 <span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="./images/whimseacall-artwork.jpeg"
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall | Fine Art Print">View <span class="uk-visible@m">ARTOLDO's</span> Artwork 1</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall | Fine Art Print"><span class="uk-visible@m">View ARTOLDO's </span>Artwork 1</a>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="./images/raggio-artwork.jpeg"
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil - Raggio d'acciaio №44 | Fine Art Print">View <span class="uk-visible@m">ARTOLDO's</span> Artwork 2</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil - Raggio d'acciaio №44 | Fine Art Print"><span class="uk-visible@m">View ARTOLDO's </span>Artwork 2</a>
         	</span>
                 </div>
 
@@ -184,27 +274,27 @@
 
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/mascara.html" data-type="iframe"
-		data-caption="">Video Poetry №1</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №1</a>
 	
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/micrognosing.html" data-type="iframe"
-		data-caption="">Video Poetry №2</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №2</a>
 
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/pegasomosh.html" data-type="iframe"
-		data-caption="">Video Poetry №3</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №3</a>
 
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/hauntology.html" data-type="iframe"
-		data-caption="">Video Poetry №4</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №4</a>
 
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/whimseacall.html" data-type="iframe"
-		data-caption="">Video Poetry №5</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №5</a>
 
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://artoldo.github.io/atb/cinepresa.html" data-type="iframe"
-		data-caption="">Video Poetry №6</a>
+		data-caption=""><span class="uk-visible@m">Video </span>Poetry №6</a>
 
                 </div>
 
@@ -250,7 +340,7 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="./images/raggio-artwork.jpeg"
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil - Raggio d'acciaio №44 | Fine Art Print">View <span class="uk-visible@m">ARTOLDO's</span> Artwork</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil - Raggio d'acciaio №44 | Fine Art Print"><span class="uk-visible@m">View ARTOLDO's</span> Artwork</a>
 		</span>
         	</div>
 
@@ -490,7 +580,7 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="./images/whimseacall-artwork.jpeg"
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall | Fine Art Print">View <span class="uk-visible@m">ARTOLDO's</span> Artwork</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: WhimSeaCall | Fine Art Print"><span class="uk-visible@m">View  ARTOLDO's </span>Artwork</a>
         	</span>
 		</div>
 
@@ -529,11 +619,11 @@
                 <span uk-lightbox>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom uk-visible@l"
 		href="./images/interview-artoldo-blast-uncompressed.pdf" data-type="iframe"
-		data-caption="ARTOLDO Interview - Il Blast">Read Interview</a>
+		data-caption="ARTOLDO Interview - Il Blast"><span class="uk-visible@m">Read </span>Interview</a>
 		</span>
 		<span>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom uk-hidden@l"
-		href="./images/interview-artoldo-blast.pdf" target="_blank">Read Interview</a>
+		href="./images/interview-artoldo-blast.pdf" target="_blank"><span class="uk-visible@m">Read </span>Interview</a>
 		</span>
 		</div>
 
@@ -707,11 +797,11 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom uk-visible@l" 
 		href="./images/interview-artoldo-itsliquid-uncompressed.pdf" data-type="iframe"
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Interview">Read Interview</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Interview"><span class="uk-visible@m">Read </span>Interview</a>
         	</span>
 		<span uk-lightbox>
 		<a class="uk-button uk-button-default uk-border-pill uk-margin-small-bottom uk-hidden@l" 
-		href="./images/interview-artoldo-itsliquid.pdf" target="_blank">Read Interview</a>
+		href="./images/interview-artoldo-itsliquid.pdf" target="_blank"><span class="uk-visible@m">Read </span>Interview</a>
         	</span>
 		</div>
 
@@ -935,7 +1025,7 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://vimeo.com/482704311?autoplay=1&title=0&byline=0&portrait=0" data-attrs="width: 1280; height: 720;" 
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Butterfly 360°">Play 360° <span class="uk-visible@m">Video</span></a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Butterfly 360°">Play 360°<span class="uk-visible@m"> Video</span></a>
         	</span>
 		</div>
 
@@ -1067,7 +1157,7 @@
 		<span uk-lightbox>
 		<a class="uk-button uk-button-primary uk-border-pill uk-margin-small-bottom" 
 		href="https://youtu.be/xiDfxoB4qQU?autoplay=1&rel=0&modestbranding=1&playsinline=1&color=white&iv_load_policy=3" data-attrs="width: 1280; height: 720;" 
-		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Anamorpheion - In/between Worlds">Play Video</a>
+		data-caption="ARTOLDO - Sara Ferro & Chris Weil: Anamorpheion - In/between Worlds">Watch Show</a>
         	</span>
 		</div>
 
@@ -1101,7 +1191,6 @@
 </div>
 
 <!-- Exhibitions End -->
-
 
   </body>
 </html>
