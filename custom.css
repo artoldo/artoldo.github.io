@@ -383,3 +383,16 @@ button:active {
 	-o-outline: 0 !important;
 	-webkit-outline: 0 !important;
 }
+
+
+/* Disable justification by default */
+  .uk-text-justify {
+    text-align: left !important;
+  }
+
+/* Enable justification from medium screens up (≥960px) */
+  @media (min-width: 960px) {
+    .uk-text-justify {
+      text-align: justify !important;
+    }
+  }
