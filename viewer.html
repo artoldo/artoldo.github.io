@@ -14,57 +14,39 @@
     }
     h1 {
       font-size: 2rem;
-      margin-bottom: 0.5em;
       text-align: center;
       color: #2c3e50;
     }
     input[type="file"] {
       display: block;
       margin: 1em auto 2em;
-      font-size: 1rem;
-      cursor: pointer;
     }
     #preview {
       display: flex;
       justify-content: center;
       margin-bottom: 1em;
     }
-    #preview img,
-    #preview video {
+    #preview img, #preview video {
       max-width: 300px;
       max-height: 200px;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
-      object-fit: contain;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     pre {
       background: #fff;
+      padding: 1em;
       border-radius: 8px;
-      padding: 1em 1.5em;
-      box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 400px;
       overflow-y: auto;
-      font-family: 'Fira Mono', monospace;
-      font-size: 0.9rem;
-      line-height: 1.4;
     }
-    .section-title {
-      font-weight: 700;
-      margin-top: 1.5em;
-      margin-bottom: 0.3em;
-      font-size: 1.1rem;
-      color: #34495e;
-      border-bottom: 2px solid #3498db;
-      padding-bottom: 0.2em;
+    details {
+      margin-top: 1em;
     }
     .note {
-      font-size: 0.9em;
-      color: #666;
       text-align: center;
-      margin-top: 2em;
       font-style: italic;
+      color: #666;
     }
   </style>
 </head>
@@ -75,49 +57,32 @@
   <pre id="output">Choose a file to extract metadata...</pre>
   <div class="note">All processing is done locally in your browser. No files are uploaded.</div>
 
-  <!-- Load music-metadata-browser as an ES module and attach to window.mm -->
-<script type="module">
-  import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
-  import { Buffer } from 'https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js';
-  window.mm = musicMetadata;
-  window.Buffer = Buffer;
-</script>
-
-  <!-- Load EXIF library for image metadata -->
+  <script type="module">
+    import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
+    window.mm = musicMetadata;
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
 
-  <!-- Load MediaInfo.js dynamically -->
   <script>
     async function loadMediaInfo() {
+      if (window.MediaInfoLib) return window.MediaInfoLib;
       return new Promise((resolve, reject) => {
-        if(window.MediaInfo) {
-          resolve(window.MediaInfo({
-            format: 'object',
-            locateFile: (path) => `https://unpkg.com/mediainfo.js@0.1.8/dist/${path}`
-          }));
-          return;
-        }
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/mediainfo.js@0.1.8/dist/mediainfo.min.js';
         script.onload = async () => {
-          try {
-            const mi = await window.MediaInfo({
-              format: 'object',
-              locateFile: (path) => `https://unpkg.com/mediainfo.js@0.1.8/dist/${path}`,
-            });
-            resolve(mi);
-          } catch (err) {
-            reject(err);
-          }
+          const mediaInfo = await window.MediaInfo({
+            format: 'object',
+            locateFile: path => `https://unpkg.com/mediainfo.js@0.1.8/dist/${path}`
+          });
+          window.MediaInfoLib = mediaInfo;
+          resolve(mediaInfo);
         };
         script.onerror = reject;
         document.head.appendChild(script);
       });
     }
-  </script>
 
-  <!-- Main Logic -->
-  <script>
     const fileInput = document.getElementById('fileInput');
     const output = document.getElementById('output');
     const preview = document.getElementById('preview');
@@ -125,7 +90,6 @@
     fileInput.addEventListener('change', async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-
       preview.innerHTML = '';
       output.textContent = `Reading metadata for: ${file.name}\n\n`;
       const type = file.type;
@@ -135,30 +99,27 @@
           await showImagePreview(file);
           await readImageMetadata(file);
         } else if (type.startsWith('audio/')) {
-          await readMusicMetadata(file);
-        } else if (type.startsWith('video/') || isLikelyVideo(file.name)) {
+          await readBasicAudioInfo(file);
+          await readWithMediaInfo(file);
+          if (file.name.toLowerCase().endsWith('.mp3')) {
+            readMP3TagsWithJsMediaTags(file);
+          }
+        } else if (type.startsWith('video/')) {
           await showVideoPreview(file);
           await readWithMediaInfo(file);
         } else {
-          await readWithMediaInfo(file); // fallback for other types
+          await readWithMediaInfo(file);
         }
       } catch (err) {
         output.textContent += `\n❌ Error: ${err.message}`;
       }
     });
 
-    function isLikelyVideo(filename) {
-      return ['.mov', '.mp4', '.mkv', '.avi', '.webm'].some(ext => filename.toLowerCase().endsWith(ext));
-    }
-
     async function showImagePreview(file) {
       return new Promise((resolve, reject) => {
         const url = URL.createObjectURL(file);
-        const img = document.createElement('img');
-        img.onload = () => {
-          URL.revokeObjectURL(url);
-          resolve();
-        };
+        const img = new Image();
+        img.onload = () => { URL.revokeObjectURL(url); resolve(); };
         img.onerror = reject;
         img.src = url;
         preview.appendChild(img);
@@ -166,167 +127,85 @@
     }
 
     async function showVideoPreview(file) {
-      return new Promise((resolve, reject) => {
-        const url = URL.createObjectURL(file);
-        const video = document.createElement('video');
-        video.controls = true;
-        video.width = 300;
-        video.height = 200;
-        video.onloadeddata = () => {
-          URL.revokeObjectURL(url);
-          resolve();
-        };
-        video.onerror = reject;
-        video.src = url;
-        preview.appendChild(video);
-      });
+      const url = URL.createObjectURL(file);
+      const video = document.createElement('video');
+      video.controls = true;
+      video.src = url;
+      preview.appendChild(video);
     }
 
     async function readImageMetadata(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
+      const reader = new FileReader();
+      reader.onload = e => {
         const img = new Image();
-
-        reader.onload = function (e) {
-          img.onload = function () {
-            EXIF.getData(img, function () {
-              const data = EXIF.getAllTags(this);
-              if (Object.keys(data).length === 0) {
-                output.textContent += "📷 No EXIF metadata found.\n";
-              } else {
-                output.textContent += '📷 Image Metadata:\n' + JSON.stringify(data, null, 2) + '\n';
-              }
-              resolve();
-            });
-          };
-          img.src = e.target.result;
+        img.onload = () => {
+          EXIF.getData(img, function () {
+            const data = EXIF.getAllTags(this);
+            output.innerHTML += `<hr><h3>📷 Image EXIF Metadata</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+          });
         };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+    async function readBasicAudioInfo(file) {
+      return new Promise((resolve, reject) => {
+        const audio = new Audio();
+        audio.preload = 'metadata';
+        audio.onloadedmetadata = () => {
+          output.innerHTML += `<hr><h3>📻 Basic Audio Info</h3><ul><li>⏱ Duration: ${audio.duration.toFixed(2)}s</li></ul>`;
+          resolve();
+        };
+        audio.onerror = () => reject(new Error("Audio metadata could not be read"));
+        audio.src = URL.createObjectURL(file);
       });
     }
 
-async function readMusicMetadata(file) {
-  const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('Timed out after 10s')), ms));
-  try {
-    while (typeof window.mm === 'undefined') {
-      await new Promise(r => setTimeout(r, 50));
+    function readMP3TagsWithJsMediaTags(file) {
+      jsmediatags.read(file, {
+        onSuccess: function(tag) {
+          output.innerHTML += `<hr><details open><summary>📝 ID3 Tags (jsmediatags)</summary><pre>${JSON.stringify(tag.tags, null, 2)}</pre></details>`;
+          if (tag.tags.picture) {
+            const { data, format } = tag.tags.picture;
+            const byteArray = new Uint8Array(data);
+            const blob = new Blob([byteArray], { type: format });
+            const url = URL.createObjectURL(blob);
+            preview.innerHTML += `<img src="${url}" alt="Cover Art">`;
+          }
+        },
+        onError: function(error) {
+          output.innerHTML += `<p>❌ jsmediatags error: ${error.type} - ${error.info}</p>`;
+        }
+      });
     }
-
-    const buffer = await file.arrayBuffer();
-
-    const metadata = await Promise.race([
-      window.mm.parseBuffer(Buffer.from(buffer), file.type, { size: file.size }),
-      timeout(10000)
-    ]);
-
-    console.log('Parsed audio metadata:', metadata); // for debugging
-
-    if (!metadata || (!metadata.common && !metadata.format)) {
-      output.innerHTML += '<p>⚠️ No readable metadata found in this audio file.</p>';
-      return;
-    }
-
-    const { format } = metadata;
-
-    const duration = format.duration
-      ? `${Math.floor(format.duration / 60)}:${String(Math.floor(format.duration % 60)).padStart(2, '0')}`
-      : 'Unknown';
-
-    const bitrate = format.bitrate
-      ? `${(format.bitrate / 1000).toFixed(0)} kbps`
-      : 'Unknown';
-
-    const channels = format.numberOfChannels
-      ? (format.numberOfChannels === 1 ? 'Mono' :
-         format.numberOfChannels === 2 ? 'Stereo' :
-         `${format.numberOfChannels} channels`)
-      : 'Unknown';
-
-    output.innerHTML += `
-      <hr>
-      <h3>🎵 Audio Summary</h3>
-      <ul>
-        <li><strong>⏱ Duration:</strong> ${duration}</li>
-        <li><strong>🔈 Channels:</strong> ${channels}</li>
-        <li><strong>🎚 Bitrate:</strong> ${bitrate}</li>
-      </ul>
-    `;
-
-    if (metadata.common && Object.keys(metadata.common).length > 0) {
-      output.innerHTML += `
-        <details open>
-          <summary>📝 Common Tags</summary>
-          <pre>${JSON.stringify(metadata.common, null, 2)}</pre>
-        </details>
-      `;
-    }
-
-    if (format && Object.keys(format).length > 0) {
-      output.innerHTML += `
-        <details>
-          <summary>⚙️ Technical Format Info</summary>
-          <pre>${JSON.stringify(format, null, 2)}</pre>
-        </details>
-      `;
-    }
-
-    output.innerHTML += `
-      <details>
-        <summary>🧪 Raw Full Metadata</summary>
-        <pre>${JSON.stringify(metadata, null, 2)}</pre>
-      </details>
-    `;
-
-  } catch (err) {
-    output.innerHTML += `<p>❌ Audio metadata error: ${err.message}</p>`;
-    console.error(err);
-  }
-}
 
     async function readWithMediaInfo(file) {
-      try {
-        const mediaInfo = await loadMediaInfo();
-        const getSize = () => file.size;
-        const readChunk = (chunkSize, offset) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = e => resolve(new Uint8Array(e.target.result));
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize));
-          });
+      const mediaInfo = await loadMediaInfo();
+      const getSize = () => file.size;
+      const readChunk = (chunkSize, offset) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(new Uint8Array(e.target.result));
+          reader.onerror = reject;
+          reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize));
+        });
 
-        const result = await mediaInfo.analyzeData(getSize, readChunk);
-        if (!result || !result.media) {
-          output.textContent += '📦 No metadata found by MediaInfo.\n';
-          return;
-        }
+      const result = await mediaInfo.analyzeData(getSize, readChunk);
+      if (!result || !result.media || !result.media.track) {
+        output.innerHTML += '<p>📦 No metadata found by MediaInfo.</p>';
+        return;
+      }
 
-        // Output general metadata (if any)
-        if(result.media.track && result.media.track.length > 0){
-          output.textContent += '📦 MediaInfo Metadata:\n';
+      const grouped = result.media.track.reduce((acc, track) => {
+        const type = track["@type"] || "Unknown";
+        acc[type] = acc[type] || [];
+        acc[type].push(track);
+        return acc;
+      }, {});
 
-          // Group tracks by type for clarity
-          const tracksByType = result.media.track.reduce((acc, t) => {
-            const type = t['@type'] || 'Unknown';
-            if (!acc[type]) acc[type] = [];
-            acc[type].push(t);
-            return acc;
-          }, {});
-
-          for(const [type, tracks] of Object.entries(tracksByType)) {
-            output.textContent += `\n--- ${type} Track(s) ---\n`;
-            tracks.forEach((track, idx) => {
-              output.textContent += `Track ${idx + 1}:\n${JSON.stringify(track, null, 2)}\n\n`;
-            });
-          }
-        } else {
-          output.textContent += JSON.stringify(result.media, null, 2);
-        }
-
-      } catch (err) {
-        output.textContent += `❌ MediaInfo error: ${err.message}\n`;
+      for (const [type, tracks] of Object.entries(grouped)) {
+        output.innerHTML += `<hr><details open><summary>📁 ${type} Tracks (${tracks.length})</summary><pre>${JSON.stringify(tracks, null, 2)}</pre></details>`;
       }
     }
   </script>
