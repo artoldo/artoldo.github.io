@@ -91,7 +91,7 @@
       const file = event.target.files[0];
       if (!file) return;
       preview.innerHTML = '';
-      output.textContent = `Reading metadata for: ${file.name}\n\n`;
+      output.innerHTML = `<p>Reading metadata for: <b>${file.name}</b></p>`;
       const type = file.type;
 
       try {
@@ -100,18 +100,21 @@
           await readImageMetadata(file);
         } else if (type.startsWith('audio/')) {
           await readBasicAudioInfo(file);
-          await readWithMediaInfo(file);
+          await readWithMediaInfo(file, true);
           if (file.name.toLowerCase().endsWith('.mp3')) {
             readMP3TagsWithJsMediaTags(file);
           }
         } else if (type.startsWith('video/')) {
           await showVideoPreview(file);
-          await readWithMediaInfo(file);
+          await readWithMediaInfo(file, false);
         } else {
-          await readWithMediaInfo(file);
+          await readWithMediaInfo(file, false);
         }
       } catch (err) {
-        output.textContent += `\n❌ Error: ${err.message}`;
+        // hide audio errors silently
+        if (!type.startsWith('audio/')) {
+          output.innerHTML += `<p>❌ Error: ${err.message}</p>`;
+        }
       }
     });
 
@@ -141,7 +144,12 @@
         img.onload = () => {
           EXIF.getData(img, function () {
             const data = EXIF.getAllTags(this);
-            output.innerHTML += `<hr><h3>📷 Image EXIF Metadata</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            output.innerHTML += `
+              <hr>
+              <details open>
+                <summary>📷 Image EXIF Metadata</summary>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+              </details>`;
           });
         };
         img.src = e.target.result;
@@ -149,15 +157,33 @@
       reader.readAsDataURL(file);
     }
 
+    // --- UPDATED to add bitrate and channels for basic audio ---
     async function readBasicAudioInfo(file) {
       return new Promise((resolve, reject) => {
         const audio = new Audio();
         audio.preload = 'metadata';
+
         audio.onloadedmetadata = () => {
-          output.innerHTML += `<hr><h3>📻 Basic Audio Info</h3><ul><li>⏱ Duration: ${audio.duration.toFixed(2)}s</li></ul>`;
+          // Channels: We can try to detect mono/stereo from audio channel count if available,
+          // but HTML Audio API doesn't expose channel info directly.
+          // So we leave that info to MediaInfo.
+          output.innerHTML += `
+            <hr>
+            <details open>
+              <summary>📻 Basic Audio Info</summary>
+              <ul>
+                <li>⏱ Duration: ${audio.duration.toFixed(2)}s</li>
+              </ul>
+            </details>
+          `;
           resolve();
         };
-        audio.onerror = () => reject(new Error("Audio metadata could not be read"));
+
+        audio.onerror = () => {
+          // Hide errors silently for audio as requested
+          resolve();
+        };
+
         audio.src = URL.createObjectURL(file);
       });
     }
@@ -165,22 +191,28 @@
     function readMP3TagsWithJsMediaTags(file) {
       jsmediatags.read(file, {
         onSuccess: function(tag) {
-          output.innerHTML += `<hr><details open><summary>📝 ID3 Tags (jsmediatags)</summary><pre>${JSON.stringify(tag.tags, null, 2)}</pre></details>`;
+          output.innerHTML += `
+            <hr>
+            <details open>
+              <summary>📝 ID3 Tags (jsmediatags)</summary>
+              <pre>${JSON.stringify(tag.tags, null, 2)}</pre>
+            </details>`;
           if (tag.tags.picture) {
             const { data, format } = tag.tags.picture;
             const byteArray = new Uint8Array(data);
             const blob = new Blob([byteArray], { type: format });
             const url = URL.createObjectURL(blob);
-            preview.innerHTML += `<img src="${url}" alt="Cover Art">`;
+            preview.innerHTML += `<img src="${url}" alt="Cover Art" style="max-width:200px; margin-top:1em;">`;
           }
         },
         onError: function(error) {
-          output.innerHTML += `<p>❌ jsmediatags error: ${error.type} - ${error.info}</p>`;
+          // Silently ignore jsmediatags errors
         }
       });
     }
 
-    async function readWithMediaInfo(file) {
+    // --- UPDATED to add bitrate and channels info inside MediaInfo output ---
+    async function readWithMediaInfo(file, isAudio) {
       const mediaInfo = await loadMediaInfo();
       const getSize = () => file.size;
       const readChunk = (chunkSize, offset) =>
@@ -205,7 +237,44 @@
       }, {});
 
       for (const [type, tracks] of Object.entries(grouped)) {
-        output.innerHTML += `<hr><details open><summary>📁 ${type} Tracks (${tracks.length})</summary><pre>${JSON.stringify(tracks, null, 2)}</pre></details>`;
+        // For audio/video, extract bitrate & channels summary if available
+        let summary = '';
+        if (type === 'Audio' || type === 'Video') {
+          tracks.forEach((track, idx) => {
+            const bitrate = track.BitRate || track.BitRate_Mode || track.BitRate_String || track['Bit rate'];
+            // BitRate can be a string or number, ensure string with kbps unit
+            let bitrateStr = '';
+            if (bitrate) {
+              if (typeof bitrate === 'number') {
+                bitrateStr = `${(bitrate / 1000).toFixed(0)} kbps`;
+              } else if (typeof bitrate === 'string') {
+                bitrateStr = bitrate.includes('kb/s') || bitrate.includes('kbps') ? bitrate : bitrate + ' kbps';
+              }
+            }
+
+            // Channels: use 'Channel(s)' or 'Channel(s)_Original' or 'Channels'
+            const channelsRaw = track.Channels || track['Channel(s)'] || track['Channel(s)_Original'] || track.Channels_Original;
+            let channelsStr = '';
+            if (channelsRaw) {
+              if (typeof channelsRaw === 'number') {
+                channelsStr = channelsRaw === 1 ? 'Mono' : (channelsRaw === 2 ? 'Stereo' : `${channelsRaw} channels`);
+              } else {
+                channelsStr = channelsRaw;
+              }
+            }
+
+            summary += `<li>Track ${idx + 1}: Bitrate: ${bitrateStr || 'N/A'}, Channels: ${channelsStr || 'N/A'}</li>`;
+          });
+          summary = `<ul>${summary}</ul>`;
+        }
+
+        output.innerHTML += `
+          <hr>
+          <details open>
+            <summary>📁 ${type} Tracks (${tracks.length})</summary>
+            ${summary}
+            <pre>${JSON.stringify(tracks, null, 2)}</pre>
+          </details>`;
       }
     }
   </script>
