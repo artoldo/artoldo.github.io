@@ -76,10 +76,12 @@
   <div class="note">All processing is done locally in your browser. No files are uploaded.</div>
 
   <!-- Load music-metadata-browser as an ES module and attach to window.mm -->
-  <script type="module">
-    import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
-    window.mm = musicMetadata;
-  </script>
+<script type="module">
+  import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
+  import { Buffer } from 'https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js';
+  window.mm = musicMetadata;
+  window.Buffer = Buffer;
+</script>
 
   <!-- Load EXIF library for image metadata -->
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
@@ -212,20 +214,22 @@ async function readMusicMetadata(file) {
       await new Promise(r => setTimeout(r, 50));
     }
 
-    const blob = file.slice(0, file.size); // full blob
+    const buffer = await file.arrayBuffer();
+
     const metadata = await Promise.race([
-      window.mm.parseBlob(blob),
+      window.mm.parseBuffer(Buffer.from(buffer), file.type, { size: file.size }),
       timeout(10000)
     ]);
 
+    console.log('Parsed audio metadata:', metadata); // for debugging
+
     if (!metadata || (!metadata.common && !metadata.format)) {
-      output.textContent += '⚠️ No readable metadata found in this audio file.\n';
+      output.innerHTML += '<p>⚠️ No readable metadata found in this audio file.</p>';
       return;
     }
 
     const { format } = metadata;
 
-    // Prepare summary values
     const duration = format.duration
       ? `${Math.floor(format.duration / 60)}:${String(Math.floor(format.duration % 60)).padStart(2, '0')}`
       : 'Unknown';
@@ -240,25 +244,44 @@ async function readMusicMetadata(file) {
          `${format.numberOfChannels} channels`)
       : 'Unknown';
 
-    output.textContent += `🎵 Audio Summary:
-⏱ Duration: ${duration}
-🔈 Channels: ${channels}
-🎚 Bitrate: ${bitrate}
+    output.innerHTML += `
+      <hr>
+      <h3>🎵 Audio Summary</h3>
+      <ul>
+        <li><strong>⏱ Duration:</strong> ${duration}</li>
+        <li><strong>🔈 Channels:</strong> ${channels}</li>
+        <li><strong>🎚 Bitrate:</strong> ${bitrate}</li>
+      </ul>
+    `;
 
-`;
-
-    if (metadata.common) {
-      output.textContent += '📝 Common Tags:\n' +
-        JSON.stringify(metadata.common, null, 2) + '\n';
+    if (metadata.common && Object.keys(metadata.common).length > 0) {
+      output.innerHTML += `
+        <details open>
+          <summary>📝 Common Tags</summary>
+          <pre>${JSON.stringify(metadata.common, null, 2)}</pre>
+        </details>
+      `;
     }
 
-    if (format) {
-      output.textContent += '⚙️ Technical Metadata:\n' +
-        JSON.stringify(format, null, 2) + '\n';
+    if (format && Object.keys(format).length > 0) {
+      output.innerHTML += `
+        <details>
+          <summary>⚙️ Technical Format Info</summary>
+          <pre>${JSON.stringify(format, null, 2)}</pre>
+        </details>
+      `;
     }
+
+    output.innerHTML += `
+      <details>
+        <summary>🧪 Raw Full Metadata</summary>
+        <pre>${JSON.stringify(metadata, null, 2)}</pre>
+      </details>
+    `;
 
   } catch (err) {
-    output.textContent += `❌ Audio metadata error: ${err.message}\n`;
+    output.innerHTML += `<p>❌ Audio metadata error: ${err.message}</p>`;
+    console.error(err);
   }
 }
 
