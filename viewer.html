@@ -205,24 +205,62 @@
       });
     }
 
-    async function readMusicMetadata(file) {
-      try {
-        // Wait until mm is available
-        while (typeof window.mm === 'undefined') {
-          await new Promise(r => setTimeout(r, 100));
-        }
-
-        const metadata = await mm.parseBlob(file);
-
-        output.textContent += '🎵 Audio Metadata (Common Tags):\n' + JSON.stringify(metadata.common, null, 2) + '\n';
-
-        if(metadata.format) {
-          output.textContent += '\n🎛 Audio Technical Metadata:\n' + JSON.stringify(metadata.format, null, 2) + '\n';
-        }
-      } catch (err) {
-        output.textContent += `⚠️ Could not read audio metadata: ${err.message}\n`;
-      }
+async function readMusicMetadata(file) {
+  const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('Timed out after 10s')), ms));
+  try {
+    while (typeof window.mm === 'undefined') {
+      await new Promise(r => setTimeout(r, 50));
     }
+
+    const blob = file.slice(0, file.size); // full blob
+    const metadata = await Promise.race([
+      window.mm.parseBlob(blob),
+      timeout(10000)
+    ]);
+
+    if (!metadata || (!metadata.common && !metadata.format)) {
+      output.textContent += '⚠️ No readable metadata found in this audio file.\n';
+      return;
+    }
+
+    const { format } = metadata;
+
+    // Prepare summary values
+    const duration = format.duration
+      ? `${Math.floor(format.duration / 60)}:${String(Math.floor(format.duration % 60)).padStart(2, '0')}`
+      : 'Unknown';
+
+    const bitrate = format.bitrate
+      ? `${(format.bitrate / 1000).toFixed(0)} kbps`
+      : 'Unknown';
+
+    const channels = format.numberOfChannels
+      ? (format.numberOfChannels === 1 ? 'Mono' :
+         format.numberOfChannels === 2 ? 'Stereo' :
+         `${format.numberOfChannels} channels`)
+      : 'Unknown';
+
+    output.textContent += `🎵 Audio Summary:
+⏱ Duration: ${duration}
+🔈 Channels: ${channels}
+🎚 Bitrate: ${bitrate}
+
+`;
+
+    if (metadata.common) {
+      output.textContent += '📝 Common Tags:\n' +
+        JSON.stringify(metadata.common, null, 2) + '\n';
+    }
+
+    if (format) {
+      output.textContent += '⚙️ Technical Metadata:\n' +
+        JSON.stringify(format, null, 2) + '\n';
+    }
+
+  } catch (err) {
+    output.textContent += `❌ Audio metadata error: ${err.message}\n`;
+  }
+}
 
     async function readWithMediaInfo(file) {
       try {
