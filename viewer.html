@@ -4,51 +4,135 @@
   <meta charset="UTF-8" />
   <meta name="robots" content="noindex, nofollow">
   <title>Universal Metadata Viewer</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 2em auto;
-      max-width: 900px;
-      background: #f5f7fa;
-      color: #333;
-    }
-    h1 {
-      font-size: 2rem;
-      text-align: center;
-      color: #2c3e50;
-    }
-    input[type="file"] {
-      display: block;
-      margin: 1em auto 2em;
-    }
-    #preview {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1em;
-    }
-    #preview img, #preview video {
-      max-width: 300px;
-      max-height: 200px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    pre {
-      background: #fff;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      white-space: pre-wrap;
-      overflow-y: auto;
-    }
-    details {
-      margin-top: 1em;
-    }
-    .note {
-      text-align: center;
-      font-style: italic;
-      color: #666;
-    }
-  </style>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #111;
+    color: #eee;
+    padding: 2em;
+    max-width: 900px;
+    margin: auto;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 1.5em;
+  }
+
+  input[type="file"] {
+    font-size: 1rem;
+    background: #1e1e1e;
+    color: #ddd;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 0.6em 1em;
+    margin: 0.5em auto 2em;
+    display: block;
+    transition: all 0.3s ease;
+  }
+
+  #preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5em;
+  }
+
+  #preview img,
+  #preview video {
+    max-width: 300px;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+
+  pre {
+    background: #1e1e1e;
+    color: #eee;
+    padding: 1em;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    text-align: left;
+  }
+
+  details {
+    margin-top: 1.5em;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 0.5em 1em;
+    text-align: left;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.03);
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  .note {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+    margin-top: 2em;
+  }
+
+  table.meta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5em;
+  }
+
+  table.meta-table th,
+  table.meta-table td {
+    border: 1px solid #333;
+    padding: 0.5em;
+    text-align: left;
+  }
+
+  table.meta-table th {
+    background-color: #222;
+    color: #ddd;
+  }
+
+  table.meta-table td {
+    background-color: #191919;
+    color: #ccc;
+  }
+
+  audio {
+    margin-top: 1em;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  button {
+    background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+    background-size: 400% 400%;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    padding: 0.75em 1.5em;
+    cursor: pointer;
+    animation: rainbowFlow 6s ease infinite;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  @keyframes rainbowFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
 </head>
 <body>
   <h1>Universal Metadata Viewer</h1>
@@ -63,7 +147,6 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
-
   <script>
     async function loadMediaInfo() {
       if (window.MediaInfoLib) return window.MediaInfoLib;
@@ -81,6 +164,20 @@
         script.onerror = reject;
         document.head.appendChild(script);
       });
+    }
+
+    function renderMetadataTable(title, dataObj) {
+      const rows = Object.entries(dataObj)
+        .map(([key, value]) => {
+  	const cleanValue = (typeof value === 'object' && value !== null) ? '-' : value;
+  	return `<tr><th>${key}</th><td>${cleanValue}</td></tr>`;
+	})
+        .join('');
+      return `<details open><summary>${title}</summary><table class="meta-table">${rows}</table></details>`;
+    }
+
+    function normalize(track) {
+      return Object.fromEntries(Object.entries(track || {}).filter(([_, v]) => v !== undefined && v !== null));
     }
 
     const fileInput = document.getElementById('fileInput');
@@ -111,7 +208,6 @@
           await readWithMediaInfo(file, false);
         }
       } catch (err) {
-        // hide audio errors silently
         if (!type.startsWith('audio/')) {
           output.innerHTML += `<p>❌ Error: ${err.message}</p>`;
         }
@@ -144,12 +240,13 @@
         img.onload = () => {
           EXIF.getData(img, function () {
             const data = EXIF.getAllTags(this);
-            output.innerHTML += `
-              <hr>
-              <details open>
-                <summary>📷 Image EXIF Metadata</summary>
-                <pre>${JSON.stringify(data, null, 2)}</pre>
-              </details>`;
+            const { MakerNote, ...otherTags } = data;
+
+            output.innerHTML += renderMetadataTable('📷 Image EXIF Metadata', otherTags);
+
+            if (MakerNote) {
+              output.innerHTML += `<details><summary>🛠 Maker Note</summary><pre>${JSON.stringify(MakerNote, null, 2)}</pre></details>`;
+            }
           });
         };
         img.src = e.target.result;
@@ -157,33 +254,17 @@
       reader.readAsDataURL(file);
     }
 
-    // --- UPDATED to add bitrate and channels for basic audio ---
     async function readBasicAudioInfo(file) {
       return new Promise((resolve, reject) => {
         const audio = new Audio();
         audio.preload = 'metadata';
-
         audio.onloadedmetadata = () => {
-          // Channels: We can try to detect mono/stereo from audio channel count if available,
-          // but HTML Audio API doesn't expose channel info directly.
-          // So we leave that info to MediaInfo.
-          output.innerHTML += `
-            <hr>
-            <details open>
-              <summary>📻 Basic Audio Info</summary>
-              <ul>
-                <li>⏱ Duration: ${audio.duration.toFixed(2)}s</li>
-              </ul>
-            </details>
-          `;
+          output.innerHTML += renderMetadataTable('📻 Basic Audio Info', {
+            Duration: audio.duration.toFixed(2) + 's'
+          });
           resolve();
         };
-
-        audio.onerror = () => {
-          // Hide errors silently for audio as requested
-          resolve();
-        };
-
+        audio.onerror = () => resolve();
         audio.src = URL.createObjectURL(file);
       });
     }
@@ -191,12 +272,7 @@
     function readMP3TagsWithJsMediaTags(file) {
       jsmediatags.read(file, {
         onSuccess: function(tag) {
-          output.innerHTML += `
-            <hr>
-            <details open>
-              <summary>📝 ID3 Tags (jsmediatags)</summary>
-              <pre>${JSON.stringify(tag.tags, null, 2)}</pre>
-            </details>`;
+          output.innerHTML += renderMetadataTable('📝 ID3 Tags (jsmediatags)', tag.tags);
           if (tag.tags.picture) {
             const { data, format } = tag.tags.picture;
             const byteArray = new Uint8Array(data);
@@ -205,13 +281,10 @@
             preview.innerHTML += `<img src="${url}" alt="Cover Art" style="max-width:200px; margin-top:1em;">`;
           }
         },
-        onError: function(error) {
-          // Silently ignore jsmediatags errors
-        }
+        onError: function(error) {}
       });
     }
 
-    // --- UPDATED to add bitrate and channels info inside MediaInfo output ---
     async function readWithMediaInfo(file, isAudio) {
       const mediaInfo = await loadMediaInfo();
       const getSize = () => file.size;
@@ -237,44 +310,18 @@
       }, {});
 
       for (const [type, tracks] of Object.entries(grouped)) {
-        // For audio/video, extract bitrate & channels summary if available
-        let summary = '';
-        if (type === 'Audio' || type === 'Video') {
-          tracks.forEach((track, idx) => {
-            const bitrate = track.BitRate || track.BitRate_Mode || track.BitRate_String || track['Bit rate'];
-            // BitRate can be a string or number, ensure string with kbps unit
-            let bitrateStr = '';
-            if (bitrate) {
-              if (typeof bitrate === 'number') {
-                bitrateStr = `${(bitrate / 1000).toFixed(0)} kbps`;
-              } else if (typeof bitrate === 'string') {
-                bitrateStr = bitrate.includes('kb/s') || bitrate.includes('kbps') ? bitrate : bitrate + ' kbps';
-              }
-            }
+        tracks.forEach((track, idx) => {
+          output.innerHTML += renderMetadataTable(`📁 ${type} Track ${tracks.length > 1 ? `(${idx + 1})` : ''}`, normalize(track));
+        });
+      }
 
-            // Channels: use 'Channel(s)' or 'Channel(s)_Original' or 'Channels'
-            const channelsRaw = track.Channels || track['Channel(s)'] || track['Channel(s)_Original'] || track.Channels_Original;
-            let channelsStr = '';
-            if (channelsRaw) {
-              if (typeof channelsRaw === 'number') {
-                channelsStr = channelsRaw === 1 ? 'Mono' : (channelsRaw === 2 ? 'Stereo' : `${channelsRaw} channels`);
-              } else {
-                channelsStr = channelsRaw;
-              }
-            }
-
-            summary += `<li>Track ${idx + 1}: Bitrate: ${bitrateStr || 'N/A'}, Channels: ${channelsStr || 'N/A'}</li>`;
-          });
-          summary = `<ul>${summary}</ul>`;
-        }
-
-        output.innerHTML += `
-          <hr>
-          <details open>
-            <summary>📁 ${type} Tracks (${tracks.length})</summary>
-            ${summary}
-            <pre>${JSON.stringify(tracks, null, 2)}</pre>
-          </details>`;
+      if (isAudio) {
+        const audioUrl = URL.createObjectURL(file);
+        preview.innerHTML += `
+          <audio controls style="margin-top: 1em; max-width: 100%;">
+            <source src="${audioUrl}" type="${file.type}">
+            Your browser does not support the audio element.
+          </audio>`;
       }
     }
   </script>
