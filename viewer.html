@@ -18,7 +18,6 @@
   h1 {
     font-size: 2rem;
     color: #fff;
-    margin-bottom: 1.5em;
   }
 
   input[type="file"] {
@@ -110,7 +109,7 @@
     max-width: 400px;
   }
 
-  button {
+  .rainbow-button {
     background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
     background-size: 400% 400%;
     color: #fff;
@@ -121,9 +120,12 @@
     cursor: pointer;
     animation: rainbowFlow 6s ease infinite;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+    display: inline-block;
+    text-align: center;
+    margin-bottom: 20px;
   }
 
-  button:hover {
+  .rainbow-button:hover {
     transform: scale(1.05);
   }
 
@@ -132,14 +134,25 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
+  #fileInput {
+    display: none;
+  }
+
+  label[for="fileInput"] {
+    cursor: pointer;
+  }
+
 </style>
 </head>
 <body>
   <h1>Universal Metadata Viewer</h1>
+  <h2>100% In-Browser · No Server Uploads · Full Privacy</h2> 
+  <h3>Read your file’s metadata.</h3>
+  <label for="fileInput" class="rainbow-button">Choose File</label>
   <input type="file" id="fileInput" />
   <div id="preview"></div>
   <pre id="output">Choose a file to extract metadata...</pre>
-  <div class="note">All processing is done locally in your browser. No files are uploaded.</div>
 
   <script type="module">
     import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
@@ -209,7 +222,7 @@
         }
       } catch (err) {
         if (!type.startsWith('audio/')) {
-          output.innerHTML += `<p>❌ Error: ${err.message}</p>`;
+          output.innerHTML += `<p>Error: ${err.message}</p>`;
         }
       }
     });
@@ -242,10 +255,10 @@
             const data = EXIF.getAllTags(this);
             const { MakerNote, ...otherTags } = data;
 
-            output.innerHTML += renderMetadataTable('📷 Image EXIF Metadata', otherTags);
+            output.innerHTML += renderMetadataTable('Image EXIF Metadata', otherTags);
 
             if (MakerNote) {
-              output.innerHTML += `<details><summary>🛠 Maker Note</summary><pre>${JSON.stringify(MakerNote, null, 2)}</pre></details>`;
+              output.innerHTML += `<details><summary>Maker Note</summary><pre>${JSON.stringify(MakerNote, null, 2)}</pre></details>`;
             }
           });
         };
@@ -259,7 +272,7 @@
         const audio = new Audio();
         audio.preload = 'metadata';
         audio.onloadedmetadata = () => {
-          output.innerHTML += renderMetadataTable('📻 Basic Audio Info', {
+          output.innerHTML += renderMetadataTable('Basic Audio Info', {
             Duration: audio.duration.toFixed(2) + 's'
           });
           resolve();
@@ -272,7 +285,7 @@
     function readMP3TagsWithJsMediaTags(file) {
       jsmediatags.read(file, {
         onSuccess: function(tag) {
-          output.innerHTML += renderMetadataTable('📝 ID3 Tags (jsmediatags)', tag.tags);
+          output.innerHTML += renderMetadataTable('ID3 Tags (jsmediatags)', tag.tags);
           if (tag.tags.picture) {
             const { data, format } = tag.tags.picture;
             const byteArray = new Uint8Array(data);
@@ -298,7 +311,7 @@
 
       const result = await mediaInfo.analyzeData(getSize, readChunk);
       if (!result || !result.media || !result.media.track) {
-        output.innerHTML += '<p>📦 No metadata found by MediaInfo.</p>';
+        output.innerHTML += '<p>No metadata found.</p>';
         return;
       }
 
@@ -311,7 +324,7 @@
 
       for (const [type, tracks] of Object.entries(grouped)) {
         tracks.forEach((track, idx) => {
-          output.innerHTML += renderMetadataTable(`📁 ${type} Track ${tracks.length > 1 ? `(${idx + 1})` : ''}`, normalize(track));
+          output.innerHTML += renderMetadataTable(`${type} Track ${tracks.length > 1 ? `(${idx + 1})` : ''}`, normalize(track));
         });
       }
 
