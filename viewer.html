@@ -269,96 +269,12 @@
       preview.appendChild(canvas);
     }
 
-async function extractPDFMetadata(file) {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const metadata = await pdf.getMetadata();
-
-  // Standard info dictionary metadata
-  if (metadata.info) {
-    output.innerHTML += renderMetadataTable('PDF Info Metadata', metadata.info);
-  }
-
-  // Raw XMP metadata (XML string)
-  if (metadata.metadata) {
-    const rawXMP = metadata.metadata.getMetadata();
-    output.innerHTML += `<details open><summary>XMP Metadata (Raw XML)</summary><pre>${escapeHTML(rawXMP)}</pre></details>`;
-
-    // Try to parse XMP into JSON and flatten
-    try {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(rawXMP, 'application/xml');
-      const json = xmlToJson(xmlDoc);
-      const flat = flattenObject(json);
-      output.innerHTML += renderMetadataTable('XMP Metadata (Parsed)', flat);
-    } catch (e) {
-      output.innerHTML += `<p><i>Could not parse XMP metadata.</i></p>`;
+    async function extractPDFMetadata(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const metadata = await pdf.getMetadata();
+      output.innerHTML += renderMetadataTable('PDF Metadata', metadata.info);
     }
-  } else {
-    output.innerHTML += `<p><i>XMP Header: No additional metadata found in this PDF.</I></p>`;
-  }
-}
-
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g, function (m) {
-    return ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    })[m];
-  });
-}
-
-function flattenObject(obj, prefix = '') {
-  let result = {};
-  for (const key in obj) {
-    const value = obj[key];
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      Object.assign(result, flattenObject(value, newKey));
-    } else if (Array.isArray(value)) {
-      result[newKey] = value.map(v => typeof v === 'object' ? JSON.stringify(v) : v).join(', ');
-    } else {
-      result[newKey] = value;
-    }
-  }
-  return result;
-}
-
-function xmlToJson(xml) {
-  let obj = {};
-  if (xml.nodeType === 1) {
-    if (xml.attributes.length > 0) {
-      obj['@attributes'] = {};
-      for (let j = 0; j < xml.attributes.length; j++) {
-        const attr = xml.attributes.item(j);
-        obj['@attributes'][attr.nodeName] = attr.nodeValue;
-      }
-    }
-  } else if (xml.nodeType === 3) {
-    return xml.nodeValue.trim();
-  }
-
-  if (xml.hasChildNodes()) {
-    for (let i = 0; i < xml.childNodes.length; i++) {
-      const child = xml.childNodes.item(i);
-      const name = child.nodeName;
-      const value = xmlToJson(child);
-      if (!value) continue;
-      if (obj[name] === undefined) {
-        obj[name] = value;
-      } else {
-        if (!Array.isArray(obj[name])) {
-          obj[name] = [obj[name]];
-        }
-        obj[name].push(value);
-      }
-    }
-  }
-  return obj;
-}
 
     async function readImageMetadata(file) {
       const reader = new FileReader();
