@@ -156,11 +156,19 @@
   <pre id="output">Choose a file to extract metadata...</pre>
 
   <script type="module">
+    import * as pdfjsLib from 'https://unpkg.com/pdfjs-dist@latest/build/pdf.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://unpkg.com/pdfjs-dist@latest/build/pdf.worker.min.mjs';
+    window.pdfjsLib = pdfjsLib;
+  </script>
+
+  <script type="module">
     import * as musicMetadata from 'https://cdn.jsdelivr.net/npm/music-metadata-browser@2.7.9/dist/index.min.js';
     window.mm = musicMetadata;
   </script>
   <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
+
   <script>
     async function loadMediaInfo() {
       if (window.MediaInfoLib) return window.MediaInfoLib;
@@ -183,9 +191,9 @@
     function renderMetadataTable(title, dataObj) {
       const rows = Object.entries(dataObj)
         .map(([key, value]) => {
-  	const cleanValue = (typeof value === 'object' && value !== null) ? '-' : value;
-  	return `<tr><th>${key}</th><td>${cleanValue}</td></tr>`;
-	})
+          const cleanValue = (typeof value === 'object' && value !== null) ? '-' : value;
+          return `<tr><th>${key}</th><td>${cleanValue}</td></tr>`;
+        })
         .join('');
       return `<details open><summary>${title}</summary><table class="meta-table">${rows}</table></details>`;
     }
@@ -218,13 +226,14 @@
         } else if (type.startsWith('video/')) {
           await showVideoPreview(file);
           await readWithMediaInfo(file, false);
+        } else if (file.name.toLowerCase().endsWith('.pdf')) {
+          await renderPDFPreview(file);
+          await extractPDFMetadata(file);
         } else {
           await readWithMediaInfo(file, false);
         }
       } catch (err) {
-        if (!type.startsWith('audio/')) {
-          output.innerHTML += `<p>Error: ${err.message}</p>`;
-        }
+        output.innerHTML += `<p>Error: ${err.message}</p>`;
       }
     });
 
@@ -247,6 +256,110 @@
       preview.appendChild(video);
     }
 
+    async function renderPDFPreview(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const context = canvas.getContext('2d');
+      await page.render({ canvasContext: context, viewport }).promise;
+      preview.appendChild(canvas);
+    }
+
+async function extractPDFMetadata(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const metadata = await pdf.getMetadata();
+
+  // Standard info dictionary metadata
+  if (metadata.info) {
+    output.innerHTML += renderMetadataTable('PDF Info Metadata', metadata.info);
+  }
+
+  // Raw XMP metadata (XML string)
+  if (metadata.metadata) {
+    const rawXMP = metadata.metadata.getMetadata();
+    output.innerHTML += `<details open><summary>XMP Metadata (Raw XML)</summary><pre>${escapeHTML(rawXMP)}</pre></details>`;
+
+    // Try to parse XMP into JSON and flatten
+    try {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(rawXMP, 'application/xml');
+      const json = xmlToJson(xmlDoc);
+      const flat = flattenObject(json);
+      output.innerHTML += renderMetadataTable('XMP Metadata (Parsed)', flat);
+    } catch (e) {
+      output.innerHTML += `<p><i>Could not parse XMP metadata.</i></p>`;
+    }
+  } else {
+    output.innerHTML += `<p><i>XMP Header: No additional metadata found in this PDF.</I></p>`;
+  }
+}
+
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, function (m) {
+    return ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m];
+  });
+}
+
+function flattenObject(obj, prefix = '') {
+  let result = {};
+  for (const key in obj) {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      Object.assign(result, flattenObject(value, newKey));
+    } else if (Array.isArray(value)) {
+      result[newKey] = value.map(v => typeof v === 'object' ? JSON.stringify(v) : v).join(', ');
+    } else {
+      result[newKey] = value;
+    }
+  }
+  return result;
+}
+
+function xmlToJson(xml) {
+  let obj = {};
+  if (xml.nodeType === 1) {
+    if (xml.attributes.length > 0) {
+      obj['@attributes'] = {};
+      for (let j = 0; j < xml.attributes.length; j++) {
+        const attr = xml.attributes.item(j);
+        obj['@attributes'][attr.nodeName] = attr.nodeValue;
+      }
+    }
+  } else if (xml.nodeType === 3) {
+    return xml.nodeValue.trim();
+  }
+
+  if (xml.hasChildNodes()) {
+    for (let i = 0; i < xml.childNodes.length; i++) {
+      const child = xml.childNodes.item(i);
+      const name = child.nodeName;
+      const value = xmlToJson(child);
+      if (!value) continue;
+      if (obj[name] === undefined) {
+        obj[name] = value;
+      } else {
+        if (!Array.isArray(obj[name])) {
+          obj[name] = [obj[name]];
+        }
+        obj[name].push(value);
+      }
+    }
+  }
+  return obj;
+}
+
     async function readImageMetadata(file) {
       const reader = new FileReader();
       reader.onload = e => {
@@ -255,9 +368,7 @@
           EXIF.getData(img, function () {
             const data = EXIF.getAllTags(this);
             const { MakerNote, ...otherTags } = data;
-
             output.innerHTML += renderMetadataTable('Image EXIF Metadata', otherTags);
-
             if (MakerNote) {
               output.innerHTML += `<details><summary>Maker Note</summary><pre>${JSON.stringify(MakerNote, null, 2)}</pre></details>`;
             }
@@ -269,7 +380,7 @@
     }
 
     async function readBasicAudioInfo(file) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const audio = new Audio();
         audio.preload = 'metadata';
         audio.onloadedmetadata = () => {
@@ -295,7 +406,7 @@
             preview.innerHTML += `<img src="${url}" alt="Cover Art" style="max-width:200px; margin-top:1em;">`;
           }
         },
-        onError: function(error) {}
+        onError: function(_) {}
       });
     }
 
