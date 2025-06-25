@@ -1,0 +1,850 @@
+<!-- Version: 1.0.10 | Last Update: 2025-06-25 | Author: Sacrisoft | © All rights reserved -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Page Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 30px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #000;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+      margin-top: 15px;
+      color: #000;
+    }
+    input[type="text"], input[type="file"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      background-color: #fff;
+      color: #000;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus, textarea:focus {
+      border-color: orange;
+      box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.4);
+    }
+    button {
+      background-color: #000;
+      color: #fff;
+      font-size: 1rem;
+      padding: 12px 20px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: orange;
+      color: #fff;
+      border-color: orange;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      background-color: #fff;
+      border: 2px dashed #000;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      min-height: 100px;
+    }
+    .gallery-item {
+      width: 140px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.3s;
+      position: relative;
+      cursor: grab;
+    }
+    .gallery-item:hover, .gallery-item.drag-over {
+      transform: scale(1.03);
+      box-shadow: 0 0 0 2px orange;
+    }
+    .gallery-item.dragging {
+      cursor: grabbing;
+    }
+    .gallery-item img {
+      max-width: 120px;
+      max-height: 100px;
+      border-radius: 6px;
+      margin-bottom: 5px;
+    }
+    .caption-input {
+      width: 100%;
+      padding: 6px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      background-color: #fff;
+      color: #000;
+      outline: none;
+    }
+    .caption-input:focus {
+      box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.4);
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 20px;
+      text-align: center;
+      cursor: pointer;
+      z-index: 10;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      font-family: Arial, sans-serif;
+    }
+    .delete-btn:hover {
+      background: #f44336;
+    }
+    #fullscreenPreview {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000d;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #fullscreenPreview img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 10px;
+    }
+    #previewFilename {
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: white;
+      text-align: center;
+    }
+
+    select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #000;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    }
+
+    select:focus {
+    border-color: orange;
+    box-shadow: 0 0 0 2px rgba(255, 165, 0, 0.4);
+    }
+
+    input[type="text"],
+    input[type="file"],
+    textarea {
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-family: inherit; /* Ensures font matches inputs */
+    }
+
+  </style>
+</head>
+<body>
+
+<h1>Film Page Generator</h1>
+
+<h2>Meta Data</h2>
+
+<label>Schema Type</label>
+<select id="inputType">
+  <option value="Movie" selected>Movie</option>
+  <option value="TVSeries">Series</option>
+</select>
+
+<label>Genre Type</label>
+<select id="inputGenre">
+  <option value="Action">Action</option>
+  <option value="Adventure">Adventure</option>
+  <option value="Animation">Animation</option>
+  <option value="Biography">Biography</option>
+  <option value="Comedy">Comedy</option>
+  <option value="Crime">Crime</option>
+  <option value="Documentary" selected>Documentary</option>
+  <option value="Drama">Drama</option>
+  <option value="Fantasy">Fantasy</option>
+  <option value="Historical">Historical</option>
+  <option value="Horror">Horror</option>
+  <option value="Music">Music</option>
+  <option value="Mystery">Mystery</option>
+  <option value="Romance">Romance</option>
+  <option value="Science Fiction">Science Fiction</option>
+  <option value="Short">Short</option>
+  <option value="Thriller">Thriller</option>
+  <option value="War">War</option>
+  <option value="Western">Western</option>
+</select>
+
+<label>Description</label>
+<input type="text" id="inputDescription" placeholder="Short description for SEO and sharing"></input>
+
+<label>Keywords</label>
+<input type="text" id="inputKeywords" placeholder="keyword 1, keyword 2, keyword 3, keyword 4, keyword 5">
+
+<label>Author</label>
+<input type="text" id="inputAuthor" placeholder="Artoldo" value="Artoldo">
+
+<h2>Film Data</h2>
+
+<label>Film title</label>
+<input type="text" id="inputH1" placeholder="e. g. My New Film">
+
+<label>Subtitle</label>
+<input type="text" id="inputH2" placeholder="e. g. Documentary / TV Show / Feature Film / Short Movie / Experimental Film / Video Art / Director's Cut / Full Movie / Special Edition etc.">
+
+<label>Directors</label>
+<input type="text" id="inputDirectors" placeholder="Sara Ferro, Chris Weil" value="Sara Ferro, Chris Weil">
+
+<label>Cast</label>
+<input type="text" id="inputFeaturing" placeholder="Name 1, Name 2, Name 3">
+
+<label>Runtime</label>
+<input type="text" id="inputRuntime" placeholder="90 min">
+
+<label>Tagline</label>
+<textarea id="inputIntro1" placeholder="Short pitch description"></textarea>
+
+<label>Synposis</label>
+<textarea id="inputIntro2" placeholder="Full synopsis"></textarea>
+
+<label>Director's Statement</label>
+<textarea id="inputIntro3" placeholder="Trivia about the movie"></textarea>
+
+<h2>Media files</h2>
+
+<label>Film Poster</label>
+<input type="file" id="inputPosterImage" accept="image/*">
+
+<label>Background Video (MP4)</label>
+<input type="file" id="inputVideoSrc" accept="video/mp4">
+
+<label>Textless Backdrop</label>
+<input type="file" id="inputVideoPoster" accept="image/*">
+
+<h2>Sticky Buttons</h2>
+
+<label>Button Text</label>
+<input type="text" id="inputButton" placeholder="Stream + Download">
+
+<label>Button URL</label>
+<input type="text" id="inputButtonUrl" placeholder="https://artoldo.gumroad.com/l/yourpage">
+
+<label>Trailer URL (YouTube)</label>
+<input type="text" id="inputTrailerUrl" placeholder="https://youtu.be/yourtrailer">
+
+<h2>Awards and Nominations</h2>
+
+<div id="awardContainer">
+  <label>Award Type</label>
+  <select class="awardType">
+    <option>Official Selection</option>
+    <option>Special Screening</option>
+    <option>Solo Exhibition</option>
+    <option>Group Exhibition</option>
+    <option>Featured on</option>
+    <option>Showcased at</option>
+  </select>
+  <label>Film Festival / Gallery / Museum</label>
+  <input type="text" class="awardName" placeholder="Event Name">
+  <label>City and Year</label>
+  <input type="text" class="awardCityYear" placeholder="e. g. Milan 2025">
+</div>
+<button onclick="addAwardInput()">Add Another Award</button>
+
+<script>
+function addAwardInput() {
+  const container = document.getElementById('awardContainer');
+  const block = document.createElement('div');
+  block.innerHTML = `
+    <hr>
+    <label>Award Type</label>
+    <select class="awardType">
+      <option>Official Selection</option>
+      <option>Special Screening</option>
+      <option>Solo Exhibition</option>
+      <option>Group Exhibition</option>
+      <option>Featured on</option>
+      <option>Showcased at</option>
+    </select>
+    <label>Film Festival / Gallery / Museum</label>
+    <input type="text" class="awardName" placeholder="Event Name">
+    <label>City and Year</label>
+    <input type="text" class="awardCityYear" placeholder="e. g. Milan 2025">
+  `;
+  container.appendChild(block);
+}
+</script>
+
+<br><br>
+
+<h2>Image Gallery</h2>
+
+<!-- Gallery Upload -->
+<label>Slide Show</label>
+<input type="file" id="images" multiple accept="image/*">
+<div class="gallery" id="gallery"></div>
+
+<br><br>
+
+<!-- Generate Button -->
+<button onclick="generateAndDownload()">Generate Page and Download</button>
+<pre id="output"></pre>
+
+<!-- Fullscreen Preview -->
+<div id="fullscreenPreview">
+  <div style="text-align:center;">
+    <img id="previewImage" src="" alt="Preview">
+    <div id="previewFilename"></div>
+  </div>
+</div>
+
+
+<!-- Output-->
+<pre id="outputHead" style="display:none;"></pre>
+<pre id="outputBody" style="display:none;"></pre>
+
+<!-- Scripts -->
+<script>
+const gallery = document.getElementById('gallery');
+const loadedFiles = [];
+let selectedGalleryItem = null;
+
+gallery.addEventListener('dragover', e => e.preventDefault());
+gallery.addEventListener('drop', e => e.preventDefault());
+
+document.getElementById('images').addEventListener('change', function () {
+  const h1 = document.getElementById('inputH1').value.trim() || 'Gallery';
+  const h2 = document.getElementById('inputH2').value.trim() || 'Images';
+
+  Array.from(this.files).forEach((file) => {
+    const exists = loadedFiles.some(f => f.file.name === file.name && f.file.size === file.size);
+    if (exists) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const src = e.target.result;
+      const item = createGalleryItem(src, file, h1, h2);
+      gallery.appendChild(item);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  this.value = '';
+});
+
+function createGalleryItem(src, file, h1, h2) {
+  const item = document.createElement('div');
+  item.className = 'gallery-item';
+  item.setAttribute('draggable', 'true');
+
+  const uniqueId = crypto.randomUUID();
+
+  const img = document.createElement('img');
+  img.src = src;
+  img.dataset.id = uniqueId;
+  img.alt = `${h1} - ${h2}`;
+  img.draggable = false;
+  img.dataset.filename = file.name;
+
+  const input = document.createElement('input');
+  input.className = 'caption-input';
+  input.placeholder = 'Caption (optional)';
+  input.addEventListener('blur', () => {
+    if (!input.value.trim()) {
+      input.value = `${h1} - ${h2}`;
+    }
+  });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.innerHTML = '×';
+  deleteBtn.addEventListener('click', () => {
+    item.remove();
+    const index = loadedFiles.findIndex(f => f.id === uniqueId);
+    if (index !== -1) loadedFiles.splice(index, 1);
+  });
+
+  item.appendChild(deleteBtn);
+  item.appendChild(img);
+  item.appendChild(input);
+
+  loadedFiles.push({ id: uniqueId, file, src });
+
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('selected'));
+    item.classList.add('selected');
+    selectedGalleryItem = item;
+  });
+
+  item.addEventListener('dragstart', e => {
+    item.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', 'drag');
+  });
+
+  item.addEventListener('dragend', () => {
+    item.classList.remove('dragging');
+    document.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('drag-over'));
+  });
+
+  item.addEventListener('dragover', e => {
+    e.preventDefault();
+    item.classList.add('drag-over');
+  });
+
+  item.addEventListener('dragleave', () => {
+    item.classList.remove('drag-over');
+  });
+
+  item.addEventListener('drop', e => {
+    e.preventDefault();
+    const dragged = document.querySelector('.dragging');
+    if (dragged && dragged !== item) {
+      const fromIndex = [...gallery.children].indexOf(dragged);
+      const toIndex = [...gallery.children].indexOf(item);
+      if (fromIndex < toIndex) {
+        gallery.insertBefore(dragged, item.nextSibling);
+      } else {
+        gallery.insertBefore(dragged, item);
+      }
+    }
+    item.classList.remove('drag-over');
+  });
+
+  return item;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && selectedGalleryItem) {
+    e.preventDefault();
+    const img = selectedGalleryItem.querySelector('img');
+    const fileObj = loadedFiles.find(f => f.id === img.dataset.id);
+    if (!fileObj) return;
+    document.getElementById('previewImage').src = fileObj.src;
+    document.getElementById('previewFilename').textContent = fileObj.file.name;
+    document.getElementById('fullscreenPreview').style.display = 'flex';
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('fullscreenPreview').style.display = 'none';
+  }
+});
+
+document.getElementById('fullscreenPreview').addEventListener('click', () => {
+  document.getElementById('fullscreenPreview').style.display = 'none';
+});
+</script>
+
+<script>
+function generateHeadContent() {
+  const h1 = document.getElementById('inputH1').value.trim();
+  const h2 = document.getElementById('inputH2').value.trim();
+  const button = document.getElementById('inputButton').value.trim();
+  const description = document.getElementById('inputDescription').value.trim();
+  const keywords = document.getElementById('inputKeywords').value.trim();
+  const author = document.getElementById('inputAuthor').value.trim();
+  const type = document.getElementById('inputType').value.trim();
+  const genre = document.getElementById('inputGenre').value.trim();
+  const directors = document.getElementById('inputDirectors').value.split(',').map(d => d.trim()).filter(Boolean);
+
+  // Clean slug: lowercase, no special chars, no hyphens
+  const slug = h1.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // Get filename from video poster file input
+  const videoPosterFile = document.getElementById('inputVideoPoster').files[0];
+  const videoPosterFilename = videoPosterFile ? videoPosterFile.name : '';
+
+  const image = `https://artoldo.github.io/${slug}/images/${videoPosterFilename}`;
+  const url = `https://artoldo.com/${slug}`;
+  const permalink = `https://artoldo.github.io/${slug}`;
+  const title = `${h1} - ${h2}: ${button}`;
+  const directorsJSON = directors.map(name => `    { "@type": "Person", "name": "${name}" }`).join(',\n');
+
+  const headContent = `
+<meta charset="UTF-8">
+<meta name="robots" content="index, follow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<meta name="description" content="${description}">
+<meta name="keywords" content="${keywords}">
+<meta name="author" content="${author}">
+<link rel="icon" href="https://artoldo.github.io/images/artoldo.jpeg" type="image/jpeg">
+
+<!-- Open Graph -->
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${genre} film ${button} - ${author}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="${url}">
+<meta property="og:image" content="${image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${genre} film ${button} - ${author}">
+<meta name="twitter:url" content="${url}">
+<meta name="twitter:image" content="${image}">
+
+<!-- JSON-LD Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "${type}",
+  "name": "${title}",
+  "genre": "${genre}",
+  "director": [
+${directorsJSON}
+  ]
+}
+<\/script>
+
+<!-- Stylesheets and Scripts -->
+<link rel="stylesheet" type="text/css" href="https://artoldo.github.io/css/uikit.css" />
+<link rel="stylesheet" type="text/css" href="https://artoldo.github.io/custom.css" />
+<script src="https://artoldo.github.io/js/uikit.js"><\/script>
+<script src="https://artoldo.github.io/js/uikit-icons.js"><\/script>
+
+<!-- UIkit Lightbox Delay -->
+<script>
+UIkit.mixin({
+  data: {
+    delayControls: 86400000
+  }
+}, 'lightbox');
+<\/script>
+
+<style>
+  p, h1, h2, h3, li {
+    color: black !important;
+  }
+
+  .video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+  .hover-scale img {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .hover-scale:hover img {
+    transform: scale(1.1);
+  }
+
+  .share-container {
+    position: fixed;
+    bottom: 60%;
+    right: 20px;
+    z-index: 1000;
+  }
+
+  .share-menu {
+    min-width: 200px;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+
+  .uk-notification-message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+
+  .uk-notification-message-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+</style>
+`.trim();
+
+  // Display in preview
+  document.getElementById('outputHead').textContent = headContent;
+
+  // Return the generated headContent
+  return headContent;
+}
+</script>
+
+<script>
+function generateBodyContent() {
+  const h1 = document.getElementById('inputH1').value.trim();
+  const h2 = document.getElementById('inputH2').value.trim();
+  const button = document.getElementById('inputButton').value.trim();
+  const directors = document.getElementById('inputDirectors').value.split(',').map(d => d.trim()).filter(Boolean);
+
+  const videoFile = document.getElementById('inputVideoSrc').files[0];
+  const videoPosterFile = document.getElementById('inputVideoPoster').files[0];
+  const posterImageFile = document.getElementById('inputPosterImage').files[0];
+
+  const videoFilename = videoFile ? videoFile.name : '';
+  const videoPosterFilename = videoPosterFile ? videoPosterFile.name : '';
+  const posterImageFilename = posterImageFile ? posterImageFile.name : '';
+
+  const videoSrc = `images/${videoFilename}`;
+  const videoPoster = `images/${videoPosterFilename}`;
+  const posterImage = `images/${posterImageFilename}`;
+
+  const buttonUrl = document.getElementById('inputButtonUrl').value.trim();
+  const trailerUrl = document.getElementById('inputTrailerUrl').value.trim();
+  const runtime = document.getElementById('inputRuntime').value.trim();
+  const featuring = document.getElementById('inputFeaturing').value.trim();
+  const intro1 = document.getElementById('inputIntro1').value.trim();
+  const intro2 = document.getElementById('inputIntro2').value.trim();
+  const intro3 = document.getElementById('inputIntro3').value.trim();
+
+  const slug = h1.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const url = `https://artoldo.com/${slug}`;
+  const permalink = `https://artoldo.github.io/${slug}`;
+
+  const awardTypes = document.querySelectorAll('.awardType');
+  const awardNames = document.querySelectorAll('.awardName');
+  const awardCityYears = document.querySelectorAll('.awardCityYear');
+  let awardsHTML = '';
+
+  for (let i = 0; i < awardTypes.length; i++) {
+    const type = awardTypes[i].value.trim();
+    const name = awardNames[i].value.trim();
+    const cityYear = awardCityYears[i].value.trim();
+    if (type && name && cityYear) {
+      awardsHTML += `
+        <li>
+          <img src="https://artoldo.github.io/images/laurel.png" width="400" height="600" alt="${type} - ${name} - ${cityYear}">
+          <div class="uk-position-center uk-panel uk-position-z-index-negative" style="cursor:grab;">
+            <div class="uk-width-medium uk-text-uppercase uk-text-center" style="color:black">
+              <span>${type}</span><br>
+              <span class="uk-text-large uk-text-bold">${name.replace(/\s+/g, '<br>')}</span><br>
+              <span class="uk-text-lighter">${cityYear}</span>
+            </div>
+          </div>
+        </li>`;
+    }
+  }
+
+let galleryHTML = '';
+const galleryItems = document.querySelectorAll('.gallery-item');
+for (const item of galleryItems) {
+  const img = item.querySelector('img');
+  const caption = (item.querySelector('.caption-input')?.value.trim()) || img.alt || "Gallery image";
+  const filename = img.dataset.filename || `${crypto.randomUUID()}.jpg`;
+
+  galleryHTML += `
+  <div class="hover-scale">
+    <a href="images/${filename}" data-caption="${caption}">
+      <img src="images/${filename}" width="600" height="400" alt="${caption}" class="uk-border-rounded">
+    </a>
+  </div>`;
+}
+
+  const bodyContent = `
+<body>
+  <!-- Background Video -->
+  <video class="video-background" src="${videoSrc}" poster="${videoPoster}" loop muted autoplay playsinline></video>
+
+  <!-- Sticky Buttons -->
+  <script src="https://gumroad.com/js/gumroad.js"><\/script>
+  <div class="uk-text-center" uk-sticky="offset: 20vh; end: 40vh;">
+    <a class="uk-button uk-button-primary uk-button-large uk-border-pill uk-text-bold" href="${buttonUrl}" data-gumroad-overlay-checkout="true" target="_blank">
+      <span uk-icon="icon: play; ratio: 1.5"><\/span> <span class="uk-visible@m">${button}</span><span class="uk-hidden@m">Watch Now</span> <span uk-icon="icon: download; ratio: 1.5"><\/span>
+    </a>
+  </div>
+
+  <div uk-lightbox class="uk-text-center" uk-sticky="offset: 35vh; end: 45vh;">
+    <a class="uk-button uk-button-default uk-button-large uk-border-pill uk-text-bold" style="color:white;" 
+      href="${trailerUrl}?autoplay=1&rel=0&modestbranding=1&playsinline=1&color=white&iv_load_policy=3" data-attrs="width: 1280; height: 720;" 
+      data-caption="ARTOLDO - ${directors.join(' & ')}: ${h1} - ${h2} - Official Trailer">
+      <span uk-icon="icon: play; ratio: 1.5"><\/span> Play Trailer
+    </a>
+  </div>
+
+  <div class="uk-text-center" uk-sticky="offset: 140vh; start: 90vh;">
+    <a class="uk-button uk-button-primary uk-button-large uk-border-pill uk-text-bold" href="${buttonUrl}" data-gumroad-overlay-checkout="true" target="_blank">
+      <span uk-icon="icon: play; ratio: 1.5"><\/span> <span class="uk-visible@m">${button}</span><span class="uk-hidden@m">Watch Now</span> <span uk-icon="icon: download; ratio: 1.5"><\/span>
+    </a>
+    <br><br>
+  </div>
+
+  <!-- Content -->
+<section class="uk-section uk-background-default" style="margin-top: 40vh;">
+<div class="uk-container">
+      <h1 class="uk-heading-large uk-text-bold uk-text-center">${h1}</h1>
+      <h2 class="uk-heading uk-text-bold uk-text-center">${h2}</h2>
+      <div class="hover-scale" uk-lightbox>
+        <a href="${posterImage}">
+          <img class="uk-border-rounded uk-align-center uk-align-left@m" src="${posterImage}" width="200" height="300" alt="${h1} - ${h2} - Film poster">
+        </a>
+      </div>
+      <p><strong>Runtime: </strong>${runtime}</p>
+      <p><strong>Filmmakers:</strong> ${directors.join(' & ')}</p>
+      <p><strong>Featuring:</strong> ${featuring}</p>
+      <p class="uk-dropcap uk-text-large uk-text-justify">${intro1}</p>
+      <p class="uk-text-lighter uk-text-large uk-text-justify">${intro2}</p>
+      <p class="uk-text-lighter uk-text-large uk-text-justify">${intro3}</p>
+
+<!-- Gallery -->
+<div uk-lightbox uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">
+  <div uk-slider="sets: false; autoplay: false" tabindex="-1">
+    <div class="uk-position-relative uk-visible-toggle uk-light uk-padding uk-padding-remove-horizontal uk-padding-remove-top">
+      <div class="uk-slider-items uk-child-width-1-1 uk-child-width-1-3@m uk-grid uk-flex uk-flex-middle">
+
+        <!-- Awards -->
+        <div class="uk-background-muted uk-flex uk-flex-center uk-flex-middle uk-text-center">
+          <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider autoplay="true" autoplay-interval="5000" pause-on-hover="true">
+            <ul class="uk-section uk-slider-items uk-child-width-1-1 uk-child-width-1-1@s uk-child-width-1-1@m uk-child-width-1-1@l" style="cursor:grab;">
+              ${awardsHTML}
+            </ul>
+          </div>
+        </div>
+        <!-- Awards End -->
+
+        <!-- Gallery Images -->
+        ${galleryHTML}
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Gallery End -->
+
+</div>
+</section>
+
+  <!-- Logo -->
+  <div class="uk-sticky uk-position-top-left">
+    <a href="https://artoldo.github.io/" target="_blank">
+      <img src="https://artoldo.github.io/images/1.png"
+           onmouseover="this.src='https://artoldo.github.io/images/2.png'"
+           onmouseout="this.src='https://artoldo.github.io/images/1.png'"
+           alt="logo" style="width:200px;">
+    </a>
+  </div>
+  <script>(() => { (new Image).src = "https://artoldo.github.io/images/2.png"; })();<\/script>
+
+  <!-- Share Container -->
+  <div class="share-container uk-visible@m">
+    <a href="#" class="uk-icon-button uk-rounded" uk-icon="social" uk-toggle="target: #share-menu"></a>
+    <div id="share-menu" class="uk-card uk-card-body uk-card-default uk-box-shadow-medium uk-animation-slide-bottom-small uk-border-rounded share-menu" hidden>
+      <button class="uk-close uk-position-small uk-position-top-right" uk-close onclick="document.getElementById('share-menu').hidden = true;"></button>
+      <ul class="uk-list uk-list-divider uk-margin-remove">
+        <li><strong>Share this page</strong></li>
+        <li>Official website: <span onclick="copyToClipboard('${url}')" uk-tooltip="title: Copy Link; pos: top">${url.replace('https://', '')}</span></li>
+        <li>Permalink: <span onclick="copyToClipboard('${permalink}')" uk-tooltip="title: Copy Link; pos: bottom">${permalink.replace('https://', '')}</span></li>
+      </ul>
+    </div>
+  </div>
+</body>
+`.trim();
+
+  document.getElementById('outputBody').textContent = bodyContent;
+
+  // Return the body HTML content
+  return bodyContent;
+}
+</script>
+
+<script>
+async function generateAndDownload() {
+  // Generate head and body content
+  generateHeadContent();
+  const bodyContent = generateBodyContent();
+
+  const h1 = document.getElementById('inputH1').value.trim();
+  const slug = h1.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const headContent = document.getElementById('outputHead').textContent;
+
+  const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+${headContent}
+</head>
+${bodyContent}
+</html>`;
+
+  const zip = new JSZip();
+  zip.file("index.html", fullHTML);
+
+  const imgFolder = zip.folder("images");
+
+  // Add main media files
+  const videoFile = document.getElementById('inputVideoSrc').files[0];
+  const posterFile = document.getElementById('inputPosterImage').files[0];
+  const videoPosterFile = document.getElementById('inputVideoPoster').files[0];
+
+  if (videoFile) imgFolder.file(videoFile.name, await videoFile.arrayBuffer());
+  if (posterFile) imgFolder.file(posterFile.name, await posterFile.arrayBuffer());
+  if (videoPosterFile) imgFolder.file(videoPosterFile.name, await videoPosterFile.arrayBuffer());
+
+  // Add gallery images
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  for (const item of galleryItems) {
+    const img = item.querySelector('img');
+    const base64 = img.src.split(',')[1];
+    const filename = img.dataset.filename || `${crypto.randomUUID()}.jpg`;
+    imgFolder.file(filename, base64, { base64: true });
+  }
+
+  const blob = await zip.generateAsync({ type: "blob" });
+  saveAs(blob, `${slug}.zip`);
+}
+</script>
+
+</body>
+</html>
