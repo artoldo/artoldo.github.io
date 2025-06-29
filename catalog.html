@@ -13,7 +13,7 @@
   <script src="https://artoldo.github.io/js/uikit-icons.min.js"></script>
   <style>
 .section {
-  padding: 4rem;
+  padding: 3rem;
   box-sizing: border-box;
 }
 .editor-toolbar {
@@ -159,9 +159,9 @@ input, select {
 <div id="language-chooser" class="language-chooser">
   <div class="uk-inline">
     <button class="uk-button uk-button-default uk-border-pill" type="button" id="lang-btn-current" aria-haspopup="true">
-      <span uk-icon="icon: world" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M1,10.5 L19,10.5"></path><path fill="none" stroke="#000" d="M2.35,15.5 L17.65,15.5"></path><path fill="none" stroke="#000" d="M2.35,5.5 L17.523,5.5"></path><path fill="none" stroke="#000" d="M10,19.46 L9.98,19.46 C7.31,17.33 5.61,14.141 5.61,10.58 C5.61,7.02 7.33,3.83 10,1.7 C10.01,1.7 9.99,1.7 10,1.7 L10,1.7 C12.67,3.83 14.4,7.02 14.4,10.58 C14.4,14.141 12.67,17.33 10,19.46 L10,19.46 L10,19.46 L10,19.46 Z"></path><circle fill="none" stroke="#000" cx="10" cy="10.5" r="9"></circle></svg></span>
+      <span uk-icon="icon: world"></span>
       <span id="lang-btn-label">EN</span>
-      <span uk-icon="icon: triangle-down" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polygon points="5 7 15 7 10 12"></polygon></svg></span>
+      <span uk-icon="icon: triangle-down"></span>
     </button>
     <div uk-dropdown="mode: click; pos: bottom-left; offset: 4" class="uk-drop uk-dropdown">
       <ul class="uk-nav uk-dropdown-nav" id="main-lang-dropdown"><li><a href="#" onclick="setLanguage('EN');return false;">EN - English</a></li></ul>
@@ -173,12 +173,24 @@ input, select {
   <button class="uk-button uk-button-primary uk-border-pill" id="save-btn" type="button">Save</button>
 </div>
 <div class="sticky-nav uk-button-group">
-  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-bottom-left-radius: 10px; border-top-left-radius: 10px;"  aria-describedby="uk-tooltip-4"><span uk-icon="icon: chevron-up" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="4 13 10 7 16 13"></polyline></svg></span></button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Next" onclick="scrollToNext()"  aria-describedby="uk-tooltip-6"><span uk-icon="icon: chevron-down" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="16 7 10 13 4 7"></polyline></svg></span></button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Random" onclick="scrollToRandom()"  aria-describedby="uk-tooltip-8"><span uk-icon="icon: bolt" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.74,20 L7.73,12 L3,12 L15.43,1 L12.32,9 L17.02,9 L4.74,20 L4.74,20 L4.74,20 Z M9.18,11 L7.1,16.39 L14.47,10 L10.86,10 L12.99,4.67 L5.61,11 L9.18,11 L9.18,11 L9.18,11 Z"></path></svg></span></button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Copy Link" onclick="copyCurrentLink()"  aria-describedby="uk-tooltip-10"><span uk-icon="icon: link" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span></button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Search" onclick="showSearchModal()"  aria-describedby="uk-tooltip-12"><span uk-icon="icon: search" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="9" cy="9" r="7"></circle><path fill="none" stroke="#000" stroke-width="1.1" d="M14,14 L18,18 L14,14 Z"></path></svg></span></button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Glossary" onclick="UIkit.offcanvas('#glossary').show()" style="border-bottom-right-radius: 10px; border-top-right-radius: 10px;"  aria-describedby="uk-tooltip-14"><span uk-icon="icon: menu" class="uk-icon"></span></button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-top-left-radius: 14px; border-bottom-left-radius: 14px;">
+    <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Next" onclick="scrollToNext()">
+    <span uk-icon="icon: chevron-down; ratio: 1.5"></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Random" onclick="scrollToRandom()">
+    <span uk-icon="icon: bolt; ratio: 1.5"></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Copy Link" onclick="copyCurrentLink()">
+    <span uk-icon="icon: link; ratio: 1.5"></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Search" onclick="showSearchModal()">
+    <span uk-icon="icon: search; ratio: 1.5"></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Glossary" onclick="UIkit.offcanvas('#glossary').show()" style="border-top-right-radius: 14px; border-bottom-right-radius: 14px;">
+    <span uk-icon="icon: menu; ratio: 1.5"></span>
+  </button>
 </div>
 <div id="glossary" uk-offcanvas="overlay: true" class="uk-offcanvas" style="" tabindex="-1">
   <div class="uk-offcanvas-bar" role="dialog" aria-modal="true" style="">
@@ -192,7 +204,7 @@ input, select {
           <h2 class="uk-text-center" style="flex:1">1. How to Enter Edit Mode</h2>
           
             <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(0)" uk-tooltip="Edit Entry" style="margin-left:12px;"  aria-describedby="uk-tooltip-144">
-              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+              <span uk-icon="icon: pencil" class="uk-icon"></span>
             </button>
           
         </div>
