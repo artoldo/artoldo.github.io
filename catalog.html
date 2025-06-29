@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Artoldo Catalog</title>
+  <title>Artoldo catalog</title>
   <link rel="stylesheet" href="https://artoldo.github.io/css/uikit.min.css">
   <link rel="stylesheet" href="https://artoldo.github.io/custom.css">
   <script src="https://artoldo.github.io/js/uikit.min.js"></script>
@@ -152,7 +152,7 @@ input, select {
 <body class="uk-padding-large uk-padding-remove-horizontal">
 
 <div class="uk-container uk-text-center uk-padding-large">
-  <h1>ARTOLDO catalog</h1>
+  <h1>ARTOLDO <span class="uk-text-lighter">catalog</span></h1>
   <h2>The collected works of Sara Ferro and Chris Weil</h2>
 </div>
 
@@ -173,7 +173,7 @@ input, select {
   <button class="uk-button uk-button-primary uk-border-pill" id="save-btn" type="button">Save</button>
 </div>
 <div class="sticky-nav uk-button-group">
-  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-top-left-radius: 14px; border-bottom-left-radius: 14px;">
+  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
     <span uk-icon="icon: chevron-up; ratio: 1.5"></span>
   </button>
   <button class="uk-button uk-button-secondary" uk-tooltip="Next" onclick="scrollToNext()">
@@ -188,7 +188,7 @@ input, select {
   <button class="uk-button uk-button-secondary" uk-tooltip="Search" onclick="showSearchModal()">
     <span uk-icon="icon: search; ratio: 1.5"></span>
   </button>
-  <button class="uk-button uk-button-secondary" uk-tooltip="Glossary" onclick="UIkit.offcanvas('#glossary').show()" style="border-top-right-radius: 14px; border-bottom-right-radius: 14px;">
+  <button class="uk-button uk-button-secondary" uk-tooltip="Glossary" onclick="UIkit.offcanvas('#glossary').show()" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
     <span uk-icon="icon: menu; ratio: 1.5"></span>
   </button>
 </div>
@@ -217,7 +217,7 @@ input, select {
           <h2 class="uk-text-center" style="flex:1">2. Adding Text, Media, and Formatting</h2>
           
             <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(1)" uk-tooltip="Edit Entry" style="margin-left:12px;"  aria-describedby="uk-tooltip-146">
-              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+              <span uk-icon="icon: pencil" class="uk-icon"></span>
             </button>
           
         </div>
@@ -230,7 +230,7 @@ input, select {
           <h2 class="uk-text-center" style="flex:1">3. Adding Multiple Languages</h2>
           
             <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(2)" uk-tooltip="Edit Entry" style="margin-left:12px;"  aria-describedby="uk-tooltip-148">
-              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+              <span uk-icon="icon: pencil" class="uk-icon"></span>
             </button>
           
         </div>
@@ -243,7 +243,7 @@ input, select {
           <h2 class="uk-text-center" style="flex:1">4. Navigating the Interface</h2>
           
             <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(3)" uk-tooltip="Edit Entry" style="margin-left:12px;"  aria-describedby="uk-tooltip-150">
-              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+              <span uk-icon="icon: pencil" class="uk-icon"></span>
             </button>
           
         </div>
@@ -269,34 +269,34 @@ input, select {
       
   <div class="editor-rich-toolbar">
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Bold ; pos: bottom"  onclick="formatEditor('EN','bold')" aria-label="Bold" aria-describedby="uk-tooltip-124">
-    <span uk-icon="bold" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5,15.3 C5.66,15.3 5.9,15 5.9,14.53 L5.9,5.5 C5.9,4.92 5.56,4.7 5,4.7 L5,4 L8.95,4 C12.6,4 13.7,5.37 13.7,6.9 C13.7,7.87 13.14,9.17 10.86,9.59 L10.86,9.7 C13.25,9.86 14.29,11.28 14.3,12.54 C14.3,14.47 12.94,16 9,16 L5,16 L5,15.3 Z M9,9.3 C11.19,9.3 11.8,8.5 11.85,7 C11.85,5.65 11.3,4.8 9,4.8 L7.67,4.8 L7.67,9.3 L9,9.3 Z M9.185,15.22 C11.97,15 12.39,14 12.4,12.58 C12.4,11.15 11.39,10 9,10 L7.67,10 L7.67,15 L9.18,15 Z"></path></svg></span>
+    <span uk-icon="bold" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Italic ; pos: bottom"  onclick="formatEditor('EN','italic')" aria-label="Italic" aria-describedby="uk-tooltip-126">
-    <span uk-icon="italic" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12.63,5.48 L10.15,14.52 C10,15.08 10.37,15.25 11.92,15.3 L11.72,16 L6,16 L6.2,15.31 C7.78,15.26 8.19,15.09 8.34,14.53 L10.82,5.49 C10.97,4.92 10.63,4.76 9.09,4.71 L9.28,4 L15,4 L14.81,4.69 C13.23,4.75 12.78,4.91 12.63,5.48 L12.63,5.48 Z"></path></svg></span>
+    <span uk-icon="italic" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Underline ; pos: bottom"  onclick="formatEditor('EN','underline')" aria-label="Underline" aria-describedby="uk-tooltip-128">
-    <span uk-icon="minus" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect height="1" width="18" y="9" x="1"></rect></svg></span>
+    <span uk-icon="minus" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Bullet ; pos: bottom"  onclick="formatEditor('EN','insertUnorderedList')" aria-label="Bullet" aria-describedby="uk-tooltip-130">
-    <span uk-icon="more-vertical" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="3" r="2"></circle><circle cx="10" cy="10" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+    <span uk-icon="more-vertical" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Numbered List ; pos: bottom"  onclick="formatEditor('EN','insertOrderedList')" aria-label="Numbered" aria-describedby="uk-tooltip-132">
-    <span uk-icon="list" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect x="6" y="4" width="12" height="1"></rect><rect x="6" y="9" width="12" height="1"></rect><rect x="6" y="14" width="12" height="1"></rect><rect x="2" y="4" width="2" height="1"></rect><rect x="2" y="9" width="2" height="1"></rect><rect x="2" y="14" width="2" height="1"></rect></svg></span>
+    <span uk-icon="list" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Left ; pos: bottom"  onclick="formatEditor('EN','justifyLeft')" aria-label="Left" aria-describedby="uk-tooltip-134">
-    <span uk-icon="chevron-double-left" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 14 6 10 10 6"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="14 14 10 10 14 6"></polyline></svg></span>
+    <span uk-icon="chevron-double-left" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Center ; pos: bottom"  onclick="formatEditor('EN','justifyCenter')" aria-label="Center" aria-describedby="uk-tooltip-136">
-    <span uk-icon="table" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect x="1" y="3" width="18" height="1"></rect><rect x="1" y="7" width="18" height="1"></rect><rect x="1" y="11" width="18" height="1"></rect><rect x="1" y="15" width="18" height="1"></rect></svg></span>
+    <span uk-icon="table" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Right ; pos: bottom"  onclick="formatEditor('EN','justifyRight')" aria-label="Right" aria-describedby="uk-tooltip-138">
-    <span uk-icon="chevron-double-right" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 6 14 10 10 14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="6 6 10 10 6 14"></polyline></svg></span>
+    <span uk-icon="chevron-double-right" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Add Link ; pos: bottom"  onclick="insertLink('EN')" aria-label="Link" aria-describedby="uk-tooltip-140">
-    <span uk-icon="link" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span>
+    <span uk-icon="link" class="uk-icon"></span>
   </button>
   <button class="uk-button-default uk-border-rounded" uk-tooltip="Remove Link ; pos: bottom"  onclick="removeLink('EN')" aria-label="Remove Link" aria-describedby="uk-tooltip-142">
-    <span uk-icon="ban" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="10" cy="10" r="9"></circle><line fill="none" stroke="#000" stroke-width="1.1" x1="4" y1="3.5" x2="16" y2="16.5"></line></svg></span>
+    <span uk-icon="ban" class="uk-icon"></span>
   </button>
   </div>
       <div id="editor-area-EN" contenteditable="true" class="uk-margin" style="border:1px solid #ccc;min-height:80px;padding:1em;text-align:left;"><p>Use the arrow buttons for <b>next / previous entries</b>, the lightning for <b>random</b>, the link to copy a <b>direct URL</b>, the magnifier to <b>search</b> <b>entries</b>, and the menu for the <b>full glossary</b>.</p></div>
@@ -980,9 +980,6 @@ ${externalDeps}
   URL.revokeObjectURL(url);
 }
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"><\/script>
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"><\/script>
 
 </body>
 </html>
