@@ -1,0 +1,273 @@
+<!-- Version: 1.1.0 | Last Update: 2025-07-01 | Author: Sacrisoft | © All rights reserved -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Online HTML Editor PRO | Sacrisoft</title>
+
+  <!-- Fonts and CodeMirror CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/theme/material.min.css" />
+
+  <style>
+    :root {
+      --bg: #000000;
+      --accent: #000000;
+      --accent-dark: #ff55aa;
+      --text: #ffffff;
+      --light: #1f1f1f;
+      --gray: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      color: var(--text);
+    }
+
+    header {
+      background-color: var(--accent);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      padding: 0.75rem;
+      background: var(--light);
+      border-bottom: 1px solid var(--gray);
+    }
+
+    button {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    button:hover {
+      background-color: var(--accent-dark);
+    }
+
+    .editor-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.split-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* critical for flex children to scroll */
+}
+
+.CodeMirror {
+  height: 100%;
+  flex: 1 1 auto;
+  background: #1e1e1e;
+  color: white;
+  overflow: auto;
+}
+
+.CodeMirror-scroll {
+  height: 100% !important;
+  max-height: none;
+  overflow: auto;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: white;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .split-view {
+    flex-direction: row;
+  }
+
+  .CodeMirror, iframe {
+    width: 50% !important;
+    height: 100%;
+    flex: none;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <header>Online HTML Editor PRO</header>
+
+  <div class="buttons">
+    <button onclick="pasteCode()">Paste Code</button>
+    <button onclick="updatePreview()">Run Code</button>
+    <button onclick="copyCode()">Copy Code</button>
+    <button onclick="saveCode()">Save Code</button>
+  </div>
+
+  <div class="editor-container">
+    <div class="split-view">
+      <textarea id="code" placeholder="Your HTML here..."></textarea>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+
+  <!-- CodeMirror Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/mode/xml/xml.min.js"></script>
+
+  <script>
+    const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      mode: "htmlmixed",
+      lineNumbers: true,
+      theme: "material",
+      tabSize: 2,
+      lineWrapping: true,
+    });
+
+    const defaultCode = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000000;
+    }
+    #bgCanvas, canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: blur(0px);
+    }
+    h1 {
+      position: relative;
+      z-index: 1;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello, world! This is a live preview.</h1>
+  <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+  <script>
+    let canvas = document.getElementById("mainCanvas");
+    let ctx = canvas.getContext("2d");
+    let t = 0;
+
+    function resize() {
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const colors = ["#00aaff", "#ffaa00", "#ff55aa", "#55ffaa"];
+      const size = 50;
+
+      for (let i = 0; i < colors.length; i++) {
+        ctx.beginPath();
+        for (let x = 0; x <= canvas.width; x++) {
+          let y = canvas.height / 2 +
+            Math.sin((x + t + i * 50) * 0.01) * (size + i * 5) +
+            Math.sin((x + t + i * 30) * 0.02 + t * 0.02) * 15;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      t += 1;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  <\/script>
+</body>
+</html>`;
+
+    editor.setValue(defaultCode);
+
+    function updatePreview() {
+      const code = editor.getValue();
+      document.getElementById("preview").srcdoc = code;
+    }
+
+    function copyCode() {
+      navigator.clipboard.writeText(editor.getValue())
+        .then(() => alert("Code copied to clipboard!"))
+        .catch(() => alert("Copy failed."));
+    }
+
+    async function pasteCode() {
+      try {
+        const text = await navigator.clipboard.readText();
+        editor.setValue(text);
+        updatePreview();
+      } catch (err) {
+        alert("Clipboard paste failed. Please allow access.");
+      }
+    }
+
+    window.onload = updatePreview;
+
+    function saveCode() {
+  const code = editor.getValue();
+  const blob = new Blob([code], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "your-code-from-sacrisoft.html";
+  document.body.appendChild(a);
+  a.click();
+
+  // Cleanup
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+  </script>
+</body>
+</html>
