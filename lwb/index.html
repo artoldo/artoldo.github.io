@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live UIkit Website Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css" />
+</head>
+<body>
+  <div class="uk-flex uk-flex-between">
+    <aside class="uk-width-1-4@s uk-background-muted uk-padding-small">
+      <h3>Presets</h3>
+      <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
+      <ul id="module-list" class="uk-list"></ul>
+    </aside>
+    <main class="uk-width-expand uk-padding-small">
+      <div class="uk-margin-bottom">
+        <button class="uk-button uk-button-primary" id="saveBtn">💾 Save</button>
+        <button class="uk-button uk-button-default" id="loadBtn">🔄 Load</button>
+        <button class="uk-button uk-button-secondary" id="exportBtn">⬇️ Export HTML</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" />
+      </div>
+      <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:400px;">
+        <div class="uk-text-center uk-text-meta">Drag modules here</div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>
