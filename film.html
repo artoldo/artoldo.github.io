@@ -1,4 +1,4 @@
-<!-- Version: 1.0.10 | Last Update: 2025-06-25 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.01 | Last Update: 2025-07-08 | Author: Sacrisoft | © All rights reserved -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -393,7 +393,10 @@ function createGalleryItem(src, file, h1, h2) {
   img.dataset.id = uniqueId;
   img.alt = `${h1} - ${h2}`;
   img.draggable = false;
-  img.dataset.filename = file.name;
+  const baseName = h1.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const ext = file.name.split('.').pop();
+  const customName = `${baseName}-${crypto.randomUUID()}.${ext}`;
+  img.dataset.filename = customName;
 
   const input = document.createElement('input');
   input.className = 'caption-input';
@@ -785,8 +788,8 @@ for (const item of galleryItems) {
       <button class="uk-close uk-position-small uk-position-top-right" uk-close onclick="document.getElementById('share-menu').hidden = true;"></button>
       <ul class="uk-list uk-list-divider uk-margin-remove">
         <li><strong>Share this page</strong></li>
-        <li>Official website: <span onclick="copyToClipboard('${url}')" uk-tooltip="title: Copy Link; pos: top">${url.replace('https://', '')}</span></li>
-        <li>Permalink: <span onclick="copyToClipboard('${permalink}')" uk-tooltip="title: Copy Link; pos: bottom">${permalink.replace('https://', '')}</span></li>
+        <li>Official website: <a href="${url}" target="_blank" onclick="copyToClipboard('${url}'); return false;" uk-tooltip="title: Click to copy; pos: top">${url.replace('https://', '')}</a></li>
+<li>Permalink: <a href="${permalink}" target="_blank" onclick="copyToClipboard('${permalink}'); return false;" uk-tooltip="title: Click to copy; pos: bottom">${permalink.replace('https://', '')}</a></li>
       </ul>
     </div>
   </div>
@@ -816,6 +819,17 @@ async function generateAndDownload() {
 ${headContent}
 </head>
 ${bodyContent}
+
+<script>
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    UIkit.notification({ message: 'Link copied to clipboard!', status: 'success' });
+  }).catch(() => {
+    UIkit.notification({ message: 'Copy failed.', status: 'danger' });
+  });
+}
+<\/script>
+
 </html>`;
 
   const zip = new JSZip();
