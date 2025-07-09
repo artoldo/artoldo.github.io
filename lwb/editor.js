@@ -12,7 +12,7 @@ const loadBtn = document.getElementById('loadBtn');
 const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
 
-// --- Improved: Always set contentEditable for all [data-editable]
+// Always set contentEditable for all [data-editable]
 function makeEditableAll() {
   document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
 }
@@ -86,8 +86,8 @@ function addModuleToCanvas(file) {
     });
 }
 
-// On canvas click, open color picker next to element
-canvas.addEventListener('click', e => {
+// Double-click for color picker; click hides it
+canvas.addEventListener('dblclick', e => {
   const el = e.target.closest('[data-color-editable]');
   if (el) {
     colorTarget = el;
@@ -107,11 +107,15 @@ canvas.addEventListener('click', e => {
     colorInput.style.top = `${r.top + window.scrollY}px`;
     colorInput.style.display = 'block';
     colorInput.focus();
-  } else {
-    colorInput.style.display = 'none';
-    colorTarget = null;
+    e.preventDefault();
   }
 });
+// Hide picker on normal click
+canvas.addEventListener('click', e => {
+  colorInput.style.display = 'none';
+  colorTarget = null;
+});
+
 colorInput.addEventListener('input', () => {
   if (colorTarget) {
     const prop = colorTarget.getAttribute('data-color-editable')==='background'?'backgroundColor':'color';
