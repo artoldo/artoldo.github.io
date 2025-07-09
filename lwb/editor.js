@@ -12,6 +12,11 @@ const loadBtn = document.getElementById('loadBtn');
 const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
 
+// --- Improved: Always set contentEditable for all [data-editable]
+function makeEditableAll() {
+  document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+}
+
 // Sidebar preset drag setup
 function loadModuleList(filter = '') {
   moduleList.innerHTML = '';
@@ -29,7 +34,7 @@ function loadModuleList(filter = '') {
   });
 }
 
-// Canvas drop events (only use addEventListener)
+// Canvas drop events
 canvas.addEventListener('dragover', e => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'copy';
@@ -37,7 +42,6 @@ canvas.addEventListener('dragover', e => {
 canvas.addEventListener('drop', e => {
   e.preventDefault();
   const file = e.dataTransfer.getData('text/plain');
-  // Remove placeholder if present
   const placeholder = canvas.querySelector('.uk-text-center.uk-text-meta');
   if (placeholder) placeholder.remove();
   if (file) addModuleToCanvas(file);
@@ -45,6 +49,17 @@ canvas.addEventListener('drop', e => {
 
 search.addEventListener('input', () => loadModuleList(search.value));
 
+// Color picker setup
+let colorInput = document.getElementById('lwb-color-picker');
+if (!colorInput) {
+  colorInput = document.createElement('input');
+  colorInput.type = 'color';
+  colorInput.id = 'lwb-color-picker';
+  document.body.appendChild(colorInput);
+}
+let colorTarget = null;
+
+// Add module to canvas and set editability
 function addModuleToCanvas(file) {
   fetch(`presets/${file}`)
     .then(r => {
@@ -60,8 +75,10 @@ function addModuleToCanvas(file) {
       del.className = 'uk-button uk-button-danger uk-button-small uk-position-top-right';
       del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
       wrapper.appendChild(del);
+      // Set contentEditable for live editing
       wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
       canvas.appendChild(wrapper);
+      makeEditableAll();
     })
     .catch(err => {
       UIkit.notification(err.message, 'danger');
@@ -69,23 +86,24 @@ function addModuleToCanvas(file) {
     });
 }
 
-const colorInput = document.createElement('input');
-colorInput.type = 'color';
-colorInput.style.position = 'absolute';
-colorInput.style.display = 'none';
-document.body.appendChild(colorInput);
-let colorTarget = null;
-
+// On canvas click, open color picker next to element
 canvas.addEventListener('click', e => {
   const el = e.target.closest('[data-color-editable]');
   if (el) {
     colorTarget = el;
-    const prop = el.getAttribute('data-color-editable')==='background' ? 'backgroundColor':'color';
+    const prop = el.getAttribute('data-color-editable') === 'background' ? 'backgroundColor' : 'color';
     const style = getComputedStyle(el)[prop];
-    const vals = style.match(/\d+/g);
-    if (vals) colorInput.value = '#' + ((1<<24) + (+vals[0]<<16) + (+vals[1]<<8) + +vals[2]).toString(16).slice(1);
+    let hex = "#ffffff";
+    if (style.startsWith("rgb")) {
+      const vals = style.match(/\d+/g);
+      if (vals) hex = '#' + ((1<<24) + (+vals[0]<<16) + (+vals[1]<<8) + +vals[2]).toString(16).slice(1);
+    } else if (style.startsWith("#")) {
+      hex = style;
+    }
+    colorInput.value = hex;
+    // Position the color picker
     const r = el.getBoundingClientRect();
-    colorInput.style.left = `${r.right + 10 + window.scrollX}px`;
+    colorInput.style.left = `${r.right + 12 + window.scrollX}px`;
     colorInput.style.top = `${r.top + window.scrollY}px`;
     colorInput.style.display = 'block';
     colorInput.focus();
@@ -94,7 +112,6 @@ canvas.addEventListener('click', e => {
     colorTarget = null;
   }
 });
-
 colorInput.addEventListener('input', () => {
   if (colorTarget) {
     const prop = colorTarget.getAttribute('data-color-editable')==='background'?'backgroundColor':'color';
@@ -105,6 +122,9 @@ colorInput.addEventListener('blur', () => {
   colorInput.style.display = 'none';
   colorTarget = null;
 });
+
+// Make sure all [data-editable] are editable after load
+window.addEventListener('DOMContentLoaded', makeEditableAll);
 
 new Sortable(canvas, { animation:150, ghostClass:'uk-background-muted' });
 
@@ -136,6 +156,7 @@ importFile.onchange = () => {
         wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
         canvas.appendChild(wrapper);
       });
+      makeEditableAll();
       UIkit.notification('Loaded!', 'primary');
     } catch {
       UIkit.notification('Import failed.', 'danger');
