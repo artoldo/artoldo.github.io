@@ -20,7 +20,7 @@ function makeEditableAll() {
 // Sidebar preset drag setup
 function loadModuleList(filter = '') {
   moduleList.innerHTML = '';
-  presetFiles.filter(f => f.includes(filter)).forEach(file => {
+  presetFiles.filter(f => f.toLowerCase().includes(filter.toLowerCase())).forEach(file => {
     const li = document.createElement('li');
     li.className = 'uk-margin-small';
     li.textContent = file.replace('.html', '');
@@ -239,3 +239,171 @@ ${bodyContent}
 };
 
 loadModuleList();
+
+// Save to localStorage and as file
+saveBtn.onclick = () => {
+  const data = JSON.stringify(getSiteData());
+  localStorage.setItem('site', data);
+  // Download as file
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'website-project.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  UIkit.notification('Project saved (and downloaded)!');
+};
+
+// Load from file
+loadBtn.onclick = () => importFile.click();
+
+importFile.onchange = () => {
+  const f = importFile.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      canvas.innerHTML = '';
+      data.forEach(m => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'module-wrapper uk-margin';
+        wrapper.innerHTML = m.html;
+        wrapper.querySelectorAll('button').forEach(btn => {
+          if(btn.textContent==='×') btn.onclick = e => wrapper.remove();
+        });
+        wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+        canvas.appendChild(wrapper);
+      });
+      makeEditableAll();
+      UIkit.notification('Project loaded!');
+    } catch {
+      UIkit.notification('Import failed.', 'danger');
+    }
+  };
+  r.readAsText(f);
+};
+
+// Create a hidden file input for image uploads
+let imageInput = document.getElementById('lwb-image-input');
+if (!imageInput) {
+  imageInput = document.createElement('input');
+  imageInput.type = 'file';
+  imageInput.accept = 'image/*';
+  imageInput.style.display = 'none';
+  imageInput.id = 'lwb-image-input';
+  document.body.appendChild(imageInput);
+}
+
+let imgTarget = null;
+
+// Listen for clicks on images to select a new one
+canvas.addEventListener('click', e => {
+  // For images: single click with alt key, or double click
+  if (
+    (e.target.tagName === 'IMG' && (e.altKey || e.detail === 2)) ||
+    (e.target.closest('img') && (e.altKey || e.detail === 2))
+  ) {
+    imgTarget = e.target.tagName === 'IMG' ? e.target : e.target.closest('img');
+    // Ask: Upload or URL?
+    UIkit.modal.prompt('Paste image URL or click OK to upload an image:', '', function(val){
+      if (val && val.trim()) {
+        imgTarget.src = val.trim();
+      } else {
+        imageInput.click();
+      }
+    });
+  }
+});
+
+// On image file input change, update image src
+imageInput.onchange = () => {
+  if (imageInput.files && imageInput.files[0] && imgTarget) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      imgTarget.src = e.target.result;
+    };
+    reader.readAsDataURL(imageInput.files[0]);
+  }
+};
+
+// Inline link editing: double-click a link or button with href
+canvas.addEventListener('dblclick', e => {
+  let a = null;
+  if (e.target.tagName === 'A') a = e.target;
+  else if (e.target.closest('a')) a = e.target.closest('a');
+  if (a && a.hasAttribute('href')) {
+    e.preventDefault();
+    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
+      if (val && val.trim()) a.setAttribute('href', val.trim());
+    });
+    return;
+  }
+  // (existing double-click handler for color picker continues...)
+});
+
+// Make any UIkit accordion dynamic (add/remove sections)
+function makeAccordionEditable(wrapper) {
+  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
+    // Add "+" button if not present
+    if (!acc.querySelector('.lwb-acc-add')) {
+      const addBtn = document.createElement('button');
+      addBtn.textContent = '+ Add Section';
+      addBtn.className = 'uk-button uk-button-small uk-button-primary lwb-acc-add';
+      addBtn.style.marginTop = '1em';
+      addBtn.onclick = () => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a class="uk-accordion-title" href="#" data-editable>New Section</a>
+          <div class="uk-accordion-content"><p data-editable>New content…</p></div>
+          <button class="uk-button uk-button-danger uk-button-small lwb-acc-remove" style="position:absolute;right:1em;top:0.6em;">×</button>
+        `;
+        acc.appendChild(li);
+        makeAccordionEditable(wrapper);
+        makeEditableAll();
+      };
+      acc.parentElement.appendChild(addBtn);
+    }
+    // Add remove buttons for each item
+    acc.querySelectorAll('li').forEach(li => {
+      if (!li.querySelector('.lwb-acc-remove')) {
+        const remBtn = document.createElement('button');
+        remBtn.textContent = '×';
+        remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
+        remBtn.style.position = 'absolute';
+        remBtn.style.right = '1em';
+        remBtn.style.top = '0.6em';
+        remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
+        li.appendChild(remBtn);
+      }
+    });
+  });
+}
+
+// Call after adding modules
+function addModuleToCanvas(file) {
+  fetch(`presets/${file}`)
+    .then(r => r.text())
+    .then(html => {
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('module-wrapper','uk-margin');
+      wrapper.innerHTML = html;
+      const del = document.createElement('button');
+      del.textContent = '×';
+      del.className = 'uk-button uk-button-danger uk-button-small uk-position-top-right';
+      del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
+      wrapper.appendChild(del);
+      wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+      // Make accordions editable
+      makeAccordionEditable(wrapper);
+      canvas.appendChild(wrapper);
+      makeEditableAll();
+    })
+    .catch(err => {
+      UIkit.notification(err.message, 'danger');
+      console.error(err);
+    });
+}

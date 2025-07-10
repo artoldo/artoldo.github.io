@@ -41,7 +41,7 @@ aside {
   font-size: 1.3em;
   top: 0.5em;
   right: 1em;
-  border-radius: 50%;
+  border-radius: 100%;
   box-shadow: 0 1px 8px 1px #d7e1ee44;
   transition: background 0.2s;
   opacity: 0.92;
@@ -78,7 +78,7 @@ aside h3 {
   z-index: 99999 !important;
   width: 46px !important;
   height: 46px !important;
-  border-radius: 50% !important;
+  border-radius: 100% !important;
   border: 3px solid #3387e6 !important;
   box-shadow: 0 4px 24px #8bc2ff38;
   background: #f4f8fc !important;
@@ -88,4 +88,38 @@ aside h3 {
 }
 #lwb-color-picker:focus {
   box-shadow: 0 0 0 3px #3881f944;
+}
+
+.uk-button.uk-lwb-main {
+  background: #3881f9;
+  color: #fff;
+  border-radius: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 1.12em;
+  box-shadow: 0 1px 6px #8bc2ff22;
+  border: none;
+  padding: 0.48em 1.3em;
+  margin-right: 0.5em;
+  transition: background 0.18s;
+}
+.uk-button.uk-lwb-main:hover {
+  background: #2363d9;
+  color: #fff;
+}
+.uk-button.uk-lwb-alt {
+  background: #f5f7fb;
+  color: #3a4e6a;
+  border: 1.5px solid #dae7fc;
+  border-radius: 0.7em;
+  font-weight: 500;
+  font-size: 1.12em;
+  padding: 0.48em 1.3em;
+  margin-right: 0.5em;
+  transition: background 0.15s, border 0.15s;
+}
+.uk-button.uk-lwb-alt:hover {
+  background: #e3edfc;
+  border-color: #b9d2f3;
+  color: #2061b5;
 }
