@@ -4,11 +4,41 @@
   <meta charset="UTF-8">
   <title>Live UIkit Website Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css" />
 </head>
 <body>
+  <!-- Sticky Builder Toolbar -->
+  <nav id="builder-toolbar" class="uk-navbar-container uk-navbar-sticky" style="position:sticky;top:0;z-index:100;">
+    <div class="uk-container uk-container-expand">
+      <div class="uk-navbar-left">
+        <button class="uk-button uk-button-primary" id="saveBtn">Save</button>
+        <button class="uk-button uk-button-default" id="loadBtn">Load</button>
+        <button class="uk-button uk-button-secondary" id="exportBtn">Export HTML</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" />
+        <label style="margin-left:2em;">Padding:
+          <input type="range" id="paddingRange" min="0" max="64" value="24" step="2" style="width:120px;vertical-align:middle;">
+          <span id="paddingValue" style="width:38px;display:inline-block;">24px</span>
+        </label>
+        <label style="margin-left:1em;">Margin:
+          <input type="range" id="marginRange" min="0" max="64" value="18" step="2" style="width:120px;vertical-align:middle;">
+          <span id="marginValue" style="width:38px;display:inline-block;">18px</span>
+        </label>
+        <label style="margin-left:1.5em;">
+          Animate:
+          <select id="textAnimationSelect" class="uk-select" style="width:120px;display:inline;">
+            <option value="uk-animation-fade">Fade</option>
+            <option value="uk-animation-scale-up">Scale</option>
+            <option value="uk-animation-slide-top-small">Slide Top</option>
+            <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
+            <option value="uk-animation-slide-left-small">Slide Left</option>
+            <option value="uk-animation-slide-right-small">Slide Right</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </nav>
   <div class="uk-flex uk-flex-between">
     <aside class="uk-width-1-4@s uk-background-muted uk-padding-small">
       <h3>Presets</h3>
@@ -16,37 +46,13 @@
       <ul id="module-list" class="uk-list"></ul>
     </aside>
     <main class="uk-width-expand uk-padding-small">
-      <div class="uk-margin-bottom">
-        <button class="uk-button uk-lwb-main" id="saveBtn">Save</button>
-        <button class="uk-button uk-lwb-alt" id="loadBtn">Load</button>
-        <button class="uk-button uk-lwb-alt" id="exportBtn">Export HTML</button>
-        <input type="file" id="importFile" accept=".json" style="display:none;" />
-      </div>
-<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
-  <label style="font-weight:600;">Block Padding:</label>
-  <input type="range" id="paddingRange" min="0" max="64" value="24" step="2" style="width:120px;">
-  <span id="paddingValue" style="width:38px;display:inline-block;">24px</span>
-  <label style="font-weight:600;">Block Margin:</label>
-  <input type="range" id="marginRange" min="0" max="64" value="18" step="2" style="width:120px;">
-  <span id="marginValue" style="width:38px;display:inline-block;">18px</span>
-</div>
-<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
-  <label style="font-weight:600;">Text Animation:</label>
-  <select id="textAnimationSelect">
-    <option value="uk-animation-fade">Fade</option>
-    <option value="uk-animation-scale-up">Scale Up</option>
-    <option value="uk-animation-slide-top-small">Slide Top</option>
-    <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
-    <option value="uk-animation-slide-left-small">Slide Left</option>
-    <option value="uk-animation-slide-right-small">Slide Right</option>
-  </select>
-</div>
       <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:400px;">
         <div class="uk-text-center uk-text-meta">Drag modules here</div>
       </div>
     </main>
   </div>
 
+  <!-- Format toolbar for live edit (created by JS) -->
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
