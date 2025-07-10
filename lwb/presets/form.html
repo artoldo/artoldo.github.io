@@ -1,15 +1,19 @@
-<form class="uk-form-stacked" data-module="form">
-  <div class="uk-margin">
-    <label class="uk-form-label" for="name" data-editable>Name</label>
-    <div class="uk-form-controls">
-      <input class="uk-input" id="name" type="text" placeholder="Your name">
+<form>
+  <fieldset class="uk-fieldset">
+    <div class="uk-margin">
+      <label class="uk-form-label" data-editable>Name</label>
+      <input class="uk-input" type="text" placeholder="Your name" data-editable-placeholder>
     </div>
-  </div>
-  <div class="uk-margin">
-    <label class="uk-form-label" for="email" data-editable>Email</label>
-    <div class="uk-form-controls">
-      <input class="uk-input" id="email" type="email" placeholder="your@email.com">
+    <div class="uk-margin">
+      <label class="uk-form-label" data-editable>Email</label>
+      <input class="uk-input" type="email" placeholder="email@domain.com" data-editable-placeholder>
     </div>
-  </div>
-  <button class="uk-button uk-button-primary" type="submit" data-editable>Submit</button>
+    <div class="uk-margin">
+      <label class="uk-form-label" data-editable>Message</label>
+      <textarea class="uk-textarea" rows="4" placeholder="Type your message" data-editable-placeholder></textarea>
+    </div>
+    <div class="uk-margin">
+      <button type="submit" class="uk-button uk-button-primary" data-editable>Send</button>
+    </div>
+  </fieldset>
 </form>

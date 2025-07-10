@@ -38,10 +38,9 @@ aside {
 }
 
 .module-wrapper > button.uk-button-danger {
-  font-size: 1.3em;
-  top: 0.5em;
-  right: 1em;
-  border-radius: 100%;
+  border-radius: 50%;         /* perfect circle */
+  width: 38px;
+  height: 38px;
   box-shadow: 0 1px 8px 1px #d7e1ee44;
   transition: background 0.2s;
   opacity: 0.92;
@@ -75,14 +74,17 @@ aside h3 {
 
 /* Color picker: large, visible, styled */
 #lwb-color-picker {
-  z-index: 99999 !important;
-  width: 46px !important;
-  height: 46px !important;
-  border-radius: 100% !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;    /* perfect circle */
   border: 3px solid #3387e6 !important;
   box-shadow: 0 4px 24px #8bc2ff38;
   background: #f4f8fc !important;
-  transition: box-shadow 0.2s;
+  padding: 0 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  cursor: pointer;
+  z-index: 99999;
   position: absolute;
   display: none;
 }
@@ -122,4 +124,82 @@ aside h3 {
   background: #e3edfc;
   border-color: #b9d2f3;
   color: #2061b5;
+}
+
+.lwb-acc-add {
+  display: block;
+  margin: 1.5em auto 0 auto;
+  background: #3881f9;
+  color: #fff;
+  border-radius: 1em;
+  font-weight: 600;
+  font-size: 1em;
+  padding: 0.3em 1.2em;
+  text-align: center;
+  transition: background 0.18s;
+}
+.lwb-acc-add:hover {
+  background: #2261c9;
+  color: #fff;
+}
+.uk-button.lwb-acc-remove {
+  font-size: 1.2em;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff3860;
+  color: #fff;
+  border: none;
+  opacity: 0.93;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.16s;
+  z-index: 10;
+}
+.uk-button.lwb-acc-remove:hover {
+  background: #d60137;
+}
+
+#lwb-toolbar {
+  position: absolute;
+  z-index: 99999;
+  background: #fff;
+  border-radius: 1.2em;
+  box-shadow: 0 2px 16px #aacafc40;
+  padding: 0.3em 0.6em;
+  display: flex;
+  gap: 0.35em;
+  transition: opacity 0.18s;
+  opacity: 0.97;
+  border: 1.5px solid #e3e9f9;
+}
+#lwb-toolbar button {
+  background: none;
+  border: none;
+  color: #2261c9;
+  font-size: 1.07em;
+  padding: 0.22em 0.5em;
+  border-radius: 0.6em;
+  cursor: pointer;
+  transition: background 0.13s, color 0.13s;
+  font-weight: 600;
+}
+#lwb-toolbar button:hover,
+#lwb-toolbar button:focus {
+  background: #f4f9ff;
+  color: #1c3876;
+}
+
+.lwb-image-placeholder {
+  transition: box-shadow 0.15s, border 0.13s;
+  border: 2px dashed #7bb2fd;
+}
+.lwb-image-placeholder:hover {
+  box-shadow: 0 2px 16px #3881f922;
+  border: 2px solid #3881f9;
+}
+
+.module-wrapper {
+  transition: padding 0.22s cubic-bezier(.47,1.64,.41,.8), box-shadow 0.3s, background 0.2s;
 }

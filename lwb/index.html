@@ -22,6 +22,22 @@
         <button class="uk-button uk-lwb-alt" id="exportBtn">Export HTML</button>
         <input type="file" id="importFile" accept=".json" style="display:none;" />
       </div>
+<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
+  <label style="font-weight:600;">Block Padding:</label>
+  <input type="range" id="paddingRange" min="0" max="64" value="24" step="2" style="width:180px;">
+  <span id="paddingValue" style="width:38px;display:inline-block;">24px</span>
+</div>
+<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
+  <label style="font-weight:600;">Text Animation:</label>
+  <select id="textAnimationSelect">
+    <option value="uk-animation-fade">Fade</option>
+    <option value="uk-animation-scale-up">Scale Up</option>
+    <option value="uk-animation-slide-top-small">Slide Top</option>
+    <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
+    <option value="uk-animation-slide-left-small">Slide Left</option>
+    <option value="uk-animation-slide-right-small">Slide Right</option>
+  </select>
+</div>
       <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:400px;">
         <div class="uk-text-center uk-text-meta">Drag modules here</div>
       </div>
