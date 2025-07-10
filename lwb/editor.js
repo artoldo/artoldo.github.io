@@ -1,7 +1,6 @@
 // --- DOM Elements & Presets ---
 const presetFiles = [
-  'hero.html','navbar.html','card.html',
-  'accordion.html','modal.html','form.html','footer.html'
+  'hero.html', 'card.html', 'image.html'
 ];
 const moduleList = document.getElementById('module-list');
 const canvas = document.getElementById('canvas');
@@ -115,26 +114,19 @@ function addModuleToCanvas(file) {
       del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
       wrapper.appendChild(del);
 
-      // Remove submit action for all forms
-      wrapper.querySelectorAll('form').forEach(form => {
-        form.onsubmit = e => { e.preventDefault(); return false; };
-      });
-
       // All text editable
       wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-
-      // Editable submit buttons
-      wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
-
-      // Accordion/Slider handling
-      makeAccordionEditable(wrapper);
-      makeSliderEditable(wrapper);
 
       // Add to canvas
       canvas.appendChild(wrapper);
 
       // Animate text
       animateAllTextElements();
+
+      // Re-initialize UIkit Parallax if needed
+      if (wrapper.hasAttribute('uk-parallax')) {
+        UIkit.parallax(wrapper);
+      }
       makeEditableAll();
     })
     .catch(err => {
@@ -142,10 +134,6 @@ function addModuleToCanvas(file) {
       console.error(err);
     });
 }
-
-// --- Accordion & Slider Logic --- (as before, unchanged)
-function makeAccordionEditable(wrapper) { /* ...same as yours... */ }
-function makeSliderEditable(wrapper) { /* ...same as yours... */ }
 
 // --- Color Picker Logic ---
 canvas.addEventListener('dblclick', e => {
@@ -199,17 +187,67 @@ canvas.addEventListener('click', e => {
     });
     return;
   }
-  if (e.target.tagName === 'IMG') {
-    imgTarget = e.target;
-    UIkit.modal.prompt('Paste image URL or click OK to upload:', '', function(val) {
-      if (val && val.trim()) {
-        imgTarget.src = val.trim();
-      } else {
-        imageInput.click();
+  if (e.target.tagName === 'BUTTON' && e.target.hasAttribute('data-editable')) {
+  e.preventDefault();
+  const currentText = e.target.textContent;
+  let currentUrl = "";
+  // If the button is actually an <a>, or wrapped by <a>
+  let btnLink = e.target.closest('a');
+  if (btnLink && btnLink.hasAttribute('href')) {
+    currentUrl = btnLink.getAttribute('href');
+  }
+
+  // Show a custom modal for both text and URL
+  const formHtml = `
+    <div class="uk-margin">
+      <label class="uk-form-label">Button Text</label>
+      <input class="uk-input" id="lwb-btn-text" value="${currentText.replace(/"/g, "&quot;")}" type="text">
+    </div>
+    <div class="uk-margin">
+      <label class="uk-form-label">Button Link URL</label>
+      <input class="uk-input" id="lwb-btn-url" value="${currentUrl.replace(/"/g, "&quot;")}" type="text">
+    </div>
+  `;
+  const modal = UIkit.modal.dialog(`<form onsubmit="return false">${formHtml}</form>`, {
+    bgClose: false,
+    escClose: true
+  });
+
+  // Wait for modal to be shown, then set up handler
+  setTimeout(() => {
+    const textInput = document.getElementById('lwb-btn-text');
+    const urlInput = document.getElementById('lwb-btn-url');
+    textInput.focus();
+    textInput.select();
+
+    // Listen for Enter key (on either input)
+    [textInput, urlInput].forEach(input => {
+      input.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          modal.hide();
+          // Set text
+          e.target.textContent = textInput.value;
+          // Set URL if possible
+          if (btnLink && urlInput.value) {
+            btnLink.setAttribute('href', urlInput.value);
+          }
+        }
+      });
+    });
+
+    // On modal hide, set values
+    modal.$el.on('hidden', () => {
+      // Set text
+      e.target.textContent = textInput.value;
+      // Set URL if possible
+      if (btnLink && urlInput.value) {
+        btnLink.setAttribute('href', urlInput.value);
       }
     });
-    return;
-  }
+  }, 100);
+  return;
+}
 });
 imageInput.onchange = () => {
   if (!imgTarget) return;
@@ -249,38 +287,8 @@ function replacePlaceholderWithImage(placeholder, src) {
   placeholder.parentNode.replaceChild(img, placeholder);
 }
 
-// --- Editable Form Buttons & Placeholders ---
-canvas.addEventListener('dblclick', e => {
-  const input = e.target.closest('[data-editable-placeholder]');
-  if (input) {
-    e.preventDefault();
-    const current = input.getAttribute('placeholder') || '';
-    UIkit.modal.prompt('Edit placeholder:', current, val => {
-      if (val !== null) input.setAttribute('placeholder', val);
-    });
-    return;
-  }
-  if (e.target.tagName === 'BUTTON' && e.target.hasAttribute('data-editable')) {
-    e.preventDefault();
-    const current = e.target.textContent;
-    UIkit.modal.prompt('Edit button text:', current, val => {
-      if (val !== null) e.target.textContent = val;
-    });
-    return;
-  }
-  let a = null;
-  if (e.target.tagName === 'A') a = e.target;
-  else if (e.target.closest('a')) a = e.target.closest('a');
-  if (a && a.hasAttribute('href')) {
-    e.preventDefault();
-    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
-      if (val && val.trim()) a.setAttribute('href', val.trim());
-    });
-    return;
-  }
-});
-
 // --- Rich Text Toolbar (as before, no change) ---
+
 // --- UIkit Text Animation ---
 let currentTextAnimation = textAnimationSelect.value;
 function updateTextAnimations() {
@@ -311,36 +319,7 @@ function animateAllTextElements(animationClass = currentTextAnimation) {
   });
 }
 
-// --- Save/Load/Export: Use your working logic ---
-
-// --- Parallax (block level only, recommended) ---
-let parallaxTarget = null;
-canvas.addEventListener('click', function(e) {
-  let wrapper = e.target.closest('.module-wrapper');
-  if (wrapper) {
-    parallaxTarget = wrapper;
-    // Optionally, add highlight to wrapper
-  }
-});
-parallaxSelect.addEventListener('change', function(e) {
-  if (!parallaxTarget) {
-    UIkit.notification('Click a block to select it first!', 'warning');
-    return;
-  }
-  parallaxTarget.removeAttribute('uk-parallax');
-  if (parallaxTarget._parallax) {
-    parallaxTarget._parallax.$destroy(true);
-    delete parallaxTarget._parallax;
-  }
-  const val = parallaxSelect.value;
-  if (val) {
-    parallaxTarget.setAttribute('uk-parallax', val);
-    UIkit.parallax(parallaxTarget);
-  }
-});
-
-
-// --- SAVE: Store modules as JSON in localStorage ---
+// --- Save/Load/Export logic ---
 saveBtn.onclick = () => {
   const data = Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({
     html: m.innerHTML
@@ -355,13 +334,10 @@ saveBtn.onclick = () => {
   URL.revokeObjectURL(a.href);
   UIkit.notification('Saved as JSON file!', 'success');
 };
-
-// --- LOAD: Prompt for file and import as JSON ---
 loadBtn.onclick = () => {
   importFile.value = '';
   importFile.click();
 };
-
 importFile.onchange = () => {
   const f = importFile.files[0];
   if (!f) return;
@@ -378,11 +354,11 @@ importFile.onchange = () => {
         wrapper.querySelectorAll('button.uk-button-danger').forEach(btn => {
           btn.onclick = e => { e.stopPropagation(); wrapper.remove(); };
         });
-        makeAccordionEditable(wrapper);
-        makeSliderEditable(wrapper);
         wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-        // For form submit buttons:
-        wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
+        // Parallax re-init if present
+        if (wrapper.hasAttribute('uk-parallax')) {
+          UIkit.parallax(wrapper);
+        }
         canvas.appendChild(wrapper);
       });
       animateAllTextElements();
@@ -394,21 +370,17 @@ importFile.onchange = () => {
   };
   r.readAsText(f);
 };
-
-// --- EXPORT: Download as static HTML with no edit controls ---
 exportBtn.onclick = async () => {
   // 1. Fetch UIkit CSS
   let uikitCSS = '';
   try {
     uikitCSS = await fetch('https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css').then(r => r.text());
   } catch(e) { uikitCSS = ''; }
-
   // 2. Fetch your custom CSS
   let customCSS = '';
   try {
     customCSS = await fetch('style.css').then(r => r.text());
   } catch(e) { customCSS = ''; }
-
   // 3. Collect dynamic styles (colors, etc.)
   let dynamicCSS = '';
   let styleCounter = 0;
@@ -424,18 +396,15 @@ exportBtn.onclick = async () => {
       }
     });
   });
-
   // 4. Export content: strip only editor controls, keep all attributes (incl. uk-parallax)
   let bodyContent = '';
   document.querySelectorAll('.module-wrapper').forEach(m => {
     const clone = m.cloneNode(true);
-    clone.querySelectorAll('button.uk-button-danger, .uk-position-top-right, .uk-position-top-left, .lwb-acc-add, .lwb-acc-remove, .lwb-slider-add, .lwb-slider-remove, #lwb-toolbar').forEach(b => b.remove());
+    clone.querySelectorAll('button.uk-button-danger, .uk-position-top-right, .uk-position-top-left, #lwb-toolbar').forEach(b => b.remove());
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-    clone.querySelectorAll('form').forEach(form => form.removeAttribute('onsubmit'));
     // DO NOT remove or touch uk-parallax or other UIkit attributes!
     bodyContent += clone.innerHTML;
   });
-
   // 5. Compose final HTML
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -454,7 +423,6 @@ exportBtn.onclick = async () => {
 ${bodyContent}
 </body>
 </html>`;
-
   // 6. Download
   const blob = new Blob([html], {type:'text/html'});
   const url = URL.createObjectURL(blob);
@@ -466,3 +434,28 @@ ${bodyContent}
   URL.revokeObjectURL(url);
   UIkit.notification('Exported as HTML!', 'success');
 };
+
+// --- Parallax (block level only, recommended) ---
+let parallaxTarget = null;
+canvas.addEventListener('click', function(e) {
+  let wrapper = e.target.closest('.module-wrapper');
+  if (wrapper) {
+    parallaxTarget = wrapper;
+  }
+});
+parallaxSelect.addEventListener('change', function(e) {
+  if (!parallaxTarget) {
+    UIkit.notification('Click a block to select it first!', 'warning');
+    return;
+  }
+  parallaxTarget.removeAttribute('uk-parallax');
+  if (parallaxTarget._parallax) {
+    parallaxTarget._parallax.$destroy(true);
+    delete parallaxTarget._parallax;
+  }
+  const val = parallaxSelect.value;
+  if (val) {
+    parallaxTarget.setAttribute('uk-parallax', val);
+    UIkit.parallax(parallaxTarget);
+  }
+});
