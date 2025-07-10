@@ -1,9 +1,13 @@
-.module-wrapper {
-  position: relative;
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, "Liberation Sans", "sans-serif";
 }
 
 body {
   background: #f5f7fb;
+}
+
+.module-wrapper {
+  position: relative;
 }
 
 aside {
@@ -266,4 +270,29 @@ aside h3 {
   top: 1.1em;
   right: auto;
   position: absolute;
+}
+
+#textAnimationSelect {
+  background: #3881f9;
+  color: #fff;
+  border-radius: 0.7em;
+  letter-spacing: 0.02em;
+  font-size: 1.12em;
+  font-family: inherit;           /* <-- Add this line */
+  box-shadow: 0 1px 6px #8bc2ff22;
+  border: none;
+  padding: 0.48em 1.3em;
+  margin-bottom: 1em;
+  margin-top: 0.1em;
+  transition: background 0.18s;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  min-width: 160px;
+}
+#textAnimationSelect:focus,
+#textAnimationSelect:hover {
+  background: #2363d9;
+  color: #fff;
 }

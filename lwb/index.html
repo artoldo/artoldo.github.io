@@ -4,34 +4,15 @@
   <meta charset="UTF-8">
   <title>Live UIkit Website Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css" />
 </head>
 <body>
   <div class="uk-flex uk-flex-between">
     <aside class="uk-width-1-4@s uk-background-muted uk-padding-small">
-      <h3>Presets</h3>
-      <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
-      <ul id="module-list" class="uk-list"></ul>
-    </aside>
-    <main class="uk-width-expand uk-padding-small">
-      <div class="uk-margin-bottom">
-        <button class="uk-button uk-lwb-main" id="saveBtn">Save</button>
-        <button class="uk-button uk-lwb-alt" id="loadBtn">Load</button>
-        <button class="uk-button uk-lwb-alt" id="exportBtn">Export HTML</button>
-        <input type="file" id="importFile" accept=".json" style="display:none;" />
-      </div>
-<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
-  <label style="font-weight:600;">Block Padding:</label>
-  <input type="range" id="paddingRange" min="0" max="64" value="24" step="2" style="width:120px;">
-  <span id="paddingValue" style="width:38px;display:inline-block;">24px</span>
-  <label style="font-weight:600;">Block Margin:</label>
-  <input type="range" id="marginRange" min="0" max="64" value="18" step="2" style="width:120px;">
-  <span id="marginValue" style="width:38px;display:inline-block;">18px</span>
-</div>
-<div class="uk-margin-bottom" style="display:flex;align-items:center;gap:1em;">
-  <label style="font-weight:600;">Text Animation:</label>
+
+            <h3>Animation</h3>
   <select id="textAnimationSelect">
     <option value="uk-animation-fade">Fade</option>
     <option value="uk-animation-scale-up">Scale Up</option>
@@ -40,7 +21,21 @@
     <option value="uk-animation-slide-left-small">Slide Left</option>
     <option value="uk-animation-slide-right-small">Slide Right</option>
   </select>
-</div>
+
+
+
+
+      <h3>Presets</h3>
+      <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
+      <ul id="module-list" class="uk-list"></ul>
+    </aside>
+    <main class="uk-width-expand uk-padding-small uk-sticky">
+      <div class="uk-margin-bottom">
+        <button class="uk-button uk-lwb-main" id="saveBtn">Save</button>
+        <button class="uk-button uk-lwb-alt" id="loadBtn">Load</button>
+        <button class="uk-button uk-lwb-alt" id="exportBtn">Export HTML</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" />
+      </div>
       <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:400px;">
         <div class="uk-text-center uk-text-meta">Drag modules here</div>
       </div>
