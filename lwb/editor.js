@@ -345,8 +345,15 @@ saveBtn.onclick = () => {
   const data = Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({
     html: m.innerHTML
   }));
-  localStorage.setItem('lwb-site', JSON.stringify(data));
-  UIkit.notification('Saved!', 'success');
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "site.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  UIkit.notification('Saved as JSON file!', 'success');
 };
 
 // --- LOAD: Prompt for file and import as JSON ---
@@ -402,7 +409,7 @@ exportBtn.onclick = async () => {
     customCSS = await fetch('style.css').then(r => r.text());
   } catch(e) { customCSS = ''; }
 
-  // 3. Collect dynamic styles (for colors, etc.)
+  // 3. Collect dynamic styles (colors, etc.)
   let dynamicCSS = '';
   let styleCounter = 0;
   document.querySelectorAll('.module-wrapper').forEach(m => {
@@ -418,13 +425,14 @@ exportBtn.onclick = async () => {
     });
   });
 
-  // 4. Clean up export: strip controls and edit modes
+  // 4. Export content: strip only editor controls, keep all attributes (incl. uk-parallax)
   let bodyContent = '';
   document.querySelectorAll('.module-wrapper').forEach(m => {
     const clone = m.cloneNode(true);
     clone.querySelectorAll('button.uk-button-danger, .uk-position-top-right, .uk-position-top-left, .lwb-acc-add, .lwb-acc-remove, .lwb-slider-add, .lwb-slider-remove, #lwb-toolbar').forEach(b => b.remove());
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
     clone.querySelectorAll('form').forEach(form => form.removeAttribute('onsubmit'));
+    // DO NOT remove or touch uk-parallax or other UIkit attributes!
     bodyContent += clone.innerHTML;
   });
 
@@ -439,6 +447,8 @@ exportBtn.onclick = async () => {
   ${customCSS}
   ${dynamicCSS}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
 </head>
 <body>
 ${bodyContent}
