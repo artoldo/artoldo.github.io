@@ -1,10 +1,9 @@
-// --- Preset files ---
+// --- Globals & Presets ---
 const presetFiles = [
   'hero.html','navbar.html','grid-2col.html','card.html',
   'slider.html','accordion.html','modal.html','form.html','footer.html'
 ];
 
-// --- DOM elements ---
 const moduleList = document.getElementById('module-list');
 const canvas = document.getElementById('canvas');
 const search = document.getElementById('search');
@@ -12,76 +11,44 @@ const saveBtn = document.getElementById('saveBtn');
 const loadBtn = document.getElementById('loadBtn');
 const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
+
 const paddingRange = document.getElementById('paddingRange');
 const paddingValue = document.getElementById('paddingValue');
 const marginRange = document.getElementById('marginRange');
 const marginValue = document.getElementById('marginValue');
 const textAnimationSelect = document.getElementById('textAnimationSelect');
 
-// --- Color picker ---
-let colorInput = document.getElementById('lwb-color-picker');
-if (!colorInput) {
-  colorInput = document.createElement('input');
-  colorInput.type = 'color';
-  colorInput.id = 'lwb-color-picker';
-  document.body.appendChild(colorInput);
+// --- Image input for all image uploads ---
+let lwbImageInput = document.getElementById('lwb-image-input');
+if (!lwbImageInput) {
+  lwbImageInput = document.createElement('input');
+  lwbImageInput.type = 'file';
+  lwbImageInput.accept = 'image/*';
+  lwbImageInput.style.display = 'none';
+  lwbImageInput.id = 'lwb-image-input';
+  document.body.appendChild(lwbImageInput);
 }
-let colorTarget = null;
+let lwbImgTarget = null;
 
-// --- Image upload helper ---
-let imageInput = document.getElementById('lwb-image-input');
-if (!imageInput) {
-  imageInput = document.createElement('input');
-  imageInput.type = 'file';
-  imageInput.accept = 'image/*';
-  imageInput.style.display = 'none';
-  imageInput.id = 'lwb-image-input';
-  document.body.appendChild(imageInput);
-}
-let imgTarget = null;
-
-// --- Rich text toolbar ---
-let lwbToolbar = document.getElementById('lwb-toolbar');
-if (!lwbToolbar) {
-  lwbToolbar = document.createElement('div');
-  lwbToolbar.id = 'lwb-toolbar';
-  lwbToolbar.innerHTML = `
-    <button data-cmd="bold" title="Bold"><b>B</b></button>
-    <button data-cmd="italic" title="Italic"><i>I</i></button>
-    <button data-cmd="link" title="Add Link">🔗</button>
-    <button data-cmd="unlink" title="Remove Link">✖️</button>
-    <button data-cmd="formatBlock-h1" title="H1">H1</button>
-    <button data-cmd="formatBlock-h2" title="H2">H2</button>
-    <button data-cmd="formatBlock-h3" title="H3">H3</button>
-    <button data-cmd="formatBlock-h4" title="H4">H4</button>
-    <button data-cmd="formatBlock-p" title="Paragraph">P</button>
-  `;
-  document.body.appendChild(lwbToolbar);
-}
-lwbToolbar.style.display = 'none';
-
-// --- List modules ---
+// --- Load & Filter Module List ---
 function loadModuleList(filter = '') {
   moduleList.innerHTML = '';
-  presetFiles
-    .filter(f => f.toLowerCase().includes(filter.toLowerCase()))
-    .forEach(file => {
-      const li = document.createElement('li');
-      li.className = 'uk-margin-small';
-      li.textContent = file.replace('.html', '');
-      li.draggable = true;
-      li.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', file);
-        e.dataTransfer.effectAllowed = 'copy';
-      });
-      li.onclick = () => addModuleToCanvas(file);
-      moduleList.appendChild(li);
+  presetFiles.filter(f => f.toLowerCase().includes(filter.toLowerCase())).forEach(file => {
+    const li = document.createElement('li');
+    li.className = 'uk-margin-small';
+    li.textContent = file.replace('.html', '');
+    li.draggable = true;
+    li.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', file);
+      e.dataTransfer.effectAllowed = 'copy';
     });
+    li.onclick = () => addModuleToCanvas(file);
+    moduleList.appendChild(li);
+  });
 }
 search.addEventListener('input', () => loadModuleList(search.value));
-loadModuleList();
 
-// --- Drag/drop canvas setup ---
+// --- Canvas Drag/Drop ---
 canvas.addEventListener('dragover', e => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'copy';
@@ -89,388 +56,70 @@ canvas.addEventListener('dragover', e => {
 canvas.addEventListener('drop', e => {
   e.preventDefault();
   const file = e.dataTransfer.getData('text/plain');
-  const placeholder = canvas.querySelector('.uk-text-center.uk-text-meta');
-  if (placeholder) placeholder.remove();
   if (file) addModuleToCanvas(file);
 });
 
-// --- Make contenteditable everywhere needed ---
-function makeEditableAll() {
-  document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+// --- Sortable Main Canvas ---
+new Sortable(canvas, { animation:150, ghostClass:'uk-background-muted', draggable: '.module-wrapper' });
+
+// --- Initial Load ---
+window.addEventListener('DOMContentLoaded', () => {
+  loadModuleList();
+  setGlobalBlockPadding(parseInt(paddingRange.value, 10), false);
+  setGlobalBlockMargin(parseInt(marginRange.value, 10), false);
+  animateAllTextElements();
+  makeEditableAll();
+});
+
+// --- Ensure .module-content wrapper (for padding control) ---
+function ensureModuleContent(wrapper) {
+  if (!wrapper.querySelector('.module-content')) {
+    // Don't wrap the close button
+    let btn = wrapper.querySelector('button.uk-button-danger');
+    let nodes = Array.from(wrapper.childNodes).filter(n => n !== btn);
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'module-content';
+    nodes.forEach(n => contentDiv.appendChild(n));
+    wrapper.appendChild(contentDiv);
+  }
 }
 
-// --- Add module/preset to canvas ---
+// --- Add Module to Canvas ---
 function addModuleToCanvas(file) {
-  fetch(`presets/${file}`)
-    .then(r => {
-      if (!r.ok) throw new Error("Preset not found: " + file);
-      return r.text();
-    })
-    .then(html => {
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('module-wrapper','uk-margin');
-      wrapper.innerHTML = html;
+  fetch(`presets/${file}`).then(r => r.text()).then(html => {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('module-wrapper', 'uk-margin');
+    // Close (remove) button
+    const del = document.createElement('button');
+    del.textContent = '×';
+    del.className = 'uk-button uk-button-danger uk-button-small';
+    del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
+    wrapper.appendChild(del);
 
-      // Place main close button at the left, always circular
-      const del = document.createElement('button');
-      del.textContent = '×';
-      del.className = 'uk-button uk-button-danger uk-button-small uk-position-top-left';
-      del.style.left = '-1.6em';
-      del.style.top = '1.1em';
-      del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
-      wrapper.appendChild(del);
+    // Insert module content and ensure wrapped
+    wrapper.innerHTML += html;
+    ensureModuleContent(wrapper);
 
-      // Remove submit action for all forms
-      wrapper.querySelectorAll('form').forEach(form => {
-        form.onsubmit = e => { e.preventDefault(); return false; };
-      });
+    // Set all editable, color-editable, etc.
+    makeEditableAll(wrapper);
+    makeAccordionEditable(wrapper);
+    makeSliderEditable(wrapper);
 
-      // All text editable
-      wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+    // Re-enable editable for submit buttons
+    wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
 
-      // Editable submit buttons
-      wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
-
-      // Accordion/Slider handling
-      makeAccordionEditable(wrapper);
-      makeSliderEditable(wrapper);
-
-      // Add to canvas
-      canvas.appendChild(wrapper);
-
-      // Animate text, padding, margin
-      animateAllTextElements();
-      setGlobalBlockPadding(paddingRange.value, false);
-      setGlobalBlockMargin(marginRange.value, false);
-      makeEditableAll();
-    })
-    .catch(err => {
-      UIkit.notification(err.message, 'danger');
-      console.error(err);
-    });
-}
-
-// --- ACCORDION: headings & content, draggable, one "+" add, red "-" remove (right) ---
-function makeAccordionEditable(wrapper) {
-  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
-    // Ensure only one add button
-    acc.parentElement.querySelectorAll('.lwb-acc-add').forEach(btn => btn.remove());
-    const addBtn = document.createElement('button');
-    addBtn.innerHTML = '<span uk-icon="plus"></span>';
-    addBtn.className = 'uk-button uk-button-primary lwb-acc-add';
-    addBtn.style.display = 'block';
-    addBtn.style.margin = '1.2em auto 0 auto';
-    addBtn.style.borderRadius = '50%';
-    addBtn.style.width = '38px';
-    addBtn.style.height = '38px';
-    addBtn.style.padding = '0';
-    addBtn.onclick = () => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div style="position:relative;">
-          <a class="uk-accordion-title" href="#" data-editable>New Section</a>
-          <button class="uk-button uk-button-danger uk-button-small lwb-acc-remove" 
-            style="position:absolute;right:-48px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;">–</button>
-        </div>
-        <div class="uk-accordion-content"><p data-editable>New content…</p></div>
-      `;
-      acc.appendChild(li);
-      makeAccordionEditable(wrapper);
-      makeEditableAll();
-    };
-    acc.parentElement.appendChild(addBtn);
-
-    // Remove/replace all delete buttons (right side, circle minus)
-    acc.querySelectorAll('li').forEach(li => {
-      li.querySelectorAll('.lwb-acc-remove').forEach(btn => btn.remove());
-      const headerDiv = li.querySelector('.uk-accordion-title')?.parentElement;
-      if (headerDiv && !headerDiv.querySelector('.lwb-acc-remove')) {
-        const remBtn = document.createElement('button');
-        remBtn.innerHTML = '–';
-        remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
-        remBtn.style.position = 'absolute';
-        remBtn.style.right = '-48px';
-        remBtn.style.top = '50%';
-        remBtn.style.transform = 'translateY(-50%)';
-        remBtn.style.width = '30px';
-        remBtn.style.height = '30px';
-        remBtn.style.borderRadius = '50%';
-        remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
-        headerDiv.appendChild(remBtn);
-      }
-      li.style.position = 'relative';
-    });
-
-    // Draggable by heading
-    if (!acc.lwbSortable) {
-      new Sortable(acc, {
-        handle: '.uk-accordion-title',
-        animation: 160,
-        ghostClass: 'uk-background-muted',
-        draggable: 'li'
-      });
-      acc.lwbSortable = true;
-    }
+    canvas.appendChild(wrapper);
+    animateAllTextElements();
+    setGlobalBlockPadding(paddingRange.value, false);
+    setGlobalBlockMargin(marginRange.value, false);
   });
 }
 
-// --- SLIDER: add/remove slides, captions, lightbox, draggable ---
-function makeSliderEditable(wrapper) {
-  wrapper.querySelectorAll('.uk-slideshow-items').forEach(slideshow => {
-    // Add "+" button
-    if (!wrapper.querySelector('.lwb-slider-add')) {
-      const addBtn = document.createElement('button');
-      addBtn.innerHTML = '<span uk-icon="plus"></span>';
-      addBtn.className = 'uk-button uk-button-primary lwb-slider-add';
-      addBtn.style.display = 'block';
-      addBtn.style.margin = '1.2em auto 0 auto';
-      addBtn.style.borderRadius = '50%';
-      addBtn.style.width = '38px';
-      addBtn.style.height = '38px';
-      addBtn.style.padding = '0';
-      addBtn.onclick = () => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <a href="#" class="lwb-slide-image">
-            <div class="lwb-image-placeholder" style="width: 320px; height: 180px;">
-              <span uk-icon="icon: image; ratio: 2"></span>
-            </div>
-          </a>
-          <div class="uk-overlay uk-overlay-primary uk-position-bottom uk-text-center">
-            <span data-editable>New caption…</span>
-          </div>
-        `;
-        slideshow.appendChild(li);
-        makeSliderEditable(wrapper);
-        makeEditableAll();
-      };
-      wrapper.appendChild(addBtn);
-    }
-
-    // Remove all delete buttons, then add them (right corner)
-    slideshow.querySelectorAll('li').forEach(li => {
-      li.querySelectorAll('.lwb-slider-remove').forEach(btn => btn.remove());
-      const remBtn = document.createElement('button');
-      remBtn.innerHTML = '–';
-      remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-slider-remove';
-      remBtn.style.position = 'absolute';
-      remBtn.style.right = '-20px';
-      remBtn.style.top = '10px';
-      remBtn.style.width = '28px';
-      remBtn.style.height = '28px';
-      remBtn.style.borderRadius = '50%';
-      remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
-      li.style.position = 'relative';
-      li.appendChild(remBtn);
-    });
-
-    // Slides draggable
-    if (!slideshow.lwbSortable) {
-      new Sortable(slideshow, {
-        handle: '.lwb-slide-image',
-        animation: 150,
-        ghostClass: 'uk-background-muted',
-        draggable: 'li'
-      });
-      slideshow.lwbSortable = true;
-    }
-
-    // Lightbox for slides (click img)
-    slideshow.querySelectorAll('.lwb-slide-image img').forEach(img => {
-      img.onclick = e => {
-        e.preventDefault();
-        UIkit.lightboxPanel({items:[{source: img.src, type: 'image'}]}).show();
-      };
-    });
-  });
-}
-
-// --- Color picker logic ---
-canvas.addEventListener('dblclick', e => {
-  const el = e.target.closest('[data-color-editable]');
-  if (el) {
-    colorTarget = el;
-    const prop = el.getAttribute('data-color-editable') === 'background' ? 'backgroundColor' : 'color';
-    const style = getComputedStyle(el)[prop];
-    let hex = "#ffffff";
-    if (style.startsWith("rgb")) {
-      const vals = style.match(/\d+/g);
-      if (vals) hex = '#' + ((1<<24) + (+vals[0]<<16) + (+vals[1]<<8) + +vals[2]).toString(16).slice(1);
-    } else if (style.startsWith("#")) {
-      hex = style;
-    }
-    colorInput.value = hex;
-    const r = el.getBoundingClientRect();
-    colorInput.style.left = `${r.right + 12 + window.scrollX}px`;
-    colorInput.style.top = `${r.top + window.scrollY}px`;
-    colorInput.style.display = 'block';
-    colorInput.focus();
-    e.preventDefault();
-  }
-});
-canvas.addEventListener('click', e => {
-  colorInput.style.display = 'none';
-  colorTarget = null;
-});
-colorInput.addEventListener('input', () => {
-  if (colorTarget) {
-    const prop = colorTarget.getAttribute('data-color-editable')==='background'?'backgroundColor':'color';
-    colorTarget.style[prop] = colorInput.value;
-  }
-});
-colorInput.addEventListener('blur', () => {
-  colorInput.style.display = 'none';
-  colorTarget = null;
-});
-
-// --- Image placeholder logic ---
-canvas.addEventListener('click', e => {
-  const placeholder = e.target.closest('.lwb-image-placeholder');
-  if (placeholder) {
-    imgTarget = placeholder;
-    UIkit.modal.prompt('Paste image URL or click OK to upload:', '', function(val) {
-      if (val && val.trim()) {
-        replacePlaceholderWithImage(placeholder, val.trim());
-      } else {
-        imageInput.click();
-      }
-    });
-    return;
-  }
-  if (e.target.tagName === 'IMG') {
-    imgTarget = e.target;
-    UIkit.modal.prompt('Paste image URL or click OK to upload:', '', function(val) {
-      if (val && val.trim()) {
-        imgTarget.src = val.trim();
-      } else {
-        imageInput.click();
-      }
-    });
-    return;
-  }
-});
-imageInput.onchange = () => {
-  if (!imgTarget) return;
-  if (imageInput.files && imageInput.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      if (imgTarget.classList && imgTarget.classList.contains('lwb-image-placeholder')) {
-        replacePlaceholderWithImage(imgTarget, e.target.result);
-      } else if (imgTarget.tagName === 'IMG') {
-        imgTarget.src = e.target.result;
-      }
-    };
-    reader.readAsDataURL(imageInput.files[0]);
-  }
-};
-function replacePlaceholderWithImage(placeholder, src) {
-  const img = document.createElement('img');
-  img.src = src;
-  img.alt = 'Image';
-  img.style.width = placeholder.style.width || '100%';
-  img.style.height = placeholder.style.height || 'auto';
-  img.style.borderRadius = placeholder.style.borderRadius || '1em';
-  img.style.display = 'block';
-  img.style.objectFit = 'cover';
-  img.style.cursor = 'pointer';
-  img.addEventListener('click', function(e) {
-    e.stopPropagation();
-    imgTarget = img;
-    UIkit.modal.prompt('Paste image URL or click OK to upload:', '', function(val) {
-      if (val && val.trim()) {
-        img.src = val.trim();
-      } else {
-        imageInput.click();
-      }
-    });
-  });
-  placeholder.parentNode.replaceChild(img, placeholder);
-}
-
-// --- Form buttons & placeholders editable ---
-canvas.addEventListener('dblclick', e => {
-  const input = e.target.closest('[data-editable-placeholder]');
-  if (input) {
-    e.preventDefault();
-    const current = input.getAttribute('placeholder') || '';
-    UIkit.modal.prompt('Edit placeholder:', current, val => {
-      if (val !== null) input.setAttribute('placeholder', val);
-    });
-    return;
-  }
-  if (e.target.tagName === 'BUTTON' && e.target.hasAttribute('data-editable')) {
-    e.preventDefault();
-    const current = e.target.textContent;
-    UIkit.modal.prompt('Edit button text:', current, val => {
-      if (val !== null) e.target.textContent = val;
-    });
-    return;
-  }
-  let a = null;
-  if (e.target.tagName === 'A') a = e.target;
-  else if (e.target.closest('a')) a = e.target.closest('a');
-  if (a && a.hasAttribute('href')) {
-    e.preventDefault();
-    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
-      if (val && val.trim()) a.setAttribute('href', val.trim());
-    });
-    return;
-  }
-});
-
-// --- Rich text toolbar stays until click outside ---
-let lwbSelEditable = null;
-document.addEventListener('selectionchange', function() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  const parent = range.startContainer.parentElement;
-  const editable = parent && parent.closest('[data-editable]');
-  if (
-    editable && sel.toString().trim() &&
-    editable.contains(sel.anchorNode) && editable.contains(sel.focusNode)
-  ) {
-    lwbSelEditable = editable;
-    const rect = range.getBoundingClientRect();
-    lwbToolbar.style.left = `${rect.left + window.scrollX}px`;
-    lwbToolbar.style.top = `${rect.top + window.scrollY - 44}px`;
-    lwbToolbar.style.display = 'flex';
-  }
-});
-document.addEventListener('click', e => {
-  if (!lwbToolbar.contains(e.target)) {
-    lwbToolbar.style.display = 'none';
-  }
-});
-lwbToolbar.addEventListener('mousedown', function(e) {
-  e.preventDefault();
-});
-lwbToolbar.addEventListener('click', function(e) {
-  const btn = e.target.closest('button[data-cmd]');
-  if (!btn) return;
-  const cmd = btn.getAttribute('data-cmd');
-  if (!lwbSelEditable) return;
-  lwbSelEditable.focus();
-  if (cmd === 'bold' || cmd === 'italic') {
-    document.execCommand(cmd, false, null);
-  } else if (cmd === 'link') {
-    let url = prompt('Enter URL:');
-    if (url) document.execCommand('createLink', false, url);
-  } else if (cmd === 'unlink') {
-    document.execCommand('unlink', false, null);
-  } else if (cmd.startsWith('formatBlock-')) {
-    let block = cmd.split('-')[1];
-    document.execCommand('formatBlock', false, block);
-  }
-});
-
-// --- Padding control ---
+// --- Padding & Margin Sliders ---
 function setGlobalBlockPadding(val, animate = true) {
-  document.querySelectorAll('.module-wrapper').forEach(block => {
-    block.style.transition = animate
-      ? 'padding 0.22s cubic-bezier(.47,1.64,.41,.8), margin 0.22s cubic-bezier(.47,1.64,.41,.8)'
-      : '';
-    block.style.padding = `${val}px 1.5em ${val}px 1.5em`;
+  document.querySelectorAll('.module-wrapper .module-content').forEach(content => {
+    content.style.transition = animate ? 'padding 0.22s cubic-bezier(.47,1.64,.41,.8)' : '';
+    content.style.padding = `${val}px 1.5em ${val}px 1.5em`;
   });
 }
 paddingRange.addEventListener('input', e => {
@@ -478,13 +127,9 @@ paddingRange.addEventListener('input', e => {
   paddingValue.textContent = `${val}px`;
   setGlobalBlockPadding(val, true);
 });
-
-// --- Margin control ---
 function setGlobalBlockMargin(val, animate = true) {
   document.querySelectorAll('.module-wrapper').forEach(block => {
-    block.style.transition = animate
-      ? 'margin 0.22s cubic-bezier(.47,1.64,.41,.8)'
-      : '';
+    block.style.transition = animate ? 'margin 0.22s cubic-bezier(.47,1.64,.41,.8)' : '';
     block.style.marginBottom = `${val}px`;
   });
 }
@@ -494,7 +139,7 @@ marginRange.addEventListener('input', e => {
   setGlobalBlockMargin(val, true);
 });
 
-// --- UIkit Text Animation: longer duration ---
+// --- UIkit Animation ---
 let currentTextAnimation = textAnimationSelect.value;
 function updateTextAnimations() {
   canvas.querySelectorAll('h1, h2, h3, h4, p, [data-editable]').forEach(el => {
@@ -524,34 +169,342 @@ function animateAllTextElements(animationClass = currentTextAnimation) {
   });
 }
 
-// --- Save/load/export (as before, not repeated for brevity) ---
+// --- Format Bar (UIkit icons) ---
+let lwbToolbar = document.createElement('div');
+lwbToolbar.id = 'lwb-toolbar';
+lwbToolbar.style.display = 'none';
+lwbToolbar.innerHTML = `
+  <button data-cmd="bold" title="Bold"><span uk-icon="bold"></span></button>
+  <button data-cmd="italic" title="Italic"><span uk-icon="italic"></span></button>
+  <button data-cmd="formatBlock-p" title="Paragraph"><b>P</b></button>
+  <button data-cmd="formatBlock-h1" title="H1">H1</button>
+  <button data-cmd="formatBlock-h2" title="H2">H2</button>
+  <button data-cmd="formatBlock-h3" title="H3">H3</button>
+  <button data-cmd="link" title="Add Link"><span uk-icon="link"></span></button>
+  <button data-cmd="unlink" title="Remove Link"><span uk-icon="close"></span></button>
+`;
+document.body.appendChild(lwbToolbar);
+UIkit.icon(lwbToolbar);
 
-window.addEventListener('DOMContentLoaded', () => {
-  setGlobalBlockPadding(parseInt(paddingRange.value, 10), false);
-  setGlobalBlockMargin(parseInt(marginRange.value, 10), false);
-  animateAllTextElements();
-  makeEditableAll();
+let lwbToolbarTarget = null;
+canvas.addEventListener('click', function(e) {
+  // Format bar logic
+  if (lwbToolbar.contains(e.target)) return;
+  let editable = e.target.closest('[data-editable]');
+  if (editable && editable.isContentEditable) {
+    lwbToolbarTarget = editable;
+    const rect = editable.getBoundingClientRect();
+    lwbToolbar.style.top = (window.scrollY + rect.top - lwbToolbar.offsetHeight - 10) + "px";
+    lwbToolbar.style.left = (window.scrollX + rect.left) + "px";
+    lwbToolbar.style.display = 'flex';
+    setTimeout(() => lwbToolbar.style.opacity = 1, 0);
+  } else {
+    lwbToolbar.style.display = 'none';
+    lwbToolbarTarget = null;
+  }
+});
+lwbToolbar.addEventListener('mousedown', e => e.preventDefault());
+lwbToolbar.addEventListener('click', function(e) {
+  if (!lwbToolbarTarget) return;
+  let cmd = e.target.closest('button')?.getAttribute('data-cmd');
+  if (!cmd) return;
+  lwbToolbarTarget.focus();
+  document.execCommand('styleWithCSS', false, true);
+  if (cmd === 'bold' || cmd === 'italic') {
+    document.execCommand(cmd, false, null);
+  } else if (cmd === 'link') {
+    let url = prompt("Link URL:");
+    if (url) document.execCommand('createLink', false, url);
+  } else if (cmd === 'unlink') {
+    document.execCommand('unlink', false, null);
+  } else if (cmd.startsWith('formatBlock-')) {
+    let block = cmd.split('-')[1];
+    document.execCommand('formatBlock', false, block);
+  }
 });
 
-// --- Export: UIkit CSS, custom CSS, and dynamic inline styles ---
+// --- Make everything editable (text, color) ---
+function makeEditableAll(scope) {
+  (scope || canvas).querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+  (scope || canvas).querySelectorAll('[data-color-editable]').forEach(el => el.style.cursor = 'pointer');
+}
+
+// --- Image Upload/Replace (URL or local file) ---
+canvas.addEventListener('click', function(e) {
+  let imgPlaceholder = e.target.closest('.lwb-image-placeholder');
+  let realImg = e.target.tagName === 'IMG' && e.target.closest('.module-wrapper') ? e.target : null;
+
+  if (imgPlaceholder || realImg) {
+    e.preventDefault();
+    lwbImgTarget = imgPlaceholder || realImg;
+
+    UIkit.modal.prompt('Paste image URL or leave empty for upload:', '', function(val) {
+      if (val && val.trim()) {
+        lwbReplaceImage(lwbImgTarget, val.trim());
+      } else {
+        lwbImageInput.value = '';
+        lwbImageInput.click();
+      }
+    });
+    return;
+  }
+});
+lwbImageInput.onchange = () => {
+  if (!lwbImgTarget) return;
+  const file = lwbImageInput.files && lwbImageInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    lwbReplaceImage(lwbImgTarget, e.target.result);
+  };
+  reader.readAsDataURL(file);
+};
+function lwbReplaceImage(target, src) {
+  if (!target) return;
+  // Replace placeholder with real <img>
+  if (target.classList && target.classList.contains('lwb-image-placeholder')) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Image';
+    img.style.width = target.style.width || '100%';
+    img.style.height = target.style.height || 'auto';
+    img.style.borderRadius = target.style.borderRadius || '1em';
+    img.style.display = 'block';
+    img.style.objectFit = 'cover';
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', function(e) {
+      e.stopPropagation();
+      lwbImgTarget = img;
+      UIkit.modal.prompt('Paste image URL or leave empty for upload:', '', function(val) {
+        if (val && val.trim()) {
+          img.src = val.trim();
+        } else {
+          lwbImageInput.value = '';
+          lwbImageInput.click();
+        }
+      });
+    });
+    target.parentNode.replaceChild(img, target);
+  } else if (target.tagName === 'IMG') {
+    target.src = src;
+  }
+}
+
+// --- Button/link editing dialog (dblclick) ---
+canvas.addEventListener('dblclick', function(e) {
+  // Ignore builder control buttons
+  const isEditorBtn = e.target.closest('.lwb-acc-add, .lwb-slider-add, .lwb-acc-remove, .lwb-slider-remove, .uk-button-danger');
+  if (isEditorBtn) return;
+
+  let btn = e.target.closest('button, a');
+  if (btn && btn.closest('.module-wrapper')) {
+    e.preventDefault();
+
+    // If it's a link (<a>)
+    if (btn.tagName === 'A' || btn.hasAttribute('href')) {
+      const currentText = btn.textContent;
+      const currentHref = btn.getAttribute('href') || '';
+      UIkit.modal.prompt('Button Text:', currentText, function(newText) {
+        if (newText !== null) {
+          btn.textContent = newText;
+          UIkit.modal.prompt('Button Link/URL:', currentHref, function(newHref) {
+            if (newHref !== null) {
+              btn.setAttribute('href', newHref);
+            }
+          });
+        }
+      });
+      return;
+    }
+
+    // If it's a regular button
+    if (btn.tagName === 'BUTTON') {
+      const currentText = btn.textContent;
+      UIkit.modal.prompt('Button Text:', currentText, function(newText) {
+        if (newText !== null) {
+          btn.textContent = newText;
+        }
+      });
+      return;
+    }
+  }
+});
+
+// --- Accordion editable logic ---
+function makeAccordionEditable(wrapper) {
+  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
+    // Remove any extra add/remove buttons first
+    acc.querySelectorAll('.lwb-acc-add, .lwb-acc-remove').forEach(b => b.remove());
+
+    // Add + button centered
+    if (!acc.parentNode.querySelector('.lwb-acc-add')) {
+      const addBtn = document.createElement('button');
+      addBtn.textContent = '+';
+      addBtn.className = 'uk-button uk-button-primary lwb-acc-add';
+      addBtn.onclick = () => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a class="uk-accordion-title" href="#" data-editable>Section</a>
+          <div class="uk-accordion-content" data-editable>Content...</div>
+        `;
+        acc.appendChild(li);
+        makeAccordionEditable(wrapper);
+        makeEditableAll(wrapper);
+      };
+      acc.parentNode.appendChild(addBtn);
+    }
+    // Add remove button to each section
+    acc.querySelectorAll('li').forEach(li => {
+      li.querySelectorAll('.lwb-acc-remove').forEach(b => b.remove());
+      const remBtn = document.createElement('button');
+      remBtn.innerHTML = '&ndash;';
+      remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
+      remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
+      remBtn.style.position = 'absolute';
+      remBtn.style.left = '-28px';
+      remBtn.style.top = '10px';
+      li.style.position = 'relative';
+      li.appendChild(remBtn);
+    });
+    // Make accordion sections draggable
+    if (!acc.lwbSortable) {
+      new Sortable(acc, {
+        handle: '.uk-accordion-title',
+        animation: 150,
+        ghostClass: 'uk-background-muted',
+        draggable: 'li'
+      });
+      acc.lwbSortable = true;
+    }
+  });
+}
+
+// --- Slider editable logic ---
+function makeSliderEditable(wrapper) {
+  wrapper.querySelectorAll('.uk-slideshow-items').forEach(slideshow => {
+    // Add "+" button (once)
+    if (!wrapper.querySelector('.lwb-slider-add')) {
+      const addBtn = document.createElement('button');
+      addBtn.innerHTML = '<span uk-icon="plus"></span>';
+      addBtn.className = 'uk-button uk-button-primary lwb-slider-add';
+      addBtn.onclick = () => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a href="#" class="lwb-slide-image">
+            <div class="lwb-image-placeholder" style="width: 320px; height: 180px;">
+              <span uk-icon="icon: image; ratio: 2"></span>
+            </div>
+          </a>
+          <div class="uk-overlay uk-overlay-primary uk-position-bottom uk-text-center">
+            <span data-editable>New caption…</span>
+          </div>
+        `;
+        slideshow.appendChild(li);
+        makeSliderEditable(wrapper);
+        makeEditableAll(wrapper);
+      };
+      wrapper.appendChild(addBtn);
+      UIkit.icon(addBtn);
+    }
+
+    // Remove all delete buttons, then add
+    slideshow.querySelectorAll('li').forEach(li => {
+      li.querySelectorAll('.lwb-slider-remove').forEach(btn => btn.remove());
+      const remBtn = document.createElement('button');
+      remBtn.innerHTML = '–';
+      remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-slider-remove';
+      remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
+      remBtn.style.position = 'absolute';
+      remBtn.style.right = '-20px';
+      remBtn.style.top = '10px';
+      li.style.position = 'relative';
+      li.appendChild(remBtn);
+    });
+
+    // Slides draggable
+    if (!slideshow.lwbSortable) {
+      new Sortable(slideshow, {
+        handle: '.lwb-slide-image',
+        animation: 150,
+        ghostClass: 'uk-background-muted',
+        draggable: 'li'
+      });
+      slideshow.lwbSortable = true;
+    }
+
+    // Lightbox on image click
+    slideshow.querySelectorAll('.lwb-slide-image img').forEach(img => {
+      img.onclick = e => {
+        e.preventDefault();
+        UIkit.lightboxPanel({items:[{source: img.src, type: 'image'}]}).show();
+      };
+    });
+  });
+}
+
+// --- Save/Load/Export Functions ---
+
+function getSiteData() {
+  // Save each block’s inner HTML (including .module-content and controls)
+  return Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({ html: m.innerHTML }));
+}
+
+saveBtn.onclick = () => {
+  localStorage.setItem('site', JSON.stringify(getSiteData()));
+  UIkit.notification('Saved!', 'success');
+};
+
+loadBtn.onclick = () => importFile.click();
+
+importFile.onchange = () => {
+  const f = importFile.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      canvas.innerHTML = '';
+      data.forEach(m => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'module-wrapper uk-margin';
+        wrapper.innerHTML = m.html;
+        // Re-bind delete/edit controls:
+        wrapper.querySelectorAll('button.uk-button-danger').forEach(btn => {
+          btn.onclick = e => { e.stopPropagation(); wrapper.remove(); };
+        });
+        ensureModuleContent(wrapper);
+        makeEditableAll(wrapper);
+        makeAccordionEditable(wrapper);
+        makeSliderEditable(wrapper);
+        // Re-enable editable for submit buttons
+        wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
+        canvas.appendChild(wrapper);
+      });
+      animateAllTextElements();
+      setGlobalBlockPadding(paddingRange.value, false);
+      setGlobalBlockMargin(marginRange.value, false);
+      makeEditableAll();
+      UIkit.notification('Loaded!', 'primary');
+    } catch {
+      UIkit.notification('Import failed.', 'danger');
+    }
+  };
+  r.readAsText(f);
+};
+
 exportBtn.onclick = async () => {
-  // 1. Fetch UIkit CSS
+  // Fetch UIkit CSS
   let uikitCSS = '';
   try {
     uikitCSS = await fetch('https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css').then(r => r.text());
-  } catch(e) {
-    uikitCSS = '';
-  }
-
-  // 2. Fetch your custom style.css (if you have one)
+  } catch(e) {}
+  // Fetch your custom CSS
   let customCSS = '';
   try {
     customCSS = await fetch('style.css').then(r => r.text());
-  } catch(e) {
-    customCSS = '';
-  }
+  } catch(e) {}
 
-  // 3. Collect dynamic color styles and paddings/margins
+  // Gather dynamic inline styles (padding, margin, color edits)
   let dynamicCSS = '';
   let styleCounter = 0;
   document.querySelectorAll('.module-wrapper').forEach(m => {
@@ -565,15 +518,17 @@ exportBtn.onclick = async () => {
         dynamicCSS += `.${uniqueClass} { ${prop}: ${value} !important; }\n`;
       }
     });
-    // Padding for each block (if not default)
-    const pad = m.style.padding;
-    if (pad) {
-      styleCounter++;
-      const uniqueBlockClass = `lwb-blockpad-${styleCounter}`;
-      m.classList.add(uniqueBlockClass);
-      dynamicCSS += `.${uniqueBlockClass} { padding: ${pad} !important; }\n`;
+    // padding and margin handled in .module-content and .module-wrapper
+    const modContent = m.querySelector('.module-content');
+    if (modContent) {
+      const pad = modContent.style.padding;
+      if (pad) {
+        styleCounter++;
+        const uniqueBlockClass = `lwb-blockpad-${styleCounter}`;
+        modContent.classList.add(uniqueBlockClass);
+        dynamicCSS += `.${uniqueBlockClass} { padding: ${pad} !important; }\n`;
+      }
     }
-    // Margin for each block (if not default)
     const margin = m.style.marginBottom;
     if (margin) {
       styleCounter++;
@@ -583,17 +538,21 @@ exportBtn.onclick = async () => {
     }
   });
 
-  // 4. Remove all editor-only controls for export
+  // Strip ALL builder-only controls and edit modes
   let bodyContent = '';
   document.querySelectorAll('.module-wrapper').forEach(m => {
     const clone = m.cloneNode(true);
-    clone.querySelectorAll('button.uk-button-danger, .uk-position-top-right, .uk-position-top-left, .lwb-acc-add, .lwb-acc-remove, .lwb-slider-add, .lwb-slider-remove').forEach(b => b.remove());
+    // Remove all builder controls
+    clone.querySelectorAll(
+      'button.uk-button-danger, .uk-position-top-right, .uk-position-top-left, .lwb-acc-add, .lwb-acc-remove, .lwb-slider-add, .lwb-slider-remove, #lwb-toolbar'
+    ).forEach(b => b.remove());
+    // Remove contenteditable
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    // Remove onsubmit handlers
     clone.querySelectorAll('form').forEach(form => form.removeAttribute('onsubmit'));
     bodyContent += clone.innerHTML;
   });
 
-  // 5. Compose the exported HTML
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -610,7 +569,7 @@ ${bodyContent}
 </body>
 </html>`;
 
-  // 6. Download as file
+  // Download file
   const blob = new Blob([html], {type:'text/html'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

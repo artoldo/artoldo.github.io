@@ -1,28 +1,16 @@
-<div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slideshow="animation: fade">
-  <ul class="uk-slideshow-items">
-    <li>
-      <a href="#" class="lwb-slide-image">
-        <div class="lwb-image-placeholder" style="width: 320px; height: 180px;">
-          <span uk-icon="icon: image; ratio: 2"></span>
+<div class="module-content">
+  <div uk-slideshow="animation: fade" class="uk-position-relative">
+    <ul class="uk-slideshow-items">
+      <li>
+        <a href="#" class="lwb-slide-image">
+          <div class="lwb-image-placeholder" style="width:320px;height:180px;">
+            <span uk-icon="icon: image; ratio:2"></span>
+          </div>
+        </a>
+        <div class="uk-overlay uk-overlay-primary uk-position-bottom uk-text-center">
+          <span data-editable>Slider Caption…</span>
         </div>
-      </a>
-      <div class="uk-overlay uk-overlay-primary uk-position-bottom uk-text-center">
-        <span data-editable>Add a caption…</span>
-      </div>
-    </li>
-    <li>
-      <a href="#" class="lwb-slide-image">
-        <div class="lwb-image-placeholder" style="width: 320px; height: 180px;">
-          <span uk-icon="icon: image; ratio: 2"></span>
-        </div>
-      </a>
-      <div class="uk-overlay uk-overlay-primary uk-position-bottom uk-text-center">
-        <span data-editable>Second caption…</span>
-      </div>
-    </li>
-  </ul>
-
-  <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
-  <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+      </li>
+    </ul>
+  </div>
 </div>
-<!-- + button and lightbox will be injected by JS -->
