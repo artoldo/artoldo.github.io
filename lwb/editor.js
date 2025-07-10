@@ -621,3 +621,34 @@ ${bodyContent}
   URL.revokeObjectURL(url);
   UIkit.notification('Exported as HTML!', 'success');
 };
+
+
+let parallaxTarget = null;
+
+// Listen for clicks inside any module-wrapper to select it for parallax
+canvas.addEventListener('click', function(e) {
+  let wrapper = e.target.closest('.module-wrapper');
+  if (wrapper) {
+    parallaxTarget = wrapper;
+    // Optionally add a visual highlight here
+  }
+});
+
+// Parallax select logic
+parallaxSelect.addEventListener('change', function(e) {
+  if (!parallaxTarget) {
+    UIkit.notification('Click a block to select it first!', 'warning');
+    return;
+  }
+  // Remove old parallax
+  parallaxTarget.removeAttribute('uk-parallax');
+  if (parallaxTarget._parallax) {
+    parallaxTarget._parallax.$destroy(true);
+    delete parallaxTarget._parallax;
+  }
+  const val = parallaxSelect.value;
+  if (val) {
+    parallaxTarget.setAttribute('uk-parallax', val);
+    UIkit.parallax(parallaxTarget);
+  }
+});

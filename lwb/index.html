@@ -12,8 +12,8 @@
   <div class="uk-flex uk-flex-between">
     <aside class="uk-width-1-4@s uk-background-muted uk-padding-small">
 
-            <h3>Animation</h3>
-  <select id="textAnimationSelect">
+<h3>Animation</h3>
+  <select id="textAnimationSelect" class="uk-select">
     <option value="uk-animation-fade">Fade</option>
     <option value="uk-animation-scale-up">Scale Up</option>
     <option value="uk-animation-slide-top-small">Slide Top</option>
@@ -22,8 +22,17 @@
     <option value="uk-animation-slide-right-small">Slide Right</option>
   </select>
 
-
-
+<h3>Paralax</h3>
+  <select id="parallaxSelect" class="uk-select">
+    <option value="">None</option>
+    <option value="y: -100">Vertical</option>
+    <option value="x: 100">Horizontal</option>
+    <option value="rotate: 90">Rotate</option>
+    <option value="scale: 1.5">Scale Up</option>
+    <option value="bgx: 200">Background X</option>
+    <option value="bgy: 200">Background Y</option>
+    <option value="opacity: 0,1">Fade In</option>
+  </select>
 
       <h3>Presets</h3>
       <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
