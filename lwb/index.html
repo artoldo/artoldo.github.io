@@ -52,9 +52,22 @@
         </div>
       </div>
     </nav>
-    <div id="canvas" class="uk-container uk-margin" style="min-height:500px;">
-      <div class="uk-text-center uk-text-meta">Drag modules here</div>
+    <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:500px;">
+  <div class="module-wrapper uk-margin uk-card uk-card-default uk-card-body uk-position-relative">
+    <div class="uk-section uk-section-primary uk-padding">
+      <div class="uk-container">
+        <h1 class="uk-heading-medium" data-editable>Welcome to Your Live Website!</h1>
+        <p data-editable>Edit this hero text. Drag more blocks from the sidebar.</p>
+        <a class="uk-button uk-button-secondary" href="#" ondblclick="buttonEditDialog(event);">Learn More</a>
+      </div>
     </div>
+    <!-- Remove Button (styled via CSS) -->
+    <button type="button" aria-label="Close"
+      class="uk-close uk-close-large lwb-remove-btn uk-position-absolute"
+      style="top: 15px; left: 15px;"
+      onclick="this.closest('.module-wrapper').remove();"></button>
+  </div>
+</div>
   </main>
 </div>
 

@@ -1,9 +1,7 @@
-// === UIkit Website Editor - Clean, Feature Complete ===
-
-// --- Config: List all preset modules here (by file name) ---
+// --- Config ---
 const presetFiles = ['hero.html', 'card.html', 'image.html'];
 
-// --- Get Elements ---
+// --- DOM ---
 const moduleList = document.getElementById('module-list');
 const canvas = document.getElementById('canvas');
 const search = document.getElementById('search');
@@ -14,37 +12,37 @@ const importFile = document.getElementById('importFile');
 const animSelect = document.getElementById('textAnimationSelect');
 const parallaxSelect = document.getElementById('parallaxSelect');
 
-// --- Image Upload Helper ---
-let imageInput = document.getElementById('lwb-image-input');
-if (!imageInput) {
-  imageInput = document.createElement('input');
-  imageInput.type = 'file';
-  imageInput.accept = 'image/*';
-  imageInput.style.display = 'none';
-  imageInput.id = 'lwb-image-input';
-  document.body.appendChild(imageInput);
-}
-let imgTarget = null;
-
-// --- Color Picker Helper ---
+// --- Color Picker ---
 let colorInput = document.getElementById('lwb-color-picker');
 if (!colorInput) {
   colorInput = document.createElement('input');
   colorInput.type = 'color';
   colorInput.id = 'lwb-color-picker';
   colorInput.style.position = 'absolute';
+  colorInput.style.zIndex = 10002;
   colorInput.style.display = 'none';
-  colorInput.style.width = '40px';
-  colorInput.style.height = '40px';
-  colorInput.style.border = '2px solid #1787fc';
+  colorInput.style.width = '44px';
+  colorInput.style.height = '44px';
   colorInput.style.borderRadius = '50%';
-  colorInput.style.zIndex = 99999;
-  colorInput.style.boxShadow = '0 2px 16px #1787fc22';
+  colorInput.style.border = '2px solid #3387e6';
+  colorInput.style.boxShadow = '0 4px 24px #8bc2ff38';
   document.body.appendChild(colorInput);
 }
 let colorTarget = null;
 
-// --- Load Module List ---
+// --- Image Upload ---
+let imageInput = document.getElementById('lwb-image-input');
+if (!imageInput) {
+  imageInput = document.createElement('input');
+  imageInput.type = 'file';
+  imageInput.accept = 'image/*';
+  imageInput.id = 'lwb-image-input';
+  imageInput.style.display = 'none';
+  document.body.appendChild(imageInput);
+}
+let imgTarget = null;
+
+// --- List modules ---
 function loadModuleList(filter = '') {
   moduleList.innerHTML = '';
   presetFiles
@@ -77,7 +75,7 @@ canvas.addEventListener('drop', e => {
   if (file) addModuleToCanvas(file);
 });
 
-// --- Add Preset Module to Canvas ---
+// --- Add Module ---
 function addModuleToCanvas(file) {
   fetch(`presets/${file}`)
     .then(r => r.text())
@@ -86,50 +84,56 @@ function addModuleToCanvas(file) {
       wrapper.className = 'module-wrapper uk-margin uk-card uk-card-default uk-card-body uk-position-relative';
       wrapper.innerHTML = html;
 
-      // Add UIkit remove button (not exported)
+      // Add visible remove button (not exported)
       const del = document.createElement('button');
       del.type = 'button';
       del.setAttribute('aria-label', 'Close');
-      del.className = 'uk-close uk-close-large uk-position-absolute lwb-remove-btn';
+      del.className = 'uk-close uk-close-large lwb-remove-btn uk-position-absolute';
       del.style.top = '15px';
       del.style.left = '15px';
+      del.style.background = '#fff';
+      del.style.border = '2px solid #e44';
+      del.style.color = '#e44';
+      del.style.opacity = '1';
+      del.style.boxShadow = '0 3px 14px #e44a';
+      del.style.width = '42px';
+      del.style.height = '42px';
+      del.style.borderRadius = '1em';
       del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
       wrapper.appendChild(del);
 
-      // Mark for animation/parallax (per block)
       wrapper.setAttribute('data-lwb-anim', '');
       wrapper.setAttribute('data-lwb-parallax', '');
 
-      // Content Editable Fields
+      // Editable
       wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
 
-      // [data-color-editable] for color picking
+      // Color picker support
       wrapper.querySelectorAll('[data-color-editable]').forEach(el => {
         el.style.cursor = 'pointer';
+        el.addEventListener('click', colorEditHandler);
       });
 
-      // UIkit-style image placeholder
-      wrapper.querySelectorAll('.lwb-image, .lwb-image-placeholder').forEach(img => {
+      // Image upload/URL with icon
+      wrapper.querySelectorAll('img.lwb-image, .lwb-image-placeholder').forEach(img => {
         img.style.cursor = 'pointer';
         img.onclick = imageClickHandler;
         if (!img.src) img.src = "https://getuikit.com/images/placeholder_600x400.svg";
       });
 
-      // Assign click for buttons
+      // Double-click button: edit
       wrapper.querySelectorAll('button, a.uk-button').forEach(btn => {
         btn.ondblclick = buttonEditDialog;
       });
 
-      // Add to canvas
+      // Place in canvas
       canvas.appendChild(wrapper);
-
-      // Animation/parallax per block (nothing assigned initially)
       applyBlockAnimation(wrapper, '');
       applyBlockParallax(wrapper, '');
     });
 }
 
-// --- Per-Block Animation Assign ---
+// --- Animation: Per-block, assign on select ---
 let animTarget = null;
 canvas.addEventListener('click', e => {
   const wrapper = e.target.closest('.module-wrapper');
@@ -157,7 +161,7 @@ function applyBlockAnimation(wrapper, animation) {
   }
 }
 
-// --- Per-Block Parallax Assign ---
+// --- Parallax: Per-block ---
 let parallaxTarget = null;
 canvas.addEventListener('click', e => {
   const wrapper = e.target.closest('.module-wrapper');
@@ -180,33 +184,26 @@ function applyBlockParallax(wrapper, value) {
   }
 }
 
-// --- Color Picker: On Click for Any [data-color-editable] ---
-canvas.addEventListener('click', e => {
-  // Color
-  const colorEl = e.target.closest('[data-color-editable]');
-  if (colorEl) {
-    colorTarget = colorEl;
-    let prop = colorEl.getAttribute('data-color-editable') === 'background' ? 'backgroundColor' : 'color';
-    let style = getComputedStyle(colorEl)[prop];
-    let hex = "#ffffff";
-    if (style.startsWith("rgb")) {
-      const vals = style.match(/\d+/g);
-      if (vals) hex = '#' + ((1<<24) + (+vals[0]<<16) + (+vals[1]<<8) + +vals[2]).toString(16).slice(1);
-    } else if (style.startsWith("#")) {
-      hex = style;
-    }
-    colorInput.value = hex;
-    const r = colorEl.getBoundingClientRect();
-    colorInput.style.left = `${r.right + 8 + window.scrollX}px`;
-    colorInput.style.top = `${r.top + window.scrollY}px`;
-    colorInput.style.display = 'block';
-    colorInput.focus();
-    return;
-  } else {
-    colorInput.style.display = 'none';
-    colorTarget = null;
+// --- Color picker: On click for [data-color-editable] ---
+function colorEditHandler(e) {
+  colorTarget = e.target;
+  let prop = colorTarget.getAttribute('data-color-editable') === 'background' ? 'backgroundColor' : 'color';
+  let style = getComputedStyle(colorTarget)[prop];
+  let hex = "#ffffff";
+  if (style.startsWith("rgb")) {
+    const vals = style.match(/\d+/g);
+    if (vals) hex = '#' + ((1<<24) + (+vals[0]<<16) + (+vals[1]<<8) + +vals[2]).toString(16).slice(1);
+  } else if (style.startsWith("#")) {
+    hex = style;
   }
-});
+  colorInput.value = hex;
+  const r = colorTarget.getBoundingClientRect();
+  colorInput.style.left = `${r.right + 8 + window.scrollX}px`;
+  colorInput.style.top = `${r.top + window.scrollY}px`;
+  colorInput.style.display = 'block';
+  colorInput.focus();
+  e.stopPropagation();
+}
 colorInput.addEventListener('input', () => {
   if (colorTarget) {
     const prop = colorTarget.getAttribute('data-color-editable') === 'background' ? 'backgroundColor' : 'color';
@@ -218,7 +215,7 @@ colorInput.addEventListener('blur', () => {
   colorTarget = null;
 });
 
-// --- UIkit Image Upload + Icon ---
+// --- UIkit image upload ---
 function imageClickHandler(e) {
   imgTarget = e.target;
   UIkit.modal.prompt('Paste image URL or click OK to upload:', '', function(val) {
@@ -239,55 +236,55 @@ imageInput.onchange = () => {
   }
 };
 
-// --- UIkit Modal For Button (and Link) Edit ---
+// --- Button edit: text + url (in UIkit modal) ---
 function buttonEditDialog(e) {
   e.preventDefault();
   const btn = e.target.closest('button, a.uk-button');
   if (!btn) return;
-  let currentText = btn.textContent;
+  let currentText = btn.textContent.trim();
   let currentUrl = "";
   let link = btn.closest('a.uk-button') || btn.closest('a');
   if (link && link.hasAttribute('href')) currentUrl = link.getAttribute('href');
 
-  const formHtml = `
+const formHtml = `
+  <form class="uk-form-stacked" style="padding:2em 1.2em;max-width:420px;margin:auto;">
+    <h4 class="uk-margin-small-bottom uk-text-primary">Edit Button</h4>
     <div class="uk-margin">
       <label class="uk-form-label">Button Text</label>
-      <input class="uk-input" id="lwb-btn-text" value="${currentText.replace(/"/g, "&quot;")}" type="text">
+      <input class="uk-input uk-border-rounded" id="lwb-btn-text" value="${currentText.replace(/"/g, "&quot;")}" type="text" autofocus placeholder="Button Text">
     </div>
     <div class="uk-margin">
       <label class="uk-form-label">Button Link URL</label>
-      <input class="uk-input" id="lwb-btn-url" value="${currentUrl.replace(/"/g, "&quot;")}" type="text">
+      <input class="uk-input uk-border-rounded" id="lwb-btn-url" value="${currentUrl.replace(/"/g, "&quot;")}" type="text" placeholder="https://…">
     </div>
-  `;
-  const modal = UIkit.modal.dialog(`<form onsubmit="return false">${formHtml}</form>`, {
-    bgClose: false,
+    <div class="uk-flex uk-flex-between uk-margin-top">
+      <button class="uk-button uk-button-default uk-border-rounded" type="button" id="lwb-btn-cancel">Cancel</button>
+      <button class="uk-button uk-button-primary uk-border-rounded" type="button" id="lwb-btn-ok">Save</button>
+    </div>
+  </form>
+`;
+
+  const modal = UIkit.modal.dialog(formHtml, {
+    bgClose: true,
     escClose: true
   });
   setTimeout(() => {
     const textInput = document.getElementById('lwb-btn-text');
     const urlInput = document.getElementById('lwb-btn-url');
-    textInput.focus(); textInput.select();
-
-    [textInput, urlInput].forEach(input => {
-      input.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter') {
-          ev.preventDefault();
-          modal.hide();
-          btn.textContent = textInput.value;
-          if (link) link.setAttribute('href', urlInput.value);
-        }
-      });
-    });
-    modal.$el.on('hidden', () => {
+    const okBtn = document.getElementById('lwb-btn-ok');
+    const cancelBtn = document.getElementById('lwb-btn-cancel');
+    textInput.focus();
+    okBtn.onclick = () => {
       btn.textContent = textInput.value;
       if (link) link.setAttribute('href', urlInput.value);
-    });
-  }, 100);
+      modal.hide();
+    };
+    cancelBtn.onclick = () => modal.hide();
+  }, 80);
   return false;
 }
 
-// --- Save, Load, Export ---
-// Save (JSON, UIkit-notification)
+// --- Save/Load/Export ---
 saveBtn.onclick = () => {
   const data = Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({
     html: m.innerHTML,
@@ -302,7 +299,6 @@ saveBtn.onclick = () => {
   URL.revokeObjectURL(a.href);
   UIkit.notification('Saved as JSON file!', 'success');
 };
-// Load
 loadBtn.onclick = () => { importFile.value = ''; importFile.click(); };
 importFile.onchange = () => {
   const f = importFile.files[0];
@@ -317,29 +313,38 @@ importFile.onchange = () => {
         wrapper.className = 'module-wrapper uk-margin uk-card uk-card-default uk-card-body uk-position-relative';
         wrapper.innerHTML = m.html;
 
-        // Remove button (UIkit, not exported)
+        // Remove button
         const del = document.createElement('button');
         del.type = 'button';
         del.setAttribute('aria-label', 'Close');
-        del.className = 'uk-close uk-close-large uk-position-absolute lwb-remove-btn';
+        del.className = 'uk-close uk-close-large lwb-remove-btn uk-position-absolute';
         del.style.top = '15px';
         del.style.left = '15px';
+        del.style.background = '#fff';
+        del.style.border = '2px solid #e44';
+        del.style.color = '#e44';
+        del.style.opacity = '1';
+        del.style.boxShadow = '0 3px 14px #e44a';
+        del.style.width = '42px';
+        del.style.height = '42px';
+        del.style.borderRadius = '1em';
         del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
         wrapper.appendChild(del);
 
         wrapper.setAttribute('data-lwb-anim', m.anim || "");
         wrapper.setAttribute('data-lwb-parallax', m.parallax || "");
 
-        // Editable and interactive fields
         wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-        wrapper.querySelectorAll('[data-color-editable]').forEach(el => el.style.cursor = 'pointer');
-        wrapper.querySelectorAll('.lwb-image, .lwb-image-placeholder').forEach(img => {
+        wrapper.querySelectorAll('[data-color-editable]').forEach(el => {
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', colorEditHandler);
+        });
+        wrapper.querySelectorAll('img.lwb-image, .lwb-image-placeholder').forEach(img => {
           img.style.cursor = 'pointer';
           img.onclick = imageClickHandler;
         });
         wrapper.querySelectorAll('button, a.uk-button').forEach(btn => btn.ondblclick = buttonEditDialog);
 
-        // Anim/parallax
         applyBlockAnimation(wrapper, m.anim);
         applyBlockParallax(wrapper, m.parallax);
 
@@ -350,21 +355,16 @@ importFile.onchange = () => {
   };
   r.readAsText(f);
 };
-// Export (HTML) - NO remove btn, NO editor meta
 exportBtn.onclick = async () => {
   let uikitCSS = '';
   try { uikitCSS = await fetch('https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css').then(r => r.text()); } catch{}
   let bodyContent = '';
   document.querySelectorAll('.module-wrapper').forEach(m => {
     const clone = m.cloneNode(true);
-    // Remove all remove buttons
     clone.querySelectorAll('.lwb-remove-btn').forEach(b => b.remove());
-    // Remove contenteditable
     clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-    // Remove editor meta attrs
     clone.removeAttribute('data-lwb-anim');
     clone.removeAttribute('data-lwb-parallax');
-    // Export animation/parallax only if set
     let anim = m.getAttribute('data-lwb-anim');
     if (anim) {
       clone.classList.add(anim);

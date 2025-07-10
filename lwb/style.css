@@ -44,7 +44,7 @@ aside h3 {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: #trasparent;
+  background: #fff;
 }
 
 #canvas {
@@ -217,4 +217,47 @@ aside h3 {
 .uk-animation-slide-right{
   animation-duration: 1.15s !important;
   transition-duration: 0.85s !important;
+}
+
+/* Color picker always a circle, visible */
+#lwb-color-picker {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  border: 3px solid #1787fc !important;
+  background: #fff !important;
+  box-shadow: 0 2px 12px #1787fc22;
+  position: absolute !important;
+  z-index: 99999 !important;
+  display: none;
+}
+.module-wrapper .lwb-remove-btn {
+  background: #fff !important;
+  border: 2px solid #e44;
+  color: #e44 !important;
+  opacity: 1;
+  box-shadow: 0 3px 14px #e44a;
+  width: 42px;
+  height: 42px;
+  border-radius: 1.2em;
+  top: 16px !important;
+  left: 16px !important;
+  z-index: 101;
+}
+.module-wrapper .lwb-remove-btn:hover {
+  background: #e44 !important;
+  color: #fff !important;
+}
+
+.uk-modal-dialog {
+  padding: 0 !important;
+  border-radius: 1em !important;
+}
+.uk-card.uk-card-body {
+  padding: 2em 2em 1.5em 2em !important;
+}
+@media (max-width: 480px) {
+  .uk-card.uk-card-body {
+    padding: 1.2em !important;
+  }
 }
