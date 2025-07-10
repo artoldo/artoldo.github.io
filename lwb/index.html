@@ -4,56 +4,63 @@
   <meta charset="UTF-8">
   <title>Live UIkit Website Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow">
-  <link rel="stylesheet" href="style.css">
+  <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css" />
 </head>
-<body>
-  <div class="uk-flex uk-flex-between">
-    <aside class="uk-width-1-4@s uk-background-muted uk-padding-small">
+<body class="uk-background-muted uk-height-viewport">
 
-<h3>Animation</h3>
-  <select id="textAnimationSelect" class="uk-select">
-    <option value="uk-animation-fade">Fade</option>
-    <option value="uk-animation-scale-up">Scale Up</option>
-    <option value="uk-animation-slide-top-small">Slide Top</option>
-    <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
-    <option value="uk-animation-slide-left-small">Slide Left</option>
-    <option value="uk-animation-slide-right-small">Slide Right</option>
-  </select>
+<div class="uk-grid-collapse" uk-grid>
+  <!-- Sidebar -->
+  <aside class="uk-width-1-4@m uk-background-default uk-padding uk-flex uk-flex-column" style="height: 100vh; position:sticky; top:0;">
+    <h3 class="uk-heading-bullet uk-margin-small-bottom">Presets</h3>
+    <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
+    <ul id="module-list" class="uk-list uk-list-divider uk-overflow-auto" style="flex:1 1 auto; min-height:0; max-height:70vh;"></ul>
+  </aside>
 
-<h3>Paralax</h3>
-  <select id="parallaxSelect" class="uk-select">
-    <option value="">None</option>
-    <option value="y: -100">Vertical</option>
-    <option value="x: 100">Horizontal</option>
-    <option value="rotate: 90">Rotate</option>
-    <option value="scale: 1.5">Scale Up</option>
-    <option value="bgx: 200">Background X</option>
-    <option value="bgy: 200">Background Y</option>
-    <option value="opacity: 0,1">Fade In</option>
-  </select>
-
-      <h3>Presets</h3>
-      <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
-      <ul id="module-list" class="uk-list"></ul>
-    </aside>
-    <main class="uk-width-expand uk-padding-small uk-sticky">
-      <div class="uk-margin-bottom">
-        <button class="uk-button uk-lwb-main" id="saveBtn">Save</button>
-        <button class="uk-button uk-lwb-alt" id="loadBtn">Load</button>
-        <button class="uk-button uk-lwb-alt" id="exportBtn">Export HTML</button>
-        <input type="file" id="importFile" accept=".json" style="display:none;" />
+  <!-- Main Canvas Area -->
+  <main class="uk-width-expand@m uk-section uk-padding-remove" style="min-height: 100vh;">
+    <nav class="uk-navbar-container uk-navbar-transparent uk-padding-small" style="position: sticky; top: 0; z-index: 100;">
+      <div class="uk-container uk-container-expand">
+        <div class="uk-navbar" uk-navbar>
+          <div class="uk-navbar-left">
+            <select id="textAnimationSelect" class="uk-select uk-width-small">
+              <option value="">No Animation</option>
+              <option value="uk-animation-fade">Fade</option>
+              <option value="uk-animation-scale-up">Scale Up</option>
+              <option value="uk-animation-slide-top-small">Slide Top</option>
+              <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
+              <option value="uk-animation-slide-left-small">Slide Left</option>
+              <option value="uk-animation-slide-right-small">Slide Right</option>
+            </select>
+            <select id="parallaxSelect" class="uk-select uk-width-small uk-margin-left">
+              <option value="">No Parallax</option>
+              <option value="y: -100">Vertical</option>
+              <option value="x: 100">Horizontal</option>
+              <option value="rotate: 90">Rotate</option>
+              <option value="scale: 1.5">Scale Up</option>
+              <option value="bgx: 200">BG X</option>
+              <option value="bgy: 200">BG Y</option>
+              <option value="opacity: 0,1">Fade In</option>
+            </select>
+          </div>
+          <div class="uk-navbar-right">
+            <button class="uk-button uk-button-primary" id="saveBtn">Save</button>
+            <button class="uk-button uk-button-default" id="loadBtn">Load</button>
+            <button class="uk-button uk-button-secondary" id="exportBtn">Export HTML</button>
+            <input type="file" id="importFile" accept=".json" style="display:none;" />
+          </div>
+        </div>
       </div>
-      <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:400px;">
-        <div class="uk-text-center uk-text-meta">Drag modules here</div>
-      </div>
-    </main>
-  </div>
+    </nav>
+    <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:500px;">
+      <div class="uk-text-center uk-text-meta">Drag modules here</div>
+    </div>
+  </main>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-  <script src="editor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="editor.js"></script>
 </body>
 </html>
