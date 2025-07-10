@@ -1,9 +1,10 @@
-// Preset files
+// --- Module presets ---
 const presetFiles = [
   'hero.html','navbar.html','grid-2col.html','card.html',
   'slider.html','accordion.html','modal.html','form.html','footer.html'
 ];
 
+// --- DOM elements ---
 const moduleList = document.getElementById('module-list');
 const canvas = document.getElementById('canvas');
 const search = document.getElementById('search');
@@ -12,29 +13,70 @@ const loadBtn = document.getElementById('loadBtn');
 const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
 
-// Always set contentEditable for all [data-editable]
-function makeEditableAll() {
-  document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+// --- Live color picker ---
+let colorInput = document.getElementById('lwb-color-picker');
+if (!colorInput) {
+  colorInput = document.createElement('input');
+  colorInput.type = 'color';
+  colorInput.id = 'lwb-color-picker';
+  document.body.appendChild(colorInput);
 }
+let colorTarget = null;
 
-// Sidebar preset drag setup
+// --- Image upload helper ---
+let imageInput = document.getElementById('lwb-image-input');
+if (!imageInput) {
+  imageInput = document.createElement('input');
+  imageInput.type = 'file';
+  imageInput.accept = 'image/*';
+  imageInput.style.display = 'none';
+  imageInput.id = 'lwb-image-input';
+  document.body.appendChild(imageInput);
+}
+let imgTarget = null;
+
+// --- Rich text toolbar (bold, italic, links, headings) ---
+let lwbToolbar = document.getElementById('lwb-toolbar');
+if (!lwbToolbar) {
+  lwbToolbar = document.createElement('div');
+  lwbToolbar.id = 'lwb-toolbar';
+  lwbToolbar.innerHTML = `
+    <button data-cmd="bold" title="Bold"><b>B</b></button>
+    <button data-cmd="italic" title="Italic"><i>I</i></button>
+    <button data-cmd="link" title="Add Link">🔗</button>
+    <button data-cmd="unlink" title="Remove Link">✖️</button>
+    <button data-cmd="formatBlock-h1" title="H1">H1</button>
+    <button data-cmd="formatBlock-h2" title="H2">H2</button>
+    <button data-cmd="formatBlock-h3" title="H3">H3</button>
+    <button data-cmd="formatBlock-h4" title="H4">H4</button>
+    <button data-cmd="formatBlock-p" title="Paragraph">P</button>
+  `;
+  document.body.appendChild(lwbToolbar);
+}
+lwbToolbar.style.display = 'none';
+
+// --- List modules in sidebar, filter by search ---
 function loadModuleList(filter = '') {
   moduleList.innerHTML = '';
-  presetFiles.filter(f => f.toLowerCase().includes(filter.toLowerCase())).forEach(file => {
-    const li = document.createElement('li');
-    li.className = 'uk-margin-small';
-    li.textContent = file.replace('.html', '');
-    li.draggable = true;
-    li.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', file);
-      e.dataTransfer.effectAllowed = 'copy';
+  presetFiles
+    .filter(f => f.toLowerCase().includes(filter.toLowerCase()))
+    .forEach(file => {
+      const li = document.createElement('li');
+      li.className = 'uk-margin-small';
+      li.textContent = file.replace('.html', '');
+      li.draggable = true;
+      li.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', file);
+        e.dataTransfer.effectAllowed = 'copy';
+      });
+      li.onclick = () => addModuleToCanvas(file);
+      moduleList.appendChild(li);
     });
-    li.onclick = () => addModuleToCanvas(file);
-    moduleList.appendChild(li);
-  });
 }
+search.addEventListener('input', () => loadModuleList(search.value));
+loadModuleList();
 
-// Canvas drop events
+// --- Drag/drop canvas setup ---
 canvas.addEventListener('dragover', e => {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'copy';
@@ -47,19 +89,12 @@ canvas.addEventListener('drop', e => {
   if (file) addModuleToCanvas(file);
 });
 
-search.addEventListener('input', () => loadModuleList(search.value));
-
-// Color picker setup
-let colorInput = document.getElementById('lwb-color-picker');
-if (!colorInput) {
-  colorInput = document.createElement('input');
-  colorInput.type = 'color';
-  colorInput.id = 'lwb-color-picker';
-  document.body.appendChild(colorInput);
+// --- Make all contenteditable areas editable ---
+function makeEditableAll() {
+  document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
 }
-let colorTarget = null;
 
-// Add module to canvas and set editability
+// --- Add a module (preset) to the canvas ---
 function addModuleToCanvas(file) {
   fetch(`presets/${file}`)
     .then(r => {
@@ -70,14 +105,34 @@ function addModuleToCanvas(file) {
       const wrapper = document.createElement('div');
       wrapper.classList.add('module-wrapper','uk-margin');
       wrapper.innerHTML = html;
+
+      // Remove any submit action on forms inside this module
+      wrapper.querySelectorAll('form').forEach(form => {
+        form.onsubmit = e => { e.preventDefault(); return false; };
+      });
+
+      // Main block close (always circular)
       const del = document.createElement('button');
       del.textContent = '×';
       del.className = 'uk-button uk-button-danger uk-button-small uk-position-top-right';
       del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
       wrapper.appendChild(del);
-      // Set contentEditable for live editing
+
+      // All text editable
       wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+
+      // Forms: submit button editable
+      wrapper.querySelectorAll('button[type="submit"]').forEach(btn => btn.setAttribute('data-editable', ''));
+
+      // Accordions: apply editable/drag/removal setup
+      makeAccordionEditable(wrapper);
+
+      // Add to canvas
       canvas.appendChild(wrapper);
+
+      // Animate text, padding
+      animateAllTextElements();
+      setGlobalBlockPadding(paddingRange.value, false);
       makeEditableAll();
     })
     .catch(err => {
@@ -86,7 +141,73 @@ function addModuleToCanvas(file) {
     });
 }
 
-// Double-click for color picker; click hides it
+// --- ACCORDION: only a single "+" (centered), red circular "-" per section, drag by header ---
+function makeAccordionEditable(wrapper) {
+  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
+    // Ensure only one add button
+    acc.parentElement.querySelectorAll('.lwb-acc-add').forEach(btn => btn.remove());
+    const addBtn = document.createElement('button');
+    addBtn.innerHTML = '<span uk-icon="plus"></span>';
+    addBtn.className = 'uk-button uk-button-primary lwb-acc-add';
+    addBtn.style.display = 'block';
+    addBtn.style.margin = '1.2em auto 0 auto';
+    addBtn.style.borderRadius = '50%';
+    addBtn.style.width = '38px';
+    addBtn.style.height = '38px';
+    addBtn.style.padding = '0';
+    addBtn.onclick = () => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div style="position:relative;">
+          <a class="uk-accordion-title" href="#" data-editable>New Section</a>
+          <button class="uk-button uk-button-danger uk-button-small lwb-acc-remove" 
+            style="position:absolute;right:-48px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;">–</button>
+        </div>
+        <div class="uk-accordion-content"><p data-editable>New content…</p></div>
+      `;
+      acc.appendChild(li);
+      makeAccordionEditable(wrapper);
+      makeEditableAll();
+    };
+    acc.parentElement.appendChild(addBtn);
+
+    // Remove/replace all delete buttons (right side, circle minus)
+    acc.querySelectorAll('li').forEach(li => {
+      // Remove old delete
+      li.querySelectorAll('.lwb-acc-remove').forEach(btn => btn.remove());
+      // Add red minus (right)
+      const headerDiv = li.querySelector('.uk-accordion-title')?.parentElement;
+      if (headerDiv && !headerDiv.querySelector('.lwb-acc-remove')) {
+        const remBtn = document.createElement('button');
+        remBtn.innerHTML = '–';
+        remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
+        remBtn.style.position = 'absolute';
+        remBtn.style.right = '-48px';
+        remBtn.style.top = '50%';
+        remBtn.style.transform = 'translateY(-50%)';
+        remBtn.style.width = '30px';
+        remBtn.style.height = '30px';
+        remBtn.style.borderRadius = '50%';
+        remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
+        headerDiv.appendChild(remBtn);
+      }
+      li.style.position = 'relative';
+    });
+
+    // Make sections draggable
+    if (!acc.lwbSortable) {
+      new Sortable(acc, {
+        handle: '.uk-accordion-title',
+        animation: 150,
+        ghostClass: 'uk-background-muted',
+        draggable: 'li'
+      });
+      acc.lwbSortable = true;
+    }
+  });
+}
+
+// --- COLOR PICKER: double click to show, click to hide ---
 canvas.addEventListener('dblclick', e => {
   const el = e.target.closest('[data-color-editable]');
   if (el) {
@@ -110,12 +231,10 @@ canvas.addEventListener('dblclick', e => {
     e.preventDefault();
   }
 });
-// Hide picker on normal click
 canvas.addEventListener('click', e => {
   colorInput.style.display = 'none';
   colorTarget = null;
 });
-
 colorInput.addEventListener('input', () => {
   if (colorTarget) {
     const prop = colorTarget.getAttribute('data-color-editable')==='background'?'backgroundColor':'color';
@@ -127,477 +246,7 @@ colorInput.addEventListener('blur', () => {
   colorTarget = null;
 });
 
-// Make sure all [data-editable] are editable after load
-window.addEventListener('DOMContentLoaded', makeEditableAll);
-
-new Sortable(canvas, { animation:150, ghostClass:'uk-background-muted' });
-
-function getSiteData() {
-  return Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({ html: m.innerHTML }));
-}
-
-saveBtn.onclick = () => {
-  localStorage.setItem('site', JSON.stringify(getSiteData()));
-  UIkit.notification('Saved!', 'success');
-};
-loadBtn.onclick = () => importFile.click();
-
-importFile.onchange = () => {
-  const f = importFile.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = () => {
-    try {
-      const data = JSON.parse(r.result);
-      canvas.innerHTML = '';
-      data.forEach(m => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'module-wrapper uk-margin';
-        wrapper.innerHTML = m.html;
-        wrapper.querySelectorAll('button').forEach(btn => {
-          if(btn.textContent==='×') btn.onclick = e => wrapper.remove();
-        });
-        wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-        canvas.appendChild(wrapper);
-      });
-      makeEditableAll();
-      UIkit.notification('Loaded!', 'primary');
-    } catch {
-      UIkit.notification('Import failed.', 'danger');
-    }
-  };
-  r.readAsText(f);
-};
-
-// EXPORT: async, standalone, with UIkit + custom + dynamic CSS embedded
-exportBtn.onclick = async () => {
-  // Fetch UIkit CSS
-  let uikitCSS = '';
-  try {
-    uikitCSS = await fetch('https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css').then(r => r.text());
-  } catch(e) {
-    uikitCSS = '';
-  }
-
-  // Fetch custom CSS
-  let customCSS = '';
-  try {
-    customCSS = await fetch('style.css').then(r => r.text());
-  } catch(e) {
-    customCSS = '';
-  }
-
-  // Collect dynamic color styles
-  let dynamicCSS = '';
-  let styleCounter = 0;
-  canvas.querySelectorAll('.module-wrapper').forEach(m => {
-    m.querySelectorAll('[data-color-editable]').forEach(el => {
-      styleCounter++;
-      const uniqueClass = `lwb-dyn-${styleCounter}`;
-      el.classList.add(uniqueClass);
-      const prop = el.getAttribute('data-color-editable') === 'background' ? 'background-color' : 'color';
-      const value = el.style[prop];
-      if (value) {
-        dynamicCSS += `.${uniqueClass} { ${prop}: ${value} !important; }\n`;
-      }
-    });
-  });
-
-  // Build the exported HTML
-  let bodyContent = '';
-  canvas.querySelectorAll('.module-wrapper').forEach(m => {
-    const clone = m.cloneNode(true);
-    clone.querySelectorAll('button').forEach(b => b.remove());
-    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-    bodyContent += clone.innerHTML;
-  });
-
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-  ${uikitCSS}
-  ${customCSS}
-  ${dynamicCSS}
-  </style>
-</head>
-<body>
-${bodyContent}
-</body>
-</html>`;
-
-  const blob = new Blob([html], {type:'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download='site.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
-loadModuleList();
-
-// Save to localStorage and as file
-saveBtn.onclick = () => {
-  const data = JSON.stringify(getSiteData());
-  localStorage.setItem('site', data);
-  // Download as file
-  const blob = new Blob([data], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'website-project.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  UIkit.notification('Project saved (and downloaded)!');
-};
-
-// Load from file
-loadBtn.onclick = () => importFile.click();
-
-importFile.onchange = () => {
-  const f = importFile.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = () => {
-    try {
-      const data = JSON.parse(r.result);
-      canvas.innerHTML = '';
-      data.forEach(m => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'module-wrapper uk-margin';
-        wrapper.innerHTML = m.html;
-        wrapper.querySelectorAll('button').forEach(btn => {
-          if(btn.textContent==='×') btn.onclick = e => wrapper.remove();
-        });
-        wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-        canvas.appendChild(wrapper);
-      });
-      makeEditableAll();
-      UIkit.notification('Project loaded!');
-    } catch {
-      UIkit.notification('Import failed.', 'danger');
-    }
-  };
-  r.readAsText(f);
-};
-
-// Create a hidden file input for image uploads
-let imageInput = document.getElementById('lwb-image-input');
-if (!imageInput) {
-  imageInput = document.createElement('input');
-  imageInput.type = 'file';
-  imageInput.accept = 'image/*';
-  imageInput.style.display = 'none';
-  imageInput.id = 'lwb-image-input';
-  document.body.appendChild(imageInput);
-}
-
-let imgTarget = null;
-
-// Listen for clicks on images to select a new one
-canvas.addEventListener('click', e => {
-  // For images: single click with alt key, or double click
-  if (
-    (e.target.tagName === 'IMG' && (e.altKey || e.detail === 2)) ||
-    (e.target.closest('img') && (e.altKey || e.detail === 2))
-  ) {
-    imgTarget = e.target.tagName === 'IMG' ? e.target : e.target.closest('img');
-    // Ask: Upload or URL?
-    UIkit.modal.prompt('Paste image URL or click OK to upload an image:', '', function(val){
-      if (val && val.trim()) {
-        imgTarget.src = val.trim();
-      } else {
-        imageInput.click();
-      }
-    });
-  }
-});
-
-// On image file input change, update image src
-imageInput.onchange = () => {
-  if (imageInput.files && imageInput.files[0] && imgTarget) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      imgTarget.src = e.target.result;
-    };
-    reader.readAsDataURL(imageInput.files[0]);
-  }
-};
-
-// Inline link editing: double-click a link or button with href
-canvas.addEventListener('dblclick', e => {
-  let a = null;
-  if (e.target.tagName === 'A') a = e.target;
-  else if (e.target.closest('a')) a = e.target.closest('a');
-  if (a && a.hasAttribute('href')) {
-    e.preventDefault();
-    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
-      if (val && val.trim()) a.setAttribute('href', val.trim());
-    });
-    return;
-  }
-  // (existing double-click handler for color picker continues...)
-});
-
-// Make any UIkit accordion dynamic (add/remove sections)
-function makeAccordionEditable(wrapper) {
-  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
-    // Add "+" button if not present
-    if (!acc.querySelector('.lwb-acc-add')) {
-      const addBtn = document.createElement('button');
-      addBtn.textContent = '+ Add Section';
-      addBtn.className = 'uk-button uk-button-small uk-button-primary lwb-acc-add';
-      addBtn.style.marginTop = '1em';
-      addBtn.onclick = () => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <a class="uk-accordion-title" href="#" data-editable>New Section</a>
-          <div class="uk-accordion-content"><p data-editable>New content…</p></div>
-          <button class="uk-button uk-button-danger uk-button-small lwb-acc-remove" style="position:absolute;right:1em;top:0.6em;">×</button>
-        `;
-        acc.appendChild(li);
-        makeAccordionEditable(wrapper);
-        makeEditableAll();
-      };
-      acc.parentElement.appendChild(addBtn);
-    }
-    // Add remove buttons for each item
-    acc.querySelectorAll('li').forEach(li => {
-      if (!li.querySelector('.lwb-acc-remove')) {
-        const remBtn = document.createElement('button');
-        remBtn.textContent = '×';
-        remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
-        remBtn.style.position = 'absolute';
-        remBtn.style.right = '1em';
-        remBtn.style.top = '0.6em';
-        remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
-        li.appendChild(remBtn);
-      }
-    });
-  });
-}
-
-// Call after adding modules
-function addModuleToCanvas(file) {
-  fetch(`presets/${file}`)
-    .then(r => r.text())
-    .then(html => {
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('module-wrapper','uk-margin');
-      wrapper.innerHTML = html;
-      const del = document.createElement('button');
-      del.textContent = '×';
-      del.className = 'uk-button uk-button-danger uk-button-small uk-position-top-right';
-      del.onclick = e => { e.stopPropagation(); wrapper.remove(); };
-      wrapper.appendChild(del);
-      wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
-      // Make accordions editable
-      makeAccordionEditable(wrapper);
-      canvas.appendChild(wrapper);
-      makeEditableAll();
-    })
-    .catch(err => {
-      UIkit.notification(err.message, 'danger');
-      console.error(err);
-    });
-}
-
-function makeAccordionEditable(wrapper) {
-  wrapper.querySelectorAll('.uk-accordion').forEach(acc => {
-    // Only one add button per accordion
-    let addBtn = acc.parentElement.querySelector('.lwb-acc-add');
-    if (!addBtn) {
-      addBtn = document.createElement('button');
-      addBtn.textContent = '+ Add Section';
-      addBtn.className = 'uk-button uk-button-primary lwb-acc-add';
-      addBtn.style.display = 'block';
-      addBtn.style.margin = '1.5em auto 0 auto';
-      addBtn.style.borderRadius = '1em';
-      addBtn.style.fontWeight = '600';
-      addBtn.style.fontSize = '1em';
-      addBtn.style.padding = '0.3em 1.2em';
-      addBtn.style.textAlign = 'center';
-      addBtn.onclick = () => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <a class="uk-accordion-title" href="#" data-editable>New Section</a>
-          <div class="uk-accordion-content"><p data-editable>New content…</p></div>
-          <button class="uk-button uk-button-danger uk-button-small lwb-acc-remove" style="position:absolute;left:-1.8em;top:0.6em;z-index:10;">×</button>
-        `;
-        acc.appendChild(li);
-        makeAccordionEditable(wrapper);
-        makeEditableAll();
-      };
-      acc.parentElement.appendChild(addBtn);
-    }
-    // Remove all delete buttons, then add them at left edge of each section
-    acc.querySelectorAll('li').forEach(li => {
-      li.querySelectorAll('.lwb-acc-remove').forEach(btn => btn.remove());
-      const remBtn = document.createElement('button');
-      remBtn.textContent = '×';
-      remBtn.className = 'uk-button uk-button-danger uk-button-small lwb-acc-remove';
-      remBtn.style.position = 'absolute';
-      remBtn.style.left = '-1.8em';
-      remBtn.style.top = '0.6em';
-      remBtn.style.zIndex = '10';
-      remBtn.onclick = e => { e.stopPropagation(); li.remove(); };
-      li.appendChild(remBtn);
-      // Ensure relative for button position
-      li.style.position = 'relative';
-    });
-
-    // Make sections draggable
-    if (!acc.lwbSortable) {
-      new Sortable(acc, {
-        handle: '.uk-accordion-title',
-        animation: 160,
-        ghostClass: 'uk-background-muted',
-        draggable: 'li'
-      });
-      acc.lwbSortable = true;
-    }
-  });
-}
-
-// Editable placeholders and submit button in forms
-canvas.addEventListener('dblclick', e => {
-  // Editable placeholders (on input, textarea with data-editable-placeholder)
-  const input = e.target.closest('[data-editable-placeholder]');
-  if (input) {
-    e.preventDefault();
-    const current = input.getAttribute('placeholder') || '';
-    UIkit.modal.prompt('Edit placeholder:', current, val => {
-      if (val !== null) input.setAttribute('placeholder', val);
-    });
-    return;
-  }
-  // Editable button (e.g., submit)
-  if (e.target.tagName === 'BUTTON' && e.target.hasAttribute('data-editable')) {
-    e.preventDefault();
-    const current = e.target.textContent;
-    UIkit.modal.prompt('Edit button text:', current, val => {
-      if (val !== null) e.target.textContent = val;
-    });
-    return;
-  }
-  // Editable link
-  let a = null;
-  if (e.target.tagName === 'A') a = e.target;
-  else if (e.target.closest('a')) a = e.target.closest('a');
-  if (a && a.hasAttribute('href')) {
-    e.preventDefault();
-    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
-      if (val && val.trim()) a.setAttribute('href', val.trim());
-    });
-    return;
-  }
-  // (existing color picker logic)
-  const el = e.target.closest('[data-color-editable]');
-  if (el) {
-    // ... color picker code as before ...
-  }
-});
-
-let lwbToolbar = document.getElementById('lwb-toolbar');
-if (!lwbToolbar) {
-  lwbToolbar = document.createElement('div');
-  lwbToolbar.id = 'lwb-toolbar';
-  lwbToolbar.innerHTML = `
-    <button data-cmd="bold" title="Bold"><b>B</b></button>
-    <button data-cmd="italic" title="Italic"><i>I</i></button>
-    <button data-cmd="link" title="Add Link">🔗</button>
-    <button data-cmd="unlink" title="Remove Link">✖️</button>
-    <button data-cmd="formatBlock-h1" title="H1">H1</button>
-    <button data-cmd="formatBlock-h2" title="H2">H2</button>
-    <button data-cmd="formatBlock-h3" title="H3">H3</button>
-    <button data-cmd="formatBlock-h4" title="H4">H4</button>
-    <button data-cmd="formatBlock-p" title="Paragraph">P</button>
-  `;
-  document.body.appendChild(lwbToolbar);
-}
-lwbToolbar.style.display = 'none';
-
-
-let lwbSelEditable = null;
-document.addEventListener('selectionchange', function() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) {
-    lwbToolbar.style.display = 'none';
-    lwbSelEditable = null;
-    return;
-  }
-  const range = sel.getRangeAt(0);
-  const parent = range.startContainer.parentElement;
-  const editable = parent && parent.closest('[data-editable]');
-  if (
-    editable && sel.toString().trim() &&
-    editable.contains(sel.anchorNode) && editable.contains(sel.focusNode)
-  ) {
-    lwbSelEditable = editable;
-    // Position toolbar
-    const rect = range.getBoundingClientRect();
-    lwbToolbar.style.left = `${rect.left + window.scrollX}px`;
-    lwbToolbar.style.top = `${rect.top + window.scrollY - 44}px`;
-    lwbToolbar.style.display = 'flex';
-  } else {
-    lwbToolbar.style.display = 'none';
-    lwbSelEditable = null;
-  }
-});
-
-// Hide on click outside
-document.addEventListener('click', e => {
-  if (!lwbToolbar.contains(e.target)) {
-    lwbToolbar.style.display = 'none';
-  }
-});
-
-lwbToolbar.addEventListener('mousedown', function(e) {
-  e.preventDefault(); // So selection doesn't collapse
-});
-lwbToolbar.addEventListener('click', function(e) {
-  const btn = e.target.closest('button[data-cmd]');
-  if (!btn) return;
-  const cmd = btn.getAttribute('data-cmd');
-  if (!lwbSelEditable) return;
-
-  lwbSelEditable.focus();
-  // Execute formatting commands
-  if (cmd === 'bold' || cmd === 'italic') {
-    document.execCommand(cmd, false, null);
-  } else if (cmd === 'link') {
-    let url = prompt('Enter URL:');
-    if (url) document.execCommand('createLink', false, url);
-  } else if (cmd === 'unlink') {
-    document.execCommand('unlink', false, null);
-  } else if (cmd.startsWith('formatBlock-')) {
-    let block = cmd.split('-')[1];
-    document.execCommand('formatBlock', false, block);
-  }
-  // Hide toolbar after action
-  lwbToolbar.style.display = 'none';
-});
-
-
-// Image upload handler for placeholders and images
-let imageInput = document.getElementById('lwb-image-input');
-if (!imageInput) {
-  imageInput = document.createElement('input');
-  imageInput.type = 'file';
-  imageInput.accept = 'image/*';
-  imageInput.style.display = 'none';
-  imageInput.id = 'lwb-image-input';
-  document.body.appendChild(imageInput);
-}
-let imgTarget = null;
-
-// Show prompt/input on click of placeholder or img
+// --- IMAGE PLACEHOLDER: click to set image ---
 canvas.addEventListener('click', e => {
   // For image placeholders (blue box)
   const placeholder = e.target.closest('.lwb-image-placeholder');
@@ -625,8 +274,6 @@ canvas.addEventListener('click', e => {
     return;
   }
 });
-
-// Handle file input for image upload
 imageInput.onchange = () => {
   if (!imgTarget) return;
   if (imageInput.files && imageInput.files[0]) {
@@ -641,8 +288,6 @@ imageInput.onchange = () => {
     reader.readAsDataURL(imageInput.files[0]);
   }
 };
-
-// Helper: Replace placeholder with real image
 function replacePlaceholderWithImage(placeholder, src) {
   const img = document.createElement('img');
   img.src = src;
@@ -653,7 +298,6 @@ function replacePlaceholderWithImage(placeholder, src) {
   img.style.display = 'block';
   img.style.objectFit = 'cover';
   img.style.cursor = 'pointer';
-  // Clicking image opens image picker again
   img.addEventListener('click', function(e) {
     e.stopPropagation();
     imgTarget = img;
@@ -668,68 +312,119 @@ function replacePlaceholderWithImage(placeholder, src) {
   placeholder.parentNode.replaceChild(img, placeholder);
 }
 
+// --- FORM BUTTONS & PLACEHOLDERS ARE EDITABLE ---
+canvas.addEventListener('dblclick', e => {
+  // Editable placeholders (on input, textarea with data-editable-placeholder)
+  const input = e.target.closest('[data-editable-placeholder]');
+  if (input) {
+    e.preventDefault();
+    const current = input.getAttribute('placeholder') || '';
+    UIkit.modal.prompt('Edit placeholder:', current, val => {
+      if (val !== null) input.setAttribute('placeholder', val);
+    });
+    return;
+  }
+  // Editable button (including submit)
+  if (e.target.tagName === 'BUTTON' && e.target.hasAttribute('data-editable')) {
+    e.preventDefault();
+    const current = e.target.textContent;
+    UIkit.modal.prompt('Edit button text:', current, val => {
+      if (val !== null) e.target.textContent = val;
+    });
+    return;
+  }
+  // Editable link
+  let a = null;
+  if (e.target.tagName === 'A') a = e.target;
+  else if (e.target.closest('a')) a = e.target.closest('a');
+  if (a && a.hasAttribute('href')) {
+    e.preventDefault();
+    UIkit.modal.prompt('Edit link URL:', a.getAttribute('href') || '', function(val){
+      if (val && val.trim()) a.setAttribute('href', val.trim());
+    });
+    return;
+  }
+});
+
+// --- Rich text toolbar for [data-editable] areas ---
+let lwbSelEditable = null;
+document.addEventListener('selectionchange', function() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) {
+    lwbToolbar.style.display = 'none';
+    lwbSelEditable = null;
+    return;
+  }
+  const range = sel.getRangeAt(0);
+  const parent = range.startContainer.parentElement;
+  const editable = parent && parent.closest('[data-editable]');
+  if (
+    editable && sel.toString().trim() &&
+    editable.contains(sel.anchorNode) && editable.contains(sel.focusNode)
+  ) {
+    lwbSelEditable = editable;
+    const rect = range.getBoundingClientRect();
+    lwbToolbar.style.left = `${rect.left + window.scrollX}px`;
+    lwbToolbar.style.top = `${rect.top + window.scrollY - 44}px`;
+    lwbToolbar.style.display = 'flex';
+  } else {
+    lwbToolbar.style.display = 'none';
+    lwbSelEditable = null;
+  }
+});
+document.addEventListener('click', e => {
+  if (!lwbToolbar.contains(e.target)) {
+    lwbToolbar.style.display = 'none';
+  }
+});
+lwbToolbar.addEventListener('mousedown', function(e) {
+  e.preventDefault(); // So selection doesn't collapse
+});
+lwbToolbar.addEventListener('click', function(e) {
+  const btn = e.target.closest('button[data-cmd]');
+  if (!btn) return;
+  const cmd = btn.getAttribute('data-cmd');
+  if (!lwbSelEditable) return;
+  lwbSelEditable.focus();
+  if (cmd === 'bold' || cmd === 'italic') {
+    document.execCommand(cmd, false, null);
+  } else if (cmd === 'link') {
+    let url = prompt('Enter URL:');
+    if (url) document.execCommand('createLink', false, url);
+  } else if (cmd === 'unlink') {
+    document.execCommand('unlink', false, null);
+  } else if (cmd.startsWith('formatBlock-')) {
+    let block = cmd.split('-')[1];
+    document.execCommand('formatBlock', false, block);
+  }
+  lwbToolbar.style.display = 'none';
+});
+
+// --- Padding control ---
 const paddingRange = document.getElementById('paddingRange');
 const paddingValue = document.getElementById('paddingValue');
-
-// Helper: animate padding change for all blocks
 function setGlobalBlockPadding(val, animate = true) {
   document.querySelectorAll('.module-wrapper').forEach(block => {
-    if (animate) {
-      block.style.transition = 'padding 0.22s cubic-bezier(.47,1.64,.41,.8)';
-    } else {
-      block.style.transition = '';
-    }
+    block.style.transition = animate
+      ? 'padding 0.22s cubic-bezier(.47,1.64,.41,.8)'
+      : '';
     block.style.padding = `${val}px 1.5em ${val}px 1.5em`;
   });
 }
-
-// On range change: update blocks and label
 paddingRange.addEventListener('input', e => {
   const val = parseInt(e.target.value, 10);
   paddingValue.textContent = `${val}px`;
   setGlobalBlockPadding(val, true);
 });
-
-// Also apply on page load (default 24px or whatever the initial value is)
-window.addEventListener('DOMContentLoaded', () => {
-  setGlobalBlockPadding(parseInt(paddingRange.value, 10), false);
-});
-
-function animateAllTextElements(animationClass = 'uk-animation-fade') {
-  canvas.querySelectorAll('h1, h2, h3, h4, p, [data-editable]').forEach(el => {
-    el.classList.add(animationClass);
-  });
-}
-
-// Call after adding a module or loading site:
-function addModuleToCanvas(file) {
-  fetch(`presets/${file}`)
-    .then(r => r.text())
-    .then(html => {
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('module-wrapper','uk-margin');
-      wrapper.innerHTML = html;
-      // ... existing code for delete btn etc ...
-      canvas.appendChild(wrapper);
-      makeEditableAll();
-      makeAccordionEditable(wrapper);
-      animateAllTextElements(); // Add animation to new content!
-    })
-    .catch(err => {
-      UIkit.notification(err.message, 'danger');
-      console.error(err);
-    });
-}
-
 window.addEventListener('DOMContentLoaded', () => {
   setGlobalBlockPadding(parseInt(paddingRange.value, 10), false);
   animateAllTextElements();
+  makeEditableAll();
 });
 
+// --- Text animation control ---
 const textAnimationSelect = document.getElementById('textAnimationSelect');
 let currentTextAnimation = textAnimationSelect.value;
-
-// Remove old and add new animation class to all text elements
 function updateTextAnimations() {
   canvas.querySelectorAll('h1, h2, h3, h4, p, [data-editable]').forEach(el => {
     el.classList.remove(
@@ -743,18 +438,148 @@ function updateTextAnimations() {
     el.classList.add(currentTextAnimation);
   });
 }
-
 textAnimationSelect.addEventListener('change', e => {
   currentTextAnimation = e.target.value;
   updateTextAnimations();
 });
-
-// Update after module add/load
 function animateAllTextElements(animationClass = currentTextAnimation) {
   canvas.querySelectorAll('h1, h2, h3, h4, p, [data-editable]').forEach(el => {
     el.classList.add(animationClass);
   });
 }
 
-// Call updateTextAnimations() after adding module or loading site, as before
+// --- Save/load/export (no changes needed) ---
+function getSiteData() {
+  return Array.from(canvas.querySelectorAll('.module-wrapper')).map(m => ({ html: m.innerHTML }));
+}
+saveBtn.onclick = () => {
+  const data = JSON.stringify(getSiteData());
+  localStorage.setItem('site', data);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'website-project.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  UIkit.notification('Project saved (and downloaded)!');
+};
+loadBtn.onclick = () => importFile.click();
+importFile.onchange = () => {
+  const f = importFile.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      canvas.innerHTML = '';
+      data.forEach(m => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'module-wrapper uk-margin';
+        wrapper.innerHTML = m.html;
+        // Remove submit actions
+        wrapper.querySelectorAll('form').forEach(form => {
+          form.onsubmit = e => { e.preventDefault(); return false; };
+        });
+        // Module delete btn
+        wrapper.querySelectorAll('button').forEach(btn => {
+          if(btn.textContent==='×') btn.onclick = e => wrapper.remove();
+        });
+        wrapper.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = true);
+        makeAccordionEditable(wrapper);
+        canvas.appendChild(wrapper);
+      });
+      animateAllTextElements();
+      setGlobalBlockPadding(paddingRange.value, false);
+      makeEditableAll();
+      UIkit.notification('Project loaded!');
+    } catch {
+      UIkit.notification('Import failed.', 'danger');
+    }
+  };
+  r.readAsText(f);
+};
 
+// --- Export: UIkit CSS, custom CSS, and dynamic inline styles ---
+exportBtn.onclick = async () => {
+  // 1. Fetch UIkit CSS
+  let uikitCSS = '';
+  try {
+    uikitCSS = await fetch('https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css').then(r => r.text());
+  } catch(e) {
+    uikitCSS = '';
+  }
+
+  // 2. Fetch your custom style.css (if you have one)
+  let customCSS = '';
+  try {
+    customCSS = await fetch('style.css').then(r => r.text());
+  } catch(e) {
+    customCSS = '';
+  }
+
+  // 3. Collect dynamic color styles and paddings
+  let dynamicCSS = '';
+  let styleCounter = 0;
+  document.querySelectorAll('.module-wrapper').forEach(m => {
+    m.querySelectorAll('[data-color-editable]').forEach(el => {
+      styleCounter++;
+      const uniqueClass = `lwb-dyn-${styleCounter}`;
+      el.classList.add(uniqueClass);
+      const prop = el.getAttribute('data-color-editable') === 'background' ? 'background-color' : 'color';
+      const value = el.style[prop];
+      if (value) {
+        dynamicCSS += `.${uniqueClass} { ${prop}: ${value} !important; }\n`;
+      }
+    });
+    // Padding for each block (if not default)
+    const pad = m.style.padding;
+    if (pad) {
+      styleCounter++;
+      const uniqueBlockClass = `lwb-blockpad-${styleCounter}`;
+      m.classList.add(uniqueBlockClass);
+      dynamicCSS += `.${uniqueBlockClass} { padding: ${pad} !important; }\n`;
+    }
+  });
+
+  // 4. Remove all editor-only controls for export
+  let bodyContent = '';
+  document.querySelectorAll('.module-wrapper').forEach(m => {
+    const clone = m.cloneNode(true);
+    clone.querySelectorAll('button.uk-button-danger, .uk-position-top-right, .lwb-acc-add, .lwb-acc-remove').forEach(b => b.remove());
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+    // Remove any leftover form submit handler
+    clone.querySelectorAll('form').forEach(form => form.removeAttribute('onsubmit'));
+    bodyContent += clone.innerHTML;
+  });
+
+  // 5. Compose the exported HTML
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  ${uikitCSS}
+  ${customCSS}
+  ${dynamicCSS}
+  </style>
+</head>
+<body>
+${bodyContent}
+</body>
+</html>`;
+
+  // 6. Download as file
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download='site.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  UIkit.notification('Exported as HTML!', 'success');
+};

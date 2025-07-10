@@ -1,14 +1,20 @@
-<ul uk-accordion class="uk-accordion" data-module="accordion">
+<ul class="uk-accordion" uk-accordion>
   <li>
-    <a class="uk-accordion-title" href="#" data-editable>Section 1</a>
+    <div style="position:relative;">
+      <a class="uk-accordion-title" href="#" data-editable>Section 1</a>
+      <!-- The red minus button will be injected here by JS -->
+    </div>
     <div class="uk-accordion-content">
-      <p data-editable>Lorem ipsum dolor sit amet.</p>
+      <p data-editable>Accordion section 1 content…</p>
     </div>
   </li>
   <li>
-    <a class="uk-accordion-title" href="#" data-editable>Section 2</a>
+    <div style="position:relative;">
+      <a class="uk-accordion-title" href="#" data-editable>Section 2</a>
+      <!-- The red minus button will be injected here by JS -->
+    </div>
     <div class="uk-accordion-content">
-      <p data-editable>Ut enim ad minim veniam.</p>
+      <p data-editable>Accordion section 2 content…</p>
     </div>
   </li>
 </ul>
