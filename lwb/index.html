@@ -1,79 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Live UIkit Website Builder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/css/uikit.min.css" />
+    <meta charset="UTF-8">
+    <title>Live Editor Landing Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+    <style>
+      .editor-section {
+        position: relative;
+        cursor: grab;
+      }
+      .editor-remove-btn {
+        position: absolute;
+        top: 16px;
+        right: 32px;
+        z-index: 20;
+      }
+      .editor-edit-btn {
+        position: absolute;
+        top: 16px;
+        left: 20px;
+        z-index: 20;
+      }
+      .live-heading.uk-heading-large { font-size: 2.7rem; }
+      .live-heading.uk-heading-xlarge { font-size: 3.6rem;}
+      .live-heading.uk-heading-2xlarge { font-size: 4.8rem; line-height:1.05; }
+      @media (max-width: 640px) {
+        .live-heading.uk-heading-2xlarge { font-size: 2.2rem;}
+        .live-heading.uk-heading-xlarge { font-size: 1.5rem;}
+        .live-heading.uk-heading-large { font-size: 1.2rem;}
+      }
+      .uk-navbar-container.sticky-colored {
+        background: #222 !important;
+      }
+      .sticky-colored .uk-navbar-item,
+      .sticky-colored .uk-navbar-item span,
+      .sticky-colored .uk-navbar-item svg,
+      .sticky-colored .uk-navbar-item .uk-icon {
+        color: #fff !important;
+        fill: #fff !important;
+      }
+      .sticky-colored .uk-navbar-item .uk-icon [stroke] {
+        stroke: #fff !important;
+      }
+      .uk-sortable-handle { cursor: move; }
+    </style>
 </head>
-<body class="uk-background-muted uk-height-viewport">
+<body class="uk-background-muted">
 
-<div class="uk-grid-collapse" uk-grid>
-  <!-- Sidebar -->
-  <aside class="uk-width-1-4@m uk-background-default uk-padding uk-flex uk-flex-column" style="height: 100vh; position:sticky; top:0;">
-    <h3 class="uk-heading-bullet uk-margin-small-bottom">Presets</h3>
-    <input id="search" class="uk-input uk-margin-small-bottom" placeholder="Search modules…" />
-    <ul id="module-list" class="uk-list uk-list-divider uk-overflow-auto" style="flex:1 1 auto; min-height:0; max-height:70vh;"></ul>
-  </aside>
-
-  <!-- Main Canvas Area -->
-  <main class="uk-width-expand@m uk-section uk-padding-remove" style="min-height: 100vh;">
-    <nav class="uk-navbar-container uk-navbar-transparent uk-padding-small" style="position: sticky; top: 0; z-index: 100;">
-      <div class="uk-container uk-container-expand">
-        <div class="uk-navbar" uk-navbar>
-          <div class="uk-navbar-left">
-            <select id="textAnimationSelect" class="uk-select uk-width-small">
-              <option value="">No Animation</option>
-              <option value="uk-animation-fade">Fade</option>
-              <option value="uk-animation-scale-up">Scale Up</option>
-              <option value="uk-animation-slide-top-small">Slide Top</option>
-              <option value="uk-animation-slide-bottom-small">Slide Bottom</option>
-              <option value="uk-animation-slide-left-small">Slide Left</option>
-              <option value="uk-animation-slide-right-small">Slide Right</option>
-            </select>
-            <select id="parallaxSelect" class="uk-select uk-width-small uk-margin-left">
-              <option value="">No Parallax</option>
-              <option value="y: -100">Vertical</option>
-              <option value="x: 100">Horizontal</option>
-              <option value="rotate: 90">Rotate</option>
-              <option value="scale: 1.5">Scale Up</option>
-              <option value="bgx: 200">BG X</option>
-              <option value="bgy: 200">BG Y</option>
-              <option value="opacity: 0,1">Fade In</option>
-            </select>
-          </div>
-          <div class="uk-navbar-right">
-            <button class="uk-button uk-button-primary" id="saveBtn">Save</button>
-            <button class="uk-button uk-button-default" id="loadBtn">Load</button>
-            <button class="uk-button uk-button-secondary" id="exportBtn">Export HTML</button>
-            <input type="file" id="importFile" accept=".json" style="display:none;" />
-          </div>
+    <!-- Sticky Navbar -->
+    <nav id="main-navbar" class="uk-navbar-container uk-navbar-transparent uk-sticky" uk-sticky="top: 100; animation: uk-animation-slide-top;">
+        <div class="uk-container uk-flex uk-flex-middle uk-flex-between">
+            <div class="uk-flex uk-flex-middle uk-flex-center">
+                <span id="nav-title" class="uk-navbar-item uk-text-bold uk-text-large" style="letter-spacing:2px;">
+                    <span uk-icon="bolt"></span> Live Editor
+                </span>
+                <a id="addImageBtn" class="uk-icon-button uk-margin-small-left" uk-tooltip="Add Image" uk-icon="image"></a>
+                <a id="addVideoBtn" class="uk-icon-button uk-margin-small-left" uk-tooltip="Add Video" uk-icon="video-camera"></a>
+            </div>
+            <div>
+                <a id="saveJSON" class="uk-icon-button uk-border-rounded uk-margin-small-left" uk-tooltip="Save as JSON" uk-icon="download"></a>
+                <a id="loadJSON" class="uk-icon-button uk-border-rounded uk-margin-small-left" uk-tooltip="Load JSON" uk-icon="upload"></a>
+                <a id="exportHTML" class="uk-icon-button uk-border-rounded uk-margin-small-left" uk-tooltip="Export as HTML" uk-icon="file-text"></a>
+                <input type="file" id="jsonFileInput" accept=".json" style="display:none">
+            </div>
         </div>
-      </div>
     </nav>
-    <div id="canvas" class="uk-card uk-card-default uk-card-body uk-margin" style="min-height:500px;">
-  <div class="module-wrapper uk-margin uk-card uk-card-default uk-card-body uk-position-relative">
-    <div class="uk-section uk-section-primary uk-padding">
-      <div class="uk-container">
-        <h1 class="uk-heading-medium" data-editable>Welcome to Your Live Website!</h1>
-        <p data-editable>Edit this hero text. Drag more blocks from the sidebar.</p>
-        <a class="uk-button uk-button-secondary" href="#" ondblclick="buttonEditDialog(event);">Learn More</a>
-      </div>
-    </div>
-    <!-- Remove Button (styled via CSS) -->
-    <button type="button" aria-label="Close"
-      class="uk-close uk-close-large lwb-remove-btn uk-position-absolute"
-      style="top: 15px; left: 15px;"
-      onclick="this.closest('.module-wrapper').remove();"></button>
-  </div>
-</div>
-  </main>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.19.2/dist/js/uikit-icons.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="editor.js"></script>
+    <ul id="live-editor-root" class="uk-list uk-sortable" uk-sortable="handle: .editor-section"></ul>
+
+    <!-- Modal: media edit -->
+    <div id="media-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h3 id="media-modal-title" class="uk-modal-title">Add Media</h3>
+            <form id="media-form">
+                <input type="hidden" id="section-index" value="">
+                <ul uk-accordion="multiple:true">
+                    <li class="uk-open">
+                        <a class="uk-accordion-title" href="#">Section Options</a>
+                        <div class="uk-accordion-content">
+                            <div class="uk-margin">
+                                <label class="uk-form-label">From URL</label>
+                                <input class="uk-input" type="url" id="media-url" placeholder="Paste image or video URL">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Or Upload</label>
+                                <input class="uk-input" type="file" id="media-file" accept="">
+                                <div id="prev-file" class="uk-text-meta uk-margin-small-top" style="display:none;">
+                                    Previous file: <span id="prev-file-name"></span>
+                                    <label><input type="checkbox" id="keep-prev-file" checked> Keep previous file</label>
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Media Size & Position</label>
+                                <select class="uk-select" id="media-size">
+                                    <option value="full">Full Screen</option>
+                                    <option value="left">Small Left</option>
+                                    <option value="center">Small Center</option>
+                                    <option value="right">Small Right</option>
+                                </select>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Background Color</label>
+                                <input class="uk-input" type="color" id="bg-color" value="#1e87f0" style="height:40px; width:60px;">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="uk-accordion-title" href="#">Heading Options</a>
+                        <div class="uk-accordion-content">
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Heading</label>
+                                <input class="uk-input" type="text" id="media-heading" value="Your Headline Here">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Heading Size</label>
+                                <select class="uk-select" id="heading-size">
+                                    <option value="uk-heading-large">Large</option>
+                                    <option value="uk-heading-xlarge">XLarge</option>
+                                    <option value="uk-heading-2xlarge" selected>XXLarge</option>
+                                </select>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Heading Color</label>
+                                <input class="uk-input" type="color" id="media-color" value="#ffffff" style="height:40px; width:60px;">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="uk-accordion-title" href="#">Button Options</a>
+                        <div class="uk-accordion-content">
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Button Label</label>
+                                <input class="uk-input" type="text" id="btn-label" placeholder="(Optional)">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Button URL</label>
+                                <input class="uk-input" type="url" id="btn-url" placeholder="https://your-link.com">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Button Color</label>
+                                <select class="uk-select" id="btn-color">
+                                    <option value="default">Default</option>
+                                    <option value="primary">Primary</option>
+                                    <option value="secondary">Secondary</option>
+                                    <option value="text">Text</option>
+                                </select>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <button type="submit" class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- UIKit modal for delete warning -->
+    <div id="delete-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title">Really delete item?</h2>
+            <p>This action cannot be undone.</p>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                <button id="confirm-delete" class="uk-button uk-button-danger uk-border-rounded" type="button">Delete</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- JSZip for export -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
+    <script>
+        // Sticky nav color swap
+        UIkit.util.on(document, 'DOMContentLoaded', function(){
+            var stickyNav = document.getElementById('main-navbar');
+            UIkit.util.on(window, 'scroll', function() {
+                const stickyActive = stickyNav.classList.contains('uk-sticky-fixed');
+                stickyNav.classList.toggle('sticky-colored', stickyActive);
+            });
+        });
+
+        // Editor logic
+        const editorRoot = document.getElementById('live-editor-root');
+        const addImageBtn = document.getElementById('addImageBtn');
+        const addVideoBtn = document.getElementById('addVideoBtn');
+        const mediaModal = UIkit.modal('#media-modal');
+        const mediaForm = document.getElementById('media-form');
+        const mediaUrl = document.getElementById('media-url');
+        const mediaFile = document.getElementById('media-file');
+        const prevFile = document.getElementById('prev-file');
+        const prevFileName = document.getElementById('prev-file-name');
+        const keepPrevFile = document.getElementById('keep-prev-file');
+        const mediaHeading = document.getElementById('media-heading');
+        const headingSize = document.getElementById('heading-size');
+        const mediaColor = document.getElementById('media-color');
+        const mediaModalTitle = document.getElementById('media-modal-title');
+        const mediaSize = document.getElementById('media-size');
+        const bgColor = document.getElementById('bg-color');
+        const btnLabel = document.getElementById('btn-label');
+        const btnUrl = document.getElementById('btn-url');
+        const btnColor = document.getElementById('btn-color');
+        const sectionIndex = document.getElementById('section-index');
+        // JSON/HTML
+        const saveJSONBtn = document.getElementById('saveJSON');
+        const loadJSONBtn = document.getElementById('loadJSON');
+        const exportHTMLBtn = document.getElementById('exportHTML');
+        const jsonFileInput = document.getElementById('jsonFileInput');
+        const deleteModal = UIkit.modal('#delete-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+
+        let currentMediaType = "image";
+        let editingPrevFileName = '';
+        let editingPrevFileData = '';
+        let editingPrevFileType = '';
+        let allSections = [];
+        let toDeleteIndex = null;
+
+        function resetPrevFileBox() {
+            prevFile.style.display = 'none';
+            prevFileName.textContent = '';
+            keepPrevFile.checked = true;
+            editingPrevFileName = '';
+            editingPrevFileData = '';
+            editingPrevFileType = '';
+        }
+
+        function setupModal(type, data, idx) {
+            currentMediaType = type;
+            mediaModalTitle.textContent = type === 'image'
+                ? (idx !== undefined ? 'Edit Image' : 'Add Image')
+                : (idx !== undefined ? 'Edit Video' : 'Add Video');
+            sectionIndex.value = idx !== undefined ? idx : '';
+            if (data) {
+                mediaUrl.value = data.url || '';
+                mediaHeading.value = data.heading || '';
+                mediaColor.value = data.headingColor || '#ffffff';
+                bgColor.value = data.bgColor || '#1e87f0';
+                mediaSize.value = data.mediaSize || 'full';
+                headingSize.value = data.headingSize || 'uk-heading-2xlarge';
+                btnLabel.value = data.btnLabel || '';
+                btnUrl.value = data.btnUrl || '';
+                btnColor.value = data.btnColor || 'default';
+
+                resetPrevFileBox();
+                mediaFile.value = '';
+                mediaFile.accept = type === 'image' ? 'image/*' : 'video/*';
+
+                if (!data.url && data.fileName && data.fileData) {
+                    editingPrevFileName = data.fileName;
+                    editingPrevFileData = data.fileData;
+                    editingPrevFileType = data.fileType;
+                    prevFile.style.display = '';
+                    prevFileName.textContent = data.fileName;
+                } else {
+                    resetPrevFileBox();
+                }
+            } else {
+                mediaUrl.value = '';
+                mediaHeading.value = 'Your Headline Here';
+                mediaColor.value = '#ffffff';
+                bgColor.value = '#1e87f0';
+                mediaSize.value = 'full';
+                headingSize.value = 'uk-heading-2xlarge';
+                btnLabel.value = '';
+                btnUrl.value = '';
+                btnColor.value = 'default';
+                mediaFile.value = '';
+                mediaFile.accept = type === 'image' ? 'image/*' : 'video/*';
+                resetPrevFileBox();
+            }
+        }
+
+        addImageBtn.addEventListener('click', () => {
+            setupModal('image');
+            mediaModal.show();
+        });
+        addVideoBtn.addEventListener('click', () => {
+            setupModal('video');
+            mediaModal.show();
+        });
+
+        function fileToDataURL(file, cb) {
+            const reader = new FileReader();
+            reader.onload = e => cb(e.target.result, file.name, file.type);
+            reader.readAsDataURL(file);
+        }
+
+        function makeButtonHtml(label, url, color) {
+            if (!label || !url) return '';
+            let classes = {
+                default: 'uk-button-default',
+                primary: 'uk-button-primary',
+                secondary: 'uk-button-secondary',
+                text: 'uk-button-text'
+            };
+            return `<a href="${url}" class="uk-button ${classes[color] || 'uk-button-default'} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
+        }
+
+        function getMediaSectionHtml(block, exportMap) {
+            let { type, src, url, heading, headingColor, headingSize, bgColor, mediaSize, btnLabel, btnUrl, btnColor, fileName } = block;
+            let headingClass = `live-heading ${headingSize}`;
+            let btnHtml = makeButtonHtml(btnLabel, btnUrl, btnColor);
+
+            function refSrc(val, fileName, exportMap) {
+                if (exportMap && fileName && exportMap[fileName]) {
+                    return 'media/' + exportMap[fileName];
+                }
+                return val;
+            }
+
+            if (type === 'image') {
+                if (mediaSize === 'full') {
+                    return `
+                        <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
+                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" uk-cover>
+                            <div class="uk-position-center uk-text-center uk-light">
+                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let imgClass = '', imgStyle = '', flexRow = '';
+                    if (mediaSize === 'center') {
+                        imgClass = 'uk-align-center';
+                        imgStyle = "width:320px;max-width:90vw;";
+                    }
+                    if (mediaSize === 'left') {
+                        flexRow = '';
+                        imgClass = 'uk-align-left@s';
+                        imgStyle = "width:320px;max-width:90vw;";
+                    }
+                    if (mediaSize === 'right') {
+                        flexRow = 'uk-flex-row-reverse';
+                        imgClass = 'uk-align-right@s';
+                        imgStyle = "width:320px;max-width:90vw;";
+                    }
+                    let inner = `
+                        <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
+                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large ${imgClass}" style="${imgStyle}">
+                            <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
+                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                    if (mediaSize === 'center') {
+                        inner = `<div class="uk-width-1-1 uk-text-center">
+                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large uk-align-center" style="${imgStyle}">
+                            <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                            ${btnHtml}
+                        </div>`;
+                    }
+                    return inner;
+                }
+            } else {
+                // VIDEO: left/right = 50% larger (480px)
+                let videoLarge = "width:480px;max-width:95vw;";
+                let videoSmall = "width:320px;max-width:90vw;";
+                if (mediaSize === 'full') {
+                    return `
+                        <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
+                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline uk-cover></video>
+                            <div class="uk-position-center uk-text-center uk-light">
+                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let vidClass = '', vidStyle = '', flexRow = '';
+                    if (mediaSize === 'center') {
+                        vidClass = 'uk-align-center';
+                        vidStyle = videoSmall;
+                    }
+                    if (mediaSize === 'left') {
+                        flexRow = '';
+                        vidClass = 'uk-align-left@s';
+                        vidStyle = videoLarge;
+                    }
+                    if (mediaSize === 'right') {
+                        flexRow = 'uk-flex-row-reverse';
+                        vidClass = 'uk-align-right@s';
+                        vidStyle = videoLarge;
+                    }
+                    let inner = `
+                        <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
+                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="${vidClass} uk-border-rounded uk-box-shadow-large" style="${vidStyle}"></video>
+                            <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
+                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                    if (mediaSize === 'center') {
+                        inner = `<div class="uk-width-1-1 uk-text-center">
+                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="uk-align-center uk-border-rounded uk-box-shadow-large" style="${vidStyle}"></video>
+                            <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
+                            ${btnHtml}
+                        </div>`;
+                    }
+                    return inner;
+                }
+            }
+        }
+
+        // --- RENDER ---
+        function renderAllSections() {
+            editorRoot.innerHTML = '';
+            allSections.forEach((block, idx) => {
+                const li = document.createElement('li');
+                li.className = 'editor-section uk-padding-remove uk-sortable-handle';
+                li.style.position = 'relative';
+                const removeBtn = `<button class="uk-button uk-button-danger uk-border-rounded editor-remove-btn" type="button" uk-icon="trash" uk-tooltip="Remove section"></button>`;
+                const editBtn = `<button class="uk-icon-button uk-button-primary uk-border-rounded editor-edit-btn" type="button" uk-icon="pencil" uk-tooltip="Edit section"></button>`;
+                const sectionStyle = `background: ${block.bgColor}; min-height:60vh;`;
+
+                li.innerHTML = `
+                    <section class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="${sectionStyle};">
+                        ${editBtn}
+                        ${removeBtn}
+                        ${getMediaSectionHtml(block)}
+                    </section>
+                `;
+                // --- Remove button always shows modal ---
+                li.querySelector('.editor-remove-btn').addEventListener('click', function() {
+                    toDeleteIndex = idx;
+                    deleteModal.show();
+                });
+                // --- Edit ---
+                li.querySelector('.editor-edit-btn').addEventListener('click', function() {
+                    setupModal(block.type, block, idx);
+                    mediaModal.show();
+                });
+                editorRoot.appendChild(li);
+            });
+            UIkit.update(editorRoot);
+        }
+
+        // Confirm Delete modal
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (toDeleteIndex !== null && allSections[toDeleteIndex]) {
+                allSections.splice(toDeleteIndex, 1);
+                renderAllSections();
+                toDeleteIndex = null;
+                deleteModal.hide();
+            }
+        });
+
+        // --- Sortable event ---
+        UIkit.util.on(editorRoot, 'moved', function(e) {
+            // Sort array to match DOM
+            let newSections = [];
+            let lis = Array.from(editorRoot.children);
+            lis.forEach(li => {
+                let i = Array.from(editorRoot.children).indexOf(li);
+                let editBtn = li.querySelector('.editor-edit-btn');
+                if (!editBtn) return;
+                // Find block by matching the heading text as id
+                let heading = li.querySelector('.live-heading');
+                let htext = heading ? heading.textContent : '';
+                // match the first block with this heading that's not already used
+                let found = allSections.findIndex((b, idx) =>
+                    b.heading === htext && !newSections.includes(b)
+                );
+                if (found >= 0) {
+                    newSections.push(allSections[found]);
+                }
+            });
+            if (newSections.length === allSections.length) {
+                allSections = newSections;
+            }
+        });
+
+        // Modal submission
+        mediaForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let file = mediaFile.files[0];
+            let url = mediaUrl.value.trim();
+            let heading = mediaHeading.value || '';
+            let headingColor = mediaColor.value || '#ffffff';
+            let headingSizeVal = headingSize.value || 'uk-heading-2xlarge';
+            let mediaSizeVal = mediaSize.value;
+            let bgColorVal = bgColor.value || "#1e87f0";
+            let btnLabelVal = btnLabel.value.trim();
+            let btnUrlVal = btnUrl.value.trim();
+            let btnColorVal = btnColor.value;
+            let idx = sectionIndex.value ? parseInt(sectionIndex.value) : null;
+
+            function finishSection(src, fileData, fileName, fileType) {
+                let block = {
+                    type: currentMediaType,
+                    src,
+                    url: url ? url : '',
+                    heading,
+                    headingColor,
+                    headingSize: headingSizeVal,
+                    bgColor: bgColorVal,
+                    mediaSize: mediaSizeVal,
+                    btnLabel: btnLabelVal,
+                    btnUrl: btnUrlVal,
+                    btnColor: btnColorVal
+                };
+                if (!url && fileData && fileName) {
+                    block.fileData = fileData;
+                    block.fileName = fileName;
+                    block.fileType = fileType;
+                }
+                if (idx !== null && !isNaN(idx)) {
+                    allSections[idx] = block;
+                } else {
+                    allSections.push(block);
+                }
+                renderAllSections();
+                mediaModal.hide();
+            }
+
+            if (file) {
+                fileToDataURL(file, (dataurl, fileName, fileType) => finishSection(dataurl, dataurl, fileName, fileType));
+            } else if (url) {
+                finishSection(url);
+            } else if (prevFile.style.display !== 'none' && keepPrevFile.checked && editingPrevFileData) {
+                finishSection(editingPrevFileData, editingPrevFileData, editingPrevFileName, editingPrevFileType);
+            } else {
+                UIkit.notification({message: 'Please provide a URL or upload a file.', status: 'warning'});
+                return;
+            }
+        });
+
+        // Save as JSON
+        saveJSONBtn.addEventListener('click', function() {
+            const out = JSON.stringify(allSections, null, 2);
+            const blob = new Blob([out], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'landing.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Load JSON
+        loadJSONBtn.addEventListener('click', function() {
+            jsonFileInput.click();
+        });
+        jsonFileInput.addEventListener('change', function(e) {
+            if (!e.target.files[0]) return;
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    allSections = JSON.parse(evt.target.result || '[]');
+                    renderAllSections();
+                } catch {
+                    UIkit.notification({message: 'Invalid JSON file!', status:'danger'});
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
+
+        // Export as HTML+media ZIP
+        exportHTMLBtn.addEventListener('click', async function() {
+            const JSZip = window.JSZip;
+            const zip = new JSZip();
+            const exportMap = {};
+            let promises = [];
+            let fileIdx = 0;
+            allSections.forEach((block, idx) => {
+                if (block.fileData && block.fileName) {
+                    let ext = block.fileName.split('.').pop().toLowerCase();
+                    let base = block.fileName.replace(/\.[^/.]+$/, "");
+                    let newName = `${base}-${fileIdx+1}.${ext}`;
+                    exportMap[block.fileName] = newName;
+                    promises.push(fetch(block.fileData).then(res => res.blob()).then(blob => {
+                        zip.file('media/' + newName, blob);
+                    }));
+                    fileIdx++;
+                }
+            });
+            await Promise.all(promises);
+            let exportBlocks = allSections.map(block =>
+                `<section style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">${getMediaSectionHtml(block, exportMap)}</section>`
+            ).join('\n');
+
+            let html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Landing Export</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
+  <style>
+    .live-heading.uk-heading-large { font-size: 2.7rem; }
+    .live-heading.uk-heading-xlarge { font-size: 3.6rem;}
+    .live-heading.uk-heading-2xlarge { font-size: 4.8rem; line-height:1.05; }
+    @media (max-width: 640px) {
+      .live-heading.uk-heading-2xlarge { font-size: 2.2rem;}
+      .live-heading.uk-heading-xlarge { font-size: 1.5rem;}
+      .live-heading.uk-heading-large { font-size: 1.2rem;}
+    }
+  </style>
+</head>
+<body class="uk-background-muted">
+${exportBlocks}
+</body>
+</html>
+`;
+            zip.file('index.html', html);
+
+            const blob = await zip.generateAsync({type:"blob"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'landing.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // UIKit tooltips
+        UIkit.util.on(document, 'DOMContentLoaded', function() {
+            UIkit.tooltip('[uk-tooltip]');
+        });
+    </script>
 </body>
 </html>
