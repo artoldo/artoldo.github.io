@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Live Editor Landing Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
     <style>
       .editor-section {
@@ -25,10 +26,20 @@
       .live-heading.uk-heading-large { font-size: 2.7rem; }
       .live-heading.uk-heading-xlarge { font-size: 3.6rem;}
       .live-heading.uk-heading-2xlarge { font-size: 4.8rem; line-height:1.05; }
+      .live-subtitle.uk-heading-medium { font-size: 1.6rem; font-weight: 500;}
+      .live-subtitle.uk-heading-large { font-size: 2.2rem; font-weight: 500;}
+      .live-subtitle.uk-heading-xlarge { font-size: 2.9rem; font-weight: 500;}
+      .live-paragraph { font-size: 1.13rem; max-width: 40em; margin-left:auto; margin-right:auto;}
+      .live-paragraph.large { font-size: 1.45rem; }
       @media (max-width: 640px) {
         .live-heading.uk-heading-2xlarge { font-size: 2.2rem;}
         .live-heading.uk-heading-xlarge { font-size: 1.5rem;}
         .live-heading.uk-heading-large { font-size: 1.2rem;}
+        .live-subtitle.uk-heading-xlarge { font-size: 1.4rem;}
+        .live-subtitle.uk-heading-large { font-size: 1.1rem;}
+        .live-subtitle.uk-heading-medium { font-size: 1.03rem;}
+        .live-paragraph { font-size: 1rem;}
+        .live-paragraph.large { font-size: 1.1rem;}
       }
       .uk-navbar-container.sticky-colored {
         background: #222 !important;
@@ -44,6 +55,7 @@
         stroke: #fff !important;
       }
       .uk-sortable-handle { cursor: move; }
+
     </style>
 </head>
 <body class="uk-background-muted">
@@ -71,8 +83,8 @@
 
     <!-- Modal: media edit -->
     <div id="media-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
+            <button class="uk-modal-close-default uk-border-rounded" type="button" uk-close></button>
             <h3 id="media-modal-title" class="uk-modal-title">Add Media</h3>
             <form id="media-form">
                 <input type="hidden" id="section-index" value="">
@@ -82,11 +94,11 @@
                         <div class="uk-accordion-content">
                             <div class="uk-margin">
                                 <label class="uk-form-label">From URL</label>
-                                <input class="uk-input" type="url" id="media-url" placeholder="Paste image or video URL">
+                                <input class="uk-input uk-border-rounded" type="url" id="media-url" placeholder="Paste URL">
                             </div>
                             <div class="uk-margin">
-                                <label class="uk-form-label">Or Upload</label>
-                                <input class="uk-input" type="file" id="media-file" accept="">
+                                <label class="uk-form-label">Or Upload</label><br>
+                                <input class="uk-button-large uk-button-default uk-border-rounded" type="file" id="media-file" accept="">
                                 <div id="prev-file" class="uk-text-meta uk-margin-small-top" style="display:none;">
                                     Previous file: <span id="prev-file-name"></span>
                                     <label><input type="checkbox" id="keep-prev-file" checked> Keep previous file</label>
@@ -94,7 +106,7 @@
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Media Size & Position</label>
-                                <select class="uk-select" id="media-size">
+                                <select class="uk-select uk-border-rounded" id="media-size">
                                     <option value="full">Full Screen</option>
                                     <option value="left">Small Left</option>
                                     <option value="center">Small Center</option>
@@ -103,7 +115,7 @@
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Background Color</label>
-                                <input class="uk-input" type="color" id="bg-color" value="#1e87f0" style="height:40px; width:60px;">
+                                <input type="color" id="bg-color" value="#1e87f0" style="height:25px; width:50px; cursor: pointer;">
                             </div>
                         </div>
                     </li>
@@ -112,11 +124,11 @@
                         <div class="uk-accordion-content">
                             <div class="uk-margin">
                                 <label class="uk-form-label">Heading</label>
-                                <input class="uk-input" type="text" id="media-heading" value="Your Headline Here">
+                                <input class="uk-input uk-border-rounded" type="text" id="media-heading" value="Your Headline Here">
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Heading Size</label>
-                                <select class="uk-select" id="heading-size">
+                                <select class="uk-select uk-border-rounded" id="heading-size">
                                     <option value="uk-heading-large">Large</option>
                                     <option value="uk-heading-xlarge">XLarge</option>
                                     <option value="uk-heading-2xlarge" selected>XXLarge</option>
@@ -124,7 +136,43 @@
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Heading Color</label>
-                                <input class="uk-input" type="color" id="media-color" value="#ffffff" style="height:40px; width:60px;">
+                                <input type="color" id="media-color" value="#ffffff" style="height:25px; width:50px; cursor: pointer;">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="uk-accordion-title" href="#">Text Options</a>
+                        <div class="uk-accordion-content">
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Subtitle</label>
+                                <input class="uk-input uk-border-rounded" type="text" id="media-subtitle" placeholder="Your Subtitle">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Subtitle Size</label>
+                                <select class="uk-select uk-border-rounded" id="subtitle-size">
+                                    <option value="uk-heading-medium">Medium</option>
+                                    <option value="uk-heading-large">Large</option>
+                                    <option value="uk-heading-xlarge">XLarge</option>
+                                </select>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Subtitle Color</label>
+                                <input type="color" id="subtitle-color" value="#ffffff" style="height:25px; width:50px; cursor: pointer;">
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Paragraph</label>
+                                <textarea class="uk-textarea uk-border-rounded" id="media-paragraph" rows="2" placeholder="Add an optional description or paragraph"></textarea>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Paragraph Size</label>
+                                <select class="uk-select uk-border-rounded" id="paragraph-size">
+                                    <option value="">Default</option>
+                                    <option value="large">Large</option>
+                                </select>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label">Paragraph Color</label>
+                                <input type="color" id="paragraph-color" value="#ffffff" style="height:25px; width:50px; cursor: pointer;">
                             </div>
                         </div>
                     </li>
@@ -133,15 +181,15 @@
                         <div class="uk-accordion-content">
                             <div class="uk-margin">
                                 <label class="uk-form-label">Button Label</label>
-                                <input class="uk-input" type="text" id="btn-label" placeholder="(Optional)">
+                                <input class="uk-input uk-border-rounded" type="text" id="btn-label" placeholder="(Optional)">
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Button URL</label>
-                                <input class="uk-input" type="url" id="btn-url" placeholder="https://your-link.com">
+                                <input class="uk-input uk-border-rounded" type="url" id="btn-url" placeholder="https://your-link.com">
                             </div>
                             <div class="uk-margin">
                                 <label class="uk-form-label">Button Color</label>
-                                <select class="uk-select" id="btn-color">
+                                <select class="uk-select uk-border-rounded" id="btn-color">
                                     <option value="default">Default</option>
                                     <option value="primary">Primary</option>
                                     <option value="secondary">Secondary</option>
@@ -203,6 +251,15 @@
         const btnUrl = document.getElementById('btn-url');
         const btnColor = document.getElementById('btn-color');
         const sectionIndex = document.getElementById('section-index');
+
+        // New fields for subtitle/paragraph
+        const mediaSubtitle = document.getElementById('media-subtitle');
+        const subtitleSize = document.getElementById('subtitle-size');
+        const subtitleColor = document.getElementById('subtitle-color');
+        const mediaParagraph = document.getElementById('media-paragraph');
+        const paragraphSize = document.getElementById('paragraph-size');
+        const paragraphColor = document.getElementById('paragraph-color');
+
         // JSON/HTML
         const saveJSONBtn = document.getElementById('saveJSON');
         const loadJSONBtn = document.getElementById('loadJSON');
@@ -244,6 +301,14 @@
                 btnUrl.value = data.btnUrl || '';
                 btnColor.value = data.btnColor || 'default';
 
+                // new fields
+                mediaSubtitle.value = data.subtitle || '';
+                subtitleSize.value = data.subtitleSize || 'uk-heading-medium';
+                subtitleColor.value = data.subtitleColor || '#ffffff';
+                mediaParagraph.value = data.paragraph || '';
+                paragraphSize.value = data.paragraphSize || '';
+                paragraphColor.value = data.paragraphColor || '#ffffff';
+
                 resetPrevFileBox();
                 mediaFile.value = '';
                 mediaFile.accept = type === 'image' ? 'image/*' : 'video/*';
@@ -267,6 +332,15 @@
                 btnLabel.value = '';
                 btnUrl.value = '';
                 btnColor.value = 'default';
+
+                // new fields
+                mediaSubtitle.value = '';
+                subtitleSize.value = 'uk-heading-medium';
+                subtitleColor.value = '#ffffff';
+                mediaParagraph.value = '';
+                paragraphSize.value = '';
+                paragraphColor.value = '#ffffff';
+
                 mediaFile.value = '';
                 mediaFile.accept = type === 'image' ? 'image/*' : 'video/*';
                 resetPrevFileBox();
@@ -299,114 +373,164 @@
             return `<a href="${url}" class="uk-button ${classes[color] || 'uk-button-default'} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
         }
 
-        function getMediaSectionHtml(block, exportMap) {
-            let { type, src, url, heading, headingColor, headingSize, bgColor, mediaSize, btnLabel, btnUrl, btnColor, fileName } = block;
-            let headingClass = `live-heading ${headingSize}`;
-            let btnHtml = makeButtonHtml(btnLabel, btnUrl, btnColor);
-
-            function refSrc(val, fileName, exportMap) {
-                if (exportMap && fileName && exportMap[fileName]) {
-                    return 'media/' + exportMap[fileName];
-                }
-                return val;
+        function getTextBlockHtml(block) {
+            // Subtitle, then Paragraph
+            let out = '';
+            if (block.subtitle) {
+                out += `<div class="live-subtitle ${block.subtitleSize || 'uk-heading-medium'}" style="color:${block.subtitleColor||'#fff'}">${block.subtitle}</div>`;
             }
-
-            if (type === 'image') {
-                if (mediaSize === 'full') {
-                    return `
-                        <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
-                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" uk-cover>
-                            <div class="uk-position-center uk-text-center uk-light">
-                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                                ${btnHtml}
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    let imgClass = '', imgStyle = '', flexRow = '';
-                    if (mediaSize === 'center') {
-                        imgClass = 'uk-align-center';
-                        imgStyle = "width:320px;max-width:90vw;";
-                    }
-                    if (mediaSize === 'left') {
-                        flexRow = '';
-                        imgClass = 'uk-align-left@s';
-                        imgStyle = "width:320px;max-width:90vw;";
-                    }
-                    if (mediaSize === 'right') {
-                        flexRow = 'uk-flex-row-reverse';
-                        imgClass = 'uk-align-right@s';
-                        imgStyle = "width:320px;max-width:90vw;";
-                    }
-                    let inner = `
-                        <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
-                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large ${imgClass}" style="${imgStyle}">
-                            <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
-                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                                ${btnHtml}
-                            </div>
-                        </div>
-                    `;
-                    if (mediaSize === 'center') {
-                        inner = `<div class="uk-width-1-1 uk-text-center">
-                            <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large uk-align-center" style="${imgStyle}">
-                            <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                            ${btnHtml}
-                        </div>`;
-                    }
-                    return inner;
-                }
-            } else {
-                // VIDEO: left/right = 50% larger (480px)
-                let videoLarge = "width:480px;max-width:95vw;";
-                let videoSmall = "width:320px;max-width:90vw;";
-                if (mediaSize === 'full') {
-                    return `
-                        <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
-                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline uk-cover></video>
-                            <div class="uk-position-center uk-text-center uk-light">
-                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                                ${btnHtml}
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    let vidClass = '', vidStyle = '', flexRow = '';
-                    if (mediaSize === 'center') {
-                        vidClass = 'uk-align-center';
-                        vidStyle = videoSmall;
-                    }
-                    if (mediaSize === 'left') {
-                        flexRow = '';
-                        vidClass = 'uk-align-left@s';
-                        vidStyle = videoLarge;
-                    }
-                    if (mediaSize === 'right') {
-                        flexRow = 'uk-flex-row-reverse';
-                        vidClass = 'uk-align-right@s';
-                        vidStyle = videoLarge;
-                    }
-                    let inner = `
-                        <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
-                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="${vidClass} uk-border-rounded uk-box-shadow-large" style="${vidStyle}"></video>
-                            <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
-                                <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                                ${btnHtml}
-                            </div>
-                        </div>
-                    `;
-                    if (mediaSize === 'center') {
-                        inner = `<div class="uk-width-1-1 uk-text-center">
-                            <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="uk-align-center uk-border-rounded uk-box-shadow-large" style="${vidStyle}"></video>
-                            <div class="${headingClass}" style="color: ${headingColor};">${heading}</div>
-                            ${btnHtml}
-                        </div>`;
-                    }
-                    return inner;
-                }
+            if (block.paragraph) {
+                out += `<div class="live-paragraph${block.paragraphSize === 'large' ? ' large' : ''}" style="color:${block.paragraphColor||'#fff'};margin-top:0.5em;">${block.paragraph.replace(/\n/g, '<br>')}</div>`;
             }
+            return out;
         }
 
+function getMediaSectionHtml(block, exportMap) {
+    let { type, src, url, heading, headingColor, headingSize, bgColor, mediaSize, btnLabel, btnUrl, btnColor, fileName } = block;
+    let headingClass = `live-heading ${headingSize}`;
+    let btnHtml = makeButtonHtml(btnLabel, btnUrl, btnColor);
+
+    function refSrc(val, fileName, exportMap) {
+        if (exportMap && fileName && exportMap[fileName]) {
+            return 'media/' + exportMap[fileName];
+        }
+        return val;
+    }
+
+    const textBlock = `
+        <div>
+            <div class="${headingClass}" style="color: ${headingColor};">${heading || ''}</div>
+            ${getTextBlockHtml(block)}
+            ${btnHtml}
+        </div>
+    `;
+
+    const isExport = !!exportMap;
+
+    // --- IMAGE ---
+    if (type === 'image') {
+        if (mediaSize === 'full') {
+            if (isExport) {
+                // Export: use direct CSS, NOT uk-cover
+                return `
+                    <div style="position:relative; width:100vw; height:100vh; overflow:hidden;">
+                        <img src="${refSrc(src, fileName, exportMap)}" alt="Image"
+                            style="width:100vw;height:100vh;object-fit:cover;display:block;">
+                        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;" class="uk-position-center uk-text-center uk-light">
+                            ${textBlock}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Editor: use uk-cover for UIKit live editing
+                return `
+                    <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
+                        <img src="${refSrc(src, fileName, exportMap)}" alt="Image" uk-cover>
+                        <div class="uk-position-center uk-text-center uk-light">${textBlock}</div>
+                    </div>
+                `;
+            }
+        } else {
+            // Center/Left/Right: add container bg color and block-level image
+            let imgClass = '', imgStyle = '', flexRow = '';
+            if (mediaSize === 'center') {
+                imgClass = 'uk-align-center';
+                imgStyle = "width:620px;max-width:98vw;";
+            }
+            if (mediaSize === 'left') {
+                flexRow = '';
+                imgClass = 'uk-align-left@s';
+                imgStyle = "width:620px;max-width:98vw;";
+            }
+            if (mediaSize === 'right') {
+                flexRow = 'uk-flex-row-reverse';
+                imgClass = 'uk-align-right@s';
+                imgStyle = "width:620px;max-width:98vw;";
+            }
+            let inner = `
+                <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
+                    <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large ${imgClass}" style="${imgStyle};display:block;">
+                    <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
+                        ${textBlock}
+                    </div>
+                </div>
+            `;
+            if (mediaSize === 'center') {
+                inner = `<div class="uk-width-1-1 uk-text-center" style="background:${bgColor};">
+                    <img src="${refSrc(src, fileName, exportMap)}" alt="Image" class="uk-border-rounded uk-box-shadow-large uk-align-center"
+                        style="${imgStyle};display:block;margin-left:auto;margin-right:auto;">
+                    ${textBlock}
+                </div>`;
+            }
+            // Add vertical padding for non-full blocks
+            return `<div class="uk-padding-large">${inner}</div>`;
+        }
+    }
+
+    // --- VIDEO ---
+    if (type === 'video') {
+        let videoLarge = "width:920px;max-width:98vw;";
+        let videoMid = "width:620px;max-width:98vw;";
+        if (mediaSize === 'full') {
+            if (isExport) {
+                // Export: use direct CSS for fullscreen video
+                return `
+                    <div style="position:relative; width:100vw; height:100vh; overflow:hidden;">
+                        <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline
+                            style="width:100vw;height:100vh;object-fit:cover;display:block;"></video>
+                        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;" class="uk-position-center uk-text-center uk-light">
+                            ${textBlock}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Editor: use uk-cover for UIKit video support
+                return `
+                    <div class="uk-cover-container uk-width-1-1" uk-height-viewport>
+                        <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline uk-cover></video>
+                        <div class="uk-position-center uk-text-center uk-light">${textBlock}</div>
+                    </div>
+                `;
+            }
+        } else {
+            let vidClass = '', vidStyle = '', flexRow = '';
+            if (mediaSize === 'center') {
+                vidClass = 'uk-align-center';
+                vidStyle = videoMid;
+            }
+            if (mediaSize === 'left') {
+                flexRow = '';
+                vidClass = 'uk-align-left@s';
+                vidStyle = videoLarge;
+            }
+            if (mediaSize === 'right') {
+                flexRow = 'uk-flex-row-reverse';
+                vidClass = 'uk-align-right@s';
+                vidStyle = videoLarge;
+            }
+            let inner = `
+                <div class="uk-width-expand@m uk-flex uk-flex-middle ${flexRow}">
+                    <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="${vidClass} uk-border-rounded uk-box-shadow-large"
+                        style="${vidStyle};display:block;">
+                    </video>
+                    <div class="uk-width-expand uk-padding-small${mediaSize === 'right' ? ' uk-text-right' : ''}">
+                        ${textBlock}
+                    </div>
+                </div>
+            `;
+            if (mediaSize === 'center') {
+                inner = `<div class="uk-width-1-1 uk-text-center" style="background:${bgColor};">
+                    <video src="${refSrc(src, fileName, exportMap)}" autoplay loop muted playsinline class="uk-align-center uk-border-rounded uk-box-shadow-large"
+                        style="${vidStyle};display:block;margin-left:auto;margin-right:auto;">
+                    </video>
+                    ${textBlock}
+                </div>`;
+            }
+            // Add vertical padding for non-full blocks
+            return `<div class="uk-padding-large">${inner}</div>`;
+        }
+    }
+}
         // --- RENDER ---
         function renderAllSections() {
             editorRoot.innerHTML = '';
@@ -459,10 +583,8 @@
                 let i = Array.from(editorRoot.children).indexOf(li);
                 let editBtn = li.querySelector('.editor-edit-btn');
                 if (!editBtn) return;
-                // Find block by matching the heading text as id
                 let heading = li.querySelector('.live-heading');
                 let htext = heading ? heading.textContent : '';
-                // match the first block with this heading that's not already used
                 let found = allSections.findIndex((b, idx) =>
                     b.heading === htext && !newSections.includes(b)
                 );
@@ -488,6 +610,14 @@
             let btnLabelVal = btnLabel.value.trim();
             let btnUrlVal = btnUrl.value.trim();
             let btnColorVal = btnColor.value;
+            // New
+            let subtitleVal = mediaSubtitle.value || '';
+            let subtitleSizeVal = subtitleSize.value || 'uk-heading-medium';
+            let subtitleColorVal = subtitleColor.value || '#ffffff';
+            let paragraphVal = mediaParagraph.value || '';
+            let paragraphSizeVal = paragraphSize.value || '';
+            let paragraphColorVal = paragraphColor.value || '#ffffff';
+
             let idx = sectionIndex.value ? parseInt(sectionIndex.value) : null;
 
             function finishSection(src, fileData, fileName, fileType) {
@@ -502,8 +632,15 @@
                     mediaSize: mediaSizeVal,
                     btnLabel: btnLabelVal,
                     btnUrl: btnUrlVal,
-                    btnColor: btnColorVal
+                    btnColor: btnColorVal,
+                    subtitle: subtitleVal,
+                    subtitleSize: subtitleSizeVal,
+                    subtitleColor: subtitleColorVal,
+                    paragraph: paragraphVal,
+                    paragraphSize: paragraphSizeVal,
+                    paragraphColor: paragraphColorVal
                 };
+                // Always set fileData and fileName if uploading
                 if (!url && fileData && fileName) {
                     block.fileData = fileData;
                     block.fileName = fileName;
@@ -572,10 +709,11 @@
             let promises = [];
             let fileIdx = 0;
             allSections.forEach((block, idx) => {
+                // Export any fileData in image or video blocks
                 if (block.fileData && block.fileName) {
                     let ext = block.fileName.split('.').pop().toLowerCase();
-                    let base = block.fileName.replace(/\.[^/.]+$/, "");
-                    let newName = `${base}-${fileIdx+1}.${ext}`;
+                    // Fix: always make unique file names in ZIP
+                    let newName = `mediafile${fileIdx+1}.${ext}`;
                     exportMap[block.fileName] = newName;
                     promises.push(fetch(block.fileData).then(res => res.blob()).then(blob => {
                         zip.file('media/' + newName, blob);
@@ -600,10 +738,20 @@
     .live-heading.uk-heading-large { font-size: 2.7rem; }
     .live-heading.uk-heading-xlarge { font-size: 3.6rem;}
     .live-heading.uk-heading-2xlarge { font-size: 4.8rem; line-height:1.05; }
+    .live-subtitle.uk-heading-medium { font-size: 1.6rem; font-weight: 500;}
+    .live-subtitle.uk-heading-large { font-size: 2.2rem; font-weight: 500;}
+    .live-subtitle.uk-heading-xlarge { font-size: 2.9rem; font-weight: 500;}
+    .live-paragraph { font-size: 1.13rem; max-width: 40em; margin-left:auto; margin-right:auto;}
+    .live-paragraph.large { font-size: 1.45rem; }
     @media (max-width: 640px) {
       .live-heading.uk-heading-2xlarge { font-size: 2.2rem;}
       .live-heading.uk-heading-xlarge { font-size: 1.5rem;}
       .live-heading.uk-heading-large { font-size: 1.2rem;}
+      .live-subtitle.uk-heading-xlarge { font-size: 1.4rem;}
+      .live-subtitle.uk-heading-large { font-size: 1.1rem;}
+      .live-subtitle.uk-heading-medium { font-size: 1.03rem;}
+      .live-paragraph { font-size: 1rem;}
+      .live-paragraph.large { font-size: 1.1rem;}
     }
   </style>
 </head>
