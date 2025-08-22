@@ -1,4 +1,4 @@
-<!-- Version: 1.1.02 | Last Update: 2025-07-29 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.03 | Last Update: 2025-08-22 | Author: Sacrisoft | © All rights reserved -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -728,19 +728,19 @@ for (const item of galleryItems) {
   <!-- Content -->
 <section class="uk-section uk-background-default" style="margin-top: 40vh;">
 <div class="uk-container uk-padding-large uk-padding-remove-top">
-      <h1 class="uk-heading-large uk-text-bold uk-text-center">${h1}</h1>
-      <h2 class="uk-heading uk-text-bold uk-text-center">${h2}</h2>
+      <h1 class="uk-heading-large uk-text-bold uk-text-center" uk-scrollspy="cls:uk-animation-scale-up; repeat:true;">${h1}</h1>
+      <h2 class="uk-heading uk-text-bold uk-text-center" uk-scrollspy="cls:uk-animation-slide-bottom; repeat:true;">${h2}</h2>
       <div class="hover-scale" uk-lightbox>
         <a href="${posterImage}">
-          <img class="uk-border-rounded uk-align-center uk-align-left@m" src="${posterImage}" width="200" height="300" alt="${h1} - ${h2} - Film poster">
+          <img class="uk-border-rounded uk-align-center uk-align-left@m" src="${posterImage}" width="200" height="300" alt="${h1} - ${h2} - Film poster" uk-scrollspy="cls:uk-animation-scale-up; repeat:true;">
         </a>
       </div>
-      <p><strong>Runtime: </strong>${runtime}</p>
-      <p><strong>Filmmakers:</strong> ${directors.join(' & ')}</p>
-      <p><strong>Featuring:</strong> ${featuring}</p>
-      <p class="uk-dropcap uk-text-large uk-text-justify">${intro1}</p>
-      <p class="uk-text-lighter uk-text-large uk-text-justify">${intro2}</p>
-      <p class="uk-text-lighter uk-text-large uk-text-justify">${intro3}</p>
+      <p uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;"><strong>Runtime: </strong>${runtime}</p>
+      <p uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;"><strong>Filmmakers:</strong> ${directors.join(' & ')}</p>
+      <p uk-scrollspy="cls:uk-animation-slide-bottom; repeat:false;"><strong>Featuring:</strong> ${featuring}</p>
+      <p class="uk-dropcap uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">${intro1}</p>
+      <p class="uk-text-lighter uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">${intro2}</p>
+      <p class="uk-text-lighter uk-text-large uk-text-justify" uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">${intro3}</p>
 
 <!-- Gallery -->
 <div uk-lightbox uk-scrollspy="cls:uk-animation-scale-up; repeat:false;">
