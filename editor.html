@@ -1,4 +1,4 @@
-<!-- Version: 1.1.0 | Last Update: 2025-07-01 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.1 | Last Update: 2025-09-03 | Author: Sacrisoft | © All rights reserved -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,13 +47,31 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .buttons {
-      display: flex;
-      justify-content: space-around;
-      padding: 0.75rem;
-      background: var(--light);
-      border-bottom: 1px solid var(--gray);
-    }
+.buttons {
+  display: flex;
+  justify-content: center;      /* center buttons if they fit */
+  gap: 1.5rem;
+  padding: 0.75rem;
+  background: var(--light);
+  border-bottom: 1px solid var(--gray);
+  overflow-x: auto;             /* scroll if too many buttons */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Pink scrollbar styling */
+.buttons::-webkit-scrollbar {
+  height: 6px;                  /* slim horizontal bar */
+}
+
+.buttons::-webkit-scrollbar-thumb {
+  background: var(--accent-dark); /* your pink accent */
+  border-radius: 3px;
+}
+
+.buttons::-webkit-scrollbar-track {
+  background: var(--gray);       /* optional: darker track */
+}
+
 
     button {
       background-color: var(--accent);
@@ -61,6 +79,7 @@
       border: none;
       border-radius: 8px;
       padding: 0.5rem 1.2rem;
+      flex: 0 0 auto;               /* prevents shrinking */
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
