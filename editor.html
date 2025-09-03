@@ -126,10 +126,13 @@ iframe {
   <header>Online HTML Editor PRO</header>
 
   <div class="buttons">
-    <button onclick="pasteCode()">Paste Code</button>
-    <button onclick="updatePreview()">Run Code</button>
-    <button onclick="copyCode()">Copy Code</button>
-    <button onclick="saveCode()">Save Code</button>
+    <button onclick="pasteCode()">Paste</button>
+    <button onclick="updatePreview()">Run</button>
+    <button onclick="undoCode()">Undo</button>
+    <button onclick="openFullscreen()">Preview</button>
+    <button onclick="redoCode()">Redo</button>
+    <button onclick="copyCode()">Copy</button>
+    <button onclick="saveCode()">Save</button>
   </div>
 
   <div class="editor-container">
@@ -268,6 +271,23 @@ iframe {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+function openFullscreen() {
+  const code = editor.getValue();
+  const newWindow = window.open("", "_blank");
+  newWindow.document.open();
+  newWindow.document.write(code);
+  newWindow.document.close();
+}
+
+function undoCode() {
+  editor.undo();
+}
+
+function redoCode() {
+  editor.redo();
+}
+
   </script>
 </body>
 </html>
