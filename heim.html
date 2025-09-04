@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow">
+<title>Heim Theory Particle Simulator</title>
+<style>
+  /* ---------- Global + Reset ---------- */
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;color:#fff;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#000;overflow-x:hidden}
+  :root{
+    --glass: rgba(0,0,0,0.7);
+    --line: rgba(255,255,255,0.08);
+    --muted: rgba(255,255,255,0.75);
+    --chip: rgba(255,255,255,0.06);
+
+    /* element colors (connected across visuals) */
+    --cK:#4ea1ff; /* blue */
+    --cG:#9bffde; /* aqua */
+    --cH:#b37eff; /* violet */
+    --cP:#ff8fb1; /* pink */
+
+    /* Quick / Reset styling */
+    --cyan: #00e5ff;
+    --pink: #ff3fa6;
+  }
+
+  /* ---------- Background starfield ---------- */
+#bg-stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #000;
+  filter: blur(3px); /* <-- add this */
+  transform: scale(1.02); /* optional: prevent edges from showing through when blurred */
+}
+
+  /* ---------- App wrapper ---------- */
+  .wrap{
+    position:relative; z-index:2; max-width:1100px; margin:0 auto; padding:18px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+
+  h1{margin:6px 0 2px; font-size:1.35rem; font-weight:800; letter-spacing:.2px; color:#fff}
+
+  /* ---------- Panels (glass) ---------- */
+  .panel{
+    background:var(--glass); border:1px solid var(--line); border-radius:14px; padding:14px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  /* ---------- Flex rows ---------- */
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0}
+  .row.stretch{align-items:stretch}
+  .col{display:flex; flex-direction:column; gap:10px; flex:1 1 320px}
+
+  /* ---------- Controls (unified cross-browser) ---------- */
+  .control{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background:#08101a; color:#fff; border:1px solid var(--line);
+    border-radius:12px; padding:10px 12px; outline:none; min-height:40px;
+    font-size:14px; min-width:92px;
+  }
+  .control:focus{border-color:var(--cK); box-shadow:0 0 0 4px rgba(78,161,255,0.08)}
+  select.control{ padding-right:36px; background-image: linear-gradient(45deg,transparent 50%,#fff 50%), linear-gradient(135deg,#fff 50%,transparent 50%); background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%; background-size:6px 6px,6px 6px; background-repeat:no-repeat; }
+
+  input[type=number].control::-webkit-outer-spin-button,
+  input[type=number].control::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+  input[type=number].control{ -moz-appearance:textfield }
+
+button, .btn {
+  cursor: pointer;
+}
+  .btn{
+    border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,0.06);
+  }
+  /* Quick Simulate = cyan, Reset = pink (no shadows, rounded) */
+  .btn-quick{
+    background:var(--cyan); color:#022; border:none; border-radius:999px; padding:8px 14px;
+  }
+  .btn-quick:hover{ filter:brightness(.95); transform:translateY(-1px) }
+  .btn-reset{
+    background:var(--pink); color:#fff; border:none; border-radius:999px; padding:8px 14px;
+  }
+  .btn-reset:hover{ filter:brightness(.95); transform:translateY(-1px) }
+
+  .btn.secondary{ background:#0f1720; color:#cfe1ff; border:1px solid var(--line); border-radius:12px }
+
+  /* ---------- Chips & info line ---------- */
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{background:var(--chip); border:1px solid var(--line); border-radius:999px; padding:6px 10px; color:var(--muted); font-size:.9rem}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------- Accordion (solid style matching panels) ---------- */
+details.accordion {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--glass); /* optional: same as panels, can also use solid #08101a */
+}
+
+details.accordion > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  background: #08101a; /* solid dark background */
+  font-weight: 800;
+  user-select: none;
+}
+
+details.accordion[open] > summary {
+  background: #0a1a26; /* slightly lighter when open */
+}
+
+details.accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.accordion .content {
+  padding: 12px 14px;
+  background: #08101a; /* match summary/panel background */
+}
+
+#chart {
+  width: 320px;       /* default width */
+  height: 80px;      /* default height */
+  max-width: 100%;    /* responsive: shrink with container */
+  display: block;
+}
+
+  /* ---------- Code block ---------- */
+  pre{
+    background:#06101a; border:1px solid var(--line); border-radius:12px; color:#e5f0ff;
+    padding:12px; margin:0; overflow:auto; min-height:160px;
+  }
+
+  /* ---------- Canvases & particle viz ---------- */
+  .canvases{display:flex; gap:12px; flex-wrap:wrap}
+  canvas.chart, canvas.pviz, canvas.pfield{
+    flex:1 1 320px; height:220px; background:linear-gradient(180deg,#07101a,#041018); border:1px solid var(--line); border-radius:12px;
+    display:block;
+  }
+  canvas.pviz{height:160px}
+  canvas.pfield{height:200px}
+
+  /* ---------- Legend ---------- */
+  .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+  .leg{display:flex; align-items:center; gap:6px}
+  .dot{width:12px; height:12px; border-radius:3px; background:#888}
+  .dK{background:var(--cK)} .dG{background:var(--cG)} .dH{background:var(--cH)} .dP{background:var(--cP)}
+
+  /* ---------- Responsive tweaks ---------- */
+  @media (max-width:720px){
+    h1{font-size:1.15rem}
+    .btn{padding:10px 12px}
+  }
+
+</style>
+</head>
+<body>
+
+<!-- starfield background canvas -->
+<canvas id="bg-stars" aria-hidden="true"></canvas>
+
+<div class="wrap" role="main">
+  <h1>Heim Theory Particle Simulator</h1>
+
+  <!-- Top Panel -->
+  <div class="panel">
+    <div class="row" style="align-items:center">
+      <label for="particleSelect" class="mono" style="min-width:190px;color:var(--muted)">Particle (Heim preset)</label>
+      <select id="particleSelect" class="control"></select>
+
+      <button id="quickSim" class="btn-quick" title="Quick Simulate selected particle">Simulate</button>
+      <button id="reset" class="btn-reset" title="Reset fields">Reset</button>
+
+      <button id="calibrateElectron" class="btn secondary" style="margin-left:auto">Calibrate μ → e⁻</button>
+    </div>
+
+    <!-- particle details accordion -->
+    <details class="accordion" open id="infoAcc">
+      <summary>Particle details</summary>
+      <div class="content">
+        <div class="chips">
+          <span class="chip" id="ptype">–</span>
+          <span class="chip mono" id="pcharge">q = –</span>
+          <span class="chip mono" id="pspin">spin –</span>
+          <span class="chip mono" id="pmass">m(exp) –</span>
+        </div>
+      </div>
+    </details>
+
+    <!-- H bar that uses same colors as particles -->
+    <div class="hbar-wrap" aria-hidden="true">
+      <div class="hbar-track" id="hbarTrack">
+        <div class="hbar-seg" style="background:var(--cK)"></div>
+        <div class="hbar-seg" style="background:var(--cG)"></div>
+        <div class="hbar-seg" style="background:var(--cH)"></div>
+        <div class="hbar-seg" style="background:var(--cP)"></div>
+        <div class="hbar-seg" style="background:var(--cK)"></div>
+        <div class="hbar-seg" style="background:var(--cG)"></div>
+      </div>
+    </div>
+
+    <div class="row stretch">
+      <div class="col">
+        <pre id="output">No computation yet.</pre>
+      </div>
+
+      <div class="col">
+        <div class="canvases">
+          <canvas id="chart" class="chart" aria-label="K,G,H,phi chart"></canvas>
+          <!-- particle glow (small) -->
+          <canvas id="particleViz" class="pviz" aria-label="Particle glow visualization"></canvas>
+        </div>
+        <div class="legend">
+          <span class="leg"><span class="dot dK"></span><span class="mono">K (orbital poly)</span></span>
+          <span class="leg"><span class="dot dG"></span><span class="mono">G (invariants)</span></span>
+          <span class="leg"><span class="dot dH"></span><span class="mono">H (A<sub>rs</sub> mix)</span></span>
+          <span class="leg"><span class="dot dP"></span><span class="mono">Φ (resonance)</span></span>
+        </div>
+
+        <!-- particle field (multicolor) - from Code1, shown below canvases -->
+        <canvas id="particleField" class="pfield" aria-hidden="false"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced -->
+  <details class="accordion" open>
+    <summary>Advanced Options</summary>
+    <div class="content">
+      <div class="row">
+        <label class="mono" style="min-width:160px;color:var(--muted)">Alpha branch</label>
+        <select id="alphaBranch" class="control">
+          <option value="alpha+">α(+)</option>
+          <option value="alpha-">α(-)</option>
+          <option value="physical" selected>physical α</option>
+        </select>
+      </div>
+      <div class="row">
+        <label class="mono" style="min-width:160px;color:var(--muted)">n1..n4</label>
+        <input id="n1" class="control" type="number" value="1" step="1" />
+        <input id="n2" class="control" type="number" value="0" step="1" />
+        <input id="n3" class="control" type="number" value="0" step="1" />
+        <input id="n4" class="control" type="number" value="0" step="1" />
+      </div>
+      <div class="row">
+        <label class="mono" style="min-width:160px;color:var(--muted)">Resonance ord. k</label>
+        <select id="resK" class="control"><option>1</option><option>2</option><option>3</option></select>
+      </div>
+      <div class="row">
+        <label class="mono" style="min-width:160px;color:var(--muted)">μ (scale factor)</label>
+        <input id="mu" class="control" type="number" value="1" step="any" />
+        <button id="compute" class="btn secondary">Compute Mass</button>
+        <button id="searchSmall" class="btn secondary">Brute-force (small)</button>
+        <button id="resetAdvanced" class="btn secondary">Reset Advanced</button>
+      </div>
+    </div>
+  </details>
+</div>
+
+<script>
+/* ======================= Starfield ======================= */
+(function(){
+  const cv = document.getElementById('bg-stars');
+  const ctx = cv.getContext('2d');
+  let W,H,DPR, stars=[], paused=false;
+
+  function resize(){
+    DPR = window.devicePixelRatio || 1;
+    W = cv.width = cv.clientWidth * DPR;
+    H = cv.height = cv.clientHeight * DPR;
+    // repopulate stars
+    const count = Math.min(600, Math.floor((W*H)/(1100*DPR)));
+    stars = Array.from({length:count}, ()=>({
+      x: Math.random()*W, y: Math.random()*H,
+      z: Math.random()*1+0.2, // depth
+      vx: (Math.random()*0.4+0.1)*DPR, vy: 0
+    }));
+  }
+  function step(){
+    if(paused) return;
+    ctx.clearRect(0,0,W,H);
+    for(const s of stars){
+      s.x -= s.vx*s.z;
+      if(s.x < -2) { s.x=W+2; s.y=Math.random()*H; }
+      const r = (0.6 + s.z*1.4) * (DPR);
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255,255,255,${0.22+0.6*s.z})`;
+      ctx.arc(s.x,s.y,r,0,Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('resize', resize, {passive:true});
+  resize(); step();
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const update = () => { paused = mq.matches; if(!paused) step(); };
+  mq.addEventListener?.('change', update); update();
+})();
+
+/* ================= Heim Engine ================= */
+const PI=Math.PI, HBAR=1.0545887e-34, E_CHARGE=1.602176634e-19;
+const alpha_plus_fromPDF=1/137.03596147, alpha_minus_fromPDF=1/1.00001363, alpha_physical=1/137.035999139;
+const xi=()=> (1+Math.sqrt(5))/2, eta=()=> PI/Math.pow(PI**4+4,0.25);
+const trunc=(v,d=12)=>{if(!isFinite(v))return v;const s=String(v);if(!s.includes('.'))return v;const[i,f]=s.split('.');return parseFloat(i+'.'+f.slice(0,d));};
+class HeimEngine{
+  constructor(opts={}){this.opts=Object.assign({truncDecimals:12},opts);this.xi=xi();this.eta=eta();this.mu=1;this.alpha=alpha_physical;this.beta=1/this.alpha;this.A=this._A(this.alpha);}
+  setAlphaBranch(b){this.alpha=(b==='alpha+'?alpha_plus_fromPDF:b==='alpha-'?alpha_minus_fromPDF:alpha_physical);this.beta=1/this.alpha;this.A=this._A(this.alpha);}
+  setMu(mu){this.mu=mu;}
+  _A(alpha){const xi=this.xi,eta=this.eta,e=E_CHARGE;const A={};for(let r=1;r<=6;r++){A[r]={};for(let s=1;s<=6;s++)A[r][s]=0;}
+    const beta=1/alpha, th=5*eta+2*Math.sqrt(eta)+1;
+    A[1][1]=Math.pow(xi*xi*PI*e,2)*(1-4*PI*alpha*alpha)/(2*eta*eta);
+    A[1][2]=2*PI*xi*xi*(th/24 - e*PI*eta*alpha*alpha/9);
+    A[1][3]=3*(4+eta*alpha)*(1-(eta*eta/5)*Math.pow((1-Math.sqrt(eta))/(1+Math.sqrt(eta)),2));
+    A[1][4]=(1+3*eta*(2*eta*alpha-e*e*xi*Math.pow((1-Math.sqrt(eta))/(1+Math.sqrt(eta)),2))/(4*xi))/alpha;
+    A[1][5]=e*e*(1-2*e*alpha*alpha/eta)/3;
+    A[1][6]=Math.pow(PI*e,2)*(1+alpha*(1+6*alpha/PI)/(5*eta));
+    A[2][1]=2*Math.pow(e*alpha/(2*eta),2)*(1-alpha/(2*xi*xi));
+    A[2][2]=xi*(1-xi*Math.pow(alpha*xi/(eta*eta),2))/12;
+    A[2][3]=(eta*eta+6*xi*alpha*alpha)/e;
+    A[2][4]=2*xi*xi/(3*eta);
+    A[2][5]=xi*Math.pow(PI*e,2)*(1-(this.beta*this.beta));
+    A[2][6]=2*(1-(PI*Math.pow((e*xi*alpha),2)*Math.sqrt(eta))/2)/(e*xi*xi);
+    A[3][1]=Math.pow(PI*e*alpha,2)*(1-Math.pow(PI*e,2)*(1-Math.pow(this.beta,2)));
+    A[3][2]=xi*xi*(1+Math.pow(2*e*alpha/eta,2))/6;
+    A[3][3]=Math.pow(PI*e*xi*alpha,2)*(1-2*PI*Math.pow(e*xi,2)*(1-Math.pow(this.beta,2)));
+    A[3][4]=this.eta*2*PI*HBAR;
+    A[3][5]=3*alpha/(e*xi*xi);
+    A[3][6]=(1-PI*e*Math.pow(xi*e,2)*(1-Math.pow(this.beta,2)))-1;
+    A[4][1]=(xi*(2+Math.pow(xi*alpha,2))-2*this.beta)/(2*this.beta-alpha);
+    A[4][2]=(PI*xi*xi*eta*(this.beta-3*alpha))/2;
+    A[4][3]=xi/2;
+    A[4][4]=2*Math.pow(eta/xi,2);
+    A[4][5]=(3*this.beta-alpha)/(6*xi);
+    A[4][6]=PI*e/(xi*eta)-e*eta*eta*alpha/2;
+    A[5][1]=Math.pow(2*alpha+1,2);
+    A[5][2]=6*alpha/(eta*eta);
+    A[5][3]=Math.pow(xi/eta,3);
+    A[5][4]=alpha*(this.beta-alpha)*Math.sqrt(3/2);
+    A[5][5]=1;A[5][6]=1;
+    for(let s=1;s<=6;s++)A[6][s]=1;
+    return A;
+  }
+  Ns(q=1,k=1){const et=PI/Math.pow(PI**4+(4+k)*q**4,0.25);const a1=0.5*(1+Math.sqrt(et)), a2=1/et, a3=1;return{N1:a1,N2:(2/3)*a2,N3:2*a3};}
+  K(n1,n2,n3,n4,N1,N2,N3){return trunc(n1*n1*Math.pow(1+n1,2)*N1 + n2*(2*n2*n2+3*n2+1)*N2 + n3*(1+n3)*N3 + 4*n4,this.opts.truncDecimals);}
+  G(Q1,Q2,Q3,Q4,N1,N2,N3){return trunc(Q1*Q1*Math.pow(1+Q1,2)*N1 + Q2*(2*Q2*Q2+3*Q2+1)*N2 + Q3*(1+Q3)*N3 + 4*Q4,this.opts.truncDecimals);}
+  H(n1,n2,n3,n4){const A=this.A;let h=0;h+=(A[1][1]||0)*Math.pow(n1+1,2);h+=(A[2][2]||0)*Math.pow(n2+1,1.5);h+=(A[3][3]||0)*(n3+1);h+=(A[4][4]||0)*Math.sqrt(Math.max(1,n4+1));h+=(A[1][2]||0)*(n1+1)*(n2+1);h+=(A[2][3]||0)*(n2+1)*(n3+1);h+=(A[1][3]||0)*(n1+1)*(n3+1);return trunc(h,this.opts.truncDecimals);}
+  Phi(n1,n2,n3,n4,k=1,Q4=1){const ex=(1-2*k*(n4+Q4)/(3*Math.max(1,Q4)));return trunc(Math.exp(ex),this.opts.truncDecimals);}
+  compute({mu=null,n1=0,n2=0,n3=0,n4=0,Qs=[0,0,0,0],k=1,q=1}={}){const u=(mu==null)?this.mu:mu;const {N1,N2,N3}=this.Ns(q,k);const K=this.K(n1,n2,n3,n4,N1,N2,N3), G=this.G(Qs[0],Qs[1],Qs[2],Qs[3],N1,N2,N3), H=this.H(n1,n2,n3,n4), P=this.Phi(n1,n2,n3,n4,k,Qs[3]);const s=K+G+H+P;return{M:trunc(u*s,this.opts.truncDecimals),K,G,H,Phi:P,sum:s,muUsed:u};}
+}
+
+/* ================== Presets + UI state ================== */
+const particlePresets = {
+  // -------- Leptons --------
+  electron: {name:"Electron", type:"Lepton", charge:-1, spin:"1/2", n1:1,n2:0,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:9.10938356e-31},
+  muon: {name:"Muon", type:"Lepton", charge:-1, spin:"1/2", n1:2,n2:0,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:1.883531627e-28},
+  tau: {name:"Tau", type:"Lepton", charge:-1, spin:"1/2", n1:3,n2:0,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:3.167e-27},
+  neutrinoE: {name:"νₑ", type:"Lepton", charge:0, spin:"1/2", n1:0,n2:0,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:1e-36},
+  neutrinoMu: {name:"ν_μ", type:"Lepton", charge:0, spin:"1/2", n1:0,n2:0,n3:0,n4:1,k:1,Qs:[0,0,0,0],experimentalMass:1e-36},
+  neutrinoTau: {name:"ν_τ", type:"Lepton", charge:0, spin:"1/2", n1:0,n2:0,n3:0,n4:2,k:1,Qs:[0,0,0,0],experimentalMass:1e-36},
+
+  // -------- Baryons --------
+  proton: {name:"Proton", type:"Baryon", charge:+1, spin:"1/2", n1:3,n2:1,n3:0,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:1.67262192369e-27},
+  neutron: {name:"Neutron", type:"Baryon", charge:0, spin:"1/2", n1:3,n2:1,n3:1,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:1.67492749804e-27},
+  deltaPlus: {name:"Δ⁺", type:"Baryon", charge:+1, spin:"3/2", n1:3,n2:2,n3:1,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:1.232e-27},
+  deltaZero: {name:"Δ⁰", type:"Baryon", charge:0, spin:"3/2", n1:3,n2:2,n3:2,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:1.232e-27},
+  sigmaPlus: {name:"Σ⁺", type:"Baryon", charge:+1, spin:"1/2", n1:3,n2:1,n3:2,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:1.189e-27},
+  sigmaZero: {name:"Σ⁰", type:"Baryon", charge:0, spin:"1/2", n1:3,n2:1,n3:1,n4:1,k:2,Qs:[0,0,0,0],experimentalMass:1.192e-27},
+  sigmaMinus: {name:"Σ⁻", type:"Baryon", charge:-1, spin:"1/2", n1:3,n2:1,n3:0,n4:2,k:2,Qs:[0,0,0,0],experimentalMass:1.197e-27},
+  xiZero: {name:"Ξ⁰", type:"Baryon", charge:0, spin:"1/2", n1:3,n2:2,n3:1,n4:1,k:2,Qs:[0,0,0,0],experimentalMass:1.314e-27},
+  xiMinus: {name:"Ξ⁻", type:"Baryon", charge:-1, spin:"1/2", n1:3,n2:2,n3:0,n4:2,k:2,Qs:[0,0,0,0],experimentalMass:1.321e-27},
+  omegaMinus: {name:"Ω⁻", type:"Baryon", charge:-1, spin:"3/2", n1:3,n2:3,n3:0,n4:3,k:2,Qs:[0,0,0,0],experimentalMass:1.672e-27},
+
+  // -------- Mesons --------
+  pion0: {name:"π⁰", type:"Meson", charge:0, spin:"0", n1:2,n2:1,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:2.406e-28},
+  pionPlus: {name:"π⁺", type:"Meson", charge:+1, spin:"0", n1:2,n2:1,n3:0,n4:1,k:1,Qs:[0,0,0,0],experimentalMass:2.488e-28},
+  pionMinus: {name:"π⁻", type:"Meson", charge:-1, spin:"0", n1:2,n2:1,n3:0,n4:-1,k:1,Qs:[0,0,0,0],experimentalMass:2.488e-28},
+  kaon0: {name:"K⁰", type:"Meson", charge:0, spin:"0", n1:3,n2:1,n3:1,n4:1,k:2,Qs:[0,0,0,0],experimentalMass:8.924e-28},
+  kaonPlus: {name:"K⁺", type:"Meson", charge:+1, spin:"0", n1:3,n2:1,n3:1,n4:2,k:2,Qs:[0,0,0,0],experimentalMass:8.968e-28},
+  kaonMinus: {name:"K⁻", type:"Meson", charge:-1, spin:"0", n1:3,n2:1,n3:1,n4:0,k:2,Qs:[0,0,0,0],experimentalMass:8.968e-28},
+  eta: {name:"η", type:"Meson", charge:0, spin:"0", n1:2,n2:2,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:5.47e-28},
+  etaPrime: {name:"η'", type:"Meson", charge:0, spin:"0", n1:2,n2:2,n3:1,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:9.78e-28},
+  rhoPlus: {name:"ρ⁺", type:"Meson", charge:+1, spin:"1", n1:2,n2:1,n3:0,n4:1,k:1,Qs:[0,0,0,0],experimentalMass:7.75e-28},
+  rhoZero: {name:"ρ⁰", type:"Meson", charge:0, spin:"1", n1:2,n2:1,n3:0,n4:0,k:1,Qs:[0,0,0,0],experimentalMass:7.72e-28},
+  rhoMinus: {name:"ρ⁻", type:"Meson", charge:-1, spin:"1", n1:2,n2:1,n3:0,n4:-1,k:1,Qs:[0,0,0,0],experimentalMass:7.75e-28}
+};
+
+const engine=new HeimEngine({truncDecimals:12});
+const pSelect=document.getElementById('particleSelect');
+Object.keys(particlePresets).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=particlePresets[k].name; pSelect.appendChild(o);});
+pSelect.value="electron";
+
+/* ---------- Info line (accordion content) ---------- */
+function updateInfo(key){
+  const p=particlePresets[key];
+  document.getElementById('ptype').textContent=p.type;
+  document.getElementById('pcharge').textContent=`q = ${p.charge}`;
+  document.getElementById('pspin').textContent=`spin ${p.spin}`;
+  document.getElementById('pmass').textContent=`m(exp) ${p.experimentalMass.toExponential(3)} kg`;
+}
+updateInfo(pSelect.value);
+pSelect.addEventListener('change',()=>updateInfo(pSelect.value));
+
+/* ---------- Controls wiring ---------- */
+document.getElementById('alphaBranch').addEventListener('change',(ev)=>engine.setAlphaBranch(ev.target.value));
+document.getElementById('reset').addEventListener('click',()=>{
+  engine.setAlphaBranch('physical'); engine.setMu(1);
+  document.getElementById('alphaBranch').value='physical';
+  ['n1','n2','n3','n4'].forEach((id,i)=>document.getElementById(id).value=[1,0,0,0][i]);
+  document.getElementById('resK').value='1';
+  document.getElementById('mu').value=1;
+  printOut({info:'Reset to defaults.'});
+});
+
+/* Calibrate */
+document.getElementById('calibrateElectron').addEventListener('click',()=>{
+  const ref=particlePresets.electron;
+  const raw=engine.compute({mu:1,n1:ref.n1,n2:ref.n2,n3:ref.n3,n4:ref.n4,Qs:ref.Qs,k:ref.k});
+  const muFit=ref.experimentalMass/(raw.K+raw.G+raw.H+raw.Phi);
+  engine.setMu(muFit);
+  document.getElementById('mu').value=muFit;
+  const result=engine.compute({mu:muFit, n1:ref.n1,n2:ref.n2,n3:ref.n3,n4:ref.n4,Qs:ref.Qs,k:ref.k});
+  printOut({note:'Calibrated μ to electron', mu: muFit, ...result});
+  drawBars(result,true); drawParticles(pSelect.value,result);
+});
+
+/* Compute and QuickSim */
+document.getElementById('compute').addEventListener('click',()=>{
+  const n1=+document.getElementById('n1').value, n2=+document.getElementById('n2').value, n3=+document.getElementById('n3').value, n4=+document.getElementById('n4').value;
+  const mu=+document.getElementById('mu').value, k=+document.getElementById('resK').value;
+  engine.setMu(mu);
+  const out=engine.compute({mu,n1,n2,n3,n4,Qs:[0,0,0,0],k});
+  printOut(out); drawBars(out,true); drawParticles(pSelect.value,out);
+});
+
+document.getElementById('quickSim').addEventListener('click',()=>{
+  const key=pSelect.value, p=particlePresets[key];
+  const out=engine.compute({mu:engine.mu, n1:p.n1,n2:p.n2,n3:p.n3,n4:p.n4,Qs:p.Qs,k:p.k});
+  printOut({quick:key, ...out}); drawBars(out,true); drawParticles(key,out);
+});
+
+/* small brute-force */
+document.getElementById('searchSmall').addEventListener('click',()=>{
+  const key=pSelect.value, p=particlePresets[key];
+  const mu=+document.getElementById('mu').value || engine.mu;
+  let best=null;
+  for(let n1=0;n1<=5;n1++)for(let n2=0;n2<=5;n2++)for(let n3=0;n3<=5;n3++)for(let n4=0;n4<=5;n4++){
+    const out=engine.compute({mu,n1,n2,n3,n4,Qs:p.Qs,k:p.k});
+    const delta=Math.abs(out.M-(p.experimentalMass||out.M));
+    if(!best || delta<best.delta) best={n1,n2,n3,n4,delta,out};
+  }
+  ['n1','n2','n3','n4'].forEach((id,i)=>document.getElementById(id).value=[best.n1,best.n2, best.n3,best.n4][i]);
+  printOut({searchBest:best}); drawBars(best.out,true); drawParticles(key,best.out);
+});
+
+/* ---------- Output ---------- */
+function printOut(obj) {
+  const lines = [];
+
+  for (const key in obj) {
+    if (!Object.hasOwn(obj, key)) continue;
+    let value = obj[key];
+
+    switch(key) {
+      case 'M':
+      case 'H':
+      case 'sum':
+        // large numbers → scientific notation + unit
+        value = `${value.toExponential(6)} kg`;
+        break;
+      case 'K':
+      case 'G':
+      case 'Phi':
+        // round to 6 decimals
+        value = value.toFixed(6);
+        break;
+      case 'muUsed':
+        value = value.toFixed(6);
+        break;
+      case 'quick':
+        value = String(value);
+        break;
+      default:
+        value = String(value);
+    }
+    
+
+
+    // Capitalize the key nicely
+    const label = key.charAt(0).toUpperCase() + key.slice(1);
+    lines.push(`${label}: ${value}`);
+  }
+
+  document.getElementById('output').textContent = lines.join('\n');
+}
+
+/* ---------- Static chart (responsive, no bars, no animation) ---------- */
+const chart = document.getElementById('chart');
+
+function drawBars(res) {
+  const ctx = chart.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+
+  // set canvas buffer size from CSS box
+  chart.width  = chart.clientWidth * DPR;
+  chart.height = chart.clientHeight * DPR;
+  const W = chart.width;
+  const H = chart.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const comps = [res.K, res.G, res.H, res.Phi];
+  const labels = ['K','G','H','Φ'];
+
+  const padL = 50, padR = 16, padB = 28, padT = 22;
+  const barW = (W - padL - padR) / comps.length * 0.6;
+
+  // axis line
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, H - padB);
+  ctx.lineTo(W - padR, H - padB);
+  ctx.stroke();
+
+  // labels + values
+  for (let i = 0; i < comps.length; i++) {
+    const x = padL + i * ((W - padL - padR) / comps.length) 
+                + ((W - padL - padR) / comps.length - barW) / 2;
+
+    // label
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = `${12*DPR}px ui-monospace,monospace`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(labels[i], x, H - 10*DPR);
+
+    // value (fixed height above label)
+    const val = comps[i].toExponential(2);
+    ctx.fillText(val, x, H - padB - 14*DPR);
+  }
+
+  // M value
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.font = `${13*DPR}px ui-monospace,monospace`;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('M = ' + res.M.toExponential(6) + ' kg', padL, 6*DPR);
+}
+
+/* ---------- Particle glow viz (orbs) ---------- */
+const pv=document.getElementById('particleViz');
+let orbs=[];
+function drawParticles(key, res){
+  const ctx=pv.getContext('2d');
+  const DPR=window.devicePixelRatio||1;
+  const W=pv.width=pv.clientWidth*DPR, H=pv.height=pv.clientHeight*DPR;
+  ctx.clearRect(0,0,W,H);
+
+  const mExp=particlePresets[key].experimentalMass || res.M;
+  const mElectron=particlePresets.electron.experimentalMass;
+  const ratio=Math.max(0.2, Math.min(10, mExp/mElectron));
+  const baseR=9*DPR, R=baseR*Math.sqrt(ratio);
+
+  orbs = Array.from({length:6},(_,i)=>({
+    x: (W/7)*(i+1), y: H/2 + (Math.sin(i)*H/6),
+    r: R*(0.6+0.4*Math.random()),
+    vx: (Math.random()*1.0+0.2)*DPR*(Math.random()<.5?-1:1),
+    vy: (Math.random()*0.7-0.35)*DPR
+  }));
+
+  const colors=[getComputedStyle(document.documentElement).getPropertyValue('--cK').trim(),
+                getComputedStyle(document.documentElement).getPropertyValue('--cG').trim(),
+                getComputedStyle(document.documentElement).getPropertyValue('--cH').trim(),
+                getComputedStyle(document.documentElement).getPropertyValue('--cP').trim(),
+                'rgba(255,255,255,0.65)','rgba(255,255,255,0.35)'];
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<orbs.length;i++){
+      const o=orbs[i];
+      o.x+=o.vx; o.y+=o.vy;
+      if(o.x<o.r||o.x>W-o.r) o.vx*=-1;
+      if(o.y<o.r||o.y>H-o.r) o.vy*=-1;
+
+      const grad=ctx.createRadialGradient(o.x,o.y,o.r*0.2,o.x,o.y,o.r);
+      grad.addColorStop(0, colors[i%colors.length]);
+      grad.addColorStop(1, 'rgba(255,255,255,0.02)');
+      ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1; ctx.stroke();
+    }
+    requestAnimationFrame(tick);
+  }
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if(!mq.matches) requestAnimationFrame(tick);
+}
+
+/* ---------- Particle field (multicolor moving dots) from Code1 ---------- */
+const pfield = document.getElementById('particleField');
+const pfctx = pfield.getContext('2d');
+let pfStars = [];
+function resizePField(){
+  const DPR = window.devicePixelRatio || 1;
+  pfield.width = pfield.clientWidth * DPR;
+  pfield.height = pfield.clientHeight * DPR;
+  pfStars = [];
+  const colors = [getComputedStyle(document.documentElement).getPropertyValue('--cK').trim(),
+                  getComputedStyle(document.documentElement).getPropertyValue('--cG').trim(),
+                  getComputedStyle(document.documentElement).getPropertyValue('--cH').trim(),
+                  getComputedStyle(document.documentElement).getPropertyValue('--cP').trim(),
+                  '#ffd28a','#ffd0f0'];
+  for(let i=0;i<80;i++){
+    pfStars.push({
+      x: Math.random()*pfield.width,
+      y: Math.random()*pfield.height,
+      r: (Math.random()*2+0.6) * (DPR),
+      dx: (Math.random()-0.5)*0.6*DPR,
+      dy: (Math.random()-0.5)*0.4*DPR,
+      color: colors[i % colors.length]
+    });
+  }
+}
+function animatePField(){
+  pfctx.clearRect(0,0,pfield.width,pfield.height);
+  for(const s of pfStars){
+    pfctx.beginPath();
+    pfctx.fillStyle = s.color;
+    pfctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    pfctx.fill();
+    s.x += s.dx; s.y += s.dy;
+    if(s.x < -10) s.x = pfield.width + 10;
+    if(s.x > pfield.width + 10) s.x = -10;
+    if(s.y < -10) s.y = pfield.height + 10;
+    if(s.y > pfield.height + 10) s.y = -10;
+  }
+  requestAnimationFrame(animatePField);
+}
+window.addEventListener('resize', resizePField);
+resizePField();
+animatePField();
+
+/* ---------- First render ---------- */
+(function init(){
+  const key=pSelect.value, p=particlePresets[key];
+  const out=engine.compute({mu:engine.mu,n1:p.n1,n2:p.n2,n3:p.n3,n4:p.n4,Qs:p.Qs,k:p.k});
+  printOut({quick:key, ...out});
+  drawBars(out,true); drawParticles(key,out);drawHBar(out);
+})();
+
+/* ---------- Utility: simple round rect polyfill for older contexts ---------- */
+CanvasRenderingContext2D.prototype.roundRect = CanvasRenderingContext2D.prototype.roundRect || function(x,y,w,h,r){
+  const ctx=this;
+  const radius = r;
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+};
+
+</script>
+</body>
+</html>
