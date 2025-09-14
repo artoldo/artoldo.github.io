@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Online HTML Editor PRO | Sacrisoft</title>
+  <title>HERO – Html Editor Online | Sacrisoft</title>
 
   <!-- Fonts and CodeMirror CSS -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -141,11 +141,32 @@
         flex: none;
       }
     }
+
+.hero-word {
+    color: #ff55aa;
+  }
+
+  /* Default: letters are white */
+  .hero-letter {
+    color: white;
+    transition: color 0.3s;
+  }
+
+  /* On hover: turn them pink */
+  .hero-header:hover .hero-letter {
+    color: #ff55aa;
+  }
+
   </style>
 </head>
 <body>
 
-  <header>Online HTML Editor PRO</header>
+<header class="hero-header">
+  <span class="hero-word">HERO</span> – 
+  <span class="hero-letter">H</span>TML 
+  <span class="hero-letter">E</span>DITO<span class="hero-letter">R</span> 
+  <span class="hero-letter">O</span>NLINE
+</header>
 
   <div class="buttons">
     <span> &nbsp; &nbsp; </span>
@@ -222,7 +243,7 @@
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"><\/script>
 </head>
 <body>
-  <h1>Welcome! Let's code...</h1>
+  <h1>Welcome HERO! Let's code...</h1>
   <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
   <script>
     tsParticles.load("bgCanvas", {
