@@ -1,4 +1,4 @@
-<!-- Version: 1.1.1 | Last Update: 2025-09-03 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.4 | Last Update: 2025-09-14 | Author: Sacrisoft | © All rights reserved -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,10 +22,6 @@
       --gray: #333333;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Inter', sans-serif;
       margin: 0;
@@ -47,31 +43,27 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-.buttons {
-  display: flex;
-  justify-content: center;      /* center buttons if they fit */
-  gap: 1.5rem;
-  padding: 0.75rem;
-  background: var(--light);
-  border-bottom: 1px solid var(--gray);
-  overflow-x: auto;             /* scroll if too many buttons */
-  -webkit-overflow-scrolling: touch;
-}
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 0.75rem;
+      background: var(--light);
+      border-bottom: 1px solid var(--gray);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-/* Pink scrollbar styling */
-.buttons::-webkit-scrollbar {
-  height: 6px;                  /* slim horizontal bar */
-}
-
-.buttons::-webkit-scrollbar-thumb {
-  background: var(--accent-dark); /* your pink accent */
-  border-radius: 3px;
-}
-
-.buttons::-webkit-scrollbar-track {
-  background: var(--gray);       /* optional: darker track */
-}
-
+    .buttons::-webkit-scrollbar {
+      height: 6px;
+    }
+    .buttons::-webkit-scrollbar-thumb {
+      background: var(--accent-dark);
+      border-radius: 3px;
+    }
+    .buttons::-webkit-scrollbar-track {
+      background: var(--gray);
+    }
 
     button {
       background-color: var(--accent);
@@ -79,7 +71,7 @@
       border: none;
       border-radius: 8px;
       padding: 0.5rem 1.2rem;
-      flex: 0 0 auto;               /* prevents shrinking */
+      flex: 0 0 auto;
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
@@ -92,52 +84,63 @@
     }
 
     .editor-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
 
-.split-view {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0; /* critical for flex children to scroll */
-}
+    .split-view {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
 
-.CodeMirror {
-  height: 100%;
-  flex: 1 1 auto;
-  background: #1e1e1e;
-  color: white;
-  overflow: auto;
-}
+    .CodeMirror {
+      height: 100%;
+      flex: 1 1 auto;
+      background: #1e1e1e;
+      color: white;
+      overflow: auto;
+    }
 
-.CodeMirror-scroll {
-  height: 100% !important;
-  max-height: none;
-  overflow: auto;
-}
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: white;
+      flex: 1;
+    }
 
-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: white;
-  flex: 1;
-}
+    .drop-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 85, 170, 0.2);
+      border: 2px dashed var(--accent-dark);
+      color: var(--accent-dark);
+      font-size: 1.5rem;
+      z-index: 10;
+    }
 
-@media (min-width: 768px) {
-  .split-view {
-    flex-direction: row;
-  }
+    @media (min-width: 768px) {
+      .split-view {
+        flex-direction: row;
+      }
 
-  .CodeMirror, iframe {
-    width: 50% !important;
-    height: 100%;
-    flex: none;
-  }
-}
+      .CodeMirror, iframe {
+        width: 50% !important;
+        height: 100%;
+        flex: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -147,6 +150,8 @@ iframe {
   <div class="buttons">
     <button onclick="undoCode()">Undo</button>
     <button onclick="redoCode()">Redo</button>
+    <button onclick="document.getElementById('fileInput').click()">Open</button>
+    <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="openFile(event)">
     <button onclick="pasteCode()">Paste</button>
     <button onclick="updatePreview()">Run</button>
     <button onclick="openFullscreen()">Preview</button>
@@ -154,11 +159,12 @@ iframe {
     <button onclick="saveCode()">Save</button>
   </div>
 
-  <div class="editor-container">
+  <div class="editor-container" id="editorContainer">
     <div class="split-view">
       <textarea id="code" placeholder="Your HTML here..."></textarea>
       <iframe id="preview"></iframe>
     </div>
+    <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
   </div>
 
   <!-- CodeMirror Dependencies -->
@@ -177,9 +183,14 @@ iframe {
       lineWrapping: true,
     });
 
+    const dropZone = document.getElementById("dropZone");
+    const editorContainer = document.getElementById("editorContainer");
+
     const defaultCode = `<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <title>Welcome to the Online HTML Editor PRO</title>
   <style>
     html, body {
       margin: 0;
@@ -187,6 +198,14 @@ iframe {
       height: 100%;
       overflow: hidden;
       background: #000000;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-top: 3rem;
     }
     #bgCanvas, canvas {
       position: absolute;
@@ -195,57 +214,38 @@ iframe {
       width: 100%;
       height: 100%;
       display: block;
-      filter: blur(0px);
-    }
-    h1 {
-      position: relative;
-      z-index: 1;
-      color: white;
-      text-align: center;
-      padding: 2rem;
-      font-family: Arial, sans-serif;
+      filter: blur(5px);
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"><\/script>
 </head>
 <body>
   <h1>Hello, world! This is a live preview.</h1>
   <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
-
   <script>
-    let canvas = document.getElementById("mainCanvas");
-    let ctx = canvas.getContext("2d");
-    let t = 0;
-
-    function resize() {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const colors = ["#00aaff", "#ffaa00", "#ff55aa", "#55ffaa"];
-      const size = 50;
-
-      for (let i = 0; i < colors.length; i++) {
-        ctx.beginPath();
-        for (let x = 0; x <= canvas.width; x++) {
-          let y = canvas.height / 2 +
-            Math.sin((x + t + i * 50) * 0.01) * (size + i * 5) +
-            Math.sin((x + t + i * 30) * 0.02 + t * 0.02) * 15;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+    tsParticles.load("bgCanvas", {
+      fullScreen: { enable: true },
+      background: { color: "#000000" },
+      particles: {
+        number: { value: 100 },
+        color: { value: ["#00aaff", "#ffaa00", "#ff55aa", "#55ffaa"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.6 },
+        size: { value: 15.5 },
+        move: { enable: true, speed: 2 }
+      },
+      interactivity: {
+        events: {
+          onHover: { enable: true, mode: "repulse" },
+          onClick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 100 },
+          push: { quantity: 4 }
         }
-        ctx.strokeStyle = colors[i];
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-
-      t += 1;
-      requestAnimationFrame(draw);
-    }
-    draw();
+      },
+      detectRetina: true
+    });
   <\/script>
 </body>
 </html>`;
@@ -253,8 +253,7 @@ iframe {
     editor.setValue(defaultCode);
 
     function updatePreview() {
-      const code = editor.getValue();
-      document.getElementById("preview").srcdoc = code;
+      document.getElementById("preview").srcdoc = editor.getValue();
     }
 
     function copyCode() {
@@ -276,37 +275,74 @@ iframe {
     window.onload = updatePreview;
 
     function saveCode() {
-  const code = editor.getValue();
-  const blob = new Blob([code], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
+      const code = editor.getValue();
+      let fileName = prompt("Enter file name:", "my-code.html");
+      if (!fileName) fileName = "my-code.html";
+      if (!fileName.endsWith(".html")) fileName += ".html";
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "your-code-from-sacrisoft.html";
-  document.body.appendChild(a);
-  a.click();
+      const blob = new Blob([code], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
 
-  // Cleanup
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
 
-function openFullscreen() {
-  const code = editor.getValue();
-  const newWindow = window.open("", "_blank");
-  newWindow.document.open();
-  newWindow.document.write(code);
-  newWindow.document.close();
-}
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
 
-function undoCode() {
-  editor.undo();
-}
+    function openFullscreen() {
+      const code = editor.getValue();
+      const newWindow = window.open("", "_blank");
+      newWindow.document.open();
+      newWindow.document.write(code);
+      newWindow.document.close();
+    }
 
-function redoCode() {
-  editor.redo();
-}
+    function undoCode() { editor.undo(); }
+    function redoCode() { editor.redo(); }
 
+    function openFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      readFile(file);
+    }
+
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        editor.setValue(e.target.result);
+        updatePreview();
+      };
+      reader.readAsText(file);
+    }
+
+    // --- Drag & Drop Support ---
+    editorContainer.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.style.display = "flex";
+    });
+
+    editorContainer.addEventListener("dragleave", (e) => {
+      if (e.target === editorContainer) {
+        dropZone.style.display = "none";
+      }
+    });
+
+    editorContainer.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.style.display = "none";
+      if (e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        if (file.name.endsWith(".html") || file.name.endsWith(".htm")) {
+          readFile(file);
+        } else {
+          alert("Only HTML files are supported.");
+        }
+      }
+    });
   </script>
 </body>
 </html>
