@@ -156,6 +156,48 @@
     color: #ff55aa;
   }
 
+.editor-fullscreen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: #1e1e1e;
+}
+
+.editor-fullscreen .CodeMirror {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+#editorCloseBtn {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #ff55aa;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 2.5rem;
+  cursor: pointer;
+  z-index: 1100;
+  transition: all 0.2s ease;
+}
+
+.editor-fullscreen #editorCloseBtn {
+  display: block; /* Show only in fullscreen */
+}
+
+#editorCloseBtn:hover {
+  background-color: white;
+  color: #ff55aa;
+}
   </style>
 </head>
 <body>
@@ -175,6 +217,7 @@
     <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="openFile(event)">
     <button onclick="pasteCode()">Paste</button>
     <button onclick="updatePreview()">Run</button>
+    <button onclick="toggleEditorFullscreen()">Fullscreen</button>
     <button onclick="openFullscreen()">Preview</button>
     <button onclick="copyCode()">Copy</button>
     <button onclick="saveCode()">Save</button>
@@ -187,6 +230,7 @@
       <iframe id="preview"></iframe>
     </div>
     <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
+    <div id="editorCloseBtn" onclick="closeEditorFullscreen()">×</div>
   </div>
 
   <!-- CodeMirror Dependencies -->
@@ -367,6 +411,29 @@
         }
       }
     });
+
+function toggleEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.toggle("editor-fullscreen");
+  editor.refresh();
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const container = document.getElementById("editorContainer");
+    if (container.classList.contains("editor-fullscreen")) {
+      container.classList.remove("editor-fullscreen");
+      editor.refresh();
+    }
+  }
+});
+
+function closeEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.remove("editor-fullscreen");
+  editor.refresh();
+}
+
   </script>
 </body>
 </html>
