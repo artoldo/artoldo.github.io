@@ -146,13 +146,11 @@
     color: #ff55aa;
   }
 
-  /* Default: letters are white */
   .hero-letter {
     color: white;
     transition: color 0.3s;
   }
 
-  /* On hover: turn them pink */
   .hero-header:hover .hero-letter {
     color: #ff55aa;
   }
@@ -228,7 +226,7 @@
       position: relative;
       z-index: 1;
       text-align: center;
-      padding-top: 3rem;
+      padding-top: 2rem;
     }
     #bgCanvas, canvas {
       position: absolute;
@@ -243,7 +241,7 @@
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"><\/script>
 </head>
 <body>
-  <h1>Welcome HERO! Let's code...</h1>
+  <h1>Welcome HERO! <br>Let's code...</h1>
   <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
   <script>
     tsParticles.load("bgCanvas", {
