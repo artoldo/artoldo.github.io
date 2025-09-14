@@ -1,4 +1,4 @@
-<!-- Version: 1.1.4 | Last Update: 2025-09-14 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.5 | Last Update: 2025-09-14 | Author: Sacrisoft | © All rights reserved -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,6 +148,7 @@
   <header>Online HTML Editor PRO</header>
 
   <div class="buttons">
+    <span> &nbsp; &nbsp; </span>
     <button onclick="undoCode()">Undo</button>
     <button onclick="redoCode()">Redo</button>
     <button onclick="document.getElementById('fileInput').click()">Open</button>
@@ -157,6 +158,7 @@
     <button onclick="openFullscreen()">Preview</button>
     <button onclick="copyCode()">Copy</button>
     <button onclick="saveCode()">Save</button>
+    <span> &nbsp; &nbsp; </span>
   </div>
 
   <div class="editor-container" id="editorContainer">
@@ -190,7 +192,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Welcome to the Online HTML Editor PRO</title>
+  <title>Drop your HTML file here...</title>
   <style>
     html, body {
       margin: 0;
@@ -220,7 +222,7 @@
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"><\/script>
 </head>
 <body>
-  <h1>Hello, world! This is a live preview.</h1>
+  <h1>Welcome! Let's code...</h1>
   <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
   <script>
     tsParticles.load("bgCanvas", {
