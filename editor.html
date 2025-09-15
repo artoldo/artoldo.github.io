@@ -172,31 +172,52 @@
 }
 
 #editorCloseBtn {
-  display: none; /* Hidden by default */
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   background-color: #ff55aa;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
+  color: white; /* SVG inherits this */
   border-radius: 50%;
-  text-align: center;
-  line-height: 2.5rem;
   cursor: pointer;
   z-index: 1100;
   transition: all 0.2s ease;
+
+  /* Flexbox for centering, but hidden by default */
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#editorCloseBtn svg {
+  width: 1.4rem;   /* slightly larger */
+  height: 1.4rem;
+  viewBox: 0 0 16 16;
+  display: block;  /* removes inline gaps */
 }
 
 .editor-fullscreen #editorCloseBtn {
-  display: block; /* Show only in fullscreen */
+  display: flex; /* show only in fullscreen */
 }
 
 #editorCloseBtn:hover {
   background-color: white;
-  color: #ff55aa;
+  color: #ff55aa; /* SVG lines change color */
+}
+
+/* Mobile scaling */
+@media (max-width: 600px) {
+  #editorCloseBtn {
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  #editorCloseBtn svg {
+    width: 1rem;
+    height: 1rem;
+  }
 }
   </style>
 </head>
@@ -211,12 +232,13 @@
 
   <div class="buttons">
     <span> &nbsp; &nbsp; </span>
+    <button onclick="clearCode()">Reset</button>
     <button onclick="undoCode()">Undo</button>
     <button onclick="redoCode()">Redo</button>
+    <button onclick="toggleEditorFullscreen()">Fullscreen</button>
     <button onclick="document.getElementById('fileInput').click()">Open</button>
     <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="openFile(event)">
     <button onclick="pasteCode()">Paste</button>
-    <button onclick="toggleEditorFullscreen()">Fullscreen</button>
     <button onclick="updatePreview()">Run</button>
     <button onclick="openFullscreen()">Preview</button>
     <button onclick="copyCode()">Copy</button>
@@ -224,14 +246,19 @@
     <span> &nbsp; &nbsp; </span>
   </div>
 
-  <div class="editor-container" id="editorContainer">
-    <div class="split-view">
-      <textarea id="code" placeholder="Your HTML here..."></textarea>
-      <iframe id="preview"></iframe>
-    </div>
-    <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
-    <div id="editorCloseBtn" onclick="closeEditorFullscreen()">×</div>
+<div class="editor-container" id="editorContainer">
+  <div id="editorCloseBtn" onclick="closeEditorFullscreen()">
+  <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
   </div>
+  <div class="split-view">
+    <textarea id="code" placeholder="Your HTML here..."></textarea>
+    <iframe id="preview"></iframe>
+  </div>
+  <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
+</div>
 
   <!-- CodeMirror Dependencies -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
@@ -428,10 +455,51 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+function toggleEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.toggle("editor-fullscreen");
+  editor.refresh();
+}
+
 function closeEditorFullscreen() {
   const container = document.getElementById("editorContainer");
   container.classList.remove("editor-fullscreen");
   editor.refresh();
+}
+
+// ESC key also closes fullscreen
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeEditorFullscreen();
+  }
+});
+
+function clearCode() {
+  const confirmClear = confirm("Do you really want to clear the code?");
+  if (!confirmClear) return;
+
+  const newDoc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Document</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello World!</h1>
+  <p>Start coding...</p>
+</body>
+</html>`;
+
+  editor.setValue(newDoc);
+  updatePreview();
 }
 
   </script>
