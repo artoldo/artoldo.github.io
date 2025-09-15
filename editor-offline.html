@@ -1,4 +1,4 @@
-<!-- Version: 1.1.5 | Last Update: 2025-09-14 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.5 | Last Update: 2025-09-15 | Author: Sacrisoft | © All rights reserved -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,6 +156,72 @@
     color: #ff55aa;
   }
 
+.editor-fullscreen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: #1e1e1e;
+}
+
+.editor-fullscreen .CodeMirror {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+#editorCloseBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  background-color: #ff55aa;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1100;
+  transition: all 0.2s ease;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#editorCloseBtn svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  viewBox: 0 0 16 16;
+  display: block;
+}
+
+.editor-fullscreen #editorCloseBtn {
+  display: flex;
+}
+
+#editorCloseBtn:hover {
+  background-color: white;
+  color: #ff55aa;
+}
+
+@media (max-width: 600px) {
+  #editorCloseBtn {
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  #editorCloseBtn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .CodeMirror {
+    font-size: 16px;
+  }
+}
   </style>
 </head>
 <body>
@@ -169,8 +235,10 @@
 
   <div class="buttons">
     <span> &nbsp; &nbsp; </span>
+    <button onclick="clearCode()">Reset</button>
     <button onclick="undoCode()">Undo</button>
     <button onclick="redoCode()">Redo</button>
+    <button onclick="toggleEditorFullscreen()">Fullscreen</button>
     <button onclick="document.getElementById('fileInput').click()">Open</button>
     <input type="file" id="fileInput" accept=".html,.htm" style="display:none" onchange="openFile(event)">
     <button onclick="pasteCode()">Paste</button>
@@ -181,13 +249,19 @@
     <span> &nbsp; &nbsp; </span>
   </div>
 
-  <div class="editor-container" id="editorContainer">
-    <div class="split-view">
-      <textarea id="code" placeholder="Your HTML here..."></textarea>
-      <iframe id="preview"></iframe>
-    </div>
-    <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
+<div class="editor-container" id="editorContainer">
+  <div id="editorCloseBtn" onclick="closeEditorFullscreen()">
+  <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="2" x2="2" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
   </div>
+  <div class="split-view">
+    <textarea id="code" placeholder="Your HTML here..."></textarea>
+    <iframe id="preview"></iframe>
+  </div>
+  <div class="drop-zone" id="dropZone">Drop your HTML file here</div>
+</div>
 
   <!-- CodeMirror Dependencies -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.js"></script>
@@ -367,6 +441,70 @@
         }
       }
     });
+
+function toggleEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.toggle("editor-fullscreen");
+  editor.refresh();
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const container = document.getElementById("editorContainer");
+    if (container.classList.contains("editor-fullscreen")) {
+      container.classList.remove("editor-fullscreen");
+      editor.refresh();
+    }
+  }
+});
+
+function toggleEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.toggle("editor-fullscreen");
+  editor.refresh();
+}
+
+function closeEditorFullscreen() {
+  const container = document.getElementById("editorContainer");
+  container.classList.remove("editor-fullscreen");
+  editor.refresh();
+}
+
+// ESC key also closes fullscreen
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeEditorFullscreen();
+  }
+});
+
+function clearCode() {
+  const confirmClear = confirm("Do you really want to clear the code?");
+  if (!confirmClear) return;
+
+  const newDoc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Document</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello HERO!</h1>
+  <p>Start coding...</p>
+</body>
+</html>`;
+
+  editor.setValue(newDoc);
+  updatePreview();
+}
+
   </script>
 </body>
 </html>

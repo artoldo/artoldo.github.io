@@ -1,4 +1,4 @@
-<!-- Version: 1.1.5 | Last Update: 2025-09-14 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 1.1.5 | Last Update: 2025-09-15 | Author: Sacrisoft | © All rights reserved -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,35 +178,32 @@
   width: 2.75rem;
   height: 2.75rem;
   background-color: #ff55aa;
-  color: white; /* SVG inherits this */
+  color: white;
   border-radius: 50%;
   cursor: pointer;
   z-index: 1100;
   transition: all 0.2s ease;
-
-  /* Flexbox for centering, but hidden by default */
   display: none;
   align-items: center;
   justify-content: center;
 }
 
 #editorCloseBtn svg {
-  width: 1.4rem;   /* slightly larger */
+  width: 1.4rem;
   height: 1.4rem;
   viewBox: 0 0 16 16;
-  display: block;  /* removes inline gaps */
+  display: block;
 }
 
 .editor-fullscreen #editorCloseBtn {
-  display: flex; /* show only in fullscreen */
+  display: flex;
 }
 
 #editorCloseBtn:hover {
   background-color: white;
-  color: #ff55aa; /* SVG lines change color */
+  color: #ff55aa;
 }
 
-/* Mobile scaling */
 @media (max-width: 600px) {
   #editorCloseBtn {
     top: 0.5rem;
@@ -217,6 +214,12 @@
   #editorCloseBtn svg {
     width: 1rem;
     height: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .CodeMirror {
+    font-size: 16px;
   }
 }
   </style>
@@ -493,7 +496,7 @@ function clearCode() {
   </style>
 </head>
 <body>
-  <h1>Hello World!</h1>
+  <h1>Hello HERO!</h1>
   <p>Start coding...</p>
 </body>
 </html>`;
