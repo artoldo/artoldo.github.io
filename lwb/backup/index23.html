@@ -825,16 +825,15 @@ if (type === 'embed') {
         // FULL (image centered, responsive)
         if (mediaSize === 'full') {
             return `
-<div style="position:relative; width:100vw; height:100vh; overflow:hidden; background:${bgColor};">
-    <img src="${refSrc(src, fileName, exportMap)}"
-         alt="Image"
-         style="width:100vw; height:100vh; object-fit:cover; display:block;" 
-         ${mediaSpy}>
-    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%;" 
-         class="uk-text-center uk-light">
-        ${textBlock}
-    </div>
-</div>
+                <div class="uk-padding-large" style="background:${bgColor};">
+                    <div class="uk-text-center">
+                        <img src="${refSrc(src, fileName, exportMap)}"
+                             alt="Image"
+                             style="max-width:100%; height:auto; display:block; margin:0 auto;"
+                             ${mediaSpy}>
+                        ${textBlock}
+                    </div>
+                </div>
             `;
         }
 
@@ -861,15 +860,15 @@ if (type === 'embed') {
             return `
                 <div class="uk-padding-large" style="background:${bgColor};">
                     <div class="uk-grid uk-grid-medium uk-flex-middle" uk-grid>
-                        <div class="uk-width-expand@m uk-padding-small uk-text-left">
-                            ${textBlock}
-                        </div>
                         <div class="uk-width-1-2@m">
                             <img src="${refSrc(src, fileName, exportMap)}"
                                  alt="Image"
                                  class="uk-border-rounded uk-box-shadow-large"
                                  style="max-width:100%; width:100%; height:auto; display:block;"
                                  ${mediaSpy}>
+                        </div>
+                        <div class="uk-width-expand@m uk-padding-small">
+                            ${textBlock}
                         </div>
                     </div>
                 </div>
