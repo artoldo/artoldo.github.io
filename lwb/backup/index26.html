@@ -683,16 +683,16 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         }
 
-function makeButtonHtml(label, url, color) {
-    if (!label || !url) return '';
-    const classes = {
-        default: 'uk-button uk-button-default',
-        primary: 'uk-button uk-button-primary',
-        secondary: 'uk-button uk-button-secondary',
-        text: 'uk-button-text' // no uk-button wrapper here
-    };
-    return `<a href="${url}" class="${classes[color] || classes.default} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
-}
+        function makeButtonHtml(label, url, color) {
+            if (!label || !url) return '';
+            let classes = {
+                default: 'uk-button-default',
+                primary: 'uk-button-primary',
+                secondary: 'uk-button-secondary',
+                text: 'uk-button-text'
+            };
+            return `<a href="${url}" class="uk-button ${classes[color] || 'uk-button-default'} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
+        }
 
         function getTextBlockHtml(block) {
             // Subtitle, then Paragraph
