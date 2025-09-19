@@ -683,16 +683,16 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         }
 
-function makeButtonHtml(label, url, color) {
-    if (!label || !url) return '';
-    const classes = {
-        default: 'uk-button uk-button-default',
-        primary: 'uk-button uk-button-primary',
-        secondary: 'uk-button uk-button-secondary',
-        text: 'uk-button-text' // no uk-button wrapper here
-    };
-    return `<a href="${url}" class="${classes[color] || classes.default} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
-}
+        function makeButtonHtml(label, url, color) {
+            if (!label || !url) return '';
+            let classes = {
+                default: 'uk-button-default',
+                primary: 'uk-button-primary',
+                secondary: 'uk-button-secondary',
+                text: 'uk-button-text'
+            };
+            return `<a href="${url}" class="uk-button ${classes[color] || 'uk-button-default'} uk-margin-top uk-border-rounded" target="_blank">${label}</a>`;
+        }
 
         function getTextBlockHtml(block) {
             // Subtitle, then Paragraph
@@ -1220,11 +1220,11 @@ const previewBtn = document.getElementById('previewBtn');
 previewBtn.addEventListener('click', function () {
     const exportMap = {}; // not needed for preview, but avoids errors
 
-    let exportBlocks = allSections.map(block =>
-        `<section style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
-            ${getExportSectionHtml(block, exportMap)}
-        </section>`
-    ).join('\n');
+let exportBlocks = allSections.map(block =>
+    `<section class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
+        ${getExportSectionHtml(block, exportMap)}
+    </section>`
+).join('\n');
 
     let html = `
 <!DOCTYPE html>
@@ -1311,7 +1311,7 @@ ${exportBlocks}
     await Promise.all(promises);
 
 let exportBlocks = allSections.map(block =>
-    `<section style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
+    `<section class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
         ${getExportSectionHtml(block, exportMap)}
     </section>`
 ).join('\n');
