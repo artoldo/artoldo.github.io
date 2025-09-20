@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CLASH Creator™ — Landing Animation SEO Homepage | Sacrisoft</title>
+    <title>FLASH Live Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" />
@@ -175,45 +175,21 @@
   background: var(--gray, #eee);
 }
 
-.navbar-scroll {
-  -ms-overflow-style: none;  /* IE & Edge */
-  scrollbar-width: none;     /* Firefox */
-}
-.navbar-scroll::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari, Opera */
-}
-
-#main-navbar .navbar-scroll {
-  display: flex;
-  justify-content: center; /* centers horizontally */
-}
-
-#site-title-h1 {
-  display: none !important;
-}
-
-#dynamic-navbar-container .navbar-scroll a img {
-  display: block;
-}
-#dynamic-navbar-container .navbar-scroll a:has(img) {
-  text-decoration: none !important;
-  border-bottom: none !important;
-}
-
 </style>
 </head>
-<body id="top">
-<h1 id="site-title-h1" class="visually-hidden">${siteSettings.title}</h1>
+<body class="uk-background-muted" id="top">
+<h1 id="site-title-h1" class="visually-hidden"></h1>
 
    <!-- Sticky Navbar (Toolbar) -->
 <nav id="main-navbar" class="uk-navbar-container uk-navbar-transparent uk-sticky" uk-sticky="top: 100; animation: uk-animation-slide-top;">
   <div class="navbar-scroll">
     <div class="navbar-group">
       <a id="settingsBtn" class="uk-icon-button"  uk-tooltip="Site Settings" uk-icon="settings"></a>
-      <a id="navBarBtn" class="uk-icon-button"    uk-tooltip="Dynamic Nav Bar" uk-icon="cog"></a>
       <a id="addImageBtn" class="uk-icon-button"  uk-tooltip="Add Image" uk-icon="image"></a>
       <a id="addVideoBtn" class="uk-icon-button"  uk-tooltip="Add Video" uk-icon="video-camera"></a>
       <a id="embedCodeBtn" class="uk-icon-button" uk-tooltip="Embed Code" uk-icon="code"></a>
+      <!-- New Dynamic Nav Bar button -->
+      <a id="navBarBtn" class="uk-icon-button" uk-tooltip="Dynamic Nav Bar" uk-icon="menu"></a>
       <a id="previewBtn" class="uk-icon-button"   uk-tooltip="Preview" uk-icon="eye"></a>
       <a id="saveJSON" class="uk-icon-button"     uk-tooltip="Save as JSON" uk-icon="download"></a>
       <a id="loadJSON" class="uk-icon-button"     uk-tooltip="Load JSON" uk-icon="upload"></a>
@@ -389,7 +365,7 @@
       </div>
       <div class="uk-margin">
         <label class="uk-form-label">Description</label>
-        <textarea class="uk-textarea uk-border-rounded" id="site-description" placeholder="CLASH Creator™ — Landing Animation SEO Homepage" rows="2"></textarea>
+        <textarea class="uk-textarea uk-border-rounded" id="site-description" rows="2"></textarea>
       </div>
       <div class="uk-margin">
         <label class="uk-form-label">Robots</label>
@@ -400,7 +376,7 @@
       </div>
       <div class="uk-margin">
         <label class="uk-form-label">Author</label>
-        <input class="uk-input uk-border-rounded" type="text" id="site-author" placeholder="Sacrisoft">
+        <input class="uk-input uk-border-rounded" type="text" id="site-author" placeholder="Author Name">
       </div>
       <div class="uk-margin">
         <label class="uk-form-label">Favicon URL</label>
@@ -538,7 +514,7 @@ const navbarLogoPreview = document.getElementById('navbar-logo-preview');
         // Default settings
         let siteSettings = {
             language: 'en',
-            title: 'CLASH Creator™',
+            title: 'Live Editor',
             description: '',
             robots: 'index, follow',
             author: '',
@@ -1413,15 +1389,6 @@ let exportBlocks = allSections.map((block, idx) =>
   background: var(--gray, #eee);
 }
 
-
-.navbar-scroll {
-  -ms-overflow-style: none;  /* IE & Edge */
-  scrollbar-width: none;     /* Firefox */
-}
-.navbar-scroll::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari, Opera */
-}
-
 </style>
 </head>
 <body class="uk-background-muted" id="top">
@@ -1579,19 +1546,10 @@ let exportBlocks = allSections.map((block, idx) =>
   background: var(--gray, #eee);
 }
 
-
-.navbar-scroll {
-  -ms-overflow-style: none;  /* IE & Edge */
-  scrollbar-width: none;     /* Firefox */
-}
-.navbar-scroll::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari, Opera */
-}
-
 </style>
 </head>
 <body class="uk-background-muted" id="top">
-<h1 id="site-title-h1" class="visually-hidden">${siteSettings.title}</h1>
+<h1 id="site-title-h1" class="visually-hidden"></h1>
 ${navBarHtml}
 ${exportBlocks}
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"><\/script>
