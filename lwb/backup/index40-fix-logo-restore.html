@@ -1233,7 +1233,6 @@ if (siteSettings.socialBase64) {
 }
 
 if (siteSettings.navbar && siteSettings.navbar.logoBase64) {
-    siteSettings.navbar.logo = siteSettings.navbar.logoBase64;   // 👈 assign for consistency
     siteSettings.navbar.logoBlob = dataURLtoBlob(siteSettings.navbar.logoBase64);
     navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoBase64}" class="navbar-logo">`;
 } else if (siteSettings.navbar.logoExport) {
@@ -1349,13 +1348,11 @@ function buildEditorDynamicNavBarHtml() {
   const links = [];
   
 if (siteSettings.navbar.logoUrl) {
-    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-} else if (siteSettings.navbar.logoBase64) {
-    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoBase64}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
 } else if (siteSettings.navbar.logoBlob) {
-    links.push(`<li><a href="#top"><img src="${URL.createObjectURL(siteSettings.navbar.logoBlob)}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+  links.push(`<li><a href="#top"><img src="${URL.createObjectURL(siteSettings.navbar.logoBlob)}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
 } else {
-    links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
+  links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
 }
 
   allSections.forEach((block, idx) => {
@@ -1372,18 +1369,18 @@ if (siteSettings.navbar.logoUrl) {
   </nav>`;
 }
 
+// Update/inject the dynamic navbar in the editor
+
 // Toggle H1 visibility depending on logo presence
 const siteTitleH1 = document.getElementById('site-title-h1');
 function updateSiteTitleH1() {
   siteTitleH1.textContent = siteSettings.title || '';
-  if (siteSettings.navbar.logoUrl || siteSettings.navbar.logoBase64 || siteSettings.navbar.logoBlob) {
+  if (siteSettings.navbar.logoUrl || siteSettings.navbar.logoBlob) {
     siteTitleH1.classList.add('visually-hidden');
   } else {
     siteTitleH1.classList.remove('visually-hidden');
   }
 }
-
-// Update/inject the dynamic navbar in the editor
 
 function updateDynamicNavbar() {
   if (!dynamicNavbarContainer) return;
@@ -1401,23 +1398,19 @@ function buildPreviewDynamicNavBarHtml() {
   if (!siteSettings.navbar.enabled) return '';
   const links = [];
 
-if (siteSettings.navbar.logoExport) {
-  // 1. Exported file path (set during Export)
-  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoExport}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-} else if (siteSettings.navbar.logoUrl) {
-  // 2. Explicit URL
-  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-} else if (siteSettings.navbar.logoBase64) {
-  // 3. Base64 restored from JSON
-  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoBase64}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-} else if (siteSettings.navbar.logoBlob) {
-  // 4. Uploaded file not yet exported
-  const blobUrl = URL.createObjectURL(siteSettings.navbar.logoBlob);
-  links.push(`<li><a href="#top"><img src="${blobUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-} else {
-  // 5. Fallback: just show the site title
-  links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
-}
+  if (siteSettings.navbar.logoExport) {
+    // Exported file path (set during Export) -> use it first
+    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoExport}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+  } else if (siteSettings.navbar.logoUrl) {
+    // If a URL is provided, use it next
+    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+  } else if (siteSettings.navbar.logoBlob) {
+    // Fallback for Preview: uploaded file not exported yet
+    const blobUrl = URL.createObjectURL(siteSettings.navbar.logoBlob);
+    links.push(`<li><a href="#top"><img src="${blobUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+  } else {
+    links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
+  }
 
   allSections.forEach((block, idx) => {
     if (block.heading) {
