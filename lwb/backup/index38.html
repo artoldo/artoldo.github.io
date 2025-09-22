@@ -1200,48 +1200,26 @@ jsonFileInput.addEventListener('change', function(e) {
                 allSections = data.sections || [];
             }
 
-renderAllSections();
+            renderAllSections();
 
-// --- Restore logo, favicon, and social from JSON (base64 backup first, fallback to export paths) ---
-if (siteSettings.faviconBase64) {
-    siteSettings.faviconBlob = dataURLtoBlob(siteSettings.faviconBase64);
-    faviconPreview.innerHTML = `<img src="${siteSettings.faviconBase64}" style="max-height:40px;">`;
-} else if (siteSettings.faviconExport) {
-    faviconPreview.innerHTML = `<img src="${siteSettings.faviconExport}" style="max-height:40px;">`;
-} else {
-    faviconPreview.innerHTML = '';
-}
+            // --- Restore previews from saved export paths (since blobs are gone in JSON) ---
+            if (siteSettings.faviconExport) {
+                faviconPreview.innerHTML = `<img src="${siteSettings.faviconExport}" style="max-height:40px;">`;
+            } else {
+                faviconPreview.innerHTML = '';
+            }
 
-if (siteSettings.socialBase64) {
-    siteSettings.socialBlob = dataURLtoBlob(siteSettings.socialBase64);
-    socialPreview.innerHTML = `<img src="${siteSettings.socialBase64}" style="max-height:80px;">`;
-} else if (siteSettings.socialExport) {
-    socialPreview.innerHTML = `<img src="${siteSettings.socialExport}" style="max-height:80px;">`;
-} else {
-    socialPreview.innerHTML = '';
-}
+            if (siteSettings.socialExport) {
+                socialPreview.innerHTML = `<img src="${siteSettings.socialExport}" style="max-height:80px;">`;
+            } else {
+                socialPreview.innerHTML = '';
+            }
 
-if (siteSettings.navbar && siteSettings.navbar.logoBase64) {
-    siteSettings.navbar.logoBlob = dataURLtoBlob(siteSettings.navbar.logoBase64);
-    navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoBase64}" class="navbar-logo">`;
-} else if (siteSettings.navbar.logoExport) {
-    navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoExport}" class="navbar-logo">`;
-} else {
-    navbarLogoPreview.innerHTML = '';
-}
-
-// Utility: Convert base64 back to Blob
-function dataURLtoBlob(dataurl) {
-    let arr = dataurl.split(',');
-    let mime = arr[0].match(/:(.*?);/)[1];
-    let bstr = atob(arr[1]);
-    let n = bstr.length;
-    let u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-}
+            if (siteSettings.navbar && siteSettings.navbar.logoExport) {
+                navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoExport}" class="navbar-logo">`;
+            } else {
+                navbarLogoPreview.innerHTML = '';
+            }
 
         } catch {
             UIkit.notification({message: 'Invalid JSON file!', status:'danger'});

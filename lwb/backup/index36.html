@@ -1124,55 +1124,20 @@ function finishSection(src, fileData, fileName, fileType) {
             }
         });
 
-// Save as JSON (wrap settings + sections, including logo/fav/social as base64 backup)
+// Save as JSON (wrap settings + sections)
 saveJSONBtn.addEventListener('click', function() {
-    // Clone settings to modify safely
-    const settingsToSave = JSON.parse(JSON.stringify(siteSettings));
-
-    // Convert logo, favicon, and social Blobs into base64 so they can be stored in JSON
-    const convertBlobToBase64 = (blob) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-
-    const conversions = [];
-
-    if (siteSettings.navbar.logoBlob) {
-        conversions.push(convertBlobToBase64(siteSettings.navbar.logoBlob).then(b64 => {
-            settingsToSave.navbar.logoBase64 = b64;
-        }));
-    }
-
-    if (siteSettings.faviconBlob) {
-        conversions.push(convertBlobToBase64(siteSettings.faviconBlob).then(b64 => {
-            settingsToSave.faviconBase64 = b64;
-        }));
-    }
-
-    if (siteSettings.socialBlob) {
-        conversions.push(convertBlobToBase64(siteSettings.socialBlob).then(b64 => {
-            settingsToSave.socialBase64 = b64;
-        }));
-    }
-
-    Promise.all(conversions).then(() => {
-        const out = JSON.stringify({ settings: settingsToSave, sections: allSections }, null, 2);
-        const blob = new Blob([out], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        let fileName = prompt("Enter a name for your JSON file:", "homepage.json");
-        if (!fileName) fileName = "homepage.json"; // fallback
-        a.download = fileName.endsWith(".json") ? fileName : fileName + ".json";
-
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    });
+    const out = JSON.stringify({ settings: siteSettings, sections: allSections }, null, 2);
+    const blob = new Blob([out], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+let fileName = prompt("Enter a name for your JSON file:", "homepage.json");
+if (!fileName) fileName = "homepage.json"; // fallback
+a.download = fileName.endsWith(".json") ? fileName : fileName + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 });
 
 // Load JSON (unwrap settings + sections)
@@ -1193,56 +1158,11 @@ jsonFileInput.addEventListener('change', function(e) {
                 allSections = data;
             } else {
                 siteSettings = data.settings || siteSettings;
-                siteSettings.navbar = Object.assign(
-                    { enabled:false, bg:'#ffffff', text:'#000000', logoUrl:'', logoFileName:'' },
-                    siteSettings.navbar || {}
-                );
+                siteSettings.navbar = Object.assign({ enabled:false, bg:'#ffffff', text:'#000000', logoUrl:'', logo:'', logoFileName:'' }, siteSettings.navbar || {});
                 allSections = data.sections || [];
             }
 
-renderAllSections();
-
-// --- Restore logo, favicon, and social from JSON (base64 backup first, fallback to export paths) ---
-if (siteSettings.faviconBase64) {
-    siteSettings.faviconBlob = dataURLtoBlob(siteSettings.faviconBase64);
-    faviconPreview.innerHTML = `<img src="${siteSettings.faviconBase64}" style="max-height:40px;">`;
-} else if (siteSettings.faviconExport) {
-    faviconPreview.innerHTML = `<img src="${siteSettings.faviconExport}" style="max-height:40px;">`;
-} else {
-    faviconPreview.innerHTML = '';
-}
-
-if (siteSettings.socialBase64) {
-    siteSettings.socialBlob = dataURLtoBlob(siteSettings.socialBase64);
-    socialPreview.innerHTML = `<img src="${siteSettings.socialBase64}" style="max-height:80px;">`;
-} else if (siteSettings.socialExport) {
-    socialPreview.innerHTML = `<img src="${siteSettings.socialExport}" style="max-height:80px;">`;
-} else {
-    socialPreview.innerHTML = '';
-}
-
-if (siteSettings.navbar && siteSettings.navbar.logoBase64) {
-    siteSettings.navbar.logoBlob = dataURLtoBlob(siteSettings.navbar.logoBase64);
-    navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoBase64}" class="navbar-logo">`;
-} else if (siteSettings.navbar.logoExport) {
-    navbarLogoPreview.innerHTML = `<img src="${siteSettings.navbar.logoExport}" class="navbar-logo">`;
-} else {
-    navbarLogoPreview.innerHTML = '';
-}
-
-// Utility: Convert base64 back to Blob
-function dataURLtoBlob(dataurl) {
-    let arr = dataurl.split(',');
-    let mime = arr[0].match(/:(.*?);/)[1];
-    let bstr = atob(arr[1]);
-    let n = bstr.length;
-    let u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-}
-
+            renderAllSections();
         } catch {
             UIkit.notification({message: 'Invalid JSON file!', status:'danger'});
         }
@@ -1261,24 +1181,31 @@ const socialPreview = document.getElementById('site-social-preview');
 faviconFile.addEventListener('change', (e) => {
   if (e.target.files[0]) {
     const file = e.target.files[0];
-    siteSettings.faviconBlob = file;   // ✅ store blob
-    siteSettings.faviconFileName = file.name;
-    siteSettings.faviconFileType = file.type;
-    siteSettings.favicon = '';         // clear legacy base64
-    faviconPreview.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-height:40px;">`;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      siteSettings.favicon = ev.target.result; // base64 dataurl
+      siteSettings.faviconFileName = file.name;
+      siteSettings.faviconFileType = file.type;
+      faviconPreview.innerHTML = `<img src="${siteSettings.favicon}" style="max-height:40px;">`;
+    };
+    reader.readAsDataURL(file);
   }
 });
 
 socialFile.addEventListener('change', (e) => {
   if (e.target.files[0]) {
     const file = e.target.files[0];
-    siteSettings.socialBlob = file;   // ✅ store blob
-    siteSettings.socialFileName = file.name;
-    siteSettings.socialFileType = file.type;
-    siteSettings.socialImage = '';    // clear legacy base64
-    socialPreview.innerHTML = `<img src="${URL.createObjectURL(file)}" style="max-height:80px;">`;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      siteSettings.socialImage = ev.target.result; // base64 dataurl
+      siteSettings.socialFileName = file.name;
+      siteSettings.socialFileType = file.type;
+      socialPreview.innerHTML = `<img src="${siteSettings.socialImage}" style="max-height:80px;">`;
+    };
+    reader.readAsDataURL(file);
   }
 });
+
 
 // NEW: Navbar modal open/save
 
@@ -1386,20 +1313,14 @@ const previewBtn = document.getElementById('previewBtn');
 function buildPreviewDynamicNavBarHtml() {
   if (!siteSettings.navbar.enabled) return '';
   const links = [];
-
-  if (siteSettings.navbar.logoExport) {
-    // Exported file path (set during Export) -> use it first
-    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoExport}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-  } else if (siteSettings.navbar.logoUrl) {
-    // If a URL is provided, use it next
-    links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-  } else if (siteSettings.navbar.logoBlob) {
-    // Fallback for Preview: uploaded file not exported yet
-    const blobUrl = URL.createObjectURL(siteSettings.navbar.logoBlob);
-    links.push(`<li><a href="#top"><img src="${blobUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
-  } else {
-    links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
-  }
+  
+if (siteSettings.navbar.logoExport) {
+  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoExport}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+} else if (siteSettings.navbar.logoUrl) {
+  links.push(`<li><a href="#top"><img src="${siteSettings.navbar.logoUrl}" alt="${siteSettings.title}" class="navbar-logo"></a></li>`);
+} else {
+  links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
+}
 
   allSections.forEach((block, idx) => {
     if (block.heading) {
@@ -1407,7 +1328,6 @@ function buildPreviewDynamicNavBarHtml() {
       links.push(`<li><a href="#section-${idx}">${safe}</a></li>`);
     }
   });
-
   return `<nav class="uk-navbar-container" style="background:${siteSettings.navbar.bg};position:sticky;top:0;z-index:999;">
     <ul class="navbar-scroll" uk-scrollspy-nav="closest: a; scroll: true; offset: 100" style="color:${siteSettings.navbar.text};">
       ${links.join('')}
@@ -1585,21 +1505,27 @@ if (siteSettings.navbar.logoBlob && siteSettings.navbar.logoFileName) {
   siteSettings.navbar.logoExport = 'media/' + newName;
 }    
 
-// Include favicon in export if uploaded
-if (siteSettings.faviconBlob && siteSettings.faviconFileName) {
-    let ext = siteSettings.faviconFileName.split('.').pop().toLowerCase() || 'ico';
-    let newName = `favicon.${ext}`;
-    zip.file('media/' + newName, siteSettings.faviconBlob);
-    siteSettings.faviconExport = 'media/' + newName;
-}
+    // Include favicon in export if uploaded
+    if (siteSettings.favicon && siteSettings.faviconFileName) {
+        let ext = siteSettings.faviconFileName.split('.').pop().toLowerCase();
+        let newName = `favicon.${ext}`;
+        exportMap[siteSettings.faviconFileName] = newName;
+        promises.push(fetch(siteSettings.favicon).then(res => res.blob()).then(blob => {
+            zip.file('media/' + newName, blob);
+        }));
+        siteSettings.faviconExport = 'media/' + newName;
+    }
 
-// Include social image in export if uploaded
-if (siteSettings.socialBlob && siteSettings.socialFileName) {
-    let ext = siteSettings.socialFileName.split('.').pop().toLowerCase() || 'png';
-    let newName = `social.${ext}`;
-    zip.file('media/' + newName, siteSettings.socialBlob);
-    siteSettings.socialExport = 'media/' + newName;
-}
+    // Include social image in export if uploaded
+    if (siteSettings.socialImage && siteSettings.socialFileName) {
+        let ext = siteSettings.socialFileName.split('.').pop().toLowerCase();
+        let newName = `social.${ext}`;
+        exportMap[siteSettings.socialFileName] = newName;
+        promises.push(fetch(siteSettings.socialImage).then(res => res.blob()).then(blob => {
+            zip.file('media/' + newName, blob);
+        }));
+        siteSettings.socialExport = 'media/' + newName;
+    }
 
     await Promise.all(promises);
 
