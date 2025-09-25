@@ -503,7 +503,7 @@
 </p>
 </div>
 <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
-<div class="uk-margin"><label class="uk-form-label">Custom CSS</label><textarea class="uk-textarea uk-border-rounded" id="site-custom-css" placeholder="Write custom CSS here..." rows="6"></textarea></div></form>
+<div class="uk-margin"><label class="uk-form-label">Custom CSS</label><textarea class="uk-textarea uk-border-rounded" id="site-custom-css" placeholder="Write custom CSS here..." rows="6"></textarea></div><div class="uk-margin"><label class="uk-form-label">Google Font URL</label><input class="uk-input uk-border-rounded" id="site-font-url" placeholder="https://fonts.googleapis.com/css2?family=Staatliches&amp;display=swap" type="url"/></div><div class="uk-margin"><label class="uk-form-label">Apply Font To</label><div class="uk-form-controls"><label><input class="uk-checkbox" id="apply-to-body" type="checkbox"/> Body</label><br/><label><input class="uk-checkbox" id="apply-to-headings" type="checkbox"/> H1 &amp; H2</label></div></div></form>
 </div>
 </div>
 <!-- UIKit modal for delete warning -->
@@ -794,6 +794,31 @@
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"></script>
 <script>
+function applyFontLink() {
+  if (siteSettings.fontUrl) {
+    let link = document.getElementById("custom-font-link");
+    if (!link) {
+      link = document.createElement("link");
+      link.id = "custom-font-link";
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+    link.href = siteSettings.fontUrl;
+  }
+}
+
+function generateFontCSS() {
+  let css = "";
+  if (siteSettings.applyFontBody) {
+    css += "body { font-family: 'Staatliches', sans-serif; }\n";
+  }
+  if (siteSettings.applyFontHeadings) {
+    css += "h1, h2 { font-family: 'Staatliches', sans-serif; }\n";
+  }
+  return css;
+}
+
+
         // Sticky nav color swap
         UIkit.util.on(document, 'DOMContentLoaded', function(){
             var stickyNav = document.getElementById('main-navbar');
@@ -882,6 +907,8 @@ textForm.addEventListener('submit', e => {
     allSections.push(block);
   }
   renderAllSections();
+      applyFontLink();
+      applyCustomCSS();
   textModal.hide();
 });
 
@@ -945,6 +972,9 @@ function applyCustomCSS() {
             appColor: '#1e87f0',
             headScript: '',
             customCSS: '',
+            fontUrl: '',
+            applyFontBody: false,
+            applyFontHeadings: false,
             navbar: { enabled: false, bg: '#ffffff', text: '#000000', logoUrl: '', logo: '', logoFileName: '' },
 footer: {
   "enabled": false,
@@ -1134,6 +1164,8 @@ embedForm.addEventListener('submit', function (e) {
     }
 
     renderAllSections();
+      applyFontLink();
+      applyCustomCSS();
     embedModal.hide();
 });
 
@@ -1153,6 +1185,9 @@ settingsBtn.addEventListener('click', () => {
     document.getElementById('site-social').value = siteSettings.socialImage;
     document.getElementById('site-head-script').value = siteSettings.headScript;
     document.getElementById("site-custom-css").value = siteSettings.customCSS;
+    document.getElementById("site-font-url").value = siteSettings.fontUrl || "";
+    document.getElementById("apply-to-body").checked = siteSettings.applyFontBody || false;
+    document.getElementById("apply-to-headings").checked = siteSettings.applyFontHeadings || false;
     settingsModal.show();
 });
 
@@ -1499,6 +1534,8 @@ if (mediaSize === 'right') {
             if (toDeleteIndex !== null && allSections[toDeleteIndex]) {
                 allSections.splice(toDeleteIndex, 1);
                 renderAllSections();
+      applyFontLink();
+      applyCustomCSS();
                 toDeleteIndex = null;
                 deleteModal.hide();
             }
@@ -1515,7 +1552,9 @@ UIkit.util.on(editorRoot, 'moved', function(e) {
     if (newSections.length === allSections.length) {
         allSections = newSections;
     }
-    renderAllSections(); // re-render to update section-ids and dynamic navbar
+    renderAllSections();
+      applyFontLink();
+      applyCustomCSS(); // re-render to update section-ids and dynamic navbar
 });
 
         // Modal submission
@@ -1578,6 +1617,8 @@ function finishSection(src, fileData, fileName, fileType) {
                     allSections.push(block);
                 }
                 renderAllSections();
+      applyFontLink();
+      applyCustomCSS();
                 mediaModal.hide();
             }
 
@@ -1681,6 +1722,8 @@ jsonFileInput.addEventListener('change', function(e) {
             }
 
             renderAllSections();
+      applyFontLink();
+      applyCustomCSS();
 
             // ---  Apply custom CSS immediately
             applyCustomCSS();
