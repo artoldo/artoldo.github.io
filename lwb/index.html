@@ -278,7 +278,7 @@
                                     Previous file: <span id="prev-file-name"></span>
 <label><input checked="" id="keep-prev-file" type="checkbox"/> Keep previous file</label>
 </div>
-<div class="uk-margin">
+<div class="uk-margin" id="youtube-vimeo-options" style="display:none;">
   <label class="uk-form-label">Or YouTube / Vimeo</label><br>
   <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptYouTube()"><span uk-icon="icon: youtube; ratio: 1.2"></span> YouTube</button>
   <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptVimeo()"><span uk-icon="icon: vimeo; ratio: 1.2"></span> Vimeo</button>
@@ -1096,6 +1096,12 @@ footer: {
             mediaModalTitle.textContent = type === 'image'
                 ? (idx !== undefined ? 'Edit Image' : 'Add Image')
                 : (idx !== undefined ? 'Edit Video' : 'Add Video');
+
+// Toggle YouTube/Vimeo buttons
+    const ytVimeoBlock = document.getElementById('youtube-vimeo-options');
+    ytVimeoBlock.style.display = (type === 'video') ? '' : 'none';
+
+
             sectionIndex.value = idx !== undefined ? idx : '';
             if (data) {
                 mediaUrl.value = data.url || '';
