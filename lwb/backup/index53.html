@@ -217,19 +217,6 @@
   border-bottom: none !important;
 }
 
-.wrap {
-  min-height:100%;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.wrap iframe, .wrap video {
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  min-width:100%; min-height:100%;
-  width:auto; height:auto;
-}
-
 </style>
 </head>
 <body id="top">
@@ -278,11 +265,6 @@
                                     Previous file: <span id="prev-file-name"></span>
 <label><input checked="" id="keep-prev-file" type="checkbox"/> Keep previous file</label>
 </div>
-<div class="uk-margin">
-  <label class="uk-form-label">Or YouTube / Vimeo</label><br>
-  <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptYouTube()"><span uk-icon="icon: youtube; ratio: 1.2"></span> YouTube</button>
-  <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptVimeo()"><span uk-icon="icon: vimeo; ratio: 1.2"></span> Vimeo</button>
-</div>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Media Size &amp; Position</label>
@@ -295,7 +277,7 @@
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Background Color</label>
-<input id="bg-color" type="color" value="#000000"/>
+<input id="bg-color" type="color" value="#1e87f0"/>
 </div>
 </div>
 </li>
@@ -392,10 +374,6 @@
 <div class="uk-margin">
 <label class="uk-form-label">Paste Code</label>
 <textarea class="uk-textarea uk-border-rounded" id="embed-code" placeholder="Paste HTML, CSS, or JS here" rows="8"></textarea>
-</div>
-<div class="uk-margin">
-  <label class="uk-form-label">Background Color</label>
-  <input id="embed-bgcolor" type="color" value="#000000" />
 </div>
 <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
 </form>
@@ -532,9 +510,9 @@
   <label class="uk-form-label">Google Font Name</label><input class="uk-input uk-border-rounded" id="site-font-name" placeholder="e. g. Orbitron" type="text"/>
   <label class="uk-form-label">Apply Google Font To</label>
   <div class="uk-form-controls">
-    <label><input type="radio" name="font-target" value="all" id="apply-to-all"> All (Text + Headings)</label><br>
-    <label><input type="radio" name="font-target" value="body" id="apply-to-body"> Text</label><br>
-    <label><input type="radio" name="font-target" value="headings" id="apply-to-headings"> Headings</label><br>
+    <label><input type="radio" name="font-target" value="all" id="apply-to-all"> All</label><br>
+    <label><input type="radio" name="font-target" value="body" id="apply-to-body"> Text (Body)</label><br>
+    <label><input type="radio" name="font-target" value="headings" id="apply-to-headings"> Headings (H1, H2)</label><br>
     <label><input type="radio" name="font-target" value="none" id="apply-to-none" checked> None</label>
   </div>
 </div>
@@ -1031,7 +1009,7 @@ function applyCustomCSS() {
             author: '',
             favicon: '',
             socialImage: '',
-            appColor: '#000000',
+            appColor: '#1e87f0',
             headScript: '',
             customCSS: '',
             fontName: '',
@@ -1101,7 +1079,7 @@ footer: {
                 mediaUrl.value = data.url || '';
                 mediaHeading.value = data.heading || '';
                 mediaColor.value = data.headingColor || '#ffffff';
-                bgColor.value = data.bgColor || '#000000';
+                bgColor.value = data.bgColor || '#1e87f0';
                 mediaSize.value = data.mediaSize || 'full';
                 headingSize.value = data.headingSize || 'uk-heading-2xlarge';
                 btnLabel.value = data.btnLabel || '';
@@ -1133,7 +1111,7 @@ footer: {
                 mediaUrl.value = '';
                 mediaHeading.value = 'Your Headline Here';
                 mediaColor.value = '#ffffff';
-                bgColor.value = '#000000';
+                bgColor.value = '#1e87f0';
                 mediaSize.value = 'full';
                 headingSize.value = 'uk-heading-large';
                 btnLabel.value = '';
@@ -1202,7 +1180,6 @@ function setupEmbedModal(data, idx) {
     const titleEl = document.getElementById('embed-modal-title');
     titleEl.textContent = (idx !== undefined && idx !== null) ? 'Edit Embed Code' : 'Add Embed Code';
     embedCode.value = data ? data.code : '';
-    document.getElementById("embed-bgcolor").value = data ? (data.bgColor || "#000000") : "#000000";
     embedIndex.value = (idx !== undefined && idx !== null) ? idx : '';
 }
 
@@ -1218,8 +1195,7 @@ embedForm.addEventListener('submit', function (e) {
     let idx = parseInt(embedIndex.value, 10);
     if (isNaN(idx)) idx = null;  // null means new section
 
-let bgColorVal = document.getElementById("embed-bgcolor").value || "#000000";
-let block = { type: 'embed', code, bgColor: bgColorVal };
+    let block = { type: 'embed', code };
 
     if (idx !== null) {
         allSections[idx] = block;   // update existing
@@ -1294,17 +1270,16 @@ function getExportSectionHtml(block, exportMap) {
         </div>`;
     }
 
-if (block.type === 'embed') {
-    return `
-        <div style="position:relative; width:100%; height:100vh; margin:0; padding:0; background:${block.bgColor || '#000'};">
-            <iframe srcdoc="${block.code.replace(/"/g, '&quot;')}" 
-                    style="position:absolute; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;" 
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-            </iframe>
-        </div>
-    `;
-}
-
+    if (block.type === 'embed') {
+        return `
+            <div style="position:relative; width:100%; height:100vh; margin:0; padding:0;">
+                <iframe srcdoc="${block.code.replace(/"/g, '&quot;')}" 
+                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;" 
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+                </iframe>
+            </div>
+        `;
+    }
     return getMediaSectionHtml(block, exportMap);
 }
 
@@ -1350,7 +1325,7 @@ function getMediaSectionHtml(block, exportMap) {
 // EMBED: Full viewport
 if (type === 'embed') {
     return `
-        <div style="position:relative; width:100%; height:100vh; margin:0; padding:0; background:${block.bgColor || '#000'};">
+        <div style="position:relative; width:100%; height:100vh; margin:0; padding:0;">
             <iframe srcdoc="${block.code.replace(/"/g, '&quot;')}" 
                     style="position:absolute; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;" 
                     sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
@@ -1358,6 +1333,7 @@ if (type === 'embed') {
         </div>
     `;
 }
+
     // IMAGE
     if (type === 'image') {
         // FULL (image centered, responsive)
@@ -1637,7 +1613,7 @@ UIkit.util.on(editorRoot, 'moved', function(e) {
             let headingColor = mediaColor.value || '#ffffff';
             let headingSizeVal = headingSize.value || 'uk-heading-2xlarge';
             let mediaSizeVal = mediaSize.value;
-            let bgColorVal = bgColor.value || "#000000";
+            let bgColorVal = bgColor.value || "#1e87f0";
             let btnLabelVal = btnLabel.value.trim();
             let btnUrlVal = btnUrl.value.trim();
             let btnColorVal = btnColor.value;
@@ -2311,6 +2287,7 @@ html += `
   border: 0;
 }
 
+
 :root {
   --navbar-link-color: #000000;
 }
@@ -2627,67 +2604,6 @@ function removeLink() {
     alert("Please place the cursor inside a link to remove it.");
   }
 }
-
-function createYouTubeEmbed(url) {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&]+)/);
-  if (match) {
-    const videoId = match[1];
-    return `
-      <div style="display:flex; align-items:center; justify-content:center; width:100%; height:100dvh; background:#000;">
-        <div style="position:relative; width:100%; max-width:100%; aspect-ratio:16/9; min-height:100dvh;">
-          <iframe src="https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1" 
-                  style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" 
-                  allow="autoplay; fullscreen; picture-in-picture" 
-                  allowfullscreen 
-                  loading="lazy"></iframe>
-        </div>
-      </div>`;
-  }
-  return "<p>Invalid YouTube URL</p>";
-}
-
-function createVimeoEmbed(url) {
-  const match = url.match(/vimeo\.com\/(\d+)/);
-  if (match) {
-    const videoId = match[1];
-    return `
-      <div style="display:flex; align-items:center; justify-content:center; width:100%; height:100dvh; background:#000;">
-        <div style="position:relative; width:100%; max-width:100%; aspect-ratio:16/9; min-height:100dvh;">
-          <iframe src="https://player.vimeo.com/video/${videoId}?playsinline=1" 
-                  style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" 
-                  allow="autoplay; fullscreen; picture-in-picture" 
-                  allowfullscreen 
-                  loading="lazy"></iframe>
-        </div>
-      </div>`;
-  }
-  return "<p>Invalid Vimeo URL</p>";
-}
-
-function promptYouTube() {
-  const url = prompt("Enter YouTube link:");
-  if (url) {
-    let block = { type: 'embed', code: createYouTubeEmbed(url) };
-    allSections.push(block);
-    renderAllSections();
-    applyFontLink();
-    applyCustomCSS();
-    mediaModal.hide();
-  }
-}
-
-function promptVimeo() {
-  const url = prompt("Enter Vimeo link:");
-  if (url) {
-    let block = { type: 'embed', code: createVimeoEmbed(url) };
-    allSections.push(block);
-    renderAllSections();
-    applyFontLink();
-    applyCustomCSS();
-    mediaModal.hide();
-  }
-}
-
 </script>
 
 <script>
