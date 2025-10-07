@@ -243,6 +243,7 @@
 <a class="uk-icon-button" id="footerBtn" uk-icon="more" uk-tooltip="Footer Settings"></a>
 <a class="uk-icon-button" id="addTextBtn" uk-icon="file-text" uk-tooltip="Add Text"></a>
 <a class="uk-icon-button" id="addImageBtn" uk-icon="image" uk-tooltip="Add Image"></a>
+<a class="uk-icon-button" id="addGalleryBtn" uk-icon="thumbnails" uk-tooltip="Add Gallery"></a>
 <a class="uk-icon-button" id="addVideoBtn" uk-icon="video-camera" uk-tooltip="Add Video"></a>
 <a class="uk-icon-button" id="embedCodeBtn" uk-icon="code" uk-tooltip="Add Embed Code"></a>
 <a class="uk-icon-button" id="previewBtn" uk-icon="eye" uk-tooltip="Preview"></a>
@@ -1692,74 +1693,91 @@ if (mediaSize === 'right') {
     return `<div class="uk-padding-large" style="background:${bgColor};">${textBlock}</div>`;
 }
 
-        // --- RENDER ---
-        function renderAllSections() {
-            editorRoot.innerHTML = '';
-            allSections.forEach((block, idx) => {
-                const li = document.createElement('li');
-                li.dataset.id = block.id;
-                li.className = 'editor-section uk-padding-remove uk-sortable-handle';
-                li.style.position = 'relative';
-                const removeBtn = `<button class="uk-button uk-button-danger uk-border-rounded editor-remove-btn" type="button" uk-icon="trash" uk-tooltip="Remove section"></button>`;
-                const editBtn = `<button class="uk-icon-button uk-button-primary uk-border-rounded editor-edit-btn" type="button" uk-icon="pencil" uk-tooltip="Edit section"></button>`;
-                const sectionStyle = `background: ${block.bgColor}; min-height:60vh;`;
+// --- RENDER ---
+function renderAllSections() {
+  editorRoot.innerHTML = '';
 
-                li.innerHTML = `
-                    <section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="${sectionStyle};">
-                        ${editBtn}
-                        ${removeBtn}
-                        ${getMediaSectionHtml(block)}
-                    </section>
-                `;
-                // --- Remove button always shows modal ---
-                li.querySelector('.editor-remove-btn').addEventListener('click', function() {
-                    toDeleteIndex = idx;
-                    deleteModal.show();
-                });
-                // --- Edit ---
-                li.querySelector('.editor-edit-btn').addEventListener('click', function () {
-    if (block.type === 'embed') {
-        setupEmbedModal(block, idx);
-        UIkit.modal('#embed-modal').show();
-    } else if (block.type === 'text') {
-        // Prefill text modal with saved values
-        textHeading.value   = block.heading || '';
-        textSubtitle.value  = block.subtitle || '';
-        textParagraph.value = block.paragraph || '';
-        textAnimation.value = block.animation || 'uk-animation-fade';
-        if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#000000';
-        if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#ffffff';
-        if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = block.headingSize || 'h-lg';
-        if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
-        if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
-        textIndex.value = idx;
-        textModal.show();
+  allSections.forEach((block, idx) => {
+    const li = document.createElement('li');
+    li.dataset.id = block.id;
+    li.className = 'editor-section uk-padding-remove uk-sortable-handle';
+    li.style.position = 'relative';
+
+    const removeBtn = `
+      <button class="uk-button uk-button-danger uk-border-rounded editor-remove-btn" type="button"
+        uk-icon="trash" uk-tooltip="Remove section"></button>`;
+    const editBtn = `
+      <button class="uk-icon-button uk-button-primary uk-border-rounded editor-edit-btn" type="button"
+        uk-icon="pencil" uk-tooltip="Edit section"></button>`;
+
+    const sectionStyle = `background: ${block.bgColor}; min-height:60vh;`;
+
+    // --- Handle GALLERY sections separately ---
+    if (block.type === 'gallery') {
+      li.innerHTML = `
+        <section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true"
+          style="${sectionStyle};">
+          ${editBtn}
+          ${removeBtn}
+          ${block.html}
+        </section>
+      `;
+
+      // Edit gallery button → opens gallery modal
+      li.querySelector('.editor-edit-btn').addEventListener('click', function() {
+        editGallery(block.id);
+      });
+
     } else {
-        setupModal(block.type, block, idx);
-        mediaModal.show();
-    }
-});
+      // Default: text, image, embed, etc.
+      li.innerHTML = `
+        <section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true"
+          style="${sectionStyle};">
+          ${editBtn}
+          ${removeBtn}
+          ${getMediaSectionHtml(block)}
+        </section>
+      `;
 
-                editorRoot.appendChild(li);
-            });
-            UIkit.update(editorRoot);
-            updateDynamicNavbar();
+      // --- Edit handler for existing types ---
+      li.querySelector('.editor-edit-btn').addEventListener('click', function () {
+        if (block.type === 'embed') {
+          setupEmbedModal(block, idx);
+          UIkit.modal('#embed-modal').show();
+        } else if (block.type === 'text') {
+          // Prefill text modal with saved values
+          textHeading.value   = block.heading || '';
+          textSubtitle.value  = block.subtitle || '';
+          textParagraph.value = block.paragraph || '';
+          textAnimation.value = block.animation || 'uk-animation-fade';
+          if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#000000';
+          if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#ffffff';
+          if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = block.headingSize || 'h-lg';
+          if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
+          if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
+          textIndex.value = idx;
+          textModal.show();
+        } else {
+          setupModal(block.type, block, idx);
+          mediaModal.show();
+        }
+      });
+    }
+
+    // --- Delete handler ---
+    li.querySelector('.editor-remove-btn').addEventListener('click', function() {
+      toDeleteIndex = idx;
+      deleteModal.show();
+    });
+
+    editorRoot.appendChild(li);
+  });
+
+  UIkit.update(editorRoot);
+  updateDynamicNavbar();
   updateSiteTitleH1();
   updateFooter();
-        }
-
-        // Confirm Delete modal
-        confirmDeleteBtn.addEventListener('click', function() {
-            if (toDeleteIndex !== null && allSections[toDeleteIndex]) {
-                allSections.splice(toDeleteIndex, 1);
-                renderAllSections();
-      applyFontLink();
-      applyCustomCSS();
-                toDeleteIndex = null;
-                deleteModal.hide();
-            }
-        });
-
+}
         // Sortable event
 UIkit.util.on(editorRoot, 'moved', function(e) {
     let newSections = [];
@@ -2925,6 +2943,158 @@ function promptVimeo() {
       observer.observe(target, { childList: true, subtree: true });
     }
   });
+</script>
+
+<!-- Gallery Maker Modal-->
+<div id="gallery-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-border-rounded uk-width-1-1 uk-margin-auto">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Gallery Maker</h3>
+
+    <div class="uk-margin">
+      <label class="uk-form-label">Title</label>
+      <input class="uk-input" type="text" id="gm-title" placeholder="e.g. Sara Ferro">
+    </div>
+
+    <div class="uk-margin">
+      <label class="uk-form-label">Subtitle</label>
+      <input class="uk-input" type="text" id="gm-subtitle" placeholder="e.g. Album name">
+    </div>
+
+    <div class="uk-margin">
+      <label class="uk-form-label">Select Images</label>
+      <input class="uk-input" type="file" id="gm-images" multiple accept="image/*">
+    </div>
+
+    <!-- Sortable grid inside modal -->
+    <div id="gm-gallery" class="uk-grid-small uk-child-width-1-3@s" uk-grid uk-sortable="handle: img"></div>
+
+    <div class="uk-margin">
+      <button class="uk-button uk-button-default uk-modal-close">Cancel</button>
+      <button class="uk-button uk-button-primary" onclick="saveGallery()">Save Gallery</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let editingGalleryId = null; // track if we’re editing or creating new
+
+// Add Gallery button -> open clean modal
+document.getElementById('addGalleryBtn')
+  .addEventListener('click', () => {
+    editingGalleryId = null;
+    document.getElementById('gm-title').value = '';
+    document.getElementById('gm-subtitle').value = '';
+    document.getElementById('gm-gallery').innerHTML = '';
+    UIkit.modal('#gallery-modal').show();
+  });
+
+document.getElementById('gm-images').addEventListener('change', function(){
+  const grid = document.getElementById('gm-gallery');
+  Array.from(this.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const src = e.target.result;
+      const col = document.createElement('div');
+      col.innerHTML = `
+        <div class="uk-card uk-card-default uk-card-body uk-padding-small uk-text-center uk-position-relative">
+          <img class="uk-border-rounded" src="${src}" style="max-height:120px">
+          <input class="uk-input uk-form-small uk-margin-small-top" placeholder="Caption (optional)">
+          <button class="uk-icon-button uk-position-top-right" uk-icon="trash" type="button"></button>
+        </div>
+      `;
+      const card = col.firstElementChild;
+      card.querySelector('[uk-icon="trash"]').addEventListener('click', () => col.remove());
+      grid.appendChild(col);
+    };
+    reader.readAsDataURL(file);
+  });
+  this.value = '';
+});
+
+function gmEscapeHtml(s=''){
+  return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// Unified save (new + edit)
+window.saveGallery = function(){
+  const title = (document.getElementById('gm-title')?.value || 'Gallery').trim();
+  const subtitle = (document.getElementById('gm-subtitle')?.value || 'gallery').trim();
+
+  const items = Array.from(document.querySelectorAll('#gm-gallery .uk-card'));
+  let imagesHtml = '';
+  items.forEach(card => {
+    const img = card.querySelector('img');
+    const cap = card.querySelector('input')?.value || '';
+    imagesHtml += `<div><a href="${img.src}" data-caption="${gmEscapeHtml(cap)}"><img class="uk-border-rounded" src="${img.src}" alt=""></a></div>\n`;
+  });
+
+const newHtml = `
+  <div class="uk-container uk-padding">
+    <h1 class="uk-heading-line uk-text-center"><span>${gmEscapeHtml(title)}</span></h1>
+    <h3 class="uk-text-meta uk-text-center">${gmEscapeHtml(subtitle)}</h3>
+    <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m"
+         uk-grid uk-lightbox="animation: slide; toggle: a">
+      ${imagesHtml.trim()}
+    </div>
+  </div>
+`.trim();
+
+  if (editingGalleryId) {
+    // Update existing
+    const block = allSections.find(b => b.id === editingGalleryId);
+    if (block) block.html = newHtml;
+    editingGalleryId = null;
+  } else {
+    // Create new
+    const block = {
+      id: 'sec-' + Math.random().toString(36).substr(2, 9),
+      type: 'gallery',
+      html: newHtml
+    };
+    allSections.push(block);
+  }
+
+  renderAllSections();
+  UIkit.modal('#gallery-modal').hide();
+};
+
+// Edit gallery
+window.editGallery = function(id) {
+  const block = allSections.find(b => b.id === id);
+  if (!block) return;
+
+  editingGalleryId = id;
+
+  document.getElementById('gm-title').value = '';
+  document.getElementById('gm-subtitle').value = '';
+  document.getElementById('gm-gallery').innerHTML = '';
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(block.html, "text/html");
+
+  document.getElementById('gm-title').value = doc.querySelector('h1 span')?.textContent || '';
+  document.getElementById('gm-subtitle').value = doc.querySelector('h3')?.textContent || '';
+
+  const imgs = doc.querySelectorAll('a[href] > img');
+  imgs.forEach(img => {
+    const src = img.getAttribute('src');
+    const caption = img.closest('a').getAttribute('data-caption') || '';
+    const col = document.createElement('div');
+    col.innerHTML = `
+      <div class="uk-card uk-card-default uk-card-body uk-padding-small uk-text-center uk-position-relative">
+        <img class="uk-border-rounded" src="${src}" style="max-height:120px">
+        <input class="uk-input uk-form-small uk-margin-small-top" value="${caption}" placeholder="Caption (optional)">
+        <button class="uk-icon-button uk-position-top-right" uk-icon="trash" type="button"></button>
+      </div>
+    `;
+    const card = col.firstElementChild;
+    card.querySelector('[uk-icon="trash"]').addEventListener('click', () => col.remove());
+    document.getElementById('gm-gallery').appendChild(col);
+  });
+
+  UIkit.modal('#gallery-modal').show();
+};
 </script>
 
 </body>

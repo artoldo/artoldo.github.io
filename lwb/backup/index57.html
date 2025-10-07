@@ -592,7 +592,7 @@
 <span class="uk-form-icon" uk-icon="location"></span>
 <input class="uk-input uk-border-rounded" id="footer-address" placeholder="123 Main St, City, Country" type="text"/>
 </div>
-<h4 class="uk-heading-bullet">Website Links (URL)</h4>
+<h4 class="uk-heading-bullet" uk-tooltip="Website Links open within a Lightbox window">Lightbox Links (URL)</h4>
 <div class="uk-grid-small" uk-grid="">
 <div class="uk-width-1-2">
 <div class="uk-inline uk-width-1-1">
@@ -615,7 +615,7 @@
 <div class="uk-width-1-2">
 <div class="uk-inline uk-width-1-1">
 <span class="uk-form-icon" uk-icon="heart"></span>
-<input class="uk-input uk-border-rounded" id="footer-heart" placeholder="Donate" type="url"/>
+<input class="uk-input uk-border-rounded" id="footer-herat" placeholder="Donate" type="url"/>
 </div>
 </div>
 <div class="uk-width-1-2">
@@ -703,7 +703,7 @@
 </div>
 </div>
 </div>
-<h4 class="uk-heading-bullet">Social Links (URL)</h4>
+<h4 class="uk-heading-bullet" uk-tooltip="Social Links open in an external window">Social Links (URL)</h4>
 <div class="uk-grid-small" uk-grid="">
 <div class="uk-width-1-2">
 <div class="uk-inline uk-width-1-1">
@@ -1168,23 +1168,6 @@ footer: {
   "phone": "",
   "email": "",
   "address": "",
-  "info": "",
-  "comments": "",
-  "mail": "",
-  "heart": "",
-  "calendar": "",
-  "question": "",
-  "rss": "",
-  "star": "",
-  "bell": "",
-  "users": "",
-  "social": "",
-  "lock": "",
-  "cart": "",
-  "hashtag": "",
-  "warning": "",
-  "tag": "",
-  "menu": "",
   "android-robot": "",
   "apple": "",
   "bag": "",
@@ -2034,29 +2017,12 @@ footerBtn.addEventListener('click', () => {
 
 footerForm.addEventListener('submit', (e) => {
   e.preventDefault();
-siteSettings.footer.enabled = enableFooter.checked;
-siteSettings.footer.bg = footerBg.value;
-siteSettings.footer.text = footerText.value;
-siteSettings.footer.phone = footerPhone.value.trim();
-siteSettings.footer.email = footerEmail.value.trim();
-siteSettings.footer.address = footerAddress.value.trim();
-siteSettings.footer["info"] = document.getElementById("footer-info").value.trim();
-siteSettings.footer["comments"] = document.getElementById("footer-comments").value.trim();
-siteSettings.footer["mail"] = document.getElementById("footer-mail").value.trim();
-siteSettings.footer["heart"] = document.getElementById("footer-heart").value.trim();
-siteSettings.footer["calendar"] = document.getElementById("footer-calendar").value.trim();
-siteSettings.footer["question"] = document.getElementById("footer-question").value.trim();
-siteSettings.footer["rss"] = document.getElementById("footer-rss").value.trim();
-siteSettings.footer["star"] = document.getElementById("footer-star").value.trim();
-siteSettings.footer["bell"] = document.getElementById("footer-bell").value.trim();
-siteSettings.footer["users"] = document.getElementById("footer-users").value.trim();
-siteSettings.footer["social"] = document.getElementById("footer-social").value.trim();
-siteSettings.footer["lock"] = document.getElementById("footer-lock").value.trim();
-siteSettings.footer["cart"] = document.getElementById("footer-cart").value.trim();
-siteSettings.footer["hashtag"] = document.getElementById("footer-hashtag").value.trim();
-siteSettings.footer["warning"] = document.getElementById("footer-warning").value.trim();
-siteSettings.footer["tag"] = document.getElementById("footer-tag").value.trim();
-siteSettings.footer["menu"] = document.getElementById("footer-menu").value.trim();
+  siteSettings.footer.enabled = enableFooter.checked;
+  siteSettings.footer.bg = footerBg.value;
+  siteSettings.footer.text = footerText.value;
+  siteSettings.footer.phone = footerPhone.value.trim();
+  siteSettings.footer.email = footerEmail.value.trim();
+  siteSettings.footer.address = footerAddress.value.trim();
 siteSettings.footer["android-robot"] = document.getElementById("footer-android-robot").value.trim();
 siteSettings.footer["apple"] = document.getElementById("footer-apple").value.trim();
 siteSettings.footer["bag"] = document.getElementById("footer-bag").value.trim();
@@ -2101,23 +2067,6 @@ siteSettings.footer["link"] = document.getElementById("footer-link").value.trim(
 
 function buildSocialIcons() {
  const socials = [
-  { key: 'info', icon: 'info' },
-  { key: 'comments', icon: 'comments' },
-  { key: 'mail', icon: 'mail' },
-  { key: 'heart', icon: 'heart' },      
-  { key: 'calendar', icon: 'calendar' },
-  { key: 'question', icon: 'question' },
-  { key: 'rss', icon: 'rss' },
-  { key: 'star', icon: 'star' },
-  { key: 'bell', icon: 'bell' },
-  { key: 'users', icon: 'users' },
-  { key: 'social', icon: 'social' },
-  { key: 'lock', icon: 'lock' },
-  { key: 'cart', icon: 'cart' },
-  { key: 'hashtag', icon: 'hashtag' },
-  { key: 'warning', icon: 'warning' },
-  { key: 'tag', icon: 'tag' },
-  { key: 'menu', icon: 'menu' },
   { key: 'android-robot', icon: 'android-robot' },
   { key: 'apple', icon: 'apple' },
   { key: 'bag', icon: 'bag' },
