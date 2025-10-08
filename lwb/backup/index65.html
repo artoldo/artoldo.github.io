@@ -243,7 +243,7 @@
 <a class="uk-icon-button" id="footerBtn" uk-icon="more" uk-tooltip="Footer Settings"></a>
 <a class="uk-icon-button" id="addTextBtn" uk-icon="file-text" uk-tooltip="Add Text"></a>
 <a class="uk-icon-button" id="addImageBtn" uk-icon="image" uk-tooltip="Add Image"></a>
-<a class="uk-icon-button" id="addGalleryBtn" uk-icon="thumbnails" uk-tooltip="Add Gallery"></a>
+<a class="uk-icon-button" id="addGalleryBtn" uk-icon="thumbnails" uk-tooltip="Add Image Gallery"></a>
 <a class="uk-icon-button" id="addVideoBtn" uk-icon="video-camera" uk-tooltip="Add Video"></a>
 <a class="uk-icon-button" id="embedCodeBtn" uk-icon="code" uk-tooltip="Add Embed Code"></a>
 <a class="uk-icon-button" id="previewBtn" uk-icon="eye" uk-tooltip="Preview"></a>
@@ -406,7 +406,7 @@
 <div id="text-modal" uk-modal="">
 <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
 <button class="uk-modal-close-default uk-border-rounded" type="button" uk-close=""></button>
-<h3 class="uk-modal-title" id="text-modal-title">Add Animated Text</h3>
+<h3 class="uk-modal-title" id="text-modal-title">Add Text</h3>
 <form id="text-form">
 <input id="text-index" type="hidden" value=""/>
 <div class="uk-margin">
@@ -1014,7 +1014,6 @@ function generateFontCSS() {
         // Editor logic
         const editorRoot = document.getElementById('live-editor-root');
         const addImageBtn = document.getElementById('addImageBtn');
-        const addGalleryBtn = document.getElementById('addGalleryBtn');
         const addVideoBtn = document.getElementById('addVideoBtn');
         const mediaModal = UIkit.modal('#media-modal');
         const mediaForm = document.getElementById('media-form');
@@ -1268,9 +1267,7 @@ footer: {
 
                 resetPrevFileBox();
                 mediaFile.value = '';
-
-                if (type === 'image') mediaFile.accept = 'image/*';
-                else if (type === 'gallery') mediaFile.accept = 'image/*';
+                mediaFile.accept = type === 'image' ? 'image/*' : 'video/*';
 
                 if (!data.url && data.fileName && data.fileData) {
                     editingPrevFileName = data.fileName;
@@ -1310,12 +1307,6 @@ footer: {
             setupModal('image');
             mediaModal.show();
         });
-
-        addGalleryBtn.addEventListener('click', () => {
-        setupModal('gallery');
-        mediaModal.show();
-        });
-
         addVideoBtn.addEventListener('click', () => {
             setupModal('video');
             mediaModal.show();
@@ -1440,6 +1431,10 @@ settingsForm.addEventListener('submit', e => {
 });
 
 function getExportSectionHtml(block, exportMap) {
+
+if (block.type === 'gallery') {
+    return block.html;
+  }
     if (block.type === 'text') {
         return `
         <div class="uk-section uk-section-muted uk-flex uk-flex-center uk-flex-middle"
@@ -1452,23 +1447,6 @@ function getExportSectionHtml(block, exportMap) {
         </div>`;
     }
 
-if (block.type === 'gallery') {
-    const imgs = (block.images || [])
-        .map(i => `<div><img src="${i.src}" style="width:100%;height:auto;object-fit:cover;" alt=""></div>`)
-        .join('');
-    return `
-    <div class="uk-section" style="background:${block.bgColor || '#000'};">
-        <div class="uk-container uk-text-center" style="color:${block.headingColor || '#fff'};">
-            ${block.heading ? `<h2 class="live-heading">${block.heading}</h2>` : ''}
-            ${block.subtitle ? `<div class="live-subtitle">${block.subtitle}</div>` : ''}
-            ${block.paragraph ? `<p class="live-paragraph">${block.paragraph}</p>` : ''}
-            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
-                ${imgs}
-            </div>
-        </div>
-    </div>`;
-}
-
 if (block.type === 'embed') {
     return `
         <div style="position:relative; width:100%; height:100vh; margin:0; padding:0; background:${block.bgColor || '#000'};">
@@ -1478,24 +1456,6 @@ if (block.type === 'embed') {
             </iframe>
         </div>
     `;
-}
-
-
-if (block.type === 'gallery') {
-    const imgs = (block.images || [])
-        .map(i => `<div><img src="${i.src}" style="width:100%;height:auto;object-fit:cover;" alt=""></div>`)
-        .join('');
-    return `
-    <div class="uk-section" style="background:${block.bgColor || '#000'};">
-        <div class="uk-container uk-text-center" style="color:${block.headingColor || '#fff'};">
-            ${block.heading ? `<h2 class="live-heading">${block.heading}</h2>` : ''}
-            ${block.subtitle ? `<div class="live-subtitle">${block.subtitle}</div>` : ''}
-            ${block.paragraph ? `<p class="live-paragraph">${block.paragraph}</p>` : ''}
-            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid>
-                ${imgs}
-            </div>
-        </div>
-    </div>`;
 }
 
     return getMediaSectionHtml(block, exportMap);
@@ -1838,114 +1798,29 @@ UIkit.util.on(editorRoot, 'moved', function(e) {
       applyCustomCSS(); // re-render to update section-ids and dynamic navbar
 });
 
-// Modal submission
-mediaForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
+        // Modal submission
+        mediaForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            let file = mediaFile.files[0];
+            let url = mediaUrl.value.trim();
+            let heading = mediaHeading.value || '';
+            let headingColor = mediaColor.value || '#ffffff';
+            let headingSizeVal = headingSize.value || 'uk-heading-2xlarge';
+            let mediaSizeVal = mediaSize.value;
+            let bgColorVal = bgColor.value || "#000000";
+            let btnLabelVal = btnLabel.value.trim();
+            let btnUrlVal = btnUrl.value.trim();
+            let btnColorVal = btnColor.value;
+            // New
+            let subtitleVal = mediaSubtitle.value || '';
+            let subtitleSizeVal = subtitleSize.value || 'uk-heading-medium';
+            let subtitleColorVal = subtitleColor.value || '#ffffff';
+            let paragraphVal = mediaParagraph.value || '';
+            let paragraphSizeVal = paragraphSize.value || '';
+            let paragraphColorVal = paragraphColor.value || '#ffffff';
 
-    // --- GALLERY FIX START ---
-    if (currentMediaType === 'gallery') {
-        const files = mediaFile.files;
-        if (!files.length) {
-            UIkit.notification({ message: 'Please upload at least one image.', status: 'warning' });
-            return;
-        }
+            let idx = sectionIndex.value ? parseInt(sectionIndex.value) : null;
 
-        const galleryImages = [];
-        for (let f of files) {
-            const fileData = await new Promise(res => {
-                const reader = new FileReader();
-                reader.onload = e => res(e.target.result);
-                reader.readAsDataURL(f);
-            });
-            galleryImages.push({ src: fileData, name: f.name });
-        }
-
-        const block = {
-            id: 'sec-' + Math.random().toString(36).substr(2, 9),
-            type: 'gallery',
-            heading: mediaHeading.value || '',
-            headingColor: mediaColor.value || '#ffffff',
-            bgColor: bgColor.value || '#000000',
-            subtitle: mediaSubtitle.value || '',
-            subtitleColor: subtitleColor.value || '#ffffff',
-            paragraph: mediaParagraph.value || '',
-            paragraphColor: paragraphColor.value || '#ffffff',
-            images: galleryImages
-        };
-
-        const idx = sectionIndex.value ? parseInt(sectionIndex.value) : null;
-        if (idx !== null && !isNaN(idx)) allSections[idx] = block;
-        else allSections.push(block);
-
-        renderAllSections();
-        applyFontLink();
-        applyCustomCSS();
-        mediaModal.hide();
-        return;
-    }
-    // --- GALLERY FIX END ---
-
-    let file = mediaFile.files[0];
-    let url = mediaUrl.value.trim();
-    let heading = mediaHeading.value || '';
-    let headingColor = mediaColor.value || '#ffffff';
-    let headingSizeVal = headingSize.value || 'uk-heading-2xlarge';
-    let mediaSizeVal = mediaSize.value;
-    let bgColorVal = bgColor.value || "#000000";
-    let btnLabelVal = btnLabel.value.trim();
-    let btnUrlVal = btnUrl.value.trim();
-    let btnColorVal = btnColor.value;
-    let subtitleVal = mediaSubtitle.value || '';
-    let subtitleSizeVal = subtitleSize.value || 'uk-heading-medium';
-    let subtitleColorVal = subtitleColor.value || '#ffffff';
-    let paragraphVal = mediaParagraph.value || '';
-    let paragraphSizeVal = paragraphSize.value || '';
-    let paragraphColorVal = mediaParagraph.value || '#ffffff';
-
-    let idx = sectionIndex.value ? parseInt(sectionIndex.value) : null;
-
-    if (!url && file) {
-        let reader = new FileReader();
-        reader.onload = function (event) {
-            saveMediaBlock(event.target.result);
-        };
-        reader.readAsDataURL(file);
-    } else {
-        saveMediaBlock(url);
-    }
-
-    function saveMediaBlock(mediaSrc) {
-        const block = {
-            id: idx !== null && !isNaN(idx)
-                ? allSections[idx].id
-                : 'sec-' + Math.random().toString(36).substr(2, 9),
-            type: currentMediaType,
-            url: mediaSrc,
-            heading: heading,
-            headingColor: headingColor,
-            headingSize: headingSizeVal,
-            bgColor: bgColorVal,
-            btnLabel: btnLabelVal,
-            btnUrl: btnUrlVal,
-            btnColor: btnColorVal,
-            subtitle: subtitleVal,
-            subtitleSize: subtitleSizeVal,
-            subtitleColor: subtitleColorVal,
-            paragraph: paragraphVal,
-            paragraphSize: paragraphSizeVal,
-            paragraphColor: paragraphColorVal,
-            mediaSize: mediaSizeVal
-        };
-
-        if (idx !== null && !isNaN(idx)) allSections[idx] = block;
-        else allSections.push(block);
-
-        renderAllSections();
-        applyFontLink();
-        applyCustomCSS();
-        mediaModal.hide();
-    }
-});
 function generateId() {
     return 'sec-' + Math.random().toString(36).substr(2, 9);
 }
@@ -2677,6 +2552,34 @@ ${exportBlocks}
   ${buildFooterHtml()}
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit.min.js"><\/script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/js/uikit-icons.min.js"><\/script>
+<script>
+  // In preview: replace big data: URLs with cheap blob: URLs so Lightbox won't choke.
+  (function () {
+    function dataToBlobUrl(dataUrl) {
+      // Turn a data:image/... URL into a Blob URL
+      return fetch(dataUrl)
+        .then(r => r.blob())
+        .then(b => URL.createObjectURL(b));
+    }
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const anchors = Array.from(document.querySelectorAll('[uk-lightbox] a[href^="data:image/"]'));
+  for (const a of anchors) {
+    try {
+      // Tell UIkit these are images
+      a.setAttribute('data-type', 'image');
+      // Swap heavy data: → fast blob:
+      a.href = await dataToBlobUrl(a.href);
+    } catch (e) {
+      // Safety: block navigation if conversion fails
+      a.addEventListener('click', ev => ev.preventDefault(), { once: true, capture: true });
+    }
+  }
+  if (window.UIkit && UIkit.update) UIkit.update();
+});
+
+  })();
+<\/script>
 </body>
 </html>
 `;
@@ -2687,7 +2590,8 @@ ${exportBlocks}
     previewWindow.document.close();
 });
 
-        // Export as HTML+media ZIP
+
+// Export as HTML+media ZIP
  exportHTMLBtn.addEventListener('click', async function() {
     const JSZip = window.JSZip;
     const zip = new JSZip();
@@ -2706,6 +2610,47 @@ ${exportBlocks}
             fileIdx++;
         }
     });
+
+// --- GALLERY: pull data:image files into /media and rewrite HTML ---
+const galleryTasks = {}; // { [sectionIndex]: { raw, replacements[] } }
+
+allSections.forEach((block, idx) => {
+  if (block.type !== 'gallery' || !block.html) return;
+
+  const raw = block.html;
+  const seen = new Set();
+  let counter = 0;
+  const replacements = [];
+  const rx = /(href|src)="(data:image\/[^"]+)"/g;
+  let m;
+
+  while ((m = rx.exec(raw)) !== null) {
+    const dataUrl = m[2];
+    if (seen.has(dataUrl)) continue;
+    seen.add(dataUrl);
+
+    // derive extension from MIME
+    const mimeMatch = dataUrl.match(/^data:([^;]+)/);
+    let ext = 'png';
+    if (mimeMatch && mimeMatch[1]) {
+      const mt = mimeMatch[1].toLowerCase();
+      ext = mt.endsWith('svg+xml') ? 'svg' : (mt.split('/')[1] || 'png');
+      if (ext === 'jpeg') ext = 'jpg';
+    }
+
+    const newName = `gallery${idx + 1}_img${++counter}.${ext}`;
+    replacements.push({ from: dataUrl, to: `media/${newName}` });
+
+    // queue file into the zip
+    promises.push(
+      fetch(dataUrl)
+        .then(r => r.blob())
+        .then(blob => zip.file(`media/${newName}`, blob))
+    );
+  }
+
+  galleryTasks[idx] = { raw, replacements };
+});
 
 // Include navbar logo in export (blob -> /media/logo.<ext>)
 if (siteSettings.navbar.logoBlob && siteSettings.navbar.logoFileName) {
@@ -2733,12 +2678,25 @@ if (siteSettings.socialBlob && siteSettings.socialFileName) {
 
     await Promise.all(promises);
 
+// --- Build per-gallery export HTML from recorded replacements ---
+const galleryExportHtml = {};
+Object.keys(galleryTasks).forEach(k => {
+  let out = galleryTasks[k].raw;
+  for (const rep of galleryTasks[k].replacements) {
+    // replace every occurrence of the data: URL with its media/ path
+    out = out.split(rep.from).join(rep.to);
+  }
+  galleryExportHtml[k] = out;
+});
 
-let exportBlocks = allSections.map((block, idx) =>
-    `<section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
-        ${getExportSectionHtml(block, exportMap)}
-    </section>`
-).join('\n');
+let exportBlocks = allSections.map((block, idx) => {
+  const inner = (block.type === 'gallery' && galleryExportHtml[idx])
+    ? galleryExportHtml[idx]
+    : getExportSectionHtml(block, exportMap);
+  return `<section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
+    ${inner}
+  </section>`;
+}).join('\n');
 
     let navBarHtml = buildPreviewDynamicNavBarHtml();
 
@@ -3024,14 +2982,29 @@ function promptVimeo() {
 </script>
 
 <script>
+async function fixLightboxAnchors(root) {
+  const links = Array.from(root.querySelectorAll('[uk-lightbox] a[href^="data:image/"], [uk-lightbox] a[href^="blob:"]'));
+  await Promise.all(links.map(async (a) => {
+    a.setAttribute('data-type', 'image');
+    if (a.href.startsWith('data:image/')) {
+      const blob = await fetch(a.href).then(r => r.blob());
+      a.href = URL.createObjectURL(blob);
+    }
+  }));
+  if (window.UIkit && UIkit.update) UIkit.update(root);
+}
+</script>
+
+<script>
   // Enhance media elements (images, iframes, videos)
   function enhanceMedia(root) {
+
     // Lazy-load images
-    root.querySelectorAll('img').forEach(img => {
-      if (!img.hasAttribute('loading')) {
-        img.setAttribute('loading', 'lazy');
-      }
-    });
+root.querySelectorAll('img').forEach(img => {
+if (!img.closest('[uk-lightbox]') && !img.hasAttribute('loading')) {
+img.setAttribute('loading', 'lazy');
+}
+});
 
     // Lazy-load iframes
     root.querySelectorAll('iframe').forEach(frame => {
@@ -3051,6 +3024,9 @@ function promptVimeo() {
       video.setAttribute('muted', '');       // ensures autoplay works
       video.setAttribute('playsinline', ''); // important for mobile
     });
+
+root.querySelectorAll('[uk-lightbox]').forEach(lb => { fixLightboxAnchors(lb); });
+
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -3078,17 +3054,22 @@ function promptVimeo() {
 <div id="gallery-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-border-rounded uk-width-1-1 uk-margin-auto">
     <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h3 class="uk-modal-title">Gallery Maker</h3>
+    <h3 class="uk-modal-title">Add Image Gallery</h3>
 
     <div class="uk-margin">
       <label class="uk-form-label">Title</label>
-      <input class="uk-input" type="text" id="gm-title" placeholder="e.g. Sara Ferro">
+      <input class="uk-input" type="text" id="gm-title" placeholder="Your Gallery name">
     </div>
 
     <div class="uk-margin">
       <label class="uk-form-label">Subtitle</label>
-      <input class="uk-input" type="text" id="gm-subtitle" placeholder="e.g. Album name">
+      <input class="uk-input" type="text" id="gm-subtitle" placeholder="Your Album name">
     </div>
+
+<div class="uk-margin">
+  <label class="uk-form-label">Background Color </label>
+  <input class="uk-input uk-form-width-xsmall uk-form-small" type="color" id="gm-bgcolor" value="#000000" style="padding:0;">
+</div>
 
     <div class="uk-margin">
       <label class="uk-form-label">Select Images</label>
@@ -3147,21 +3128,24 @@ function gmEscapeHtml(s=''){
 
 // Unified save (new + edit)
 window.saveGallery = function(){
-  const title = (document.getElementById('gm-title')?.value || 'Gallery').trim();
-  const subtitle = (document.getElementById('gm-subtitle')?.value || 'gallery').trim();
+const title = (document.getElementById('gm-title')?.value || '').trim();
+const subtitle = (document.getElementById('gm-subtitle')?.value || '').trim();
 
   const items = Array.from(document.querySelectorAll('#gm-gallery .uk-card'));
   let imagesHtml = '';
   items.forEach(card => {
     const img = card.querySelector('img');
     const cap = card.querySelector('input')?.value || '';
-    imagesHtml += `<div><a href="${img.src}" data-caption="${gmEscapeHtml(cap)}"><img class="uk-border-rounded" src="${img.src}" alt=""></a></div>\n`;
+    imagesHtml += `<div><a class="uk-inline" data-type="image" href="${img.src}" data-caption="${gmEscapeHtml(cap)}"><img class="uk-border-rounded" src="${img.src}" alt=""></a></div>\n`;
   });
+
+const titleHtml    = title    ? `<h1 class="uk-heading-line uk-text-center"><span>${gmEscapeHtml(title)}</span></h1>` : '';
+const subtitleHtml = subtitle ? `<h3 class="uk-text-meta uk-text-center">${gmEscapeHtml(subtitle)}</h3>` : '';
 
 const newHtml = `
   <div class="uk-container uk-padding">
-    <h1 class="uk-heading-line uk-text-center"><span>${gmEscapeHtml(title)}</span></h1>
-    <h3 class="uk-text-meta uk-text-center">${gmEscapeHtml(subtitle)}</h3>
+    ${titleHtml}
+    ${subtitleHtml}
     <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m"
          uk-grid uk-lightbox="animation: slide; toggle: a">
       ${imagesHtml.trim()}
