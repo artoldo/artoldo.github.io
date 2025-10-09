@@ -3130,6 +3130,7 @@ function gmEscapeHtml(s=''){
 window.saveGallery = function(){
 const title = (document.getElementById('gm-title')?.value || '').trim();
 const subtitle = (document.getElementById('gm-subtitle')?.value || '').trim();
+const bgColor = document.getElementById('gm-bgcolor')?.value || '#000000';
 
   const items = Array.from(document.querySelectorAll('#gm-gallery .uk-card'));
   let imagesHtml = '';
@@ -3156,14 +3157,19 @@ const newHtml = `
   if (editingGalleryId) {
     // Update existing
     const block = allSections.find(b => b.id === editingGalleryId);
-    if (block) block.html = newHtml;
+
+if (block) {
+ block.html = newHtml;
+ block.bgColor = bgColor;
+}
     editingGalleryId = null;
   } else {
     // Create new
     const block = {
       id: 'sec-' + Math.random().toString(36).substr(2, 9),
       type: 'gallery',
-      html: newHtml
+      html: newHtml,
+      bgColor
     };
     allSections.push(block);
   }
@@ -3182,6 +3188,7 @@ window.editGallery = function(id) {
   document.getElementById('gm-title').value = '';
   document.getElementById('gm-subtitle').value = '';
   document.getElementById('gm-gallery').innerHTML = '';
+  document.getElementById('gm-bgcolor').value = block.bgColor || '#000000';
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(block.html, "text/html");
