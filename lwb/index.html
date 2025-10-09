@@ -361,15 +361,11 @@ input[type="color"]:hover {
   align-self: center;
 }
 
-#live-editor-root { contain: paint; }
-
-/* Prevent background flashes under modals */
-.uk-modal { background: rgba(0,0,0,0.7) !important; }
-.uk-modal-dialog { backface-visibility: hidden; transform: translateZ(0); }
-
-/* Inside modals: keep color pickers steady (no hover scale → fewer repaints) */
-.uk-modal input[type="color"] { transition: none; }
-.uk-modal input[type="color"]:hover { transform: none; }
+/* Prevent repaint flicker when color pickers are inside a modal */
+.uk-modal input[type="color"] {
+  transition: none !important;
+  transform: none !important;
+}
 
 </style>
 </head>
