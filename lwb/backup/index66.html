@@ -367,6 +367,28 @@ input[type="color"]:hover {
   transform: none !important;
 }
 
+/* 1) Blur the background behind UIkit modals (no fade) */
+.uk-modal {
+  /* must have some alpha for backdrop-filter to apply */
+  background: rgba(17, 18, 20, 0.25) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  backdrop-filter: blur(12px) saturate(120%);
+  transition: none !important;
+}
+.uk-modal.uk-open { opacity: 1 !important; }
+
+/* 2) While any modal is open, "freeze" the page behind it */
+#page { contain: paint; } /* cheaper repaints by default */
+html.uk-modal-page #page {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  pointer-events: none; /* prevents hover/animations under overlay */
+}
+
+/* 3) Cancel hover transforms that might still run under the overlay */
+html.uk-modal-page input[type="color"]:hover { transform: none !important; }
+html.uk-modal-page .hover-zoom { transition: none !important; transform: none !important; }
+
 </style>
 </head>
 <body id="top">
