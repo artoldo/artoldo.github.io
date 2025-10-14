@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Polyglottolalia [versicon]</title>
+  <link rel="stylesheet" href="https://artoldo.github.io/css/uikit.min.css">
+  <link rel="stylesheet" href="https://artoldo.github.io/custom.css">
+  <script src="https://artoldo.github.io/js/uikit.min.js"></script>
+  <script src="https://artoldo.github.io/js/uikit-icons.min.js"></script>
+  <style>
+.section {
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.editor-toolbar {
+  position: fixed;
+  top: 10px;
+  right: 24px;
+  z-index: 1000;
+  display: none;
+}
+.sticky-nav {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+.sticky-nav .uk-button {
+  min-width: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
+}
+.dropcap {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+.uk-notification-message {
+  min-width: 320px;
+  max-width: 90vw;
+  font-size: small;
+  background-color: #fff;
+  border-radius: 10px;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.uk-modal.uk-open .uk-button {
+  border-radius: 9999px !important;
+}
+.uk-modal-dialog {
+  border-radius: 16px !important;
+}
+input, select {
+  border-radius: 8px !important;
+}
+.language-chooser {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  z-index: 10;
+  background: rgba(255,255,255,0.96);
+  border-radius: 25px;
+}
+.language-chooser .uk-button {
+  margin: 0;
+}
+#language-chooser .uk-dropdown {
+    border-radius: 15px !important;
+    min-width: 260px;
+}
+[contenteditable="true"] {
+  outline: none;
+  min-height: 80px;
+  border: 1px solid #ccc;
+  padding: 1em;
+  background: #fafafa;
+}
+.entry-content {
+  font-size: 1.18em;
+  line-height: 1.7;
+  font-family: system-ui, Arial, sans-serif;
+}
+.center-media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0 24px 0;
+}
+.editor-rich-toolbar {
+  margin-bottom: 6px;
+  display: flex;
+  gap: 0.5em;
+}
+.editor-rich-toolbar button {
+  min-width: 32px;
+  min-height: 32px;
+}
+.edit-lang-add-select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 1rem;
+    line-height: 40px;
+    color: #222;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+}
+.edit-lang-add-select:focus {
+    border-color: #1e87f0;
+    outline: 0;
+    background: #fff;
+}
+.edit-lang-tabs .lang-tab-plus {
+  font-size: 22px;
+  font-weight: normal;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0.5em;
+  vertical-align: middle;
+}
+.edit-lang-tabs .lang-tab-plus:hover {
+  color: #111;
+}
+.add-lang-select-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.uk-tab>*>a {
+  font-size: 17px;
+}
+@media (max-width: 800px) {
+  .language-chooser { left: 10px; }
+}
+@media (max-width: 480px) {
+  .sticky-nav .uk-button { font-size: 14px; padding: 0 4px; }
+}
+  </style>
+
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+</script>
+
+</head>
+<body>
+
+
+<div class="uk-container uk-text-center uk-padding-large">
+  <h1><strong>Poly</strong><span class="uk-text-lighter">glottolalia</span></h1>
+  <h2 class="Uk-heading uk-text-lighter">[versicon]</h2>
+  <h3><strong>Poesie</strong> dal <strong>Poliverso</strong></h3>
+  <h4>The collected works of <strong>ARTOLDO</strong><br>– <strong>Sara Ferro</strong> and <strong>Chris Weil</strong> –</h4>
+</div>
+
+<div id="language-chooser" class="language-chooser">
+  <div class="uk-inline">
+    <button class="uk-button uk-button-default uk-border-pill" type="button" id="lang-btn-current" aria-haspopup="true">
+      <span uk-icon="icon: world" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M1,10.5 L19,10.5"></path><path fill="none" stroke="#000" d="M2.35,15.5 L17.65,15.5"></path><path fill="none" stroke="#000" d="M2.35,5.5 L17.523,5.5"></path><path fill="none" stroke="#000" d="M10,19.46 L9.98,19.46 C7.31,17.33 5.61,14.141 5.61,10.58 C5.61,7.02 7.33,3.83 10,1.7 C10.01,1.7 9.99,1.7 10,1.7 L10,1.7 C12.67,3.83 14.4,7.02 14.4,10.58 C14.4,14.141 12.67,17.33 10,19.46 L10,19.46 L10,19.46 L10,19.46 Z"></path><circle fill="none" stroke="#000" cx="10" cy="10.5" r="9"></circle></svg></span>
+      <span id="lang-btn-label">IT</span>
+      <span uk-icon="icon: triangle-down" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polygon points="5 7 15 7 10 12"></polygon></svg></span>
+    </button>
+    <div uk-dropdown="mode: click; pos: bottom-left; offset: 4" class="uk-drop uk-dropdown">
+      <ul class="uk-nav uk-dropdown-nav" id="main-lang-dropdown"><li><a href="#" onclick="setLanguage('IT');return false;">IT - Italiano (Italian)</a></li></ul>
+    </div>
+  </div>
+</div>
+<div class="editor-toolbar uk-button-group" style="display: block;">
+  <button class="uk-button uk-button-secondary uk-border-pill" id="add-btn" type="button">Add</button>
+  <button class="uk-button uk-button-primary uk-border-pill" id="save-btn" type="button">Save</button>
+</div>
+<div class="sticky-nav uk-button-group">
+  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
+    <span uk-icon="icon: chevron-up; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="4 13 10 7 16 13"></polyline></svg></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Next" onclick="scrollToNext()">
+    <span uk-icon="icon: chevron-down; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="16 7 10 13 4 7"></polyline></svg></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Random" onclick="scrollToRandom()">
+    <span uk-icon="icon: bolt; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><path d="M4.74,20 L7.73,12 L3,12 L15.43,1 L12.32,9 L17.02,9 L4.74,20 L4.74,20 L4.74,20 Z M9.18,11 L7.1,16.39 L14.47,10 L10.86,10 L12.99,4.67 L5.61,11 L9.18,11 L9.18,11 L9.18,11 Z"></path></svg></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Copy Link" onclick="copyCurrentLink()">
+    <span uk-icon="icon: link; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Search" onclick="showSearchModal()">
+    <span uk-icon="icon: search; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="9" cy="9" r="7"></circle><path fill="none" stroke="#000" stroke-width="1.1" d="M14,14 L18,18 L14,14 Z"></path></svg></span>
+  </button>
+  <button class="uk-button uk-button-secondary" uk-tooltip="Glossary" onclick="UIkit.offcanvas('#glossary').show()" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+    <span uk-icon="icon: menu; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><rect width="16" height="1" x="2" y="4"></rect><rect width="16" height="1" x="2" y="9"></rect><rect width="16" height="1" x="2" y="14"></rect></svg></span>
+  </button>
+</div>
+<div id="glossary" uk-offcanvas="overlay: true" class="uk-offcanvas" style="" tabindex="-1">
+  <div class="uk-offcanvas-bar" role="dialog" aria-modal="true" style="">
+    <h3>Glossary</h3>
+    <div id="glossary-list"><div class="dropcap">A</div><div><a href="#23304207-d54a-4000-89e3-03533de44367">AT MOre SPHERES</a></div><div class="dropcap">B</div><div><a href="#599a7f1e-2519-4bc6-94ca-01f688943f53">Black Sudo Rising</a></div><div class="dropcap">C</div><div><a href="#f1e2340f-595b-43c9-99c8-69a7011c74f3">Clavis Artis</a></div><div class="dropcap">D</div><div><a href="#77f94329-0758-4c1f-8fe5-e2c394031ea0">Dead As A Dodo</a></div><div class="dropcap">E</div><div><a href="#99d86261-62e8-45e6-bdfe-523d09a246af">Earth 61250</a></div><div class="dropcap">F</div><div><a href="#2b0d557e-d8d4-432e-b366-5c58b7ae8ea6">Frammenti di una festa furiosa - Furio’s Furious Fragments and Friends</a></div><div class="dropcap">G</div><div><a href="#c5c65ead-faf4-459e-84ac-e7eb6e4f7a77">Germania Segreta</a></div><div class="dropcap">H</div><div><a href="#3ad6f09e-792e-42a0-a686-3864c8bec1f2">Hauntology of Marx</a></div><div class="dropcap">I</div><div><a href="#4e091a67-b8d3-4023-b5a9-f7e21ec114ee">Il Falegname Di Ottobrunn</a></div><div class="dropcap">J</div><div><a href="#0e009901-9a89-4aee-b04d-883777625771">Jobs Act: Cancel Culture</a></div><div class="dropcap">K</div><div><a href="#8c84a922-966a-4bcf-8990-d6e97cb09d75">Kaltcaldo</a></div><div class="dropcap">L</div><div><a href="#9a751a21-42c3-417c-b231-d9a13fe9460b">Luther Blissett Legacy</a></div><div class="dropcap">M</div><div><a href="#68904c9b-eb03-4659-9a28-c71be4cc03ab">Mascara Cartridge Déjà War</a></div><div class="dropcap">N</div><div><a href="#662141cf-e02b-4f6b-adc4-bc85f5545384">Night Terror</a></div><div class="dropcap">O</div><div><a href="#4599f764-87b8-4dc6-a7f9-bf35cfa20031">Otium &amp; The City</a></div><div class="dropcap">P</div><div><a href="#388864ab-2d42-4c94-914c-f5519b5c77a1">Prampolini-Menarini Express</a></div><div class="dropcap">Q</div><div><a href="#ed946196-fe66-40e7-b5c0-505023480339">Queen of the Lunaparking</a></div><div class="dropcap">R</div><div><a href="#cddb2cb2-7a91-47f9-8dd8-fc6e5765c921">Raggio d’Acciaio</a></div><div class="dropcap">S</div><div><a href="#33a8521a-0ec9-4372-9026-0a324a11db19">Sineddoche Torino</a></div><div class="dropcap">T</div><div><a href="#e0ce1381-f843-4a91-b1bc-e77a3928d616">Timor Panicus</a></div><div class="dropcap">U</div><div><a href="#d7fd5c71-bf8d-49a2-b641-45435709056c">UFO’ Sing Song</a></div><div class="dropcap">V</div><div><a href="#b52778aa-f206-4200-b43d-7604109572e0">Vespertilio Spillover</a></div><div class="dropcap">W</div><div><a href="#adaf6913-12c8-4fe2-b541-45a4e00c28fc">WhimSeaCall</a></div><div class="dropcap">Y</div><div><a href="#fda3970e-0d2e-4670-9f35-7bfb7b96e203">YouTube Recycling Machine</a></div><div class="dropcap">Z</div><div><a href="#f5a667c3-ef09-4e88-9884-87b0b5565391">Zoroaster Superstar</a></div></div>
+  </div>
+</div>
+<div id="container"><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="23304207-d54a-4000-89e3-03533de44367" data-index="0">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">AT MOre SPHERES</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(0)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="599a7f1e-2519-4bc6-94ca-01f688943f53" data-index="1">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Black Sudo Rising</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(1)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="f1e2340f-595b-43c9-99c8-69a7011c74f3" data-index="2">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Clavis Artis</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(2)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="77f94329-0758-4c1f-8fe5-e2c394031ea0" data-index="3">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Dead As A Dodo</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(3)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="99d86261-62e8-45e6-bdfe-523d09a246af" data-index="4">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Earth 61250</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(4)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="2b0d557e-d8d4-432e-b366-5c58b7ae8ea6" data-index="5">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Frammenti di una festa furiosa - Furio’s Furious Fragments and Friends</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(5)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="c5c65ead-faf4-459e-84ac-e7eb6e4f7a77" data-index="6">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Germania Segreta</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(6)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="3ad6f09e-792e-42a0-a686-3864c8bec1f2" data-index="7">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Hauntology of Marx</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(7)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="4e091a67-b8d3-4023-b5a9-f7e21ec114ee" data-index="8">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Il Falegname Di Ottobrunn</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(8)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="0e009901-9a89-4aee-b04d-883777625771" data-index="9">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Jobs Act: Cancel Culture</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(9)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="8c84a922-966a-4bcf-8990-d6e97cb09d75" data-index="10">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Kaltcaldo</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(10)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="9a751a21-42c3-417c-b231-d9a13fe9460b" data-index="11">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Luther Blissett Legacy</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(11)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="68904c9b-eb03-4659-9a28-c71be4cc03ab" data-index="12">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Mascara Cartridge Déjà War</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(12)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="662141cf-e02b-4f6b-adc4-bc85f5545384" data-index="13">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Night Terror</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(13)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="4599f764-87b8-4dc6-a7f9-bf35cfa20031" data-index="14">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Otium &amp; The City</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(14)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="388864ab-2d42-4c94-914c-f5519b5c77a1" data-index="15">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Prampolini-Menarini Express</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(15)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="ed946196-fe66-40e7-b5c0-505023480339" data-index="16">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Queen of the Lunaparking</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(16)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="cddb2cb2-7a91-47f9-8dd8-fc6e5765c921" data-index="17">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Raggio d’Acciaio</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(17)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="33a8521a-0ec9-4372-9026-0a324a11db19" data-index="18">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Sineddoche Torino</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(18)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="e0ce1381-f843-4a91-b1bc-e77a3928d616" data-index="19">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Timor Panicus</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(19)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="d7fd5c71-bf8d-49a2-b641-45435709056c" data-index="20">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">UFO’ Sing Song</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(20)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="b52778aa-f206-4200-b43d-7604109572e0" data-index="21">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Vespertilio Spillover</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(21)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="adaf6913-12c8-4fe2-b541-45a4e00c28fc" data-index="22">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">WhimSeaCall</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(22)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="fda3970e-0d2e-4670-9f35-7bfb7b96e203" data-index="23">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">YouTube Recycling Machine</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(23)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="f5a667c3-ef09-4e88-9884-87b0b5565391" data-index="24">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">Zoroaster Superstar</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(24)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content"></div>
+      </div>
+    </div></div>
+<div id="edit-modal" uk-modal="" class="uk-modal" style="" tabindex="-1">
+  <div class="uk-modal-dialog uk-modal-body" role="dialog" aria-modal="true">
+    <h2 class="uk-modal-title">Edit Entry</h2>
+    <input class="uk-input uk-margin-small-bottom" id="edit-title" placeholder="Title">
+    <input class="uk-input uk-margin-small-bottom" id="edit-media" placeholder="Media URL">
+    <div id="edit-lang-add-container" class="uk-margin-small"></div>
+    <ul id="edit-lang-tabs" uk-tab="" class="edit-lang-tabs uk-tab" role="tablist"><li class="uk-active" role="presentation">
+      <a href="#" onclick="setEditLangTab(0); return false;" aria-selected="true" role="tab" id="uk-tab-102" aria-controls="uk-tab-103">
+        IT
+        
+      </a>
+    </li><li role="presentation">
+    <a href="#" onclick="showLangSelect=true;updateEditLangTabs();return false;" class="lang-tab-plus" uk-tooltip="Add language" aria-selected="false" tabindex="-1" role="tab">+</a>
+  </li></ul>
+    <ul id="edit-lang-switcher" class="uk-switcher uk-margin" role="presentation" style="touch-action: pan-y pinch-zoom;"><li class="uk-active" id="uk-tab-103" role="tabpanel" aria-labelledby="uk-tab-102">
+      
+  <div class="editor-rich-toolbar">
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bold ; pos: bottom" title="Bold" onclick="formatEditor('IT','bold')" aria-label="Bold">
+    <span uk-icon="bold" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5,15.3 C5.66,15.3 5.9,15 5.9,14.53 L5.9,5.5 C5.9,4.92 5.56,4.7 5,4.7 L5,4 L8.95,4 C12.6,4 13.7,5.37 13.7,6.9 C13.7,7.87 13.14,9.17 10.86,9.59 L10.86,9.7 C13.25,9.86 14.29,11.28 14.3,12.54 C14.3,14.47 12.94,16 9,16 L5,16 L5,15.3 Z M9,9.3 C11.19,9.3 11.8,8.5 11.85,7 C11.85,5.65 11.3,4.8 9,4.8 L7.67,4.8 L7.67,9.3 L9,9.3 Z M9.185,15.22 C11.97,15 12.39,14 12.4,12.58 C12.4,11.15 11.39,10 9,10 L7.67,10 L7.67,15 L9.18,15 Z"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Italic ; pos: bottom" title="Italic" onclick="formatEditor('IT','italic')" aria-label="Italic">
+    <span uk-icon="italic" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12.63,5.48 L10.15,14.52 C10,15.08 10.37,15.25 11.92,15.3 L11.72,16 L6,16 L6.2,15.31 C7.78,15.26 8.19,15.09 8.34,14.53 L10.82,5.49 C10.97,4.92 10.63,4.76 9.09,4.71 L9.28,4 L15,4 L14.81,4.69 C13.23,4.75 12.78,4.91 12.63,5.48 L12.63,5.48 Z"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Underline ; pos: bottom" title="Underline" onclick="formatEditor('IT','underline')" aria-label="Underline">
+    <span uk-icon="minus" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="18" height="1" x="1" y="9"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bullet ; pos: bottom" title="Bulleted List" onclick="formatEditor('IT','insertUnorderedList')" aria-label="Bullet">
+    <span uk-icon="more-vertical" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="3" r="2"></circle><circle cx="10" cy="10" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Numbered List ; pos: bottom" title="Numbered List" onclick="formatEditor('IT','insertOrderedList')" aria-label="Numbered">
+    <span uk-icon="list" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="12" height="1" x="6" y="4"></rect><rect width="12" height="1" x="6" y="9"></rect><rect width="12" height="1" x="6" y="14"></rect><rect width="2" height="1" x="2" y="4"></rect><rect width="2" height="1" x="2" y="9"></rect><rect width="2" height="1" x="2" y="14"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Left ; pos: bottom" title="Align Left" onclick="formatEditor('IT','justifyLeft')" aria-label="Left">
+    <span uk-icon="chevron-double-left" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 14 6 10 10 6"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="14 14 10 10 14 6"></polyline></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Center ; pos: bottom" title="Align Center" onclick="formatEditor('IT','justifyCenter')" aria-label="Center">
+    <span uk-icon="table" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="18" height="1" x="1" y="3"></rect><rect width="18" height="1" x="1" y="7"></rect><rect width="18" height="1" x="1" y="11"></rect><rect width="18" height="1" x="1" y="15"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Right ; pos: bottom" title="Align Right" onclick="formatEditor('IT','justifyRight')" aria-label="Right">
+    <span uk-icon="chevron-double-right" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 6 14 10 10 14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="6 6 10 10 6 14"></polyline></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Add Link ; pos: bottom" title="Add Link" onclick="insertLink('IT')" aria-label="Link">
+    <span uk-icon="link" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Remove Link ; pos: bottom" onclick="removeLink('IT')" aria-label="Remove Link" title="Remove Link">
+    <span uk-icon="ban" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="10" cy="10" r="9"></circle><line fill="none" stroke="#000" stroke-width="1.1" x1="4" y1="3.5" x2="16" y2="16.5"></line></svg></span>
+  </button>
+  </div>
+      <div id="editor-area-IT" contenteditable="true" class="uk-margin" style="border:1px solid #ccc;min-height:80px;padding:1em;text-align:left;"></div>
+    </li></ul>
+ <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-large-top">
+  <div>
+    <button class="uk-button uk-button-danger uk-border-pill" id="delete-btn" type="button">Delete</button>
+  </div>
+  <div>
+    <button class="uk-button uk-button-default uk-modal-close uk-border-pill" type="button">Cancel</button>
+    <button class="uk-button uk-button-primary uk-border-pill" id="save-edit-btn" type="button">Save</button>
+  </div>
+  </div>
+ </div>
+</div>
+<div id="search-modal" uk-modal="" class="uk-modal">
+  <div class="uk-modal-dialog uk-modal-body" role="dialog" aria-modal="true">
+    <h3>Search</h3>
+    <input id="search-input" class="uk-input" type="text" placeholder="Type to search..." oninput="renderSearchResults()" autofocus="">
+    <ul id="search-results" class="uk-list uk-list-divider uk-margin"></ul>
+    <button class="uk-button uk-button-default uk-modal-close uk-border-pill uk-align-right">Close</button>
+  </div>
+</div>
+
+<script>
+const ALL_LANGS = [{"code":"AF","name":"Afrikaans"},{"code":"AM","name":"አማርኛ (Amharic)"},{"code":"AR","name":"العربية (Arabic)"},{"code":"AZ","name":"Azərbaycan (Azerbaijani)"},{"code":"BE","name":"Беларуская (Belarusian)"},{"code":"BG","name":"Български (Bulgarian)"},{"code":"BN","name":"বাংলা (Bengali)"},{"code":"BS","name":"Bosanski (Bosnian)"},{"code":"CA","name":"Català (Catalan)"},{"code":"CS","name":"Čeština (Czech)"},{"code":"CY","name":"Cymraeg (Welsh)"},{"code":"DA","name":"Dansk (Danish)"},{"code":"DE","name":"Deutsch (German)"},{"code":"EL","name":"Ελληνικά (Greek)"},{"code":"EN","name":"English"},{"code":"ES","name":"Español (Spanish)"},{"code":"ET","name":"Eesti (Estonian)"},{"code":"EU","name":"Euskara (Basque)"},{"code":"FA","name":"فارسی (Persian)"},{"code":"FI","name":"Suomi (Finnish)"},{"code":"FR","name":"Français (French)"},{"code":"GA","name":"Gaeilge (Irish)"},{"code":"GL","name":"Galego (Galician)"},{"code":"GU","name":"ગુજરાતી (Gujarati)"},{"code":"HE","name":"עברית (Hebrew)"},{"code":"HI","name":"हिन्दी (Hindi)"},{"code":"HR","name":"Hrvatski (Croatian)"},{"code":"HU","name":"Magyar (Hungarian)"},{"code":"HY","name":"Հայերեն (Armenian)"},{"code":"ID","name":"Bahasa Indonesia"},{"code":"IS","name":"Íslenska (Icelandic)"},{"code":"IT","name":"Italiano (Italian)"},{"code":"JA","name":"日本語 (Japanese)"},{"code":"KA","name":"ქართული (Georgian)"},{"code":"KK","name":"Қазақ тілі (Kazakh)"},{"code":"KM","name":"ភាសាខ្មែរ (Khmer)"},{"code":"KN","name":"ಕನ್ನಡ (Kannada)"},{"code":"KO","name":"한국어 (Korean)"},{"code":"KU","name":"Kurdî (Kurdish)"},{"code":"KY","name":"Кыргызча (Kyrgyz)"},{"code":"LA","name":"Latina (Latin)"},{"code":"LB","name":"Lëtzebuergesch (Luxembourgish)"},{"code":"LT","name":"Lietuvių (Lithuanian)"},{"code":"LV","name":"Latviešu (Latvian)"},{"code":"MK","name":"Македонски (Macedonian)"},{"code":"ML","name":"മലയാളം (Malayalam)"},{"code":"MN","name":"Монгол (Mongolian)"},{"code":"MR","name":"मराठी (Marathi)"},{"code":"MS","name":"Bahasa Melayu (Malay)"},{"code":"MT","name":"Malti (Maltese)"},{"code":"NE","name":"नेपाली (Nepali)"},{"code":"NL","name":"Nederlands (Dutch)"},{"code":"NO","name":"Norsk (Norwegian)"},{"code":"PA","name":"ਪੰਜਾਬੀ (Punjabi)"},{"code":"PL","name":"Polski (Polish)"},{"code":"PS","name":"پښتو (Pashto)"},{"code":"PT","name":"Português (Portuguese)"},{"code":"RO","name":"Română (Romanian)"},{"code":"RU","name":"Русский (Russian)"},{"code":"SI","name":"සිංහල (Sinhala)"},{"code":"SK","name":"Slovenčina (Slovak)"},{"code":"SL","name":"Slovenščina (Slovenian)"},{"code":"SQ","name":"Shqip (Albanian)"},{"code":"SR","name":"Српски (Serbian)"},{"code":"SV","name":"Svenska (Swedish)"},{"code":"SW","name":"Kiswahili (Swahili)"},{"code":"TA","name":"தமிழ் (Tamil)"},{"code":"TE","name":"తెలుగు (Telugu)"},{"code":"TH","name":"ไทย (Thai)"},{"code":"TR","name":"Türkçe (Turkish)"},{"code":"UK","name":"Українська (Ukrainian)"},{"code":"UR","name":"اردو (Urdu)"},{"code":"UZ","name":"Oʻzbek (Uzbek)"},{"code":"VI","name":"Tiếng Việt (Vietnamese)"},{"code":"ZH","name":"中文 (Chinese – Simplified)"},{"code":"ZH-TW","name":"中文 (Chinese – Traditional)"}];
+function generateId() {
+  return window.crypto && window.crypto.randomUUID
+    ? window.crypto.randomUUID()
+    : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+}
+let entries = [
+  {
+    "title": "AT MOre SPHERES",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "23304207-d54a-4000-89e3-03533de44367",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Black Sudo Rising",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "599a7f1e-2519-4bc6-94ca-01f688943f53",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Clavis Artis",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "f1e2340f-595b-43c9-99c8-69a7011c74f3",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Dead As A Dodo",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "77f94329-0758-4c1f-8fe5-e2c394031ea0",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Earth 61250",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "99d86261-62e8-45e6-bdfe-523d09a246af",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Frammenti di una festa furiosa - Furio’s Furious Fragments and Friends",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "2b0d557e-d8d4-432e-b366-5c58b7ae8ea6",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Germania Segreta",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "c5c65ead-faf4-459e-84ac-e7eb6e4f7a77",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Hauntology of Marx",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "3ad6f09e-792e-42a0-a686-3864c8bec1f2",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Il Falegname Di Ottobrunn",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "4e091a67-b8d3-4023-b5a9-f7e21ec114ee",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Jobs Act: Cancel Culture",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "0e009901-9a89-4aee-b04d-883777625771",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Kaltcaldo",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "8c84a922-966a-4bcf-8990-d6e97cb09d75",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Luther Blissett Legacy",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "9a751a21-42c3-417c-b231-d9a13fe9460b",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Mascara Cartridge Déjà War",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "68904c9b-eb03-4659-9a28-c71be4cc03ab",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Night Terror",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "662141cf-e02b-4f6b-adc4-bc85f5545384",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Otium & The City",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "4599f764-87b8-4dc6-a7f9-bf35cfa20031",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Prampolini-Menarini Express",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "388864ab-2d42-4c94-914c-f5519b5c77a1",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Queen of the Lunaparking",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "ed946196-fe66-40e7-b5c0-505023480339",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Raggio d’Acciaio",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "cddb2cb2-7a91-47f9-8dd8-fc6e5765c921",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Sineddoche Torino",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "33a8521a-0ec9-4372-9026-0a324a11db19",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Timor Panicus",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "e0ce1381-f843-4a91-b1bc-e77a3928d616",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "UFO’ Sing Song",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "d7fd5c71-bf8d-49a2-b641-45435709056c",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Vespertilio Spillover",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "b52778aa-f206-4200-b43d-7604109572e0",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "WhimSeaCall",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "adaf6913-12c8-4fe2-b541-45a4e00c28fc",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "YouTube Recycling Machine",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "fda3970e-0d2e-4670-9f35-7bfb7b96e203",
+    "langs": [
+      "IT"
+    ]
+  },
+  {
+    "title": "Zoroaster Superstar",
+    "content": {
+      "IT": ""
+    },
+    "media": "",
+    "id": "f5a667c3-ef09-4e88-9884-87b0b5565391",
+    "langs": [
+      "IT"
+    ]
+  }
+];
+let editIndex = null;
+let isEditMode = false;
+let currentEditLanguages = ["IT"];
+let currentEditContent = {"IT":""};
+let tabRef = null;
+let lang = 'IT';
+let showLangSelect = false;
+function allUsedLangs() {
+  const found = new Set();
+  entries.forEach(e => (e.langs || Object.keys(e.content || {})).forEach(l => found.add(l)));
+  return [...found];
+}
+function renderMainLangDropdown() {
+  const ul = document.getElementById('main-lang-dropdown');
+  ul.innerHTML = "";
+  let presentLangs = allUsedLangs().sort((a, b) => {
+    let la = (ALL_LANGS.find(l => l.code === a) || {name: a}).name;
+    let lb = (ALL_LANGS.find(l => l.code === b) || {name: b}).name;
+    return la.localeCompare(lb);
+  });
+  if (!presentLangs.includes(lang)) {
+    lang = presentLangs[0] || "";
+  }
+  presentLangs.forEach(code => {
+    let info = ALL_LANGS.find(l => l.code === code) || {code, name: code};
+    ul.innerHTML += `<li><a href="#" onclick="setLanguage('${code}');return false;">${code} - ${info.name}</a></li>`;
+  });
+  document.getElementById('lang-btn-label').textContent = lang || "";
+}
+function setLanguage(l) {
+  lang = l;
+  renderMainLangDropdown();
+  renderEntries();
+  const current = getCurrentSection();
+  if(current) {
+    const sec = document.getElementById(current.id);
+    if(sec) sec.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+}
+function renderEntries() {
+  entries.sort((a, b) => a.title.localeCompare(b.title));
+  const container = document.getElementById('container');
+  container.innerHTML = '';
+  entries.forEach((entry, i) => {
+    const section = document.createElement('div');
+    section.className = 'section uk-section uk-flex uk-flex-middle uk-flex-center';
+    section.id = entry.id;
+    section.dataset.index = i;
+    let mediaElement = '';
+    if (entry.media) {
+      let url = entry.media;
+      let dataType = 'iframe';
+      let label = 'Open Media';
+      let icon = 'forward';
+      if (url.includes('youtube.com/watch?v=')) {
+        const id = url.split('v=')[1].split('&')[0];
+        url = `https://www.youtube.com/embed/${id}`;
+        label = 'Play Video'; icon = 'play';
+      } else if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1];
+        url = `https://www.youtube.com/embed/${id}`;
+        label = 'Play Video'; icon = 'play';
+      } else if (url.match(/\.(jpe?g|png|gif|webp|svg)$/i)) {
+        dataType = 'image'; label = 'Show Image'; icon = 'image';
+      }
+      mediaElement = `<div class="center-media" uk-lightbox>
+        <a href="${url}" data-type="${dataType}">
+          <button class="uk-button uk-button-default uk-border-pill" style="margin: 0 6px;">
+            <span uk-icon="icon: ${icon}"></span> ${label}
+          </button>
+        </a>
+      </div>`;
+    }
+    let displayContent = "";
+    if (typeof entry.content === "object" && (entry.langs && entry.langs.length)) {
+      displayContent = entry.content[lang] || entry.content[entry.langs[0]] || Object.values(entry.content).find(Boolean) || "";
+    } else {
+      displayContent = entry.content || "";
+    }
+    section.innerHTML = `
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">${entry.title}</h2>
+          ${isEditMode ? `
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left"
+              onclick="editEntryByIndex(${i})"
+              uk-tooltip="Edit Entry"
+              style="margin-left:12px;">
+              <span uk-icon="icon: pencil"></span>
+            </button>
+          ` : ''}
+        </div>
+        ${mediaElement}
+        <div class="uk-margin entry-content">${displayContent}</div>
+      </div>
+    `;
+    container.appendChild(section);
+  });
+  renderGlossary();
+  renderMainLangDropdown();
+}
+function renderGlossary() {
+  const list = document.getElementById('glossary-list');
+  list.innerHTML = '';
+  const grouped = {};
+  entries.forEach(entry => {
+    const letter = entry.title.charAt(0).toUpperCase();
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push(entry);
+  });
+  Object.keys(grouped).sort().forEach(letter => {
+    list.innerHTML += `<div class="dropcap">${letter}</div>`;
+    grouped[letter].forEach(entry => {
+      list.innerHTML += `<div><a href="#${entry.id}">${entry.title}</a></div>`;
+    });
+  });
+}
+function cleanHTML(input) {
+  // Allow only b, strong, i, em, u, a, br, p (preserve paragraphs)
+  let div = document.createElement('div');
+  div.innerHTML = input;
+
+  function cleanNode(node) {
+    if (node.nodeType === 3) return node; // text
+    if (node.nodeType === 1 && node.tagName === 'BR') return node.cloneNode(); // <br>
+    if (node.nodeType === 1 && node.tagName === 'P') {
+      let p = document.createElement('p');
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) p.appendChild(cleaned);
+      });
+      return p;
+    }
+    if (node.nodeType !== 1) return null;
+    let allowed = ['B','STRONG','I','EM','U','A','BR','P'];
+    if (!allowed.includes(node.tagName)) {
+      let fragment = document.createDocumentFragment();
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) fragment.appendChild(cleaned);
+      });
+      return fragment;
+    } else {
+      let el = document.createElement(node.tagName);
+      if (node.tagName === "A") {
+        el.href = node.getAttribute('href') || '';
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener noreferrer");
+      }
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) el.appendChild(cleaned);
+      });
+      return el;
+    }
+  }
+  let cleaned = cleanNode(div);
+  let container = document.createElement("div");
+  container.appendChild(cleaned);
+  return container.innerHTML;
+}
+function renderEditToolbar(l) {
+  return `
+  <div class="editor-rich-toolbar">
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bold ; pos: bottom" title="Bold" onclick="formatEditor('${l}','bold')" aria-label="Bold">
+    <span uk-icon="bold"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Italic ; pos: bottom" title="Italic" onclick="formatEditor('${l}','italic')" aria-label="Italic">
+    <span uk-icon="italic"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Underline ; pos: bottom" title="Underline" onclick="formatEditor('${l}','underline')" aria-label="Underline">
+    <span uk-icon="minus"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bullet ; pos: bottom" title="Bulleted List" onclick="formatEditor('${l}','insertUnorderedList')" aria-label="Bullet">
+    <span uk-icon="more-vertical"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Numbered List ; pos: bottom" title="Numbered List" onclick="formatEditor('${l}','insertOrderedList')" aria-label="Numbered">
+    <span uk-icon="list"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Left ; pos: bottom" title="Align Left" onclick="formatEditor('${l}','justifyLeft')" aria-label="Left">
+    <span uk-icon="chevron-double-left"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Center ; pos: bottom" title="Align Center" onclick="formatEditor('${l}','justifyCenter')" aria-label="Center">
+    <span uk-icon="table"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Right ; pos: bottom" title="Align Right" onclick="formatEditor('${l}','justifyRight')" aria-label="Right">
+    <span uk-icon="chevron-double-right"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Add Link ; pos: bottom" title="Add Link" onclick="insertLink('${l}')" aria-label="Link">
+    <span uk-icon="link"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Remove Link ; pos: bottom" title="Remove Link" onclick="removeLink('${l}')" aria-label="Remove Link">
+    <span uk-icon="ban"></span>
+  </button>
+  </div>`;
+}
+window.formatEditor = function(l, cmd) {
+  let editor = document.getElementById('editor-area-' + l);
+  editor.focus();
+  document.execCommand(cmd, false, null);
+  editor.focus();
+};
+window.insertLink = function(l) {
+  let url = prompt("Enter URL:");
+  if (!url) return;
+  let editor = document.getElementById('editor-area-' + l);
+  editor.focus();
+  document.execCommand("createLink", false, url);
+  // All links should be _blank
+  setTimeout(() => {
+    let links = editor.querySelectorAll("a[href]");
+    links.forEach(a => {
+      a.setAttribute("target","_blank");
+      a.setAttribute("rel","noopener noreferrer");
+      a.removeAttribute("style");
+    });
+  },1);
+  editor.focus();
+};
+window.removeLink = function(l) {
+  let editor = document.getElementById('editor-area-' + l);
+  editor.focus();
+  document.execCommand("unlink", false, null);
+  editor.focus();
+};
+function renderAddLangSelect() {
+  const unused = ALL_LANGS.filter(l => !currentEditLanguages.includes(l.code)).sort((a,b)=>a.name.localeCompare(b.name));
+  if (!showLangSelect || unused.length == 0) return '';
+  let html = `<div class="add-lang-select-container"><select class="edit-lang-add-select" id="lang-select"><option value="">Select language...</option>`;
+  unused.forEach(l => {
+    html += `<option value="${l.code}">${l.code} - ${l.name}</option>`;
+  });
+  html += "</select></div>";
+  setTimeout(() => {
+    let select = document.getElementById("lang-select");
+    if (select) select.onchange = function() {
+      if (select.value) addLang(select.value);
+      showLangSelect = false;
+      updateEditLangTabs(currentEditLanguages.length-1);
+    };
+  }, 30);
+  return html;
+}
+function updateEditLangTabs(selectedIdx = 0) {
+  const tabs = document.getElementById('edit-lang-tabs');
+  const switcher = document.getElementById('edit-lang-switcher');
+  tabs.innerHTML = '';
+  switcher.innerHTML = '';
+  let canRemove = currentEditLanguages.length > 1;
+  if (currentEditLanguages.length === 0) {
+    currentEditLanguages = ["EN"];
+    currentEditContent = { EN: "" };
+  }
+  // Tabs
+  currentEditLanguages.forEach((l, idx) => {
+    tabs.innerHTML += `<li>
+      <a href="#" onclick="setEditLangTab(${idx}); return false;">
+        ${l}
+        ${canRemove ? `<span style="color:#a00;cursor:pointer;font-size:15px;padding-left:5px;" onclick="removeLang(event,'${l}')" uk-tooltip="Remove language">×</span>` : ''}
+      </a>
+    </li>`;
+  });
+  // Plus tab
+  tabs.innerHTML += `<li>
+    <a href="#" onclick="showLangSelect=true;updateEditLangTabs();return false;" class="lang-tab-plus" uk-tooltip="Add language">+</a>
+  </li>`;
+  // Editors
+  currentEditLanguages.forEach((l, idx) => {
+    switcher.innerHTML += `<li>
+      ${renderEditToolbar(l)}
+      <div id="editor-area-${l}" contenteditable="true" class="uk-margin" style="border:1px solid #ccc;min-height:80px;padding:1em;text-align:left;"></div>
+    </li>`;
+  });
+  // Language select
+  document.getElementById("edit-lang-add-container").innerHTML = renderAddLangSelect();
+  setTimeout(() => {
+    tabRef = UIkit.tab(tabs);
+    tabRef.show(selectedIdx);
+    currentEditLanguages.forEach((l, i) => {
+      let editor = document.getElementById('editor-area-' + l);
+      editor.innerHTML = currentEditContent[l] || "";
+      // PASTE listener
+      editor.onpaste = function(e) {
+        e.preventDefault();
+        let html = (e.clipboardData || window.clipboardData).getData('text/html');
+        let text = (e.clipboardData || window.clipboardData).getData('text');
+        if (html) {
+          let cleaned = cleanHTML(html);
+          document.execCommand("insertHTML", false, cleaned);
+        } else {
+          // Convert line breaks in plain text to <br>
+          if (text.indexOf('\n') > -1) {
+            cleaned = text.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('');
+            document.execCommand("insertHTML", false, cleaned);
+          } else {
+            document.execCommand("insertText", false, text);
+          }
+        }
+      };
+    });
+  }, 1);
+}
+function setEditLangTab(idx) { tabRef.show(idx); }
+function addLang(code) {
+  if (!currentEditLanguages.includes(code)) {
+    saveEditAreasContent();
+    currentEditLanguages.push(code);
+    currentEditContent[code] = "";
+    updateEditLangTabs(currentEditLanguages.length - 1);
+  }
+  showLangSelect = false;
+}
+function removeLang(e, code) {
+  e.stopPropagation();
+  if (currentEditLanguages.length <= 1) return;
+  saveEditAreasContent();
+  let idx = currentEditLanguages.indexOf(code);
+  currentEditLanguages = currentEditLanguages.filter(l => l !== code);
+  delete currentEditContent[code];
+  let nextIdx = Math.max(0, idx - 1);
+  updateEditLangTabs(nextIdx);
+}
+function saveEditAreasContent() {
+  currentEditLanguages.forEach(l => {
+    const val = document.getElementById('editor-area-' + l).innerHTML.trim();
+    currentEditContent[l] = val;
+  });
+}
+function addEntry() {
+  let langsAvailable = allUsedLangs();
+  let firstLang = langsAvailable.length ? langsAvailable[0] : "EN";
+  currentEditLanguages = [firstLang];
+  currentEditContent = {};
+  currentEditContent[firstLang] = "";
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = '';
+  document.getElementById('edit-media').value = '';
+  UIkit.modal('#edit-modal').show();
+  setTimeout(() => { document.getElementById('edit-title').focus(); }, 120);
+  editIndex = null; // Important for new entries
+}
+function editEntry() {
+  const section = getCurrentSection();
+  if (!section) return;
+  editIndex = Number(section.dataset.index);
+  const entry = entries[editIndex];
+  currentEditLanguages = entry.langs ? entry.langs.slice() : Object.keys(entry.content || {});
+  if(currentEditLanguages.length === 0) currentEditLanguages = ["EN"];
+  currentEditContent = {};
+  currentEditLanguages.forEach(l => {
+    currentEditContent[l] = (entry.content && entry.content[l]) || "";
+  });
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = entry.title;
+  document.getElementById('edit-media').value = entry.media || '';
+  UIkit.modal('#edit-modal').show();
+}
+function saveEdit() {
+  saveEditAreasContent();
+  const title = document.getElementById('edit-title').value.trim();
+  const media = document.getElementById('edit-media').value.trim();
+  const content = {};
+  currentEditLanguages.forEach(l => content[l] = currentEditContent[l] || "");
+  if (!title) return;
+  let newId = null;
+  if (editIndex === null) {
+    newId = generateId();
+    const entry = { title, content, media, id: newId, langs: currentEditLanguages.slice() };
+    entries.push(entry);
+  } else {
+    let oldEntry = entries[editIndex];
+    let cleanedContent = {};
+    currentEditLanguages.forEach(l => { cleanedContent[l] = content[l]; });
+    entries[editIndex] = { ...oldEntry, title, content: cleanedContent, media, langs: currentEditLanguages.slice() };
+    newId = oldEntry.id;
+  }
+  UIkit.modal('#edit-modal').hide();
+  renderEntries();
+  renderMainLangDropdown();
+  setTimeout(() => {
+    const el = document.getElementById(newId);
+    if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }, 200);
+}
+function editEntryByIndex(idx) {
+  editIndex = idx;
+  const entry = entries[editIndex];
+  currentEditLanguages = entry.langs ? entry.langs.slice() : Object.keys(entry.content || {});
+  if (currentEditLanguages.length === 0) currentEditLanguages = ["EN"];
+  currentEditContent = {};
+  currentEditLanguages.forEach(l => {
+    currentEditContent[l] = (entry.content && entry.content[l]) || "";
+  });
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = entry.title;
+  document.getElementById('edit-media').value = entry.media || '';
+  UIkit.modal('#edit-modal').show();
+}
+window.editEntryByIndex = editEntryByIndex;
+function confirmDelete() {
+  const section = getCurrentSection();
+  if (!section) return;
+  const index = Number(section.dataset.index);
+  UIkit.modal.confirm('Delete this entry?').then(() => {
+    entries.splice(index, 1);
+    renderEntries();
+    renderMainLangDropdown();
+    UIkit.modal('#edit-modal').hide();
+  });
+}
+function getCurrentSection() {
+  const sections = document.querySelectorAll('.section');
+  let closest = null;
+  let minDiff = Infinity;
+  const scrollTop = window.scrollY;
+  sections.forEach(section => {
+    const diff = Math.abs(section.offsetTop - scrollTop);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = section;
+    }
+  });
+  return closest;
+}
+function scrollToNext() {
+  const current = getCurrentSection();
+  if (current && current.nextElementSibling) {
+    current.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function scrollToPrev() {
+  const current = getCurrentSection();
+  if (current && current.previousElementSibling) {
+    current.previousElementSibling.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function scrollToRandom() {
+  if (!entries.length) return;
+  const rand = Math.floor(Math.random() * entries.length);
+  const section = document.getElementById(entries[rand].id);
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+}
+function copyCurrentLink() {
+  const section = getCurrentSection();
+  if (!section) return;
+  const anchor = window.location.href.split('#')[0] + '#' + section.id;
+  navigator.clipboard.writeText(anchor).then(() => {
+    UIkit.notification(`Link copied: ${anchor}`, 'success');
+  }).catch(() => {
+    UIkit.notification("Failed to copy link", 'danger');
+  });
+}
+function rebindAllButtons() {
+  document.getElementById('add-btn').onclick = addEntry;
+  document.getElementById('delete-btn').onclick = confirmDelete;
+  document.getElementById('save-btn').onclick = downloadHTML;
+  document.getElementById('save-edit-btn').onclick = saveEdit;
+}
+function showSearchModal() {
+  UIkit.modal('#search-modal').show();
+  setTimeout(() => {
+    document.getElementById('search-input').focus();
+    renderSearchResults();
+  }, 120);
+}
+function renderSearchResults() {
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  const ul = document.getElementById('search-results');
+  ul.innerHTML = '';
+  if (!query) return;
+  let results = entries.filter(entry => {
+    let titleMatch = entry.title.toLowerCase().includes(query);
+    let contentMatch = Object.values(entry.content || {}).some(
+      val => (val || '').toLowerCase().includes(query)
+    );
+    return titleMatch || contentMatch;
+  });
+  if (!results.length) {
+    ul.innerHTML = '<li class="uk-text-muted">No results.</li>';
+    return;
+  }
+  results.forEach(entry => {
+    ul.innerHTML += `<li><a href="#${entry.id}" onclick="jumpToEntry('${entry.id}');UIkit.modal('#search-modal').hide();">${entry.title}</a></li>`;
+  });
+}
+function jumpToEntry(id) {
+  const section = document.getElementById(id);
+  if (section) section.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+document.addEventListener('DOMContentLoaded', function() {
+  renderEntries();
+  setLanguage(lang);
+  isEditMode = false;
+  document.querySelector('.editor-toolbar').style.display = 'none';
+  rebindAllButtons();
+});
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+    isEditMode = !isEditMode;
+    document.querySelector('.editor-toolbar').style.display = isEditMode ? 'block' : 'none';
+    renderEntries();
+  }
+});
+function downloadHTML() {
+  saveEditAreasContent && saveEditAreasContent();
+  const docType = '<!DOCTYPE html>';
+  const head = document.head.outerHTML;
+  const bodyHtml = document.body.innerHTML.replace(/<script[\s\S]*?<\/script>/ig,'');
+  const entriesJSON = JSON.stringify(entries, null, 2).replace(/<\/script>/g, '<\\/script>');
+  const langVal = lang;
+  const logicScript = `<script>
+const ALL_LANGS = ${JSON.stringify(ALL_LANGS)};
+function generateId() {
+  return window.crypto && window.crypto.randomUUID
+    ? window.crypto.randomUUID()
+    : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+}
+let entries = ${entriesJSON};
+let editIndex = null;
+let isEditMode = false;
+let currentEditLanguages = ${JSON.stringify(currentEditLanguages)};
+let currentEditContent = ${JSON.stringify(currentEditContent)};
+let tabRef = null;
+let lang = '${langVal}';
+let showLangSelect = false;
+${allUsedLangs.toString()}
+${renderMainLangDropdown.toString()}
+${setLanguage.toString()}
+${renderEntries.toString()}
+${renderGlossary.toString()}
+${cleanHTML.toString()}
+${renderEditToolbar.toString()}
+window.formatEditor = ${window.formatEditor.toString()};
+window.insertLink = ${window.insertLink.toString()};
+window.removeLink = ${window.removeLink.toString()};
+${renderAddLangSelect.toString()}
+${updateEditLangTabs.toString()}
+${setEditLangTab.toString()}
+${addLang.toString()}
+${removeLang.toString()}
+${saveEditAreasContent.toString()}
+${addEntry.toString()}
+${editEntry.toString()}
+${saveEdit.toString()}
+${editEntryByIndex.toString()}
+window.editEntryByIndex = editEntryByIndex;
+${confirmDelete.toString()}
+${getCurrentSection.toString()}
+${scrollToNext.toString()}
+${scrollToPrev.toString()}
+${scrollToRandom.toString()}
+${copyCurrentLink.toString()}
+${rebindAllButtons.toString()}
+${showSearchModal.toString()}
+${renderSearchResults.toString()}
+${jumpToEntry.toString()}
+document.addEventListener('DOMContentLoaded', function() {
+  renderEntries();
+  setLanguage(lang);
+  isEditMode = false;
+  document.querySelector('.editor-toolbar').style.display = 'none';
+  rebindAllButtons();
+});
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+    isEditMode = !isEditMode;
+    document.querySelector('.editor-toolbar').style.display = isEditMode ? 'block' : 'none';
+    renderEntries();
+  }
+});
+${downloadHTML.toString()}
+<\/script>`;
+  const externalDeps = `
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"><\\/script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"><\\/script>
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+<\/script>
+`;
+  const fullHTML = `${docType}
+<html lang="en">
+${head}
+<body>
+${bodyHtml}
+${logicScript}
+${externalDeps}
+</body>
+</html>`;
+  const blob = new Blob([fullHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"><\/script>
+
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+<\/script>
+
+</body>
+</html>
