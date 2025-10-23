@@ -1,5 +1,5 @@
 
-<!-- Version: 6.6.1 | Last Update: 2025-10-09 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 6.8.1 | Last Update: 2025-10-24 | Author: Sacrisoft | © All rights reserved -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -389,6 +389,38 @@ html.uk-modal-page #page {
 html.uk-modal-page input[type="color"]:hover { transform: none !important; }
 html.uk-modal-page .hover-zoom { transition: none !important; transform: none !important; }
 
+/* Keep layout width stable when UIkit toggles scrolling */
+:root { scrollbar-gutter: stable; }
+/* Fallback (older Safari): keep vertical scrollbar reserved */
+html { overflow-y: scroll; }
+
+/* Reserve vertical scrollbar gap so page width doesn't jump */
+:root { scrollbar-gutter: stable; }
+html { overflow-y: scroll; } /* fallback for older browsers */
+
+/* Make modal dialogs stable and avoid ancestor transforms.
+   Apply a soft max-height with internal scrolling for tall content. */
+.uk-modal-dialog {
+  max-height: 90vh;            /* keep modal inside viewport */
+  overflow: auto;              /* allow internal scroll instead of page scrollbar */
+  -webkit-overflow-scrolling: touch;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);    /* promote to its own layer (GPU) */
+}
+
+/* if you use uk-modal-full or similar, limit its content as well */
+.uk-modal.full .uk-modal-dialog {
+  max-height: 100vh;
+}
+
+/* avoid forced reflow by not toggling transitions that cause layout */
+.uk-modal { transition: opacity .12s ease-out; }
+.uk-modal.uk-open { opacity: 1; }
+
+.uk-modal { opacity: 0; transition: opacity .12s linear; }
+.uk-modal.uk-open { opacity: 1; }
+
 </style>
 </head>
 <body id="top">
@@ -414,8 +446,11 @@ html.uk-modal-page .hover-zoom { transition: none !important; transform: none !i
 </div>
 </nav>
 <!-- Second navbar container (rendered dynamically below the toolbar in editor) -->
+<!-- Wrap the editor canvas (leave all modals as direct children of <body>) -->
+<div id="page">
 <div id="dynamic-navbar-container"></div>
-<ul class="uk-list uk-sortable" id="live-editor-root" uk-sortable="handle: .editor-section"></ul>
+<ul id="live-editor-root" class="uk-list uk-sortable" id="live-editor-root" uk-sortable="handle: .editor-section"></ul>
+</div>
 <!-- Modal: media edit -->
 <div id="media-modal" uk-modal="">
 <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
@@ -600,6 +635,17 @@ File: <span id="prev-file-name"></span>
 <option selected="" value="p-md">Medium</option>
 <option value="p-lg">Large</option>
 </select>
+</div>
+<!-- Text Align -->
+<div class="uk-margin">
+  <label class="uk-form-label">Text Align</label>
+  <div id="text-align-group" class="uk-button-group">
+    <button type="button" class="uk-button uk-button-default align-option" data-align="left">Left</button>
+    <button type="button" class="uk-button uk-button-primary align-option" data-align="center">Center</button>
+    <button type="button" class="uk-button uk-button-default align-option" data-align="right">Right</button>
+    <button type="button" class="uk-button uk-button-default align-option" data-align="justify">Justify</button>
+  </div>
+  <input type="hidden" id="text-align" value="center"/>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Animation Style</label>
@@ -1108,8 +1154,8 @@ File: <span id="prev-file-name"></span>
   <span>Enable Dynamic Nav Bar</span>
 </label>
 </div>
-<div class="uk-margin"><label class="uk-form-label">Background Color</label><input id="navbar-bg" type="color" value="#ffffff"/></div>
-<div class="uk-margin"><label class="uk-form-label">Text Color</label><input id="navbar-text" type="color" value="#000000"/></div>
+<div class="uk-margin"><label class="uk-form-label">Background Color </label><input id="navbar-bg" type="color" value="#ffffff"/></div>
+<div class="uk-margin"><label class="uk-form-label">Text Color </label><input id="navbar-text" type="color" value="#000000"/></div>
 <div class="uk-margin">
 <label class="uk-form-label">Logo From URL</label>
 <input class="uk-input uk-border-rounded" id="navbar-logo-url" placeholder="https://example.com/logo.png" type="url"/>
@@ -1175,14 +1221,12 @@ function generateFontCSS() {
   return css;
 }
 
-        // Sticky nav color swap
-        UIkit.util.on(document, 'DOMContentLoaded', function(){
-            var stickyNav = document.getElementById('main-navbar');
-            UIkit.util.on(window, 'scroll', function() {
-                const stickyActive = stickyNav.classList.contains('uk-sticky-fixed');
-                stickyNav.classList.toggle('sticky-colored', stickyActive);
-            });
-        });
+// Sticky nav color swap (no repaint thrash on modal open)
+UIkit.util.on(document, 'DOMContentLoaded', function () {
+  var stickyNav = document.getElementById('main-navbar');
+  UIkit.util.on('#main-navbar', 'active',   () => stickyNav.classList.add('sticky-colored'));
+  UIkit.util.on('#main-navbar', 'inactive', () => stickyNav.classList.remove('sticky-colored'));
+});
 
         // Editor logic
         const editorRoot = document.getElementById('live-editor-root');
@@ -1226,12 +1270,17 @@ const textColor   = document.getElementById('text-color');
 const textHeadingSize  = document.getElementById('text-heading-size');
 const textSubtitleSize = document.getElementById('text-subtitle-size');
 const textParagraphSize = document.getElementById('text-paragraph-size');
+const textAlignInput = document.getElementById('text-align');
+const textAlignGroup = document.getElementById('text-align-group');
 
 addTextBtn.addEventListener('click', () => {
   textHeading.value = '';
   textSubtitle.value = '';
-  textParagraph.value = '';
+  textParagraph.innerHTML = '';
   textAnimation.value = 'uk-animation-fade';
+  textAlignInput.value = 'center';
+  Array.from(textAlignGroup.querySelectorAll('.align-option')).forEach(b =>
+  b.classList.toggle('uk-button-primary', b.dataset.align === 'center'));
   if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = 'h-lg';
   if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = 'sub-md';
   if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = 'p-md';
@@ -1249,6 +1298,7 @@ textForm.addEventListener('submit', e => {
     heading: textHeading.value,
     subtitle: textSubtitle.value,
     paragraph: textParagraph.innerHTML,
+    align: textAlignInput.value || 'center',
     animation: textAnimation.value,
     bgColor: textBgColor.value || '#000000',
     textColor: textColor.value || '#ffffff',
@@ -1268,6 +1318,15 @@ textForm.addEventListener('submit', e => {
   textModal.hide();
 });
 
+textAlignGroup.addEventListener('click', (e) => {
+  const btn = e.target.closest('.align-option');
+  if (!btn) return;
+  // set value
+  textAlignInput.value = btn.dataset.align;
+  // visual active state
+  Array.from(textAlignGroup.querySelectorAll('.align-option'))
+    .forEach(b => b.classList.toggle('uk-button-primary', b === btn));
+});
 
         // New fields for subtitle/paragraph
         const mediaSubtitle = document.getElementById('media-subtitle');
@@ -1630,7 +1689,7 @@ if (block.type === 'gallery') {
         return `
         <div class="uk-section uk-section-muted uk-flex uk-flex-center uk-flex-middle"
              style="background:${block.bgColor}; min-height:60vh;">
-          <div class="uk-container uk-text-center" style="color:${block.textColor || '#ffffff'};" uk-scrollspy="cls: ${block.animation}; repeat: true">
+          <div class="uk-container uk-text-${block.align || 'center'}" style="color:${block.textColor || '#ffffff'};" uk-scrollspy="cls: ${block.animation}; repeat: true">
             ${block.heading ? `<h2 class="live-heading ${block.headingSize}" style="color:${block.textColor || '#ffffff'};">${block.heading}</h2>` : ''}
             ${block.subtitle ? `<div class="live-subtitle ${block.subtitleSize}" style="color:${block.textColor || '#ffffff'};">${block.subtitle}</div>` : ''}
             ${block.paragraph ? `<p class="live-paragraph ${block.paragraphSize}" style="color:${block.textColor || '#ffffff'};">${block.paragraph}</p>` : ''}
@@ -1658,7 +1717,7 @@ function getMediaSectionHtml(block, exportMap) {
         return `
         <div class="uk-section uk-section-muted uk-flex uk-flex-center uk-flex-middle"
              style="background:${block.bgColor}; min-height:60vh;">
-          <div class="uk-container uk-text-center" style="color:${block.textColor || '#ffffff'};" uk-scrollspy="cls: ${block.animation}; repeat: true">
+          <div class="uk-container uk-text-${block.align || 'center'}" style="color:${block.textColor || '#ffffff'};" uk-scrollspy="cls: ${block.animation}; repeat: true">
             ${block.heading ? `<h2 class="live-heading ${block.headingSize}" style="color:${block.textColor || '#ffffff'};">${block.heading}</h2>` : ''}
             ${block.subtitle ? `<div class="live-subtitle ${block.subtitleSize}" style="color:${block.textColor || '#ffffff'};">${block.subtitle}</div>` : ''}
             ${block.paragraph ? `<p class="live-paragraph ${block.paragraphSize}" style="color:${block.textColor || '#ffffff'};">${block.paragraph}</p>` : ''}
@@ -1943,7 +2002,7 @@ function renderAllSections() {
           // Prefill text modal with saved values
           textHeading.value   = block.heading || '';
           textSubtitle.value  = block.subtitle || '';
-          textParagraph.value = block.paragraph || '';
+          textParagraph.innerHTML = block.paragraph || '';
           textAnimation.value = block.animation || 'uk-animation-fade';
           if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#000000';
           if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#ffffff';
@@ -2509,12 +2568,13 @@ if (siteSettings.navbar.logoUrl) {
     links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
 }
 
-  allSections.forEach((block, idx) => {
-    if (block.heading) {
-      const safe = String(block.heading).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      links.push(`<li><a href="#section-${idx}">${safe}</a></li>`);
-    }
-  });
+ allSections.forEach((block, idx) => {
+	const label = navLabelFor(block);
+	if (label) {
+	const safe = String(label).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	links.push(`<li><a href="#section-${idx}">${safe}</a></li>`);
+	}
+	});
   // place below toolbar; sticky will naturally sit under it since toolbar also sticky
   return `<nav class="uk-navbar-container" style="background:${siteSettings.navbar.bg};position:sticky;top:60px;z-index:999;">
     <ul class="navbar-scroll" uk-scrollspy-nav="closest: a; scroll: true; offset: 100" style="color:${siteSettings.navbar.text};">
@@ -2532,6 +2592,24 @@ function updateSiteTitleH1() {
   } else {
     siteTitleH1.classList.remove('visually-hidden');
   }
+}
+
+// One place to decide what shows in the Dynamic Nav for each block
+function navLabelFor(block) {
+  if (block.type === 'gallery') {
+    // prefer structured title, then stored heading, then parse HTML (legacy)
+    let label = (block.data && block.data.title) || block.heading || '';
+    if (!label && block.html) {
+      try {
+        const doc = new DOMParser().parseFromString(block.html, 'text/html');
+        label = doc.querySelector('h1 span')?.textContent
+             || doc.querySelector('h3')?.textContent
+             || '';
+      } catch (e) {}
+    }
+    return label;
+  }
+  return block.heading || '';
 }
 
 // Update/inject the dynamic navbar in the editor
@@ -2570,12 +2648,13 @@ if (siteSettings.navbar.logoExport) {
   links.push(`<li><a href="#top">${siteSettings.title || 'Home'}</a></li>`);
 }
 
-  allSections.forEach((block, idx) => {
-    if (block.heading) {
-      const safe = String(block.heading).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      links.push(`<li><a href="#section-${idx}">${safe}</a></li>`);
-    }
-  });
+	allSections.forEach((block, idx) => {
+	const label = navLabelFor(block);
+	if (label) {
+	const safe = String(label).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	links.push(`<li><a href="#section-${idx}">${safe}</a></li>`);
+	}
+	});
 
   return `<nav class="uk-navbar-container" style="background:${siteSettings.navbar.bg};position:sticky;top:0;z-index:999;">
     <ul class="navbar-scroll" uk-scrollspy-nav="closest: a; scroll: true; offset: 100" style="color:${siteSettings.navbar.text};">
@@ -3363,6 +3442,8 @@ const newHtml = `
 if (block) {
  block.html = newHtml;
  block.bgColor = bgColor;
+ block.data = galleryData;  
+ block.heading = title;
 }
     editingGalleryId = null;
   } else {
@@ -3371,7 +3452,9 @@ if (block) {
       id: 'sec-' + Math.random().toString(36).substr(2, 9),
       type: 'gallery',
       html: newHtml,
-      bgColor
+      bgColor,
+      data: galleryData,
+      heading: title
     };
     allSections.push(block);
   }

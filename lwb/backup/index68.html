@@ -394,7 +394,32 @@ html.uk-modal-page .hover-zoom { transition: none !important; transform: none !i
 /* Fallback (older Safari): keep vertical scrollbar reserved */
 html { overflow-y: scroll; }
 
+/* Reserve vertical scrollbar gap so page width doesn't jump */
+:root { scrollbar-gutter: stable; }
+html { overflow-y: scroll; } /* fallback for older browsers */
 
+/* Make modal dialogs stable and avoid ancestor transforms.
+   Apply a soft max-height with internal scrolling for tall content. */
+.uk-modal-dialog {
+  max-height: 90vh;            /* keep modal inside viewport */
+  overflow: auto;              /* allow internal scroll instead of page scrollbar */
+  -webkit-overflow-scrolling: touch;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);    /* promote to its own layer (GPU) */
+}
+
+/* if you use uk-modal-full or similar, limit its content as well */
+.uk-modal.full .uk-modal-dialog {
+  max-height: 100vh;
+}
+
+/* avoid forced reflow by not toggling transitions that cause layout */
+.uk-modal { transition: opacity .12s ease-out; }
+.uk-modal.uk-open { opacity: 1; }
+
+.uk-modal { opacity: 0; transition: opacity .12s linear; }
+.uk-modal.uk-open { opacity: 1; }
 
 </style>
 </head>
