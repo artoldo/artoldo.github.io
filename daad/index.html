@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dead As A Dodo</title>
+<link rel="icon" href="./icon.jpeg" type="image">
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#000; font-family:Arial,sans-serif; overflow:hidden; }
+  #backgroundVideoContainer { position:fixed; inset:0; z-index:-1; overflow:hidden; }
+  iframe.backgroundVideo { width:100%; height:100%; object-fit:cover; }
+
+  #overlayImage {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    object-fit:cover;
+    z-index:1000;
+    pointer-events:none;
+    display:none;
+  }
+
+  #playerAudio, #playerVideo {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .center-wrap { 
+    position:fixed; 
+    inset:0; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    z-index:10; 
+  }
+
+  .btn {
+    padding:1.2rem 2rem; 
+    font-size:1.3rem; 
+    border-radius:999px; 
+    border:none; 
+    background:rgba(255,255,255,0.08); 
+    color:#fff; 
+    cursor:pointer;
+  }
+
+  .btn-container {
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+    align-items:center;
+  }
+
+  .no-pointer {
+  pointer-events: none;
+  }
+
+
+</style>
+</head>
+<body>
+
+<div id="backgroundVideoContainer">
+  <img id="overlayImage" src="overlay.png?text=Overlay+Image" alt="Overlay Image">
+</div>
+
+<div class="center-wrap">
+  <div class="btn-container">
+    <button id="startBtn" class="btn">Start</button>
+    <button id="pauseBtn" class="btn" style="display:none;">Pause</button>
+  </div>
+</div>
+
+<div id="playerAudio"></div>
+<div id="playerVideo"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+let audioPlayer, videoPlayer;
+
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const videoContainer = document.getElementById('backgroundVideoContainer');
+const overlay = document.getElementById('overlayImage');
+
+// Hardcoded playlists
+const audioPlaylist = "PLpl0gbjp6SNgVTChwLquy2UeXV65Nn4Rw";
+const videoPlaylist = "PL_LVhuUg2LojR3__x7z46re98NMzGHXCU";
+
+const randomMusic = true;
+const randomVideo = true;
+
+function onYouTubeIframeAPIReady() {
+  audioPlayer = new YT.Player('playerAudio', {
+    height:'1', width:'1',
+    playerVars:{ listType:'playlist', list:audioPlaylist, controls:0, rel:0 },
+    events:{ 
+      onReady: (e)=>{ e.target.setVolume(100); }, 
+      onStateChange: onAudioStateChange 
+    }
+  });
+
+  videoPlayer = new YT.Player('playerVideo', {
+    height:'1', width:'1',
+    playerVars:{ listType:'playlist', list:videoPlaylist, autoplay:0, mute:1, controls:0, loop:1, playlist:videoPlaylist },
+  });
+}
+
+function embedBackgroundVideo(playlistId){
+  const randomIndex = Math.floor(Math.random() * 10); // adjust to playlist length
+  videoContainer.innerHTML = `<iframe class="backgroundVideo" src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1&mute=1&controls=0&loop=1&index=${randomIndex}&playlist=${playlistId}" frameborder="0" allowfullscreen></iframe>`;
+  videoContainer.appendChild(overlay);
+}
+
+function onAudioStateChange(event){
+  if(event.data === YT.PlayerState.ENDED && randomMusic){
+    const pl = audioPlayer.getPlaylist();
+    if(pl && pl.length) audioPlayer.playVideoAt(Math.floor(Math.random()*pl.length));
+  }
+}
+
+// Toggle overlay only in fullscreen
+function toggleOverlay() {
+  const fsElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+  overlay.style.display = fsElement ? 'block' : 'none';
+}
+
+document.addEventListener('fullscreenchange', toggleOverlay);
+document.addEventListener('webkitfullscreenchange', toggleOverlay);
+document.addEventListener('mozfullscreenchange', toggleOverlay);
+document.addEventListener('msfullscreenchange', toggleOverlay);
+
+// Start button click
+startBtn.addEventListener('click', ()=>{
+  if(!audioPlayer || !videoPlayer) return;
+
+  // Play audio
+  const audioPl = audioPlayer.getPlaylist();
+  if(randomMusic && audioPl && audioPl.length) audioPlayer.playVideoAt(Math.floor(Math.random()*audioPl.length));
+  else audioPlayer.playVideo();
+
+  // Play video
+  const videoPl = videoPlayer.getPlaylist();
+  if(randomVideo && videoPl && videoPl.length) videoPlayer.playVideoAt(Math.floor(Math.random()*videoPl.length));
+  else videoPlayer.playVideo();
+
+  embedBackgroundVideo(videoPlaylist);
+
+  // Request fullscreen
+  if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
+  else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
+  else if (videoContainer.msRequestFullscreen) videoContainer.msRequestFullscreen();
+
+  startBtn.style.display = 'none';
+  pauseBtn.style.display = 'block';
+});
+
+// Pause button click
+pauseBtn.addEventListener('click', ()=>{
+  audioPlayer.pauseVideo();
+  videoPlayer.pauseVideo();
+  startBtn.style.display = 'block';
+  pauseBtn.style.display = 'none';
+});
+
+// Ensure doesn't capture clicks
+function embedBackgroundVideo(playlistId){
+  const randomIndex = Math.floor(Math.random() * 10); // adjust to playlist length
+  const iframeHTML = `<iframe class="backgroundVideo no-pointer" 
+    src="https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1&mute=1&controls=0&loop=1&index=${randomIndex}&playlist=${playlistId}" 
+    frameborder="0" allowfullscreen></iframe>`;
+  
+  videoContainer.innerHTML = iframeHTML;
+  videoContainer.appendChild(overlay); // keep overlay on top
+}
+
+
+</script>
+
+</body>
+</html>

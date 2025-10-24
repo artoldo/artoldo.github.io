@@ -84,7 +84,11 @@
 }      
 
 /* Style the file input button */
-#media-file::file-selector-button {
+#media-file::file-selector-button,
+#gm-images::file-selector-button,
+#navbar-logo::file-selector-button,
+#site-social-file::file-selector-button,
+#site-favicon-file::file-selector-button {
   padding: 10px 20px;       /* make button bigger */
   font-size: 16px;           /* larger text */
   font-weight: bold;         /* optional */
@@ -96,7 +100,11 @@
   transition: background-color 0.2s;
 }
 
-#media-file::file-selector-button:hover {
+#media-file::file-selector-button:hover,
+#gm-images::file-selector-button:hover,
+#navbar-logo::file-selector-button:hover,
+#site-social-file::file-selector-button:hover,
+#site-favicon-file::file-selector-button:hover {
   background-color: #222;    /* slightly lighter on hover */
 }
 
@@ -460,21 +468,21 @@ html { overflow-y: scroll; } /* fallback for older browsers */
 <input id="section-index" type="hidden" value=""/>
 <ul uk-accordion="multiple:true">
 <li class="uk-open">
-<a class="uk-accordion-title" href="#">Section Options</a>
+<a class="uk-accordion-title" href="#">Media Options</a>
 <div class="uk-accordion-content">
 <div class="uk-margin">
 <label class="uk-form-label">From URL</label>
-<input class="uk-input uk-border-rounded" id="media-url" placeholder="Paste URL" type="url"/>
+<input class="uk-input uk-border-rounded" id="media-url" placeholder="https://example.com/video.mp4" type="url"/>
 </div>
 <div class="uk-margin">
-<label class="uk-form-label">Or Upload</label><br/>
+<label class="uk-form-label">Or Upload</label>
 <input accept="" id="media-file" type="file"/>
 <div class="uk-text-meta uk-margin-small-top" id="prev-file" style="display:none;">
 File: <span id="prev-file-name"></span>
 <label style="display:none;"><input checked="" id="keep-prev-file" type="checkbox"/> Keep previous file</label>
 </div>
 <div class="uk-margin" id="youtube-vimeo-options" style="display:none;">
-  <label class="uk-form-label">Or YouTube / Vimeo</label><br>
+  <label class="uk-form-label">Or YouTube / Vimeo</label>
   <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptYouTube()"><span uk-icon="icon: youtube; ratio: 1.2"></span> YouTube</button>
   <button type="button" class="uk-button uk-button-default uk-border-rounded" onclick="promptVimeo()"><span uk-icon="icon: vimeo; ratio: 1.2"></span> Vimeo</button>
 </div>
@@ -875,15 +883,15 @@ File: <span id="prev-file-name"></span>
 <textarea class="uk-textarea uk-border-rounded" id="site-description" placeholder="Short description or slogan for Search Engines" rows="2"></textarea>
 </div>
 <div class="uk-margin">
+<label class="uk-form-label">Author</label>
+<input class="uk-input uk-border-rounded" id="site-author" placeholder="Your Name or Company" type="text"/>
+</div>
+<div class="uk-margin">
 <label class="uk-form-label">Robots</label>
 <select class="uk-select uk-border-rounded" id="site-robots">
 <option value="index, follow">Index, Follow</option>
 <option value="noindex, nofollow">NoIndex, NoFollow</option>
 </select>
-</div>
-<div class="uk-margin">
-<label class="uk-form-label">Author</label>
-<input class="uk-input uk-border-rounded" id="site-author" placeholder="Your Name or Company" type="text"/>
 </div>
 <h4 class="uk-heading-bullet">Open Graph Images</h4>
 <div class="uk-margin">
@@ -1319,7 +1327,7 @@ File: <span id="prev-file-name"></span>
 </form>
 </div>
 </div>
-<!-- NEW: Dynamic Nav Bar Settings Modal -->
+<!-- Dynamic Nav Bar Settings Modal -->
 <div id="navbar-modal" uk-modal="">
 <div class="uk-modal-dialog uk-modal-body uk-border-rounded">
 <button class="uk-modal-close-default uk-border-rounded" type="button" uk-close=""></button>
@@ -3523,7 +3531,7 @@ root.querySelectorAll('[uk-lightbox]').forEach(lb => { fixLightboxAnchors(lb); }
 
     <div class="uk-margin">
       <label class="uk-form-label">Select Images</label>
-      <input class="uk-input uk-border-rounded" type="file" id="gm-images" multiple accept="image/*">
+      <input type="file" id="gm-images" multiple accept="image/*">
     </div>
 
     <!-- Sortable grid inside modal -->
