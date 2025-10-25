@@ -143,12 +143,12 @@ input, select {
 @media (max-width: 800px) {
   .language-chooser {
     position: fixed;
-    left: 5px;
-    bottom: -1000px;
-    transform: scale(0.8);
-    transform-origin: left bottom;
-    z-index: 9999; /* ensure it sits above other content */
-    touch-action: manipulation; /* mobile-friendly */
+    left: 0px;                   /* distance from the left edge */
+    top: 90%;                    /* start at 50% of viewport height */
+    transform: translateY(-50%) scale(0.8); /* center vertically & shrink */
+    transform-origin: center;    /* optional: center the scaling */
+    z-index: 9999;               /* above other content */
+    touch-action: manipulation;  /* mobile-friendly */
   }
 }
 @media (max-width: 480px) {
