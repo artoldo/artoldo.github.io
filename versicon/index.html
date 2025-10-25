@@ -141,8 +141,13 @@ input, select {
   font-size: 17px;
 }
 @media (max-width: 800px) {
-  .language-chooser { left: 10px; }
+  .language-chooser {
+    left: 0px;
+    top: 100px;
+    transform: scale(0.5);
+  }
 }
+
 @media (max-width: 480px) {
   .sticky-nav .uk-button { font-size: 14px; padding: 0 4px; }
 }
@@ -158,16 +163,11 @@ input, select {
 </script>
 
 </head>
-<body>
+<body class="uk-padding-large uk-padding-remove-horizontal">
 
-
-
-<div class="uk-container uk-text-center" style="margin-top:100px;">
-  <h1><strong>Poly</strong><span class="uk-text-lighter">glottolalia</span></h1>
-  <h2 class="Uk-heading uk-text-lighter">versicon</h2>
-  <h3><strong>Poesie</strong> dal <strong>Poliverso</strong></h3>
-  <h4>The collected works of <strong>ARTOLDO</strong><br>– <strong>Sara Ferro</strong> and <strong>Chris Weil</strong> –</h4>
-<hr class="uk-divider-icon" style="padding-top:100px; padding-bototm:300px;" "="">
+<div class="uk-container uk-text-center uk-padding-large">
+  <h1><strong>Poly</strong><span class="uk-text-lighter">glottolalia</span><br><span class="uk-text-small uk-text-lighter">[versicon]</span></h1>
+  <h2><strong>Poesie</strong> dal <strong>Poliverso</strong><br><span class="uk-text-small uk-text-lighter">ARTOLDO – Sara Ferro & Chris Weil</span></h2>
 </div>
 
 <div id="language-chooser" class="language-chooser">
