@@ -142,11 +142,15 @@ input, select {
 }
 @media (max-width: 800px) {
   .language-chooser {
-    left: 0px !important;
-    top: 200px;
+    position: fixed;
+    left: 5px;
+    bottom: 10px;
+    transform: scale(0.8);
+    transform-origin: left bottom;
+    z-index: 9999; /* ensure it sits above other content */
+    touch-action: manipulation; /* mobile-friendly */
   }
 }
-
 @media (max-width: 480px) {
   .sticky-nav .uk-button { font-size: 14px; padding: 0 4px; }
 }
