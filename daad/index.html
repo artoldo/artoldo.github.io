@@ -182,5 +182,54 @@ function embedBackgroundVideo(playlistId){
 
 </script>
 
+<script>
+// Simple mobile detection
+function isMobilePhone() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  // iOS, Android phone detection
+  return /android|iphone|ipod|windows phone/i.test(ua) && !/ipad/i.test(ua);
+}
+
+// Show alert if on mobile phone
+window.addEventListener('load', () => {
+  if (isMobilePhone()) {
+    // Using bold HTML in alert via template literals is not supported in native alert
+    // So we use a modal-like div instead for better styling
+    const notice = document.createElement('div');
+    notice.id = 'mobileNotice';
+    notice.innerHTML = `
+      <div style="
+        position:fixed;
+        top:0; left:0; right:0; bottom:0;
+        background:rgba(0,0,0,0.85);
+        color:white;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        font-size:1.5rem;
+        z-index:2000;
+        padding:1rem;
+      ">
+        <p style="font-weight:bold;">Please open this page on a Tablet or Desktop device.</p>
+        <button id="closeNotice" style="
+          margin-top:2rem;
+          padding:1rem 2rem;
+          font-size:1rem;
+          border:none;
+          border-radius:10px;
+          cursor:pointer;
+        ">OK</button>
+      </div>
+    `;
+    document.body.appendChild(notice);
+    document.getElementById('closeNotice').addEventListener('click', ()=>{
+      notice.remove();
+    });
+  }
+});
+</script>
+
 </body>
 </html>
