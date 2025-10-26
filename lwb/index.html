@@ -447,7 +447,7 @@ html { overflow-y: scroll; } /* fallback for older browsers */
 
 .uk-icon-button:active,
 .uk-active > .uk-icon-button {
-  background-color: #fff;
+  background-color: #000;
   color: #fff;
 }
 
@@ -509,61 +509,84 @@ html { overflow-y: scroll; } /* fallback for older browsers */
   cursor: not-allowed;
 }
 
-.uk-light .uk-button-secondary, .uk-section-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-section-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-card-primary.uk-card-body .uk-button-secondary, .uk-card-primary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-card-secondary.uk-card-body .uk-button-secondary, .uk-card-secondary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-overlay-primary .uk-button-secondary, .uk-offcanvas-bar .uk-button-secondary {
-background-color: #000;
-color: #fff;
+/* Primary Button */
+.uk-button-primary {
+  background-color: orange;
+  color: #fff;
 }
 
+/* Primary Button Hover */
 .uk-button-primary:hover {
-  background-color: #fff;
-  color: #000;
-  border: 1px solid #000;
-}
-
-.uk-button-primary:active,
-.uk-button-primary.uk-active {
   background-color: #000;
   color: #fff;
 }
 
-.uk-button-primary {
+/* Primary Button Active */
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Secondary Button */
+.uk-button-secondary {
   background-color: #000;
   color: #fff;
   border: 1px solid transparent;
 }
 
-.uk-button-primary:hover {
-  background-color: #fff;
-  color: #000;
-}
-
-.uk-button-primary:active,
-.uk-button-primary.uk-active {
-  background-color: #fff;
-  color: #000;
-}
-
-.uk-button-secondary {
-  background-color: #fff;
-  color: #000;
-}
-
+/* Secondary Button Hover */
 .uk-button-secondary:hover {
   background-color: #fff;
   color: #000;
 }
 
+/* Secondary Button Active */
 .uk-button-secondary:active,
 .uk-button-secondary.uk-active {
   background-color: #000;
   color: #fff;
 }
 
+/* Contextual Secondary Button Overrides for UIkit Sections/Cards/Overlay */
+.uk-light .uk-button-secondary,
+.uk-section-primary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-section-secondary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-tile-primary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-tile-secondary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-card-primary.uk-card-body .uk-button-secondary,
+.uk-card-primary > :not([class*='uk-card-media']) .uk-button-secondary,
+.uk-card-secondary.uk-card-body .uk-button-secondary,
+.uk-card-secondary > :not([class*='uk-card-media']) .uk-button-secondary,
+.uk-overlay-primary .uk-button-secondary,
+.uk-offcanvas-bar .uk-button-secondary {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Background utility */
 .uk-background-primary {
   background-color: #fff;
 }
+
 .uk-background-secondary {
   background-color: #000;
+}
+
+/* ========================================================================
+   Links
+ ========================================================================== */
+
+.uk-link {
+  color: #ccc !important;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.uk-link:hover,
+.uk-link-toggle:hover .uk-link {
+  color: #ccc;
+  text-decoration: overline;
 }
 
 .uk-tooltip {
