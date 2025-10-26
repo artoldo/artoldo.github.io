@@ -1,4 +1,3 @@
-
 <!-- Version: 6.8.1 | Last Update: 2025-10-24 | Author: Sacrisoft | © All rights reserved -->
 
 <!DOCTYPE html>
@@ -509,9 +508,13 @@ html { overflow-y: scroll; } /* fallback for older browsers */
   cursor: not-allowed;
 }
 
+/* ========================================================================
+   Button 
+ ========================================================================== */
+
 /* Primary Button */
 .uk-button-primary {
-  background-color: orange;
+  background-color: #000;
   color: #fff;
 }
 
@@ -524,8 +527,8 @@ html { overflow-y: scroll; } /* fallback for older browsers */
 /* Primary Button Active */
 .uk-button-primary:active,
 .uk-button-primary.uk-active {
-  background-color: #fff;
-  color: #000;
+  background-color: #000;
+  color: #fff;
 }
 
 /* Secondary Button */
@@ -564,6 +567,41 @@ html { overflow-y: scroll; } /* fallback for older browsers */
   color: #fff;
 }
 
+/* Save Button with Rainbow Effect */
+.save {
+  margin-top: 0.8em;
+  padding: 0.5em 1.2em; /* keep width/height reasonable for UIkit */
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+  background-size: 400% 400%;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, background-color 0.2s, color 0.2s;
+  animation: rainbowFlow 6s ease infinite;
+}
+
+/* secondary Button Hover */
+.save:hover {
+  transform: scale(1.05); /* from your controls button */
+  background-color: #000;  /* keep your original hover effect */
+  color: #fff;
+}
+
+/* Rainbow Flow Animation */
+@keyframes rainbowFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========================================================================
+   Background
+ ========================================================================== */
+
 /* Background utility */
 .uk-background-primary {
   background-color: #fff;
@@ -578,16 +616,18 @@ html { overflow-y: scroll; } /* fallback for older browsers */
  ========================================================================== */
 
 .uk-link {
-  color: #ccc !important;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .uk-link:hover,
 .uk-link-toggle:hover .uk-link {
-  color: #ccc;
   text-decoration: overline;
 }
+
+/* ========================================================================
+   Tooltip
+ ========================================================================== */
 
 .uk-tooltip {
   /* 1 */
@@ -730,7 +770,7 @@ button:active {
 <body id="top">
 <h1 class="visually-hidden" id="site-title-h1">${siteSettings.title}</h1>
 <div class="uk-background-secondary uk-text-center">
-<img src="icon.png" width="50px"><span class="uk-heading" style="color:white;">Sacrisoft CORE Creator™</span>
+<img src="icon.png" width="50px"><span class="uk-heading" style="color:white;"><span class="uk-text-lighter">Sacrisoft</span> <strong>CORE</strong> Creator™</span>
 </div>
 <!-- Sticky Navbar (Toolbar) -->
 <nav class="uk-navbar-container uk-navbar-transparent uk-sticky" id="main-navbar" uk-sticky="top: 100; animation: uk-animation-slide-top;">
@@ -880,7 +920,7 @@ File: <span id="prev-file-name"></span>
 </div>
 </li>
 </ul>
-<button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
 </form>
 </div>
 </div>
@@ -899,7 +939,7 @@ File: <span id="prev-file-name"></span>
   <label class="uk-form-label">Background Color</label>
   <input id="embed-bgcolor" type="color" value="#ffffff" />
 </div>
-<button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
 </form>
 </div>
 </div>
@@ -972,7 +1012,7 @@ File: <span id="prev-file-name"></span>
 <label class="uk-form-label">Text Color</label>
 <input id="text-color" type="color" value="#000000"/>
 </div>
-<button class="uk-button uk-button-primary uk-width-1-1 uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-border-rounded" type="submit">Save</button>
 </form>
 </div>
 </div>
@@ -1257,18 +1297,18 @@ File: <span id="prev-file-name"></span>
 <label class="uk-form-label">Custom CSS</label><textarea class="uk-textarea uk-border-rounded" id="site-custom-css" placeholder="Write custom CSS here..." rows="6"></textarea></div><div class="uk-margin">
 </div>
 
-<button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
 
 </form>
 </div>
 </div>
 <!-- UIKit modal for delete warning -->
 <div id="delete-modal" uk-modal="">
-<div class="uk-modal-dialog uk-modal-body">
+<div class="uk-modal-dialog uk-modal-body uk-border-rounded">
 <h2 class="uk-modal-title">Really delete item?</h2>
 <p>This action cannot be undone.</p>
 <p class="uk-text-right">
-<button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+<button class="uk-button uk-button-default uk-modal-close uk-border-rounded" type="button">Cancel</button>
 <button class="uk-button uk-button-danger uk-border-rounded" id="confirm-delete" type="button">Delete</button>
 </p>
 </div>
@@ -1647,7 +1687,7 @@ File: <span id="prev-file-name"></span>
 </div>
 </div>
 </div>
-<button class="uk-button uk-button-primary uk-width-1-1 uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-border-rounded" type="submit">Save</button>
 </form>
 </div>
 </div>
@@ -1678,7 +1718,7 @@ File: <span id="prev-file-name"></span>
 <input accept="image/*" id="navbar-logo" type="file"/>
 <div class="uk-margin-small-top" id="navbar-logo-preview" style="max-height:50px;"></div>
 </div>
-<button class="uk-button uk-button-primary uk-width-1-1 uk-border-rounded" type="submit">Save</button>
+<button class="save uk-width-1-1 uk-border-rounded" type="submit">Save</button>
 </form>
 </div>
 </div>
@@ -3673,32 +3713,31 @@ function addLink() {
   if (!url) return;
 
   const range = sel.getRangeAt(0);
-  const a = document.createElement("a");
+
+  // Extract the selected fragment so we preserve inline styles
+  const fragment = range.extractContents();
+
+  // Create anchor and set attributes
+  const a = document.createElement('a');
   a.href = url;
-  a.target = "_blank"; // open in new tab
-  a.classList.add("uk-link");
-  a.textContent = sel.toString();
+  a.target = "_blank";
+  a.classList.add('uk-link'); // keep your class for styling/behavior if needed
 
-  range.deleteContents();
+  // Instead of a fixed color, use 'currentColor' to inherit text color dynamically
+  a.style.color = 'currentColor';
+
+  // Append the preserved fragment (keeps nested tags/formatting)
+  a.appendChild(fragment);
+
+  // Insert the anchor back into the document at the original range position
   range.insertNode(a);
-}
 
-function removeLink() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-
-  const range = sel.getRangeAt(0);
-  let container = range.commonAncestorContainer;
-  if (container.nodeType === 3) { // text node
-    container = container.parentNode;
-  }
-
-  if (container && container.tagName === 'A') {
-    const textNode = document.createTextNode(container.textContent);
-    container.parentNode.replaceChild(textNode, container);
-  } else {
-    alert("Please place the cursor inside a link to remove it.");
-  }
+  // Move caret to just after the inserted link
+  const newRange = document.createRange();
+  newRange.setStartAfter(a);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
 }
 
 function createYouTubeEmbed(url) {
@@ -3853,6 +3892,11 @@ root.querySelectorAll('[uk-lightbox]').forEach(lb => { fixLightboxAnchors(lb); }
   <input type="color" id="gm-bgcolor" value="#000000">
 </div>
 
+<div class="uk-margin">
+  <label class="uk-form-label">Title / Text Color</label>
+  <input type="color" id="gm-textcolor" value="#ffffff">
+</div>
+
     <div class="uk-margin">
       <label class="uk-form-label">Select Images</label>
       <input type="file" id="gm-images" multiple accept="image/*">
@@ -3862,8 +3906,7 @@ root.querySelectorAll('[uk-lightbox]').forEach(lb => { fixLightboxAnchors(lb); }
     <div id="gm-gallery" class="uk-grid-small uk-child-width-1-3@s" uk-grid uk-sortable="handle: img"></div>
 
     <div class="uk-margin">
-      <button class="uk-button uk-button-default uk-modal-close">Cancel</button>
-      <button class="uk-button uk-button-primary" onclick="saveGallery()">Save Gallery</button>
+      <button class="save" onclick="saveGallery()">Save</button>
     </div>
   </div>
 </div>
@@ -3913,6 +3956,7 @@ window.saveGallery = function(){
 const title = (document.getElementById('gm-title')?.value || '').trim();
 const subtitle = (document.getElementById('gm-subtitle')?.value || '').trim();
 const bgColor = document.getElementById('gm-bgcolor')?.value || '#000000';
+const textColor = document.getElementById('gm-textcolor')?.value || '#ffffff';
 const altBase = [title, subtitle].filter(Boolean).join(' — ');
 
 const items = Array.from(document.querySelectorAll('#gm-gallery .uk-card'));
@@ -3931,19 +3975,19 @@ items.forEach((card) => {
 
   dataItems.push({ src: img.src, caption: cap, alt: altBase });
 });
-const galleryData = { title, subtitle, bgColor, items: dataItems };
+const galleryData = { title, subtitle, bgColor, textColor, items: dataItems };
 
-const titleHtml    = title    ? `<h1 class="uk-heading-line uk-text-center"><span>${gmEscapeHtml(title)}</span></h1>` : '';
-const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center">${gmEscapeHtml(subtitle)}</h3>` : '';
+const titleHtml    = title    ? `<h1 class="uk-heading-line uk-text-center" style="color:${textColor}"><span>${gmEscapeHtml(title)}</span></h1>` : '';
+const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center" style="color:${textColor}">${gmEscapeHtml(subtitle)}</h3>` : '';
 
 const newHtml = `
-  <div class="uk-container uk-padding">
+  <div class="uk-container uk-padding" style="background:${bgColor}; color:${textColor}">
     ${titleHtml}
     ${subtitleHtml}
-<div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m"
-     uk-grid="masonry: true" uk-lightbox="animation: slide; toggle: a">
-  ${imagesHtml.trim()}
-</div>
+    <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m"
+         uk-grid="masonry: true" uk-lightbox="animation: slide; toggle: a">
+      ${imagesHtml.trim()}
+    </div>
   </div>
 `.trim();
 
@@ -3986,6 +4030,7 @@ window.editGallery = function(id) {
   document.getElementById('gm-subtitle').value = '';
   document.getElementById('gm-gallery').innerHTML = '';
   document.getElementById('gm-bgcolor').value = block.bgColor || '#000000';
+  document.getElementById('gm-textcolor').value = (block.data && block.data.textColor) ? block.data.textColor : '#ffffff';
 
   if (block.data) {
   // Use structured JSON
