@@ -61,7 +61,7 @@
         .live-paragraph.uk-text-large { font-size: 1.1rem;}
       }
       .uk-navbar-container.sticky-colored {
-        background: #222 !important;
+        background: #fff !important;
       }
       .sticky-colored .uk-navbar-item,
       .sticky-colored .uk-navbar-item span,
@@ -162,6 +162,7 @@
   white-space: nowrap;
   gap: 1rem;
   padding: 0.5rem 1rem;
+
 }
 .navbar-scroll li {
   flex: 0 0 auto;
@@ -429,26 +430,301 @@ html { overflow-y: scroll; } /* fallback for older browsers */
 .uk-modal { opacity: 0; transition: opacity .12s linear; }
 .uk-modal.uk-open { opacity: 1; }
 
+
+/* ========================================================================
+   Style modifiers
+ ========================================================================== */
+
+.uk-icon-button {
+  background: #fff;
+  color: #000;
+}
+
+.uk-icon-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-icon-button:active,
+.uk-active > .uk-icon-button {
+  background-color: #fff;
+  color: #fff;
+}
+
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
+  outline: none;
+  background-color: #fff;
+  color: #000;
+  border-color: #000;
+}
+
+/* Hide native radio input */
+.radio-wrapper .uk-radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Label wrapper */
+.radio-wrapper {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 4px; /* smaller spacing */
+  font-size: 14px;    /* smaller font */
+}
+
+/* Custom radio circle */
+.radio-custom {
+  width: 16px;          /* smaller circle */
+  height: 16px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin-right: 6px;    /* less space between circle and text */
+  position: relative;
+  flex-shrink: 0;
+  background-color: #fff;
+}
+
+/* Checked state: black dot */
+.uk-radio:checked + .radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;          /* smaller dot */
+  height: 8px;
+  background-color: #000;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Disabled state */
+.uk-radio:disabled + .radio-custom {
+  border-color: #888;
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+.uk-light .uk-button-secondary, .uk-section-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-section-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-card-primary.uk-card-body .uk-button-secondary, .uk-card-primary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-card-secondary.uk-card-body .uk-button-secondary, .uk-card-secondary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-overlay-primary .uk-button-secondary, .uk-offcanvas-bar .uk-button-secondary {
+background-color: #000;
+color: #fff;
+}
+
+.uk-button-primary:hover {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-button-primary {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+.uk-button-primary:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+  background-color: #fff;
+  color: #000;
+}
+
+.uk-button-secondary {
+  background-color: #fff;
+  color: #000;
+}
+
+.uk-button-secondary:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.uk-button-secondary:active,
+.uk-button-secondary.uk-active {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-background-primary {
+  background-color: #fff;
+}
+.uk-background-secondary {
+  background-color: #000;
+}
+
+.uk-tooltip {
+  /* 1 */
+  display: none;
+  /* 2 */
+  position: absolute;
+  z-index: 1030;
+  --uk-position-offset: 10px;
+  --uk-position-viewport-offset: 10;
+  /* 3 */
+  top: 0;
+  /* 4 */
+  box-sizing: border-box;
+  max-width: 200px;
+  padding: 6px 12px;
+  /* 5 */
+  background: #000;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.uk-border-rounded {
+  border-radius: 25px;
+}
+
+/* ========================================================================
+   Lightbox
+ ========================================================================== */
+
+.uk-lightbox-button {
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 100%;
+  /* 1 */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.uk-lightbox-iframe {
+  width: 90%;
+  height: 90%;
+  border: 0px solid black;
+  border-radius: 0; /* Default: no rounding for Chrome, Brave, etc. */
+}
+
+/* Safari-only override */
+@supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
+  .uk-lightbox-iframe {
+    border-radius: 25px;
+  }
+}
+
+.uk-lightbox-toolbar {
+  padding: 5px 5px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+}
+.uk-lightbox-toolbar > * {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.uk-lightbox-toolbar-icon {
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  background: #000;
+  color: white;
+  border-radius: 100%;
+  /* 1 */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* ========================================================================
+   Slider
+ ========================================================================== */
+
+.uk-slidenav {
+  padding: 5px 10px;
+  color: rgba(102, 102, 102, 0.5);
+  transition: color 0.1s ease-in-out;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+/* ========================================================================
+   Additional CSS:
+ ========================================================================== */
+
+html {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+button:focus,
+button:active {
+	-moz-outline: 0 !important;
+	-ms-outline:0 !important;
+	-o-outline: 0 !important;
+	-webkit-outline: 0 !important;
+}
+
+.uk-text-left-justify\@m {
+    text-align: left;
+  }
+
+  @media (min-width: 960px) {
+    .uk-text-left-justify\@m {
+      text-align: justify;
+    }
+  }
+
+/* Disable justification by default */
+  .uk-text-justify {
+    text-align: left !important;
+  }
+
+/* Enable justification from medium screens up (≥960px) */
+  @media (min-width: 960px) {
+    .uk-text-justify {
+      text-align: justify !important;
+    }
+  }
+
 </style>
 </head>
 <body id="top">
 <h1 class="visually-hidden" id="site-title-h1">${siteSettings.title}</h1>
+<div class="uk-background-secondary uk-text-center">
+<img src="icon.png" width="50px"><span class="uk-heading" style="color:white;">Sacrisoft CORE Creator™</span>
+</div>
 <!-- Sticky Navbar (Toolbar) -->
 <nav class="uk-navbar-container uk-navbar-transparent uk-sticky" id="main-navbar" uk-sticky="top: 100; animation: uk-animation-slide-top;">
 <div class="navbar-scroll">
 <div class="navbar-group">
-<a class="uk-icon-button" id="loadJSON" uk-icon="upload" uk-tooltip="Load Website (JSON)"></a>
-<a class="uk-icon-button" id="saveJSON" uk-icon="download" uk-tooltip="Save Website (JSON)"></a>
-<a class="uk-icon-button" id="settingsBtn" uk-icon="settings" uk-tooltip="Site Settings"></a>
-<a class="uk-icon-button" id="navBarBtn" uk-icon="cog" uk-tooltip="Dynamic Nav Bar"></a>
-<a class="uk-icon-button" id="footerBtn" uk-icon="more" uk-tooltip="Footer Settings"></a>
-<a class="uk-icon-button" id="addTextBtn" uk-icon="file-text" uk-tooltip="Add Text"></a>
-<a class="uk-icon-button" id="addImageBtn" uk-icon="image" uk-tooltip="Add Image"></a>
-<a class="uk-icon-button" id="addGalleryBtn" uk-icon="thumbnails" uk-tooltip="Add Image Gallery"></a>
-<a class="uk-icon-button" id="addVideoBtn" uk-icon="video-camera" uk-tooltip="Add Video"></a>
-<a class="uk-icon-button" id="embedCodeBtn" uk-icon="code" uk-tooltip="Add Embed Code"></a>
-<a class="uk-icon-button" id="previewBtn" uk-icon="eye" uk-tooltip="Preview Website"></a>
-<a class="uk-icon-button" id="exportHTML" uk-icon="world" uk-tooltip="Export Website (HTML)"></a>
+<a class="uk-icon-button" id="loadJSON" uk-icon="upload" uk-tooltip="title: Load Website (JSON); pos: bottom"></a>
+<a class="uk-icon-button" id="saveJSON" uk-icon="download" uk-tooltip="title: Save Website (JSON); pos: bottom"></a>
+<a class="uk-icon-button" id="settingsBtn" uk-icon="settings" uk-tooltip="title: Site Settings; pos: bottom"></a>
+<a class="uk-icon-button" id="navBarBtn" uk-icon="cog" uk-tooltip="title: Dynamic Nav Bar; pos: bottom"></a>
+<a class="uk-icon-button" id="footerBtn" uk-icon="more" uk-tooltip="title: Footer Settings; pos: bottom"></a>
+<a class="uk-icon-button" id="addTextBtn" uk-icon="file-text" uk-tooltip="title: Add Text; pos: bottom"></a>
+<a class="uk-icon-button" id="addImageBtn" uk-icon="image" uk-tooltip="title: Add Image; pos: bottom"></a>
+<a class="uk-icon-button" id="addGalleryBtn" uk-icon="thumbnails" uk-tooltip="title: Add Image Gallery; pos: bottom"></a>
+<a class="uk-icon-button" id="addVideoBtn" uk-icon="video-camera" uk-tooltip="title: Add Video; pos: bottom"></a>
+<a class="uk-icon-button" id="embedCodeBtn" uk-icon="code" uk-tooltip="title: Add Embed Code; pos: bottom"></a>
+<a class="uk-icon-button" id="previewBtn" uk-icon="eye" uk-tooltip="title: Preview Website; pos: bottom"></a>
+<a class="uk-icon-button" id="exportHTML" uk-icon="world" uk-tooltip="title: Export Website (HTML); pos: bottom"></a>
 <input accept=".json" id="jsonFileInput" style="display:none" type="file"/>
 </div>
 </div>
@@ -563,7 +839,7 @@ File: <span id="prev-file-name"></span>
 <div class="uk-accordion-content">
 <div class="uk-margin">
 <label class="uk-form-label">Button Label</label>
-<input class="uk-input uk-border-rounded" id="btn-label" placeholder="(Optional)" type="text"/>
+<input class="uk-input uk-border-rounded" id="btn-label" placeholder="Button Text" type="text"/>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Button URL</label>
@@ -598,7 +874,7 @@ File: <span id="prev-file-name"></span>
 </div>
 <div class="uk-margin">
   <label class="uk-form-label">Background Color</label>
-  <input id="embed-bgcolor" type="color" value="#000000" />
+  <input id="embed-bgcolor" type="color" value="#ffffff" />
 </div>
 <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-border-rounded" type="submit">Save</button>
 </form>
@@ -667,11 +943,11 @@ File: <span id="prev-file-name"></span>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Background Color</label>
-<input id="text-bgcolor" type="color" value="#000000"/>
+<input id="text-bgcolor" type="color" value="#ffffff"/>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Text Color</label>
-<input id="text-color" type="color" value="#ffffff"/>
+<input id="text-color" type="color" value="#000000"/>
 </div>
 <button class="uk-button uk-button-primary uk-width-1-1 uk-border-rounded" type="submit">Save</button>
 </form>
@@ -893,7 +1169,7 @@ File: <span id="prev-file-name"></span>
 <option value="noindex, nofollow">NoIndex, NoFollow</option>
 </select>
 </div>
-<h4 class="uk-heading-bullet">Open Graph Images</h4>
+<h4 class="uk-heading-bullet"> Favicon </h4>
 <div class="uk-margin">
 <label class="uk-form-label">Favicon URL</label>
 <input class="uk-input uk-border-rounded" id="site-favicon" placeholder="https://example.com/favicon.png" type="url"/>
@@ -903,6 +1179,42 @@ File: <span id="prev-file-name"></span>
 <div class="uk-margin-small-top" id="site-favicon-preview" style="max-height:40px;"></div>
 </div>
 </div>
+<h4 class="uk-heading-bullet">Custom Font</h4>
+<div class="uk-margin">
+  <!-- Text input -->
+  <label class="uk-form-label">Insert Google Font name</label>
+  <input class="uk-input uk-border-rounded" id="site-font-name" placeholder="e.g. Orbitron" type="text"/>
+
+  <label class="uk-form-label">&nbsp;</label>
+
+  <!-- Radio buttons -->
+  <div class="uk-form-controls">
+    <label class="radio-wrapper">
+      <input class="uk-radio" type="radio" name="font-target" value="all" id="apply-to-all">
+      <span class="radio-custom"></span>
+      All (Text + Headings)
+    </label><br>
+
+    <label class="radio-wrapper">
+      <input class="uk-radio" type="radio" name="font-target" value="body" id="apply-to-body">
+      <span class="radio-custom"></span>
+      Text
+    </label><br>
+
+    <label class="radio-wrapper">
+      <input class="uk-radio" type="radio" name="font-target" value="headings" id="apply-to-headings">
+      <span class="radio-custom"></span>
+      Headings
+    </label><br>
+
+    <label class="radio-wrapper">
+      <input class="uk-radio" type="radio" name="font-target" value="none" id="apply-to-none" checked>
+      <span class="radio-custom"></span>
+      None
+    </label>
+  </div>
+</div>
+<h4 class="uk-heading-bullet">Open Graph Images</h4>
 <div class="uk-margin">
 <label class="uk-form-label">Social Preview Image URL</label>
 <input class="uk-input uk-border-rounded" id="site-social" placeholder="https://example.com/social.png" type="url"/>
@@ -916,17 +1228,6 @@ File: <span id="prev-file-name"></span>
 <div class="uk-margin">
 <label class="uk-form-label">Add custom Schema.org JSON code</label>
 <textarea class="uk-textarea uk-border-rounded" id="site-head-script" placeholder='&lt;script type="application/ld+json"&gt;...&lt;/script&gt;' rows="4"></textarea>
-</div>
-<h4 class="uk-heading-bullet">Custom Font</h4>
-<div class="uk-margin">
-  <label class="uk-form-label">Insert Google Font name</label><input class="uk-input uk-border-rounded" id="site-font-name" placeholder="e.g. Orbitron" type="text"/>
-  <label class="uk-form-label">&nbsp;</label>
-  <div class="uk-form-controls">
-    <label><input type="radio" name="font-target" value="all" id="apply-to-all"> All (Text + Headings)</label><br>
-    <label><input type="radio" name="font-target" value="body" id="apply-to-body"> Text</label><br>
-    <label><input type="radio" name="font-target" value="headings" id="apply-to-headings"> Headings</label><br>
-    <label><input type="radio" name="font-target" value="none" id="apply-to-none" checked> None</label>
-  </div>
 </div>
 <h4 class="uk-heading-bullet">Custom Style and Design</h4>
 <div class="uk-margin">
@@ -966,7 +1267,7 @@ File: <span id="prev-file-name"></span>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Background Color</label>
-<input id="footer-bg" type="color" value="#222222"/>
+<input id="footer-bg" type="color" value="#000000"/>
 </div>
 <div class="uk-margin">
 <label class="uk-form-label">Text Color</label>
@@ -1472,8 +1773,8 @@ addTextBtn.addEventListener('click', () => {
   if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = 'h-lg';
   if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = 'sub-md';
   if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = 'p-md';
-  if (typeof textBgColor !== 'undefined') textBgColor.value = '#000000';
-  if (typeof textColor !== 'undefined')   textColor.value   = '#ffffff';
+  if (typeof textBgColor !== 'undefined') textBgColor.value = '#ffffff';
+  if (typeof textColor !== 'undefined')   textColor.value   = '#000000';
   textIndex.value = '';
   textModal.show();
 });
@@ -1488,8 +1789,8 @@ textForm.addEventListener('submit', e => {
     paragraph: textParagraph.innerHTML,
     align: textAlignInput.value || 'center',
     animation: textAnimation.value,
-    bgColor: textBgColor.value || '#000000',
-    textColor: textColor.value || '#ffffff',
+    bgColor: textBgColor.value || '#ffffff',
+    textColor: textColor.value || '#000000',
     headingSize: textHeadingSize.value,
     subtitleSize: textSubtitleSize.value,
     paragraphSize: textParagraphSize.value
@@ -1602,7 +1903,7 @@ function applyCustomCSS() {
             navbar: { enabled: false, bg: '#ffffff', text: '#000000', logoUrl: '', logo: '', logoFileName: '' },
 footer: {
   "enabled": false,
-  "bg": "#222222",
+  "bg": "#000000",
   "text": "#ffffff",
   "phone": "",
   "email": "",
@@ -1789,7 +2090,7 @@ function setupEmbedModal(data, idx) {
     const titleEl = document.getElementById('embed-modal-title');
     titleEl.textContent = (idx !== undefined && idx !== null) ? 'Edit Embed Code' : 'Add Embed Code';
     embedCode.value = data ? data.code : '';
-    document.getElementById("embed-bgcolor").value = data ? (data.bgColor || "#000000") : "#000000";
+    document.getElementById("embed-bgcolor").value = data ? (data.bgColor || "#ffffff") : "#ffffff";
     embedIndex.value = (idx !== undefined && idx !== null) ? idx : '';
 }
 
@@ -1805,7 +2106,7 @@ embedForm.addEventListener('submit', function (e) {
     let idx = parseInt(embedIndex.value, 10);
     if (isNaN(idx)) idx = null;  // null means new section
 
-let bgColorVal = document.getElementById("embed-bgcolor").value || "#000000";
+let bgColorVal = document.getElementById("embed-bgcolor").value || "#ffffff";
 let block = { type: 'embed', code, bgColor: bgColorVal };
 
     if (idx !== null) {
@@ -2005,7 +2306,7 @@ if (type === 'embed') {
             `;
         }
 
-// RIGHT (image right on desktop, text left; image above text on mobile)
+// RIGHT (image right, text left)
 if (mediaSize === 'right') {
     return `
         <div class="uk-padding-large" style="background:${bgColor};">
@@ -2017,7 +2318,7 @@ if (mediaSize === 'right') {
                          style="max-width:100%; width:100%; height:auto; display:block;"
                          ${mediaSpy}>
                 </div>
-                <div class="uk-width-expand@m uk-padding-small">
+                <div class="uk-width-expand@m uk-padding-small uk-text-center uk-text-right@m">
                     ${textBlock}
                 </div>
             </div>
@@ -2192,8 +2493,8 @@ function renderAllSections() {
           textSubtitle.value  = block.subtitle || '';
           textParagraph.innerHTML = block.paragraph || '';
           textAnimation.value = block.animation || 'uk-animation-fade';
-          if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#000000';
-          if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#ffffff';
+          if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#ffffff';
+          if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#000000';
           if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = block.headingSize || 'h-lg';
           if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
           if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
