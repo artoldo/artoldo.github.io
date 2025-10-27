@@ -1,4 +1,4 @@
-<!-- Version: 6.8.1 | Last Update: 2025-10-24 | Author: Sacrisoft | © All rights reserved -->
+<!-- Version: 6.8.9 | Last Update: 2025-10-24 | Author: Sacrisoft | © All rights reserved -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -770,7 +770,7 @@ html { overflow-y: scroll; } /* fallback for older browsers */
   width: 50px;
   height: 50px;
   background: #000;
-  color: white;
+  color: #fff;
   border-radius: 100%;
   /* 1 */
   display: inline-flex;
@@ -778,6 +778,59 @@ html { overflow-y: scroll; } /* fallback for older browsers */
   align-items: center;
 }
 
+/* ===== keep only the close button always visible (preserve exact look) ===== */
+
+/* wide selector to match common UIkit close button variants */
+.uk-lightbox .uk-lightbox-button.uk-close,
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close,
+.uk-lightbox [data-uk-close],
+.uk-lightbox [data-uk-close] > * {
+  /* DO NOT change visual properties (width/height/background/color/border-radius/flex)
+     — we only override visibility/stacking/interaction and remove hide transforms. */
+  position: fixed !important;        /* remove from hidden parent so it stays visible */
+  top: 5px !important;               /* align with toolbar padding — preserves placement */
+  right: 5px !important;             /* align with toolbar padding */
+  z-index: 999999 !important;        /* above overlays */
+  display: inline-flex !important;   /* keep your inline-flex layout */
+  opacity: 0.7 !important;             /* force fully visible */
+  visibility: visible !important;    /* force visible */
+  pointer-events: auto !important;   /* clickable even if parent is disabled */
+  transform: none !important;        /* cancel hide transforms */
+  transition: none !important;       /* prevent fade-out transitions */
+  animation: none !important;        /* stop any hiding animations */
+}
+
+/* If UIkit sets helper classes, undo them for close only */
+.uk-lightbox .uk-lightbox-button.uk-close.uk-hidden,
+.uk-lightbox .uk-lightbox-button.uk-close.uk-invisible,
+.uk-lightbox .uk-close.uk-hidden,
+.uk-lightbox .uk-close.uk-invisible,
+.uk-lightbox [data-uk-close].uk-hidden,
+.uk-lightbox [data-uk-close].uk-invisible {
+  display: inline-flex !important;
+  opacity: 0.7 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* keep SVG/icon inside intact (do not change color/size) */
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close svg {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* mobile tweak to avoid overlap while preserving look (keeps same size) */
+@media (max-width: 480px) {
+  .uk-lightbox .uk-lightbox-button.uk-close,
+  .uk-lightbox .uk-close,
+  .uk-lightbox [data-uk-close] {
+    top: 8px !important;
+    right: 8px !important;
+  }
+}
 
 /* ========================================================================
    Slider
@@ -845,7 +898,7 @@ button:active {
 <body id="top">
 <h1 class="visually-hidden" id="site-title-h1">${siteSettings.title}</h1>
 <div class="uk-background-secondary uk-text-center">
-<img src="icon.png" width="50px"><span class="uk-heading" style="color:white;"><span class="uk-text-lighter">Sacrisoft</span> <strong>CORE</strong> Creator™</span>
+<img src="./images/icon.png" width="50px"><span class="uk-heading" style="color:white;"><span class="uk-text-lighter">Sacrisoft</span> <strong>CORE</strong> Creator™</span>
 </div>
 <!-- Sticky Navbar (Toolbar) -->
 <nav class="uk-navbar-container uk-navbar-transparent uk-sticky" id="main-navbar" uk-sticky="top: 100; animation: uk-animation-slide-top;">
@@ -3580,12 +3633,66 @@ html += `
   width: 50px;
   height: 50px;
   background: #000;
-  color: white;
+  color: #fff;
   border-radius: 100%;
   /* 1 */
   display: inline-flex;
   justify-content: center;
   align-items: center;
+}
+
+/* ===== keep only the close button always visible (preserve exact look) ===== */
+
+/* wide selector to match common UIkit close button variants */
+.uk-lightbox .uk-lightbox-button.uk-close,
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close,
+.uk-lightbox [data-uk-close],
+.uk-lightbox [data-uk-close] > * {
+  /* DO NOT change visual properties (width/height/background/color/border-radius/flex)
+     — we only override visibility/stacking/interaction and remove hide transforms. */
+  position: fixed !important;        /* remove from hidden parent so it stays visible */
+  top: 5px !important;               /* align with toolbar padding — preserves placement */
+  right: 5px !important;             /* align with toolbar padding */
+  z-index: 999999 !important;        /* above overlays */
+  display: inline-flex !important;   /* keep your inline-flex layout */
+  opacity: 0.7 !important;             /* force fully visible */
+  visibility: visible !important;    /* force visible */
+  pointer-events: auto !important;   /* clickable even if parent is disabled */
+  transform: none !important;        /* cancel hide transforms */
+  transition: none !important;       /* prevent fade-out transitions */
+  animation: none !important;        /* stop any hiding animations */
+}
+
+/* If UIkit sets helper classes, undo them for close only */
+.uk-lightbox .uk-lightbox-button.uk-close.uk-hidden,
+.uk-lightbox .uk-lightbox-button.uk-close.uk-invisible,
+.uk-lightbox .uk-close.uk-hidden,
+.uk-lightbox .uk-close.uk-invisible,
+.uk-lightbox [data-uk-close].uk-hidden,
+.uk-lightbox [data-uk-close].uk-invisible {
+  display: inline-flex !important;
+  opacity: 0.7 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* keep SVG/icon inside intact (do not change color/size) */
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close svg {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* mobile tweak to avoid overlap while preserving look (keeps same size) */
+@media (max-width: 480px) {
+  .uk-lightbox .uk-lightbox-button.uk-close,
+  .uk-lightbox .uk-close,
+  .uk-lightbox [data-uk-close] {
+    top: 8px !important;
+    right: 8px !important;
+  }
 }
 
 
@@ -4068,7 +4175,7 @@ html += `
   width: 50px;
   height: 50px;
   background: #000;
-  color: white;
+  color: #fff;
   border-radius: 100%;
   /* 1 */
   display: inline-flex;
@@ -4076,6 +4183,59 @@ html += `
   align-items: center;
 }
 
+/* ===== keep only the close button always visible (preserve exact look) ===== */
+
+/* wide selector to match common UIkit close button variants */
+.uk-lightbox .uk-lightbox-button.uk-close,
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close,
+.uk-lightbox [data-uk-close],
+.uk-lightbox [data-uk-close] > * {
+  /* DO NOT change visual properties (width/height/background/color/border-radius/flex)
+     — we only override visibility/stacking/interaction and remove hide transforms. */
+  position: fixed !important;        /* remove from hidden parent so it stays visible */
+  top: 5px !important;               /* align with toolbar padding — preserves placement */
+  right: 5px !important;             /* align with toolbar padding */
+  z-index: 999999 !important;        /* above overlays */
+  display: inline-flex !important;   /* keep your inline-flex layout */
+  opacity: 0.7 !important;             /* force fully visible */
+  visibility: visible !important;    /* force visible */
+  pointer-events: auto !important;   /* clickable even if parent is disabled */
+  transform: none !important;        /* cancel hide transforms */
+  transition: none !important;       /* prevent fade-out transitions */
+  animation: none !important;        /* stop any hiding animations */
+}
+
+/* If UIkit sets helper classes, undo them for close only */
+.uk-lightbox .uk-lightbox-button.uk-close.uk-hidden,
+.uk-lightbox .uk-lightbox-button.uk-close.uk-invisible,
+.uk-lightbox .uk-close.uk-hidden,
+.uk-lightbox .uk-close.uk-invisible,
+.uk-lightbox [data-uk-close].uk-hidden,
+.uk-lightbox [data-uk-close].uk-invisible {
+  display: inline-flex !important;
+  opacity: 0.7 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* keep SVG/icon inside intact (do not change color/size) */
+.uk-lightbox .uk-lightbox-button.uk-close svg,
+.uk-lightbox .uk-close svg {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* mobile tweak to avoid overlap while preserving look (keeps same size) */
+@media (max-width: 480px) {
+  .uk-lightbox .uk-lightbox-button.uk-close,
+  .uk-lightbox .uk-close,
+  .uk-lightbox [data-uk-close] {
+    top: 8px !important;
+    right: 8px !important;
+  }
+}
 
 /* ========================================================================
    Slider
