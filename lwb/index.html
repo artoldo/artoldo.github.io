@@ -4614,15 +4614,15 @@ items.forEach((card) => {
 });
 const galleryData = { title, subtitle, bgColor, textColor, items: dataItems };
 
-const titleHtml    = title    ? `<h1 class="uk-heading-line uk-text-center" style="color:${textColor}"><span>${gmEscapeHtml(title)}</span></h1>` : '';
-const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center" style="color:${textColor}">${gmEscapeHtml(subtitle)}</h3>` : '';
+const titleHtml    = title    ? `<h1 class="uk-heading-line uk-text-center" style="color:${textColor}" uk-scrollspy="cls: uk-animation-slide-top; delay: 0; offset: 100; repeat: true"><span>${gmEscapeHtml(title)}</span></h1>` : '';
+const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center" style="color:${textColor}" uk-scrollspy="cls: uk-animation-slide-bottom; delay: 0; offset: 120; repeat: true">${gmEscapeHtml(subtitle)}</h3>` : '';
 
 const newHtml = `
   <div class="uk-container uk-padding" style="background:${bgColor}; color:${textColor}">
     ${titleHtml}
     ${subtitleHtml}
     <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@m"
-         uk-grid="masonry: true" uk-lightbox="animation: slide; toggle: a">
+         uk-grid="masonry: true" uk-lightbox="animation: slide; toggle: a" uk-scrollspy="target: > div; cls: uk-animation-fade; delay: 250; repeat: true">
       ${imagesHtml.trim()}
     </div>
   </div>
