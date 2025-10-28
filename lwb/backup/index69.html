@@ -1989,7 +1989,6 @@ addTextBtn.addEventListener('click', () => {
   if (typeof textBgColor !== 'undefined') textBgColor.value = '#ffffff';
   if (typeof textColor !== 'undefined')   textColor.value   = '#000000';
   textIndex.value = '';
-  applyLastColorsToContainer('#text-modal');
   textModal.show();
 });
 
@@ -2258,12 +2257,10 @@ footer: {
 
         addImageBtn.addEventListener('click', () => {
             setupModal('image');
-            applyLastColorsToContainer('#media-modal');
             mediaModal.show();
         });
         addVideoBtn.addEventListener('click', () => {
             setupModal('video');
-            applyLastColorsToContainer('#media-modal');
             mediaModal.show();
         });
 
@@ -2299,7 +2296,6 @@ footer: {
 // EMBED modal interactions
 embedCodeBtn.addEventListener('click', () => {
     setupEmbedModal();
-    applyLastColorsToContainer('#embed-modal');
     UIkit.modal('#embed-modal').show(); // get a fresh modal instance
 });
 
@@ -2703,7 +2699,6 @@ function renderAllSections() {
       li.querySelector('.editor-edit-btn').addEventListener('click', function () {
         if (block.type === 'embed') {
           setupEmbedModal(block, idx);
-          applyLastColorsToContainer('#embed-modal');
           UIkit.modal('#embed-modal').show();
         } else if (block.type === 'text') {
           // Prefill text modal with saved values
@@ -2717,11 +2712,9 @@ function renderAllSections() {
           if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
           if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
           textIndex.value = idx;
-          applyLastColorsToContainer('#text-modal');
           textModal.show();
         } else {
           setupModal(block.type, block, idx);
-          applyLastColorsToContainer('#media-modal');
           mediaModal.show();
         }
       });
@@ -3010,7 +3003,6 @@ footerBtn.addEventListener('click', () => {
   footerPhone.value = siteSettings.footer.phone || '';
   footerEmail.value = siteSettings.footer.email || '';
   footerAddress.value = siteSettings.footer.address || '';
-  applyLastColorsToContainer('#footer-modal');
   footerModal.show();
 });
 
@@ -3140,7 +3132,7 @@ function buildSocialIcons() {
   let html = socials
     .filter(s => siteSettings.footer[s.key])
     .map(s =>
-      `<a href="${siteSettings.footer[s.key]}" uk-icon="icon: ${s.icon}; ratio: 1.5" target="_blank" style="margin:0 8px; color:${siteSettings.footer.text}"></a>`
+      `<a href="${siteSettings.footer[s.key]}" uk-icon="${s.icon}" target="_blank" style="margin:0 8px; color:${siteSettings.footer.text}"></a>`
     ).join('');
   return html ? `<div class="footer-social" style="margin-bottom:10px;">${html}</div>` : '';
 }
@@ -3230,7 +3222,6 @@ if (siteSettings.navbar.logoBlob) {
 } else {
   navbarLogoPreview.innerHTML = '';
 }
-  applyLastColorsToContainer('#navbar-modal');
   navbarModal.show();
 });
 
@@ -4567,7 +4558,6 @@ document.getElementById('addGalleryBtn')
     document.getElementById('gm-title').value = '';
     document.getElementById('gm-subtitle').value = '';
     document.getElementById('gm-gallery').innerHTML = '';
-    applyLastColorsToContainer('#gallery-modal');
     UIkit.modal('#gallery-modal').show();
   });
 
@@ -4717,7 +4707,7 @@ window.editGallery = function(id) {
     document.getElementById('gm-gallery').appendChild(col);
   });
 }
-  applyLastColorsToContainer('#gallery-modal');
+
   UIkit.modal('#gallery-modal').show();
 };
 </script>
@@ -4748,84 +4738,6 @@ function updateRainbowPickers() {
   });
 }
 updateRainbowPickers();
-
-// ------------------- keep last-used colors and apply them to any modal -------------------
-const lastColors = {
-  // fill keys for any modal color inputs you use
-  bg: null,
-  text: null,
-  heading: null,
-  subtitle: null,
-  paragraph: null,
-  btn: null,
-  navbarBg: null,
-  navbarText: null,
-  footerBg: null,
-  footerText: null
-};
-
-// Update lastColors when any color input changes (works for all modals / editors)
-// call this once at page load
-function watchColorPickers() {
-  document.querySelectorAll('input[type="color"]').forEach(input => {
-    // record changes
-    input.addEventListener('input', (e) => {
-      const id = e.target.id || '';
-      const val = e.target.value;
-      // map common input ids to lastColors keys
-      if (id.includes('bg')) lastColors.bg = val;
-      if (id.includes('text') || id.includes('color')) lastColors.text = val;
-      if (id.includes('gm-bgcolor')) lastColors.bg = val;        // gallery bg
-      if (id.includes('gm-textcolor')) lastColors.text = val;    // gallery text
-      if (id.includes('navbar-bg')) lastColors.navbarBg = val;
-      if (id.includes('navbar-text')) lastColors.navbarText = val;
-      if (id.includes('footer-bg')) lastColors.footerBg = val;
-      if (id.includes('footer-text')) lastColors.footerText = val;
-      if (id.includes('btn-color')) lastColors.btn = val;
-      // expand mapping above if you have more specific ids
-    });
-  });
-}
-watchColorPickers();
-
-/**
- * Apply lastColors into a modal container (modalEl may be a selector string or an Element)
- * Usage: applyLastColorsToContainer('#gallery-modal') or applyLastColorsToContainer(document.getElementById('gallery-modal'))
- */
-function applyLastColorsToContainer(modalEl) {
-  const root = (typeof modalEl === 'string') ? document.querySelector(modalEl) : modalEl;
-  if (!root) return;
-
-  // helper to set value if input present
-  function setIf(selector, value) {
-    if (!value) return; // nothing stored yet
-    const el = root.querySelector(selector);
-    if (el && el.type === 'color') {
-      el.value = value;
-      // update visual background (your existing UI code expects this)
-      el.style.backgroundColor = value;
-      el.style.setProperty('--fallback-color', value);
-      // if you use the rainbow border helper, keep it consistent:
-      el.style.background = `linear-gradient(${value}, ${value}) padding-box, conic-gradient(red, orange, yellow, green, cyan, blue, violet, red) border-box`;
-    }
-  }
-
-  // Apply the most used keys (adjust to match your modal input IDs)
-  setIf('#gm-bgcolor', lastColors.bg);
-  setIf('#gm-textcolor', lastColors.text);
-  setIf('#text-bgcolor', lastColors.bg);
-  setIf('#text-color', lastColors.text);
-  setIf('#bg-color', lastColors.bg);         // media modal bg
-  setIf('#media-color', lastColors.text);    // media heading color
-  setIf('#navbar-bg', lastColors.navbarBg);
-  setIf('#navbar-text', lastColors.navbarText);
-  setIf('#footer-bg', lastColors.footerBg);
-  setIf('#footer-text', lastColors.footerText);
-
-  // if you want to toggle theme (black/white) for UI preview inside modal, do it here
-  // e.g. if lastColors.text is very dark, you might want to set a contrast preview class etc.
-}
-
 </script>
 
 </body>
