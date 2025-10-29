@@ -893,6 +893,36 @@ button:active {
   border-radius: 25px;
 }
 
+/* Tweak notification container (UIkit) */
+.uk-notification { 
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Warning message style */
+.uk-notification .uk-notification-message.uk-notification-message-warning,
+.uk-notification .uk-notification-message.uk-notification-warning {
+  background-color: #ffffff; /* white background */
+  color: #ff9000; /* orange text color */
+  padding: 14px 18px;
+  border: 3px dashed #ff9000; /* orange border */
+  border-radius: 25px; /* fully rounded corners */
+  max-width: 360px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  overflow: hidden; /* important to make corners fully rounded */
+}
+
+/* Remove background from inner elements if they exist */
+.uk-notification .uk-notification-message-warning > * {
+  background: transparent;
+}
+
+/* Smaller bold label, clearer spacing */
+.uk-notification .uk-notification-message.uk-notification-message-warning strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
 </style>
 </head>
 <body id="top">
