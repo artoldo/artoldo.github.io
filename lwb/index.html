@@ -2716,8 +2716,8 @@ function renderAllSections() {
     // --- Handle GALLERY sections separately ---
     if (block.type === 'gallery') {
       li.innerHTML = `
-        <section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true"
-          style="${sectionStyle};">
+<section id="section-${idx}" class="uk-section uk-section-primary uk-flex uk-flex-middle uk-flex-center"
+         uk-height-viewport="offset-top: true" style="${sectionStyle};">
           ${editBtn}
           ${removeBtn}
           ${block.html}
@@ -3420,7 +3420,7 @@ previewBtn.addEventListener('click', function () {
     const exportMap = {}; // not needed for preview, but avoids errors
 
 let exportBlocks = allSections.map((block, idx) =>
-    `<section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
+`<section id="section-${idx}" class="uk-section uk-section-primary uk-flex uk-flex-middle uk-flex-center" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
         ${getExportSectionHtml(block, exportMap)}
     </section>`
 ).join('\n');
@@ -3970,7 +3970,7 @@ let exportBlocks = allSections.map((block, idx) => {
   const inner = (block.type === 'gallery' && galleryExportHtml[idx])
     ? galleryExportHtml[idx]
     : getExportSectionHtml(block, exportMap);
-  return `<section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
+  return `<section id="section-${idx}" class="uk-section uk-section-primary uk-flex uk-flex-middle uk-flex-center" uk-height-viewport="offset-top: true" style="background:${block.bgColor};min-height:60vh;padding:0;margin:0;">
     ${inner}
   </section>`;
 }).join('\n');
