@@ -4652,7 +4652,7 @@ items.forEach((card) => {
 const galleryData = { title, subtitle, bgColor, textColor, items: dataItems };
 
 const titleHtml    = title    ? `<h1 class="uk-heading uk-text-center" style="color:${textColor}" uk-scrollspy="cls: uk-animation-slide-top; delay: 0; offset: 100; repeat: true"><span>${gmEscapeHtml(title)}</span></h1>` : '';
-const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center" style="color:${textColor}" uk-scrollspy="cls: uk-animation-slide-bottom; delay: 0; offset: 120; repeat: true">${gmEscapeHtml(subtitle)}</h3>` : '';
+const subtitleHtml = subtitle ? `<h3 class="uk-heading uk-text-center uk-padding-large uk-padding-remove-top" style="color:${textColor}" uk-scrollspy="cls: uk-animation-slide-bottom; delay: 0; offset: 120; repeat: true">${gmEscapeHtml(subtitle)}</h3>` : '';
 
 const newHtml = `
   <div class="uk-container uk-padding" style="background:${bgColor}; color:${textColor}">
