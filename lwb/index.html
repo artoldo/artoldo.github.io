@@ -9,23 +9,50 @@
 <meta content="noindex, nofollow" name="robots"/>
 <link href="https://cdn.jsdelivr.net/npm/uikit@3.21.6/dist/css/uikit.min.css" rel="stylesheet"/>
 <style>
-      .editor-section {
-        position: relative;
-        cursor: grab;
-      }
-      .editor-remove-btn {
-        position: absolute;
-        top: 16px;
-        right: 32px;
-        z-index: 20;
-      }
-      .editor-edit-btn {
-        position: absolute;
-        top: 16px;
-        left: 20px;
-        z-index: 20;
-      }
-      .live-paragraph { font-size: 1.13rem; max-width: 40em; margin-left:auto; margin-right:auto;}
+
+/* positioning for existing edit / remove buttons (you provided) */
+.editor-remove-btn {
+  position: absolute;
+  top: 16px;
+  right: 32px;
+  z-index: 20;
+}
+.editor-edit-btn {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 20;
+}
+
+/* same visual / z placement for move buttons — centered */
+.editor-move-wrapper {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 6px;
+}
+
+/* keep the same button shape/look as other icon buttons */
+.editor-move-up,
+.editor-move-down {
+  position: relative; /* keep them flow inside the wrapper */
+  top: 0;
+  z-index: 20;
+}
+
+/* small optional tweak so disabled buttons visually match UIkit's disabled look */
+.editor-move-up[disabled],
+.editor-move-down[disabled],
+.editor-remove-btn[disabled],
+.editor-edit-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.live-paragraph { font-size: 1.13rem; max-width: 40em; margin-left:auto; margin-right:auto;}
 
 /* Simple 3-size system for text blocks */
 .live-heading.h-sm { font-size: 2.2rem; line-height: 1.15; }
@@ -2695,6 +2722,27 @@ return `
 }
 
 // --- RENDER ---
+// helper: swap two items in array
+function swapArrayItems(arr, i, j) {
+  const tmp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = tmp;
+}
+
+// move section by id and direction ('up' or 'down'), then re-render
+function moveSectionById(id, direction) {
+  const idx = allSections.findIndex(s => s.id === id);
+  if (idx === -1) return;
+
+  if (direction === 'up' && idx > 0) {
+    swapArrayItems(allSections, idx, idx - 1);
+    renderAllSections();
+  } else if (direction === 'down' && idx < allSections.length - 1) {
+    swapArrayItems(allSections, idx, idx + 1);
+    renderAllSections();
+  }
+}
+
 function renderAllSections() {
   editorRoot.innerHTML = '';
 
@@ -2704,75 +2752,113 @@ function renderAllSections() {
     li.className = 'editor-section uk-padding-remove uk-sortable-handle';
     li.style.position = 'relative';
 
-    const removeBtn = `
-      <button class="uk-button uk-button-danger uk-border-rounded editor-remove-btn" type="button"
-        uk-icon="trash" uk-tooltip="Remove section"></button>`;
+    // edit (left) uses icon-button primary; remove (right) is a red rectangular danger button
     const editBtn = `
       <button class="uk-icon-button uk-button-primary uk-border-rounded editor-edit-btn" type="button"
-        uk-icon="pencil" uk-tooltip="Edit section"></button>`;
+        uk-icon="pencil" uk-tooltip="Edit section" aria-label="Edit section"></button>`;
+    const removeBtn = `
+      <button class="uk-button uk-button-danger uk-border-rounded editor-remove-btn" type="button"
+        uk-icon="trash" uk-tooltip="Remove section" aria-label="Remove section"></button>`;
+
+    // move buttons now match the edit button look (icon-buttons primary)
+    const moveUpBtn = `<button class="uk-icon-button uk-button-primary uk-border-rounded editor-move-up" type="button" uk-icon="chevron-up" uk-tooltip="Move up" ${idx === 0 ? 'disabled' : ''} aria-label="Move up"></button>`;
+    const moveDownBtn = `<button class="uk-icon-button uk-button-primary uk-border-rounded editor-move-down" type="button" uk-icon="chevron-down" uk-tooltip="Move down" ${idx === allSections.length - 1 ? 'disabled' : ''} aria-label="Move down"></button>`;
 
     const sectionStyle = `background: ${block.bgColor}; min-height:60vh;`;
+
+    // Controls wrapper: we now rely on CSS classes for exact positioning
+    const controlsHtml = `
+      <div class="editor-controls" style="position:absolute; top:0; left:0; right:0; pointer-events:auto;">
+        ${editBtn}
+        <div class="editor-move-wrapper">${moveUpBtn}${moveDownBtn}</div>
+        ${removeBtn}
+      </div>
+    `;
 
     // --- Handle GALLERY sections separately ---
     if (block.type === 'gallery') {
       li.innerHTML = `
 <section id="section-${idx}" class="uk-section uk-section-primary uk-flex uk-flex-middle uk-flex-center"
          uk-height-viewport="offset-top: true" style="${sectionStyle};">
-          ${editBtn}
-          ${removeBtn}
+          ${controlsHtml}
           ${block.html}
         </section>
       `;
 
-      // Edit gallery button → opens gallery modal
-      li.querySelector('.editor-edit-btn').addEventListener('click', function() {
-        editGallery(block.id);
-      });
+      // Edit gallery button → opens gallery modal (keep specific gallery behavior)
+      const galleryEditBtn = li.querySelector('.editor-edit-btn');
+      if (galleryEditBtn) {
+        galleryEditBtn.addEventListener('click', function() {
+          editGallery(block.id);
+        });
+      }
 
     } else {
       // Default: text, image, embed, etc.
       li.innerHTML = `
         <section id="section-${idx}" class="uk-section uk-section-primary" uk-height-viewport="offset-top: true"
           style="${sectionStyle};">
-          ${editBtn}
-          ${removeBtn}
+          ${controlsHtml}
           ${getMediaSectionHtml(block)}
         </section>
       `;
 
       // --- Edit handler for existing types ---
-      li.querySelector('.editor-edit-btn').addEventListener('click', function () {
-        if (block.type === 'embed') {
-          setupEmbedModal(block, idx);
-          applyLastColorsToContainer('#embed-modal');
-          UIkit.modal('#embed-modal').show();
-        } else if (block.type === 'text') {
-          // Prefill text modal with saved values
-          textHeading.value   = block.heading || '';
-          textSubtitle.value  = block.subtitle || '';
-          textParagraph.innerHTML = block.paragraph || '';
-          textAnimation.value = block.animation || 'uk-animation-fade';
-          if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#ffffff';
-          if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#000000';
-          if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = block.headingSize || 'h-lg';
-          if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
-          if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
-          textIndex.value = idx;
-          applyLastColorsToContainer('#text-modal');
-          textModal.show();
-        } else {
-          setupModal(block.type, block, idx);
-          applyLastColorsToContainer('#media-modal');
-          mediaModal.show();
-        }
+      const editBtnEl = li.querySelector('.editor-edit-btn');
+      if (editBtnEl) {
+        editBtnEl.addEventListener('click', function () {
+          if (block.type === 'embed') {
+            setupEmbedModal(block, idx);
+            applyLastColorsToContainer('#embed-modal');
+            UIkit.modal('#embed-modal').show();
+          } else if (block.type === 'text') {
+            // Prefill text modal with saved values
+            textHeading.value   = block.heading || '';
+            textSubtitle.value  = block.subtitle || '';
+            textParagraph.innerHTML = block.paragraph || '';
+            textAnimation.value = block.animation || 'uk-animation-fade';
+            if (typeof textBgColor !== 'undefined') textBgColor.value = block.bgColor || '#ffffff';
+            if (typeof textColor !== 'undefined')   textColor.value   = block.textColor || '#000000';
+            if (typeof textHeadingSize !== 'undefined')  textHeadingSize.value  = block.headingSize || 'h-lg';
+            if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
+            if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
+            textIndex.value = idx;
+            applyLastColorsToContainer('#text-modal');
+            textModal.show();
+          } else {
+            setupModal(block.type, block, idx);
+            applyLastColorsToContainer('#media-modal');
+            mediaModal.show();
+          }
+        });
+      }
+    }
+
+    // --- Move handlers (present for both gallery and non-gallery) ---
+    const moveUpEl = li.querySelector('.editor-move-up');
+    if (moveUpEl) {
+      moveUpEl.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        moveSectionById(block.id, 'up');
+      });
+    }
+    const moveDownEl = li.querySelector('.editor-move-down');
+    if (moveDownEl) {
+      moveDownEl.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        moveSectionById(block.id, 'down');
       });
     }
 
     // --- Delete handler ---
-    li.querySelector('.editor-remove-btn').addEventListener('click', function() {
-      toDeleteIndex = idx;
-      deleteModal.show();
-    });
+    const removeBtnEl = li.querySelector('.editor-remove-btn');
+    if (removeBtnEl) {
+      removeBtnEl.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        toDeleteIndex = idx;
+        deleteModal.show();
+      });
+    }
 
     editorRoot.appendChild(li);
   });
@@ -2782,7 +2868,8 @@ function renderAllSections() {
   updateSiteTitleH1();
   updateFooter();
 }
-        // Sortable event
+
+// Sortable event
 UIkit.util.on(editorRoot, 'moved', function(e) {
     let newSections = [];
     Array.from(editorRoot.children).forEach(li => {
@@ -2794,8 +2881,8 @@ UIkit.util.on(editorRoot, 'moved', function(e) {
         allSections = newSections;
     }
     renderAllSections();
-      applyFontLink();
-      applyCustomCSS(); // re-render to update section-ids and dynamic navbar
+    applyFontLink();
+    applyCustomCSS(); // re-render to update section-ids and dynamic navbar
 });
 
         // Modal submission
