@@ -4950,5 +4950,27 @@ if (window.UIkit && UIkit.util) {
 
 </script>
 
+<script>
+// Prevent drag-and-drop if any section contains an iframe
+UIkit.util.on(editorRoot, 'start', function (e) {
+  // `start` fires when user begins dragging
+  const sections = Array.from(editorRoot.querySelectorAll('.editor-section'));
+  const hasIframe = sections.some(sec => sec.querySelector('iframe'));
+
+  if (hasIframe) {
+    // Stop the drag operation
+    e.preventDefault();
+
+    // Show UIkit notification
+    UIkit.notification({
+      message: 'One of your sections contains an iframe, so drag and drop is not possible. Please use the move buttons instead.',
+      status: 'warning',
+      pos: 'top-center',
+      timeout: 5000
+    });
+  }
+});
+</script>
+
 </body>
 </html>
