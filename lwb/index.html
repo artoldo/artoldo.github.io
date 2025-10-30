@@ -2047,6 +2047,10 @@ addTextBtn.addEventListener('click', () => {
   if (typeof textBgColor !== 'undefined') textBgColor.value = '#ffffff';
   if (typeof textColor !== 'undefined')   textColor.value   = '#000000';
   textIndex.value = '';
+
+  const textTitleEl = document.getElementById('text-modal-title');
+  if (textTitleEl) textTitleEl.textContent = 'Add Text';
+
   applyLastColorsToContainer('#text-modal');
   textModal.show();
 });
@@ -2823,6 +2827,10 @@ function renderAllSections() {
             if (typeof textSubtitleSize !== 'undefined') textSubtitleSize.value = block.subtitleSize || 'sub-md';
             if (typeof textParagraphSize !== 'undefined') textParagraphSize.value = block.paragraphSize || 'p-md';
             textIndex.value = idx;
+
+	    const textTitleEl = document.getElementById('text-modal-title');
+	    if (textTitleEl) textTitleEl.textContent = 'Edit Text';
+
             applyLastColorsToContainer('#text-modal');
             textModal.show();
           } else {
@@ -4738,6 +4746,10 @@ document.getElementById('addGalleryBtn')
     document.getElementById('gm-title').value = '';
     document.getElementById('gm-subtitle').value = '';
     document.getElementById('gm-gallery').innerHTML = '';
+
+    const gmTitleEl = document.querySelector('#gallery-modal .uk-modal-title');
+    if (gmTitleEl) gmTitleEl.textContent = 'Add Image Gallery';
+
     applyLastColorsToContainer('#gallery-modal');
     UIkit.modal('#gallery-modal').show();
   });
@@ -4888,8 +4900,15 @@ window.editGallery = function(id) {
     document.getElementById('gm-gallery').appendChild(col);
   });
 }
+
+
+  // set modal title to Edit when opening to edit an existing gallery
+  const gmTitleEl = document.querySelector('#gallery-modal .uk-modal-title');
+  if (gmTitleEl) gmTitleEl.textContent = 'Edit Image Gallery';
+
   applyLastColorsToContainer('#gallery-modal');
   UIkit.modal('#gallery-modal').show();
+
 };
 </script>
 
