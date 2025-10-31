@@ -921,9 +921,6 @@ button:active {
 }
 
 /* Tweak notification container (UIkit) */
-.uk-notification { 
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-}
 
 /* Warning message style */
 .uk-notification .uk-notification-message.uk-notification-message-warning,
@@ -936,6 +933,7 @@ button:active {
   max-width: 360px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   overflow: hidden; /* important to make corners fully rounded */
+  font-size: 14px;
 }
 
 /* Remove background from inner elements if they exist */
@@ -4982,10 +4980,10 @@ UIkit.util.on(editorRoot, 'start', function (e) {
 
     // Show UIkit notification
     UIkit.notification({
-      message: 'Drag and drop for Vimeo / YouTube and iframe content is not possible. Please use the Move Buttons instead.',
+      message: '<b>Drag</b> and <b>Drop</b> of content including<br> <b>Vimeo</b> / <b>YouTube</b> or <b>iframe</b> is <b>not</b> supported.<br>Use the <b>Move Up / Down</b> buttons instead.',
       status: 'warning',
       pos: 'top-center',
-      timeout: 8000
+      timeout: 10000
     });
   }
 });
