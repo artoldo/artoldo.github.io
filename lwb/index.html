@@ -2375,7 +2375,7 @@ embedForm.addEventListener('submit', function (e) {
     e.preventDefault();
     let code = embedCode.value.trim();
     if (!code) {
-        UIkit.notification({ message: 'Please enter some code.', status: 'warning' });
+        UIkit.notification({ message: 'Please enter some <b>code</b>.', status: 'warning' });
         return;
     }
 
@@ -2963,7 +2963,7 @@ function finishSection(src, fileData, fileName, fileType) {
             } else if (prevFile.style.display !== 'none' && keepPrevFile.checked && editingPrevFileData) {
                 finishSection(editingPrevFileData, editingPrevFileData, editingPrevFileName, editingPrevFileType);
             } else {
-                UIkit.notification({message: 'Please provide a URL or upload a file.', status: 'warning'});
+                UIkit.notification({message: 'Please provide a <b>URL</b> or upload a <b>file</b>.', status: 'warning'});
                 return;
             }
         });
@@ -3119,7 +3119,7 @@ renderAllSections();
             }
 
         } catch {
-            UIkit.notification({message: 'Invalid JSON file!', status:'danger'});
+            UIkit.notification({message: 'Invalid <b>JSON</b> file!', status:'danger'});
         }
     };
     reader.readAsText(file);
