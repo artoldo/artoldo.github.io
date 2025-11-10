@@ -162,14 +162,14 @@ button:active {
 <div class="media-container" style="position: relative; width: 100%; max-width: 800px; margin: 10px auto;">
     <!-- Vimeo iframe with controls hidden -->
     <div style="position: relative; width: 100%; max-width: 800px; padding-bottom: 56.25%; overflow: hidden; border-radius: 15px;">
-    <iframe
-        id="vimeo1"
-        src="https://player.vimeo.com/video/769844428?title=0&byline=0&portrait=0&controls=0"
-        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-        frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen>
-    </iframe>
+        <iframe
+            id="vimeo1"
+            src="https://player.vimeo.com/video/769844428?title=0&byline=0&portrait=0&controls=0"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+            frameborder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen>
+        </iframe>
     </div>
 
     <!-- Custom play/pause button -->
@@ -183,6 +183,14 @@ button:active {
             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
         </svg>
     </button>
+
+<!-- Fullscreen button -->
+<button id="fullscreenBtnVimeo1"
+        style="position: absolute; bottom: 40px; right: 20px; 
+               background: white; color: black; border-radius: 15px; 
+               border: none; padding: 10px 20px; cursor: pointer;">
+    Fullscreen
+</button>
 </div>
 
 <script>
@@ -191,6 +199,7 @@ const vimeoPlayer = document.getElementById('vimeo1');
 const playBtn = document.getElementById('playPauseBtnVimeo1');
 const playIcon = document.getElementById('playIconVimeo1');
 const pauseIcon = document.getElementById('pauseIconVimeo1');
+const fullscreenBtn = document.getElementById('fullscreenBtnVimeo1');
 
 // Track video state
 let isPlaying = false;
@@ -198,26 +207,21 @@ let isPlaying = false;
 // Toggle play/pause
 playBtn.addEventListener('click', () => {
     if (!isPlaying) {
-        // Play video
         vimeoPlayer.contentWindow.postMessage({ method: 'play' }, '*');
         toggleVimeoIcons(true);
-        setTimeout(() => {
-            playBtn.classList.add('hide-btn'); // Hide button after short delay
-        }, 300);
+        setTimeout(() => playBtn.classList.add('hide-btn'), 300);
         isPlaying = true;
     } else {
-        // Pause video
         vimeoPlayer.contentWindow.postMessage({ method: 'pause' }, '*');
         toggleVimeoIcons(false);
-        playBtn.classList.remove('hide-btn'); // Show button when paused
+        playBtn.classList.remove('hide-btn');
         isPlaying = false;
     }
 });
 
 // Listen for Vimeo ended event
-window.addEventListener('message', function(event) {
-    const data = event.data;
-    if (data && data.event === 'ended') {
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.event === 'ended') {
         toggleVimeoIcons(false);
         playBtn.classList.remove('hide-btn');
         isPlaying = false;
@@ -226,14 +230,20 @@ window.addEventListener('message', function(event) {
 
 // Helper function to toggle play/pause icons
 function toggleVimeoIcons(isPlaying) {
-    if (isPlaying) {
-        playIcon.style.display = 'none';
-        pauseIcon.style.display = 'block';
-    } else {
-        playIcon.style.display = 'block';
-        pauseIcon.style.display = 'none';
-    }
+    playIcon.style.display = isPlaying ? 'none' : 'block';
+    pauseIcon.style.display = isPlaying ? 'block' : 'none';
 }
+
+// Fullscreen button functionality
+fullscreenBtn.addEventListener('click', () => {
+    if (vimeoPlayer.requestFullscreen) {
+        vimeoPlayer.requestFullscreen();
+    } else if (vimeoPlayer.webkitRequestFullscreen) { // Safari
+        vimeoPlayer.webkitRequestFullscreen();
+    } else if (vimeoPlayer.msRequestFullscreen) { // IE11
+        vimeoPlayer.msRequestFullscreen();
+    }
+});
 </script>
 <br> <br>
 <h2>Poetic Portraits of Kenneth Anger’s Works in Polyglottolalia</h2>
