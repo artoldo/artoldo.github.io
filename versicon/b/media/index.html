@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Black Sudo Rising</title>
+<style>
+   /* General reset */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content styles */
+body {
+    font-family: Arial, sans-serif;
+    color: white;
+    background-color: black;
+}
+
+/* Container for main content to keep above the PDF */
+.main-content {
+    flex: 1 0 auto; /* Allows content to take up necessary space */
+    padding: 20px;
+    overflow-y: auto; /* Allows scrolling if content overflows */
+    text-align: center; /* Center all content */
+}
+
+/* Container for each player (audio or video) */
+.media-container {
+    position: relative;
+    width: 640px; /* Default width */
+    height: 480px; /* Default height for video */
+    background-color: transparent;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto; /* Center the media containers */
+}
+
+/* Specific container height adjustment for audio */
+.audio-container {
+    height: 100px;
+    margin: 10px auto; /* Center the audio container */
+    width: 80%; /* Adjust width as needed */
+    max-width: 640px; /* Keeps the audio container within a max width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent; /* Background color for contrast */
+    border-radius: 15px;
+}
+
+/* Audio and video element styles */
+            audio,
+            video {
+                width: 100%;
+                height: 100%;
+                border-radius: 15px;
+                pointer-events: none;
+                object-fit: cover;
+            }
+
+/* Play/Pause button styles */
+.play-pause-btn {
+    background-color: #AD9A00;
+    border: none;
+    border-radius: 50px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+    position: absolute; /* Center button in the container */
+}
+
+.play-pause-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Red hover effect */
+}
+
+.play-pause-btn:focus {
+    outline: none;
+}
+
+/* Icon styles */
+.play-pause-btn svg {
+    width: 40px;
+    height: 40px;
+    fill: white;
+}
+
+/* Fade-out effect for button and icons */
+.hide-btn {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Fade-in effect for the button and icons on hover */
+.media-container:hover .play-pause-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Smooth transition for fade-in/out */
+.fade-transition {
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Disable right-click */
+audio {
+    pointer-events: none;
+}
+
+/* Responsive table styles */
+table {
+    width: 100%; /* Make the table responsive */
+    border-collapse: collapse; /* Collapse borders */
+}
+
+th, td {
+    padding: 8px;
+    text-align: center; /* Center align text in table cells */
+    border: 1px solid white; /* Add border for visibility */
+}
+
+@media (max-width: 768px) {
+    .media-container, .audio-container {
+        width: 100%; /* Full width on smaller screens */
+        height: auto; /* Auto height for flexibility */
+    }
+}
+
+user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* Internet Explorer/Edge */
+
+button:focus,
+button:active {
+	-moz-outline: 0 !important;
+	-ms-outline:0 !important;
+	-o-outline: 0 !important;
+	-webkit-outline: 0 !important;
+}
+
+</style>
+    </head>
+    <body>
+
+<div class="main-content">
+        <h1>Black Sudo Rising</h1><sup>ARTOLDO – Sara Ferro & Chris Weil</sup>
+
+<div class="media-container" style="position: relative; width: 640px; height: 480px; margin: 10px auto;">
+    <!-- Vimeo iframe with controls hidden -->
+    <div style="position: relative; width: 100%; max-width: 800px; padding-bottom: 56.25%; overflow: hidden; border-radius: 15px;">
+    <iframe
+        id="vimeo1"
+        src="https://player.vimeo.com/video/769844428?title=0&byline=0&portrait=0&controls=0"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen>
+    </iframe>
+    </div>
+
+    <!-- Custom play/pause button -->
+    <button id="playPauseBtnVimeo1" class="play-pause-btn fade-transition">
+        <!-- Play icon -->
+        <svg id="playIconVimeo1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <!-- Pause icon -->
+        <svg id="pauseIconVimeo1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+
+<script>
+// Reference elements
+const vimeoPlayer = document.getElementById('vimeo1');
+const playBtn = document.getElementById('playPauseBtnVimeo1');
+const playIcon = document.getElementById('playIconVimeo1');
+const pauseIcon = document.getElementById('pauseIconVimeo1');
+
+// Track video state
+let isPlaying = false;
+
+// Toggle play/pause
+playBtn.addEventListener('click', () => {
+    if (!isPlaying) {
+        // Play video
+        vimeoPlayer.contentWindow.postMessage({ method: 'play' }, '*');
+        toggleVimeoIcons(true);
+        setTimeout(() => {
+            playBtn.classList.add('hide-btn'); // Hide button after short delay
+        }, 300);
+        isPlaying = true;
+    } else {
+        // Pause video
+        vimeoPlayer.contentWindow.postMessage({ method: 'pause' }, '*');
+        toggleVimeoIcons(false);
+        playBtn.classList.remove('hide-btn'); // Show button when paused
+        isPlaying = false;
+    }
+});
+
+// Listen for Vimeo ended event
+window.addEventListener('message', function(event) {
+    const data = event.data;
+    if (data && data.event === 'ended') {
+        toggleVimeoIcons(false);
+        playBtn.classList.remove('hide-btn');
+        isPlaying = false;
+    }
+});
+
+// Helper function to toggle play/pause icons
+function toggleVimeoIcons(isPlaying) {
+    if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+    } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+    }
+}
+</script>
+
+        <h2>Cited works of Kenneth Anger</h2>
+        <br>
+<!-- Video Player 1 -->
+<div class="media-container" id="videoContainer1">
+    <video id="videoPlayer1" poster="./1947.webp">
+        <source src="./1947.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo1" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Fireworks</b> (1947)</p>
+<br><br>
+
+<!-- Video Player 2 -->
+<div class="media-container" id="videoContainer2">
+    <video id="videoPlayer2" poster="./1949.webp">
+        <source src="./1949.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo2" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Puce Moment</b> (1949)</p>
+<br><br>
+
+<!-- Video Player 3 -->
+<div class="media-container" id="videoContainer3">
+    <video id="videoPlayer3" poster="./1953.webp">
+        <source src="./1953.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo3" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Eaux d'artifice</b> (1953)</p>
+<br><br>
+
+<!-- Video Player 4 -->
+<div class="media-container" id="videoContainer4">
+    <video id="videoPlayer4" poster="./1954.webp">
+        <source src="./1954.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo4" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Inauguration of the Pleasure Dome</b> (1954)</p>
+<br><br>
+
+<!-- Video Player 5 -->
+<div class="media-container" id="videoContainer5">
+    <video id="videoPlayer5" poster="./1964.webp">
+        <source src="./1964.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo5" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Scorpio Rising</b> (1964)</p>
+<br><br>
+
+<!-- Video Player 6 -->
+<div class="media-container" id="videoContainer6">
+    <video id="videoPlayer6" poster="./1965.webp">
+        <source src="./1965.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo6" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Kustom Kar Kommandos</b> (1965)</p>
+<br><br>
+
+<!-- Video Player 7 -->
+<div class="media-container" id="videoContainer7">
+    <video id="videoPlayer7" poster="./1969.webp">
+        <source src="./1969.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo7" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Invocation Of My Demon Brother</b> (1969)</p>
+<br><br>
+
+<!-- Video Player 8 -->
+<div class="media-container" id="videoContainer8">
+    <video id="videoPlayer8" poster="./1972r.webp">
+        <source src="./r1972.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo8" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Rabbit's Moon</b> (1972)</p>
+<br><br>
+
+<!-- Video Player 9 -->
+<div class="media-container" id="videoContainer9">
+    <video id="videoPlayer9" poster="./1972l.webp">
+        <source src="./l1972.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <button id="playPauseBtnVideo9" class="play-pause-btn fade-transition">
+        <svg id="playIconVideo9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="pauseIconVideo9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+    </button>
+</div>
+<p>Kenneth Anger <b>Lucifer Rising</b> (1972)</p>
+<br><br>
+
+<script>
+const mediaPlayers = [
+    { player: document.getElementById('videoPlayer1'), button: document.getElementById('playPauseBtnVideo1'), playIcon: document.getElementById('playIconVideo1'), pauseIcon: document.getElementById('pauseIconVideo1') },
+    { player: document.getElementById('videoPlayer2'), button: document.getElementById('playPauseBtnVideo2'), playIcon: document.getElementById('playIconVideo2'), pauseIcon: document.getElementById('pauseIconVideo2') },
+    { player: document.getElementById('videoPlayer3'), button: document.getElementById('playPauseBtnVideo3'), playIcon: document.getElementById('playIconVideo3'), pauseIcon: document.getElementById('pauseIconVideo3') },
+    { player: document.getElementById('videoPlayer4'), button: document.getElementById('playPauseBtnVideo4'), playIcon: document.getElementById('playIconVideo4'), pauseIcon: document.getElementById('pauseIconVideo4') },
+    { player: document.getElementById('videoPlayer5'), button: document.getElementById('playPauseBtnVideo5'), playIcon: document.getElementById('playIconVideo5'), pauseIcon: document.getElementById('pauseIconVideo5') },
+    { player: document.getElementById('videoPlayer6'), button: document.getElementById('playPauseBtnVideo6'), playIcon: document.getElementById('playIconVideo6'), pauseIcon: document.getElementById('pauseIconVideo6') },
+    { player: document.getElementById('videoPlayer7'), button: document.getElementById('playPauseBtnVideo7'), playIcon: document.getElementById('playIconVideo7'), pauseIcon: document.getElementById('pauseIconVideo7') },
+    { player: document.getElementById('videoPlayer8'), button: document.getElementById('playPauseBtnVideo8'), playIcon: document.getElementById('playIconVideo8'), pauseIcon: document.getElementById('pauseIconVideo8') },
+    { player: document.getElementById('videoPlayer9'), button: document.getElementById('playPauseBtnVideo9'), playIcon: document.getElementById('playIconVideo9'), pauseIcon: document.getElementById('pauseIconVideo9') }
+];
+
+            // Initialize event listeners
+            mediaPlayers.forEach(({
+                player,
+                button,	
+                playIcon,
+                pauseIcon
+            }) => {
+                button.addEventListener('click', () => handlePlayPause(player, button, playIcon, pauseIcon));
+                player.addEventListener('ended', () => handleMediaEnded(player, button, playIcon, pauseIcon));
+            });
+// Function to handle Play/Pause button click
+function handlePlayPause(currentPlayer, button, playIcon, pauseIcon) {
+    // Pause all other videos
+    mediaPlayers.forEach(({ player, button, playIcon, pauseIcon }) => {
+        if (player !== currentPlayer) {
+            player.pause();
+            button.classList.remove('hide-btn'); // Ensure other buttons are visible
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+        }
+    });
+
+    // Play or pause the current player
+    if (currentPlayer.paused) {
+        currentPlayer.play();
+        togglePlayPauseIcon(playIcon, pauseIcon, true);
+        // Hide button after short delay
+        setTimeout(() => {
+            button.classList.add('hide-btn');
+        }, 300); // Adjust delay if needed
+    } else {
+        currentPlayer.pause();
+        togglePlayPauseIcon(playIcon, pauseIcon, false);
+        button.classList.remove('hide-btn'); // Show button when paused
+    }
+}
+
+            // Function to toggle Play/Pause icon display
+            function togglePlayPauseIcon(playIcon, pauseIcon, isPlaying) {
+                if (isPlaying) {
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                } else {
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                }
+            }
+// Function to handle media ended event
+function handleMediaEnded(player, button, playIcon, pauseIcon) {
+    togglePlayPauseIcon(playIcon, pauseIcon, false);
+    button.classList.remove('hide-btn'); // Show button when video ends
+}
+   
+        </script>
+
+<!-- Prevent dragging -->
+
+<script>
+document.querySelectorAll('img').forEach((img) => {
+    img.addEventListener('dragstart', (e) => e.preventDefault());
+});
+</script>
+
+<!-- Disable right-click -->
+
+<script>
+  // Disable right-click
+  document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+  });
+
+  // Disable text selection using JavaScript (extra layer of protection)
+  document.addEventListener('selectstart', function(event) {
+    event.preventDefault();
+  });
+</script>
+
+</div>
+    </body>
+</html>
