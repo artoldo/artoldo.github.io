@@ -269,8 +269,7 @@ if (canFullscreen()) {
 <br>       
 <!-- Video Player 1 -->
 <div class="media-container" id="videoContainer1">
-    <video id="videoPlayer1" poster="./1947.webp">
-        <source src="./1947.mp4" type="video/mp4">
+    <video id="videoPlayer1" poster="./1947.webp" data-src="./1947.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo1" class="play-pause-btn fade-transition">
@@ -287,8 +286,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 2 -->
 <div class="media-container" id="videoContainer2">
-    <video id="videoPlayer2" poster="./1949.webp">
-        <source src="./1949.mp4" type="video/mp4">
+    <video id="videoPlayer2" poster="./1949.webp" data-src="./1949.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo2" class="play-pause-btn fade-transition">
@@ -305,8 +303,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 3 -->
 <div class="media-container" id="videoContainer3">
-    <video id="videoPlayer3" poster="./1953.webp">
-        <source src="./1953.mp4" type="video/mp4">
+    <video id="videoPlayer3" poster="./1953.webp" data-src="./1953.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo3" class="play-pause-btn fade-transition">
@@ -323,8 +320,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 4 -->
 <div class="media-container" id="videoContainer4">
-    <video id="videoPlayer4" poster="./1954.webp">
-        <source src="./1954.mp4" type="video/mp4">
+    <video id="videoPlayer4" poster="./1954.webp" data-src="./1954.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo4" class="play-pause-btn fade-transition">
@@ -341,8 +337,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 5 -->
 <div class="media-container" id="videoContainer5">
-    <video id="videoPlayer5" poster="./1964.webp">
-        <source src="./1964.mp4" type="video/mp4">
+    <video id="videoPlayer5" poster="./1964.webp" data-src="./1964.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo5" class="play-pause-btn fade-transition">
@@ -359,8 +354,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 6 -->
 <div class="media-container" id="videoContainer6">
-    <video id="videoPlayer6" poster="./1965.webp">
-        <source src="./1965.mp4" type="video/mp4">
+    <video id="videoPlayer6" poster="./1965.webp" data-src="./1965.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo6" class="play-pause-btn fade-transition">
@@ -377,8 +371,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 7 -->
 <div class="media-container" id="videoContainer7">
-    <video id="videoPlayer7" poster="./1969.webp">
-        <source src="./1969.mp4" type="video/mp4">
+    <video id="videoPlayer7" poster="./1969.webp" data-src="./1969.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo7" class="play-pause-btn fade-transition">
@@ -395,8 +388,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 8 -->
 <div class="media-container" id="videoContainer8">
-    <video id="videoPlayer8" poster="./1972r.webp">
-        <source src="./r1972.mp4" type="video/mp4">
+    <video id="videoPlayer8" poster="./1972r.webp" data-src="./r1972.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo8" class="play-pause-btn fade-transition">
@@ -413,8 +405,7 @@ if (canFullscreen()) {
 
 <!-- Video Player 9 -->
 <div class="media-container" id="videoContainer9">
-    <video id="videoPlayer9" poster="./1972l.webp">
-        <source src="./l1972.mp4" type="video/mp4">
+    <video id="videoPlayer9" poster="./1972l.webp" data-src="./l1972.mp4" preload="none">
         Your browser does not support HTML5 video.
     </video>
     <button id="playPauseBtnVideo9" class="play-pause-btn fade-transition">
@@ -463,6 +454,15 @@ function handlePlayPause(currentPlayer, button, playIcon, pauseIcon) {
             pauseIcon.style.display = 'none';
         }
     });
+
+    // Dynamically add <source> if not present
+    if (!currentPlayer.querySelector('source')) {
+        const source = document.createElement('source');
+        source.src = currentPlayer.getAttribute('data-src');
+        source.type = 'video/mp4';
+        currentPlayer.appendChild(source);
+        currentPlayer.load();
+    }
 
     // Play or pause the current player
     if (currentPlayer.paused) {
