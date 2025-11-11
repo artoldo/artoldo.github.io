@@ -234,7 +234,7 @@ function toggleVimeoIcons(isPlaying) {
     pauseIcon.style.display = isPlaying ? 'block' : 'none';
 }
 
-// Fullscreen button functionality with mobile touch support
+// Fullscreen button functionality with mobile support
 function openFullscreen(iframe) {
     if (iframe.requestFullscreen) {
         iframe.requestFullscreen();
@@ -245,11 +245,26 @@ function openFullscreen(iframe) {
     }
 }
 
-// Add event listeners for both click and touch
-fullscreenBtn.addEventListener('click', () => openFullscreen(vimeoPlayer));
-fullscreenBtn.addEventListener('touchstart', (e) => {
+function isMobile() {
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+fullscreenBtn.addEventListener('click', () => {
+    if (isMobile()) {
+        // Open Vimeo in new tab on mobile for reliable fullscreen
+        window.open(vimeoPlayer.src, '_blank');
+    } else {
+        openFullscreen(vimeoPlayer);
+    }
+});
+
+fullscreenBtn.addEventListener('touchend', (e) => {
     e.preventDefault(); // prevent duplicate events
-    openFullscreen(vimeoPlayer);
+    if (isMobile()) {
+        window.open(vimeoPlayer.src, '_blank');
+    } else {
+        openFullscreen(vimeoPlayer);
+    }
 });
 </script>
 <br> <br>
