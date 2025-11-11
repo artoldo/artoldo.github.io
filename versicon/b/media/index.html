@@ -206,15 +206,22 @@ let isPlaying = false;
 
 // Toggle play/pause
 playBtn.addEventListener('click', () => {
+    const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isPlaying) {
         vimeoPlayer.contentWindow.postMessage({ method: 'play' }, '*');
         toggleVimeoIcons(true);
-        setTimeout(() => playBtn.classList.add('hide-btn'), 300);
+        if (isMobileDevice) {
+            playBtn.classList.add('hide-btn'); // Hide immediately on mobile
+        } else {
+            setTimeout(() => playBtn.classList.add('hide-btn'), 300); // Desktop: fade out
+        }
         isPlaying = true;
     } else {
         vimeoPlayer.contentWindow.postMessage({ method: 'pause' }, '*');
         toggleVimeoIcons(false);
-        playBtn.classList.remove('hide-btn');
+        if (!isMobileDevice) {
+            playBtn.classList.remove('hide-btn'); // Show button again on desktop when paused
+        }
         isPlaying = false;
     }
 });
@@ -235,37 +242,27 @@ function toggleVimeoIcons(isPlaying) {
 }
 
 // Fullscreen button functionality with mobile support
-function openFullscreen(iframe) {
-    if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-    } else if (iframe.webkitRequestFullscreen) { // Safari
-        iframe.webkitRequestFullscreen();
-    } else if (iframe.msRequestFullscreen) { // IE11
-        iframe.msRequestFullscreen();
-    }
+function canFullscreen() {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/i.test(ua)) return false; // iOS cannot fullscreen cross-origin iframe
+    return true; // desktop + Android support
 }
 
-function isMobile() {
-    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (canFullscreen()) {
+    fullscreenBtn.style.display = 'block'; // Show button
+    fullscreenBtn.addEventListener('click', () => {
+        // Trigger browser fullscreen for desktop and Android
+        if (vimeoPlayer.requestFullscreen) {
+            vimeoPlayer.requestFullscreen();
+        } else if (vimeoPlayer.webkitRequestFullscreen) {
+            vimeoPlayer.webkitRequestFullscreen();
+        } else if (vimeoPlayer.msRequestFullscreen) {
+            vimeoPlayer.msRequestFullscreen();
+        }
+    });
+} else {
+    fullscreenBtn.style.display = 'none'; // Hide on iOS
 }
-
-fullscreenBtn.addEventListener('click', () => {
-    if (isMobile()) {
-        // Open Vimeo in new tab on mobile for reliable fullscreen
-        window.open(vimeoPlayer.src, '_blank');
-    } else {
-        openFullscreen(vimeoPlayer);
-    }
-});
-
-fullscreenBtn.addEventListener('touchend', (e) => {
-    e.preventDefault(); // prevent duplicate events
-    if (isMobile()) {
-        window.open(vimeoPlayer.src, '_blank');
-    } else {
-        openFullscreen(vimeoPlayer);
-    }
-});
 </script>
 <br> <br>
 <h2>Poetic Portraits of Kenneth Anger’s Works in Polyglottolalia</h2>
