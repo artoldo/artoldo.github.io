@@ -197,7 +197,7 @@ color: #fff;
 
 :root {
 --stripe-color: #000;        /* default stripe color */
---stripe-focus: orange;    /* orange on focus — change to your brand hex */
+--stripe-focus: #000;    /* orange on focus — change to your brand hex */
 }
 
 /* Base: remove global rounded corners & show 3px bottom stripe only */
@@ -293,17 +293,18 @@ cursor: not-allowed;
 Button 
 ========================================================================== */
 
-/* Primary Button */
+/* Default Button */
 .uk-button-default {
-background-color: #000;
-color: #fff;
-}
-
-/* Primary Button Hover */
-.uk-button-default:hover {
 background-color: #fff;
 color: #000;
 border: 1px solid black;
+}
+
+/* Default Button Hover */
+.uk-button-default:hover {
+background-color: #000;
+color: #fff;
+border: 1px solid white;
 }
 
 /* Primary Button Active */
