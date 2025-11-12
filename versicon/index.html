@@ -175,6 +175,25 @@ h1, h2, h3, h4, h5, h6 {
     color: #ffffff;
 }
 
+a {
+  color: #000;             
+  text-decoration: none;      
+  transition: color 0.2s ease, 
+}
+
+/* Visited links */
+a:visited {
+  color: #000;             
+}
+
+/* Hover and active */
+a:hover,
+a:active {
+  color: #000;             
+  text-decoration: underline;
+}
+
+
 /* ========================================================================
 Style modifiers
 ========================================================================== */
@@ -415,20 +434,6 @@ background-color: #000;
 }
 
 /* ========================================================================
-Links
-========================================================================== */
-
-.uk-link {
-text-decoration: underline;
-cursor: pointer;
-}
-
-.uk-link:hover,
-.uk-link-toggle:hover .uk-link {
-text-decoration: overline;
-}
-
-/* ========================================================================
 Tooltip
 ========================================================================== */
 
@@ -548,9 +553,8 @@ tsParticles.load("bgCanvas",{
 </script>
 
 </head>
-<body style="color: white;">
 
-
+<body>
 
 <div class="uk-container uk-text-center uk-padding-large">
   <h1><strong>Poly</strong><span class="uk-text-lighter">glottolalia <span class="uk-text-small uk-text-lighter">[versicon]</span></span></h1>
