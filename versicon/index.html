@@ -175,29 +175,256 @@ h1, h2, h3, h4, h5, h6 {
     color: #ffffff;
 }
 
-/* Links are white */
-a {
-    color: #ffffff;
-    text-decoration: none; /* optional */
+/* ========================================================================
+Style modifiers
+========================================================================== */
+
+.uk-icon-button {
+background: #fff;
+color: #000;
 }
 
-/* Optional: link hover effect */
-a:hover {
-    text-decoration: underline;
+.uk-icon-button:hover {
+background-color: #000;
+color: #fff;
 }
 
-/* Make all UIkit buttons white */
-.uk-button {
-    background-color: #ffffff !important;
-    color: #000000 !important; /* black text for contrast */
-    border-color: #ffffff !important; /* optional: match border to background */
+.uk-icon-button:active,
+.uk-active > .uk-icon-button {
+background-color: #000;
+color: #fff;
 }
 
-/* Optional: hover effect */
-.uk-button:hover {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: #000000 !important;
+:root {
+--stripe-color: #000;        /* default stripe color */
+--stripe-focus: orange;    /* orange on focus — change to your brand hex */
+}
+
+/* Base: remove global rounded corners & show 3px bottom stripe only */
+.uk-input,
+.uk-select,
+.uk-textarea {
+box-sizing: border-box;
+background-color: #fff;
+color: #000;
+border: none;                     /* remove all borders */
+border-radius: 0 !important;      /* override global radius */
+outline: none;
+padding: 0.5em 0.5em 0.5em 0.5em; /* adjust to taste */
+border-bottom: 3px solid var(--stripe-color);
+transition: border-color 160ms ease, box-shadow 160ms ease;
+-webkit-appearance: none;         /* normalize select on Safari/Chrome */
+}
+
+/* Focus: change bottom stripe to orange */
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
+border-bottom-color: var(--stripe-focus);
+/* optionally add a subtle glow on focus for visibility */
+box-shadow: 0 6px 10px -8px rgba(0,0,0,0.15);
+}
+
+/* Prefer keyboard-only focus indicator with :focus-visible (optional) */
+.uk-input:focus:not(:focus-visible),
+.uk-select:focus:not(:focus-visible),
+.uk-textarea:focus:not(:focus-visible) {
+/* keep visual focus change only for keyboard users — still change stripe color */
+/* If you want stripe color change only for keyboard focus replace rules above with :focus-visible */
+}
+
+/* If you want the stripe animated between states */
+.uk-input,
+.uk-select,
+.uk-textarea {
+transition: border-bottom-color 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease;
+}
+
+/* Hide native radio input */
+.radio-wrapper .uk-radio {
+position: absolute;
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+/* Label wrapper */
+.radio-wrapper {
+display: flex;
+align-items: center;
+cursor: pointer;
+margin-bottom: 4px; /* smaller spacing */
+font-size: 14px;    /* smaller font */
+}
+
+/* Custom radio circle */
+.radio-custom {
+width: 16px;          /* smaller circle */
+height: 16px;
+border: 2px solid #000;
+border-radius: 50%;
+margin-right: 6px;    /* less space between circle and text */
+position: relative;
+flex-shrink: 0;
+background-color: #fff;
+}
+
+/* Checked state: black dot */
+.uk-radio:checked + .radio-custom::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+width: 8px;          /* smaller dot */
+height: 8px;
+background-color: #000;
+border-radius: 50%;
+transform: translate(-50%, -50%);
+}
+
+/* Disabled state */
+.uk-radio:disabled + .radio-custom {
+border-color: #888;
+background-color: #eee;
+cursor: not-allowed;
+}
+
+/* ========================================================================
+Button 
+========================================================================== */
+
+/* Primary Button */
+.uk-button-default {
+background-color: #000;
+color: #fff;
+}
+
+/* Primary Button Hover */
+.uk-button-default:hover {
+background-color: #fff;
+color: #000;
+border: 1px solid black;
+}
+
+/* Primary Button Active */
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+background-color: #000;
+color: #fff;
+}
+
+
+/* Primary Button */
+.uk-button-primary {
+background-color: #000;
+color: #fff;
+}
+
+/* Primary Button Hover */
+.uk-button-primary:hover {
+background-color: #000;
+color: #fff;
+}
+
+/* Primary Button Active */
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+background-color: #000;
+color: #fff;
+}
+
+/* Secondary Button */
+.uk-button-secondary {
+background-color: #000;
+color: #fff;
+border: 1px solid transparent;
+}
+
+/* Secondary Button Hover */
+.uk-button-secondary:hover {
+background-color: #fff;
+color: #000;
+}
+
+/* Secondary Button Active */
+.uk-button-secondary:active,
+.uk-button-secondary.uk-active {
+background-color: #000;
+color: #fff;
+}
+
+/* Contextual Secondary Button Overrides for UIkit Sections/Cards/Overlay */
+.uk-light .uk-button-secondary,
+.uk-section-primary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-section-secondary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-tile-primary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-tile-secondary:not(.uk-preserve-color) .uk-button-secondary,
+.uk-card-primary.uk-card-body .uk-button-secondary,
+.uk-card-primary > :not([class*='uk-card-media']) .uk-button-secondary,
+.uk-card-secondary.uk-card-body .uk-button-secondary,
+.uk-card-secondary > :not([class*='uk-card-media']) .uk-button-secondary,
+.uk-overlay-primary .uk-button-secondary,
+.uk-offcanvas-bar .uk-button-secondary {
+background-color: #000;
+color: #fff;
+}
+
+/* Save Button with Rainbow Effect */
+.save {
+margin-top: 0.8em;
+padding: 0.5em 1.2em; /* keep width/height reasonable for UIkit */
+font-size: 1.2em;
+font-weight: bold;
+color: #fff;
+background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+background-size: 400% 400%;
+border: none;
+border-radius: 50px;
+cursor: pointer;
+box-shadow: 0 0 20px rgba(0,0,0,0.25);
+transition: transform 0.2s ease, background-color 0.2s, color 0.2s;
+animation: rainbowFlow 6s ease infinite;
+}
+
+/* secondary Button Hover */
+.save:hover {
+transform: scale(1.05); /* from your controls button */
+background-color: #000;  /* keep your original hover effect */
+color: #fff;
+}
+
+/* Rainbow Flow Animation */
+@keyframes rainbowFlow {
+0% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+100% { background-position: 0% 50%; }
+}
+
+/* ========================================================================
+Background
+========================================================================== */
+
+/* Background utility */
+.uk-background-primary {
+background-color: #fff;
+}
+
+.uk-background-secondary {
+background-color: #000;
+}
+
+/* ========================================================================
+Links
+========================================================================== */
+
+.uk-link {
+text-decoration: underline;
+cursor: pointer;
+}
+
+.uk-link:hover,
+.uk-link-toggle:hover .uk-link {
+text-decoration: overline;
 }
 
 /* ========================================================================
@@ -277,6 +504,7 @@ display: inline-flex;
 justify-content: center;
 align-items: center;
 }
+
 
   </style>
 
@@ -892,7 +1120,7 @@ tsParticles.load("bgCanvas",{
     <button class="uk-button uk-button-danger uk-border-pill" id="delete-btn" type="button">Delete</button>
   </div>
   <div>
-    <button class="uk-button uk-button-default uk-modal-close uk-border-pill" type="button">Cancel</button>
+    <button class="uk-button uk-button-secondary uk-modal-close uk-border-pill" type="button">Cancel</button>
     <button class="uk-button uk-button-primary uk-border-pill" id="save-edit-btn" type="button">Save</button>
   </div>
   </div>
@@ -900,7 +1128,7 @@ tsParticles.load("bgCanvas",{
 </div>
 <div id="search-modal" uk-modal="" class="uk-modal">
   <div class="uk-modal-dialog uk-modal-body" role="dialog" aria-modal="true">
-    <h3>Search</h3>
+    <h3 style="color:#000000;">Search</h3>
     <input id="search-input" class="uk-input" type="text" placeholder="Type to search..." oninput="renderSearchResults()" autofocus="">
     <ul id="search-results" class="uk-list uk-list-divider uk-margin"></ul>
     <button class="uk-button uk-button-default uk-modal-close uk-border-pill uk-align-right">Close</button>
