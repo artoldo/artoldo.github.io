@@ -6,9 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Polyglottolalia [versicon]</title>
   <link rel="stylesheet" href="https://artoldo.github.io/css/uikit.min.css">
-  <link rel="stylesheet" href="https://artoldo.github.io/custom90.css">
 
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
   <script src="https://artoldo.github.io/js/uikit.min.js"></script>
   <script src="https://artoldo.github.io/js/uikit-icons.min.js"></script>
@@ -161,16 +160,123 @@ input, select {
 /* Google Font */
 
 body {
-    font-family: 'Spectral', serif;
+    font-family: 'Open Sans', sans-serif;
+    color: #ffffff; /* make all text white by default */
+    margin: 0;
+    padding: 0;
 }
+
 .entry-content {
-    font-family: 'Spectral', serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Spectral', serif;
+    font-family: 'Open Sans', sans-serif;
+    color: #ffffff;
 }
 
+/* Links are white */
+a {
+    color: #ffffff;
+    text-decoration: none; /* optional */
+}
+
+/* Optional: link hover effect */
+a:hover {
+    text-decoration: underline;
+}
+
+/* Make all UIkit buttons white */
+.uk-button {
+    background-color: #ffffff !important;
+    color: #000000 !important; /* black text for contrast */
+    border-color: #ffffff !important; /* optional: match border to background */
+}
+
+/* Optional: hover effect */
+.uk-button:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+}
+
+/* ========================================================================
+Tooltip
+========================================================================== */
+
+.uk-tooltip {
+/* 1 */
+display: none;
+/* 2 */
+position: absolute;
+z-index: 1030;
+--uk-position-offset: 10px;
+--uk-position-viewport-offset: 10;
+/* 3 */
+top: 0;
+/* 4 */
+box-sizing: border-box;
+max-width: 200px;
+padding: 6px 12px;
+/* 5 */
+background: #000;
+border-radius: 15px;
+color: #fff;
+font-size: 12px;
+}
+
+/* ========================================================================
+Lightbox
+========================================================================== */
+
+.uk-lightbox-button {
+box-sizing: border-box;
+width: 50px;
+height: 50px;
+background: rgba(0, 0, 0, 0.3);
+color: rgba(255, 255, 255, 0.7);
+border-radius: 100%;
+/* 1 */
+display: inline-flex;
+justify-content: center;
+align-items: center;
+}
+
+.uk-lightbox-iframe {
+width: 90%;
+height: 90%;
+border: 0px solid black;
+border-radius: 0; /* Default: no rounding for Chrome, Brave, etc. */
+}
+
+/* Safari-only override */
+@supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
+.uk-lightbox-iframe {
+border-radius: 25px;
+}
+}
+
+.uk-lightbox-toolbar {
+padding: 5px 5px;
+background: transparent;
+color: rgba(255, 255, 255, 0.7);
+}
+.uk-lightbox-toolbar > * {
+color: rgba(255, 255, 255, 0.7);
+}
+
+.uk-lightbox-toolbar-icon {
+box-sizing: border-box;
+width: 50px;
+height: 50px;
+background: #000;
+color: #fff;
+border-radius: 100%;
+/* 1 */
+display: inline-flex;
+justify-content: center;
+align-items: center;
+}
 
   </style>
 
@@ -182,8 +288,38 @@ h1, h2, h3, h4, h5, h6 {
     }, 'lightbox');
 </script>
 
+<style>html,body{margin:0;padding:0;background:#000000;}
+/* make the particles canvas fixed behind all page content */
+#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(20px);pointer-events:none;}
+/* ensure the main document stacking context is above the background */
+body, #container {position:relative;z-index:0;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+</head><body>
+<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+<script>
+tsParticles.load("bgCanvas",{
+  fullScreen:{enable:true, zIndex:-10},
+  background:{color:"#000000"},
+  particles:{
+    number:{value:100},
+    color:{value:["#00aaff","#ffaa00","#ff55aa","#55ffaa"]},
+    shape:{type:"circle"},
+    opacity:{value:0.6},
+    size:{value:25},
+    move:{enable:true,speed:2}
+  },
+  interactivity:{
+    events:{onHover:{enable:true,mode:"repulse"},onClick:{enable:true,mode:"push"}},
+    modes:{repulse:{distance:100},push:{quantity:4}}
+  },
+  detectRetina:true
+});
+</script>
+
 </head>
-<body>
+<body style="color: white;">
 
 
 
