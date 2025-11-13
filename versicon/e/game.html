@@ -28,6 +28,7 @@
             border: 2px solid #0F0;
             overflow-y: auto;
             box-sizing: border-box;
+            scroll-behavior: smooth;
         }
 
         #terminal:focus {
@@ -278,10 +279,16 @@ function openFile(filename) {
     }
 }
 
+    function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
     function output(text) {
         outputDiv.innerHTML += `\n> ${text}\n`;
-        const terminal = document.getElementById("terminal");
-        terminal.scrollTop = terminal.scrollHeight;
+        scrollTerminal();
     }
 
     function processCommand(command) {
@@ -315,6 +322,7 @@ function openFile(filename) {
 
     hiddenInput.addEventListener('input', () => {
         userInputSpan.innerText = hiddenInput.value;
+        scrollTerminal();
     });
 
     hiddenInput.addEventListener('keydown', (event) => {
