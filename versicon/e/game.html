@@ -77,26 +77,6 @@ body, #container{position:relative;z-index:0;}
 <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 
 <script>
-(function() {
-    if (window.innerWidth > 768) return; // desktop, do nothing
-
-    const lightboxContainer = document.querySelector('.uk-lightbox, .uk-lightbox-item, .uk-lightbox-container');
-    if (!lightboxContainer) return;
-
-    // Add a one-time click listener on the Lightbox to open in a new tab
-    const openInNewTab = () => {
-        window.open(window.location.href, '_blank');
-        const closeButton = lightboxContainer.querySelector('.uk-lightbox-close');
-        if (closeButton) closeButton.click();
-        lightboxContainer.removeEventListener('click', openInNewTab);
-    };
-
-    lightboxContainer.addEventListener('click', openInNewTab, { once: true, passive: true });
-
-})();
-</script>
-
-<script>
 (function(){
   const canvas = document.getElementById("mainCanvas");
   const ctx = canvas.getContext("2d");
@@ -152,6 +132,55 @@ body, #container{position:relative;z-index:0;}
         <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
     </div>
 </div>
+
+<script>
+(function() {
+    if (window.innerWidth > 768) return; // desktop, do nothing
+
+    // Detect the Lightbox overlay or content
+    const lightboxContainer = document.querySelector('.uk-lightbox, .uk-lightbox-item, .uk-lightbox-container');
+    if (!lightboxContainer) return;
+
+    // Show a small message prompting the user to tap
+    const info = document.createElement('div');
+    info.textContent = "Tap anywhere to open the terminal in full screen.";
+    Object.assign(info.style, {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        color: "#0F0",
+        background: "rgba(0,0,0,0.8)",
+        padding: "20px",
+        borderRadius: "10px",
+        textAlign: "center",
+        zIndex: "99999",
+        fontFamily: "monospace"
+    });
+    document.body.appendChild(info);
+
+    // Use a **document-level listener** to capture any tap
+    const openInNewTab = (event) => {
+        // Ensure tap is inside Lightbox
+        if (!lightboxContainer.contains(event.target)) return;
+
+        // Open in new tab
+        window.open(window.location.href, "_blank");
+
+        // Close Lightbox if possible
+        const closeButton = lightboxContainer.querySelector('.uk-lightbox-close');
+        if (closeButton) closeButton.click();
+
+        // Cleanup
+        document.removeEventListener('touchstart', openInNewTab);
+        if (info.parentNode) info.parentNode.removeChild(info);
+    };
+
+    document.addEventListener('touchstart', openInNewTab, { passive: true });
+
+})();
+</script>
+
 
 <script>
     const outputDiv = document.getElementById('output');
