@@ -239,8 +239,9 @@ function processCommand(command) {
 function shutdownSequence() {
     output(">>> Initiating signal decryption sequence...");
     setTimeout(() => {
-        output("System lockdown complete. Thank you for accessing the terminal.");
-        document.getElementById("terminal").innerHTML = 
+        const terminal = document.getElementById("terminal");
+
+        terminal.innerHTML = 
             "<div style='color: #0F0; font-size: 2em; text-align: center;'>EARTH 61250</div>" +
             "<p style='color: #0F0; font-size: 1em; text-align: left; margin-top: 10px;'>" +
             "Nestled in the rolling hills of Usingen - Hessen (Germany), the telecommunication base stood quietly beneath the stars. Rows of satellite dishes, some towering nearly twenty meters high, were perfectly aligned, catching whispers from the sky that no ordinary receiver could detect. The facility was vast, sprawling across open fields and wooded ridges, a silent guardian of terrestrial and orbital communication.<br><br>" +
@@ -258,7 +259,11 @@ function shutdownSequence() {
             "In the control room, the screens blinked one final message:<br><br>" +
             "AS ABOVE. SO BELOW." +
             "</p>";
-        // Disable further input by removing the keydown event listener
+
+        // Jump to the top
+        terminal.scrollTop = 0;
+
+        // Disable further input
         document.removeEventListener('keydown', handleKeyDown);
     }, 4000);
 }
@@ -365,6 +370,30 @@ function openFile(filename) {
     window.onload = function() {
         document.getElementById("terminal").focus();
     };
+</script>
+
+<script>
+(function() {
+  const terminal = document.getElementById('terminal');
+  if (!terminal) return;
+
+  function adjustHeight() {
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    terminal.style.maxHeight = `${Math.max(180, vh - 20)}px`;
+    if (typeof scrollTerminal === 'function') scrollTerminal();
+  }
+
+  // initial
+  adjustHeight();
+
+  // handle keyboard / viewport changes
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', adjustHeight);
+    window.visualViewport.addEventListener('scroll', adjustHeight);
+  } else {
+    window.addEventListener('resize', adjustHeight);
+  }
+})();
 </script>
 
 </body>

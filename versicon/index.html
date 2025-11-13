@@ -389,37 +389,6 @@ background-color: #000;
 color: #fff;
 }
 
-/* Save Button with Rainbow Effect */
-.save {
-margin-top: 0.8em;
-padding: 0.5em 1.2em; /* keep width/height reasonable for UIkit */
-font-size: 1.2em;
-font-weight: bold;
-color: #fff;
-background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
-background-size: 400% 400%;
-border: none;
-border-radius: 50px;
-cursor: pointer;
-box-shadow: 0 0 20px rgba(0,0,0,0.25);
-transition: transform 0.2s ease, background-color 0.2s, color 0.2s;
-animation: rainbowFlow 6s ease infinite;
-}
-
-/* secondary Button Hover */
-.save:hover {
-transform: scale(1.05); /* from your controls button */
-background-color: #000;  /* keep your original hover effect */
-color: #fff;
-}
-
-/* Rainbow Flow Animation */
-@keyframes rainbowFlow {
-0% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-100% { background-position: 0% 50%; }
-}
-
 /* ========================================================================
 Background
 ========================================================================== */
@@ -526,39 +495,50 @@ align-items: center;
 
 <body>
 
-<!-- NOT SAVED -->
+<!-- Background Start -->
 
-<style>html,body{margin:0;padding:0;background:#000000;}
+<style>
+html,body{margin:0;padding:0;background:#000000;}
 /* make the particles canvas fixed behind all page content */
 #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(20px);pointer-events:none;}
+#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(20px);pointer-events:none;touch-action:auto;}
 /* ensure the main document stacking context is above the background */
 body, #container {position:relative;z-index:0;}
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
 </head><body>
 <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 <script>
-tsParticles.load("bgCanvas",{
-  fullScreen:{enable:true, zIndex:-10},
-  background:{color:"#000000"},
-  particles:{
-    number:{value:100},
-    color:{value:["#F21326","#0A12A6","#D98F07","#D95E32"]},
-    shape:{type:"circle"},
-    opacity:{value:0.6},
-    size:{value:25},
-    move:{enable:true,speed:2}
-  },
-  interactivity:{
-    events:{onHover:{enable:true,mode:"repulse"},onClick:{enable:true,mode:"push"}},
-    modes:{repulse:{distance:100},push:{quantity:4}}
-  },
-  detectRetina:true
-});
+(function(){
+  // Detect touch devices
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+  tsParticles.load("bgCanvas",{
+    fullScreen:{enable:true, zIndex:-10},
+    background:{color:"#000000"},
+    particles:{
+      number:{value:100},
+      color:{value:["#F21326","#0A12A6","#D98F07","#D95E32"]},
+      shape:{type:"circle"},
+      opacity:{value:0.6},
+      size:{value:25},
+      move:{enable:true,speed:2}
+    },
+    interactivity:{
+      // Disable hover/click on touch devices to allow scrolling
+      events:{
+        onHover:{enable: !isTouch, mode:"repulse"},
+        onClick:{enable: !isTouch, mode:"push"}
+      },
+      modes:{repulse:{distance:100},push:{quantity:4}}
+    },
+    detectRetina:true
+  });
+})();
 </script>
 
-<!-- NOT SAVED -->
+<!-- Background End -->
 
 <div class="uk-container uk-text-center uk-padding-large">
   <h1><strong>Poly</strong><span class="uk-text-lighter">glottolalia <span class="uk-text-small uk-text-lighter">[versicon]</span></span></h1>
