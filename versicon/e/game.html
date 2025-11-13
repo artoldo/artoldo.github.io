@@ -77,6 +77,30 @@ body, #container{position:relative;z-index:0;}
 <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 
 <script>
+(function() {
+    // Only run on mobile (you can adjust max-width threshold)
+    if (window.innerWidth > 768) return; // skip desktop
+
+    // Detect if running inside a UK Lightbox
+    const lightboxContainer = document.querySelector('.uk-lightbox, .uk-lightbox-item, .uk-lightbox-container');
+
+    if (lightboxContainer) {
+        // Open the current page in a new tab
+        window.open(window.location.href, '_blank');
+
+        // Close the Lightbox if possible
+        const closeButton = lightboxContainer.querySelector('.uk-lightbox-close');
+        if (closeButton) {
+            closeButton.click();
+        }
+
+        // Stop further scripts from running inside the Lightbox
+        return;
+    }
+})();
+</script>
+
+<script>
 (function(){
   const canvas = document.getElementById("mainCanvas");
   const ctx = canvas.getContext("2d");
@@ -370,30 +394,6 @@ function openFile(filename) {
     window.onload = function() {
         document.getElementById("terminal").focus();
     };
-</script>
-
-<script>
-(function() {
-  const terminal = document.getElementById('terminal');
-  if (!terminal) return;
-
-  function adjustHeight() {
-    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    terminal.style.maxHeight = `${Math.max(180, vh - 20)}px`;
-    if (typeof scrollTerminal === 'function') scrollTerminal();
-  }
-
-  // initial
-  adjustHeight();
-
-  // handle keyboard / viewport changes
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', adjustHeight);
-    window.visualViewport.addEventListener('scroll', adjustHeight);
-  } else {
-    window.addEventListener('resize', adjustHeight);
-  }
-})();
 </script>
 
 </body>
