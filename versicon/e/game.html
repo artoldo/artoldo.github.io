@@ -78,25 +78,21 @@ body, #container{position:relative;z-index:0;}
 
 <script>
 (function() {
-    // Only run on mobile (you can adjust max-width threshold)
-    if (window.innerWidth > 768) return; // skip desktop
+    if (window.innerWidth > 768) return; // desktop, do nothing
 
-    // Detect if running inside a UK Lightbox
     const lightboxContainer = document.querySelector('.uk-lightbox, .uk-lightbox-item, .uk-lightbox-container');
+    if (!lightboxContainer) return;
 
-    if (lightboxContainer) {
-        // Open the current page in a new tab
+    // Add a one-time click listener on the Lightbox to open in a new tab
+    const openInNewTab = () => {
         window.open(window.location.href, '_blank');
-
-        // Close the Lightbox if possible
         const closeButton = lightboxContainer.querySelector('.uk-lightbox-close');
-        if (closeButton) {
-            closeButton.click();
-        }
+        if (closeButton) closeButton.click();
+        lightboxContainer.removeEventListener('click', openInNewTab);
+    };
 
-        // Stop further scripts from running inside the Lightbox
-        return;
-    }
+    lightboxContainer.addEventListener('click', openInNewTab, { once: true, passive: true });
+
 })();
 </script>
 
