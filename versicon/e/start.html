@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Conditional Redirect</title>
+<style>
+    body {
+        background-color: #000;
+        margin: 0;
+        height: 100vh;
+    }
+</style>
+<script>
+window.onload = function() {
+    const url = "game.html";
+
+    // Simple mobile detection
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // Open in new tab/window on mobile
+        window.open(url, "_blank");
+    } else {
+        // Redirect parent window on desktop
+        window.top.location.href = url;
+    }
+};
+</script>
+</head>
+<body>
+</body>
+</html>
