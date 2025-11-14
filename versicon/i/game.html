@@ -71,27 +71,38 @@
         }
     </style>
 
-<!-- Background Animation Start -->
-
-<style>
-html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
-#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;pointer-events:none;}
-body, #container{position:relative;z-index:0;}
-</style>
-
+    <!-- Background Animation Start -->
+    <style>
+    html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+    #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+    #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;pointer-events:none;}
+    body, #container{position:relative;z-index:0;}
+    </style>
+    <!-- Background Animation End -->
+</head>
+<body>
 <div id="bgCanvas"><canvas id="ashCanvas"></canvas></div>
+<div id="terminal" tabindex="0">
+    <input type="text" id="hidden-input"
+           style="position:absolute; bottom:10px; left:10px; width:1px; height:1px; opacity:0;"
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+           aria-hidden="true"
+           placeholder="Type folder or file names. Use 'back' to return.">
+    <div id="output"></div>
+    <div>
+        <span id="input-line">&gt; </span><span id="user-input"></span><span class="cursor">_</span>
+    </div>
+</div>
 
 <script>
+// ---- Background Ash Animation ----
 (function(){
   const canvas = document.getElementById("ashCanvas");
   const ctx = canvas.getContext("2d");
-
   let width = window.innerWidth;
   let height = window.innerHeight;
   canvas.width = width;
   canvas.height = height;
-
   class AshParticle {
     constructor(){
       this.x = Math.random() * width;
@@ -121,19 +132,14 @@ body, #container{position:relative;z-index:0;}
       ctx.closePath();
     }
   }
-
   const particles = [];
-  const particleCount = Math.max(100, Math.floor((width * height) / 90000)); // scale for big screens
-
+  const particleCount = Math.max(100, Math.floor((width * height) / 90000));
   for(let i=0; i<particleCount; i++){
     particles.push(new AshParticle());
   }
-
   function animate(){
-    // soft fade to create trailing effect
     ctx.fillStyle = "rgba(0,0,0,0.18)";
     ctx.fillRect(0,0,width,height);
-
     for(let p of particles){
       p.update();
       p.draw();
@@ -141,7 +147,6 @@ body, #container{position:relative;z-index:0;}
     requestAnimationFrame(animate);
   }
   animate();
-
   window.addEventListener("resize",()=>{
     width = window.innerWidth;
     height = window.innerHeight;
@@ -149,33 +154,11 @@ body, #container{position:relative;z-index:0;}
     canvas.height = height;
   });
 })();
-</script>
+// ---- End Ash Animation ----
 
-<!-- Background Animation End -->
-
-</head>
-<body>
-
-<div id="terminal" tabindex="0">
-    <input type="text" id="hidden-input"
-           style="position:absolute; bottom:10px; left:10px; width:1px; height:1px; opacity:0;"
-           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-           aria-hidden="true"
-           placeholder="Type folder or file names. Use 'back' to return.">
-    <div id="output"></div>
-    <div>
-        <span id="input-line">&gt; </span><span id="user-input"></span><span class="cursor">_</span>
-    </div>
-</div>
-
-<script>
-    const outputDiv = document.getElementById('output');
-    const userInputSpan = document.getElementById('user-input');
-    const inputLine = document.getElementById('input-line');
-
-    let currentDirectory = "root";
-    /* Updated file system with archive/records/reports terminology */
-    const fileSystem = {
+// ---- Terminal and File System Logic ----
+let currentDirectory = "root";
+const fileSystem = {
         "root": { folders: ["archives","records","reports","chronicles","testimonies","provinces"], files: [] },
         "root/archives": { folders: ["daily","monthly"], files: ["central-catalog.txt"] },
         "root/records": { folders: ["orders","military","civilians"], files: ["registration-index.txt","missing-persons.txt"] },
@@ -199,8 +182,7 @@ body, #container{position:relative;z-index:0;}
         ] }
     };
 
-    /* File contents for archival files (province data added afterwards) */
-    const fileContents = {
+const fileContents = {
         "war-diary.txt": "War diary excerpt: 1943-1945. Multiple entries describing occupation and reprisals.",
         "eyewitness-account.txt": "Eyewitness account: civilians describe round-ups, executions, and reprisals.",
         "military-orders.txt": "Military orders: directives issued by occupying forces. (redacted)",
@@ -235,8 +217,7 @@ Y - Yield to the history and remember.
         }
     };
 
-    // provincesData (uses the dataset you provided; kept as-is but can be extended)
-    const provincesData = {
+const provincesData = {
         "Agrigento.txt": "Province: Agrigento\n12 July 1943\n[6 victims in 1 episode]",
         "Alessandria.txt": "Province: Alessandria\n9 September 1943 - 26 April 1945\n[336 victims in 93 episodes]",
         "Ancona.txt": "Province: Ancona\n6 February 1944 - 8 August 1944\n[163 victims in 59 episodes]",
@@ -345,91 +326,88 @@ Y - Yield to the history and remember.
         "Viterbo.txt": "Province: Viterbo\n14 October 1943 - 17 June 1944\n[96 victims in 20 episodes]"
     };
 
-    // add province contents to fileContents so opening them prints numbers
-    for (const [k,v] of Object.entries(provincesData)) {
-        fileContents[k] = v;
-    }
+// Add province data to fileContents
+for (const [k, v] of Object.entries(provincesData)) {
+    fileContents[k] = v;
+}
 
-    /* Fill a few archive placeholders in other directories for realism */
-    function generateRandomFiles() {
-        const directories = [
-            'root/archives',
-            'root/archives/daily',
-            'root/archives/monthly',
-            'root/reports/investigations',
-            'root/chronicles/towns',
-            'root/chronicles/massacres',
-            'root/records/military',
-            'root/records/civilians'
-        ];
-        directories.forEach(directory => {
-            if (!fileSystem[directory]) fileSystem[directory] = { folders: [], files: [] };
-            const fcount = Math.floor(Math.random() * 2) + 1;
-            for (let i=0;i<fcount;i++){
-                const fn = `report-${Math.floor(Math.random()*9000)}.txt`;
-                fileSystem[directory].files.push(fn);
-                fileContents[fn] = "Archive excerpt: refer to provincial files for full data.";
-            }
-        });
-    }
-
-    function showDirectoryContents() {
-        if (!fileSystem[currentDirectory]) {
-            output("<span class='command-color1'>Archive not found.</span>");
-            return;
+function generateRandomFiles() {
+    const directories = [
+        'root/archives',
+        'root/archives/daily',
+        'root/archives/monthly',
+        'root/reports/investigations',
+        'root/chronicles/towns',
+        'root/chronicles/massacres',
+        'root/records/military',
+        'root/records/civilians'
+    ];
+    directories.forEach(directory => {
+        if (!fileSystem[directory]) fileSystem[directory] = { folders: [], files: [] };
+        const fcount = Math.floor(Math.random() * 2) + 1;
+        for (let i=0;i<fcount;i++){
+            const fn = `report-${Math.floor(Math.random()*9000)}.txt`;
+            fileSystem[directory].files.push(fn);
+            fileContents[fn] = "Archive excerpt: refer to provincial files for full data.";
         }
-        const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
-        const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
-        output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
-    }
+    });
+}
 
-    function output(text) {
-        outputDiv.innerHTML += `\n> ${text}\n`;
-        scrollTerminal();
+function showDirectoryContents() {
+    if (!fileSystem[currentDirectory]) {
+        output("<span class='command-color1'>Archive not found.</span>");
+        return;
     }
+    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
+    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
 
-    function scrollTerminal() {
-        const terminal = document.getElementById("terminal");
-        requestAnimationFrame(() => {
-            terminal.scrollTop = terminal.scrollHeight;
-        });
-    }
+function output(text) {
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
+}
 
-    // Gameplay command parser: supports 'back' to go up one directory, and exact folder/file navigation/opening.
-    function processCommand(command) {
-        const target = command.trim();
-        if (target === "back") {
-            if (currentDirectory !== "root") {
-                const parts = currentDirectory.split('/');
-                parts.pop();
-                currentDirectory = parts.join('/') || "root";
-                output(`> Returned to ${currentDirectory}`);
-                showDirectoryContents();
-            } else {
-                output("<span class='command-color1'>Already at root directory.</span>");
-            }
-            return;
-        }
-        if (fileSystem[currentDirectory]?.folders.includes(target)) {
-            currentDirectory = `${currentDirectory}/${target}`;
-            output(`> You entered ${currentDirectory}`);
+function scrollTerminal() {
+    const terminal = document.getElementById("terminal");
+    requestAnimationFrame(() => {
+        terminal.scrollTop = terminal.scrollHeight;
+    });
+}
+
+function processCommand(command) {
+    const target = command.trim();
+    if (target === "back") {
+        if (currentDirectory !== "root") {
+            const parts = currentDirectory.split('/');
+            parts.pop();
+            currentDirectory = parts.join('/') || "root";
+            output(`> Returned to ${currentDirectory}`);
             showDirectoryContents();
-            return;
+        } else {
+            output("<span class='command-color1'>Already at root directory.</span>");
         }
-        if (fileSystem[currentDirectory]?.files.includes(target)) {
-            output(`> Opening file ${target}...`);
-            openFile(target);
-            return;
-        }
-        output("<span class='command-color1'>Command not recognized or resource not found.</span>");
+        return;
     }
+    if (fileSystem[currentDirectory]?.folders.includes(target)) {
+        currentDirectory = `${currentDirectory}/${target}`;
+        output(`> You entered ${currentDirectory}`);
+        showDirectoryContents();
+        return;
+    }
+    if (fileSystem[currentDirectory]?.files.includes(target)) {
+        output(`> Opening file ${target}...`);
+        openFile(target);
+        return;
+    }
+    output("<span class='command-color1'>Command not recognized or resource not found.</span>");
+}
 
-    /* Full memorial shutdown sequence (english translation of your provided text) */
-    function shutdownSequence() {
-        output(">>> Accessing memorial reports and finalizing archive...");
-        setTimeout(() => {
-            const terminal = document.getElementById('terminal');
-            terminal.innerHTML = `
+function shutdownSequence() {
+    output(">>> Accessing memorial reports and finalizing archive...");
+    setTimeout(() => {
+        const terminal = document.getElementById('terminal');
+        terminal.innerHTML = `
                 <div style="color: #b22222; font-size: 1.5em; text-align: center; margin-top: 1em;">IN MEMORIAM</div>
                 <div style="color: #eee; font-size: 0.95em; text-align: left; margin: 1.2em auto; max-width: 900px; line-height: 1.45em;">
                 During the Liberation War against Nazi-Fascism, between 3 September 1943 and 2 May 1945—that is, from the Cassibile Armistice between Italy and the Allied forces to the formal surrender of German troops in the Italian theater—approximately <strong>11,400 Italian soldiers, 44,720 partisans, and 9,180 children, women, and men</strong> lost their lives, either executed after combat or massacred by retreating German forces.
@@ -445,104 +423,91 @@ Y - Yield to the history and remember.
                 This memorial is dedicated to the memory of those who perished and to the duty of remembrance: to record, to bear witness, and to demand justice.
                 </div>
             `;
-            // Jump to the top
-            terminal.scrollTop = 0;
+        terminal.scrollTop = 0;
+        // Disable further input and hide UI input elements
+        const hiddenInput = document.getElementById('hidden-input');
+        const userInputSpan = document.getElementById('user-input');
+        const inputLine = document.getElementById('input-line');
+        hiddenInput.disabled = true;
+        hiddenInput.blur();
+        userInputSpan.innerText = '';
+        inputLine.style.visibility = 'hidden';
+        const cursor = document.querySelector('.cursor');
+        if (cursor) cursor.style.visibility = 'hidden';
+    }, 600);
+}
 
-            // Disable further input and hide UI input elements
-            hiddenInput.disabled = true;
-            hiddenInput.blur();
-            userInputSpan.innerText = '';
-            inputLine.style.visibility = 'hidden';
-            const cursor = document.querySelector('.cursor');
-            if (cursor) cursor.style.visibility = 'hidden';
-            // remove any existing key handler (if defined elsewhere)
-            try { document.removeEventListener('keydown', handleKeyDown); } catch(e){}
-        }, 600);
-    }
-
-    function openFile(filename) {
-        const fileData = fileContents[filename];
-        if (fileData) {
-            if (fileData.type === "executable" && typeof fileData.action === "function") {
-                output(fileData.snippet); // Show snippet
-                fileData.action(); // run memorial
-            } else if (typeof fileData === "string") {
-                output(fileData);
-            } else {
-                output("<span class='command-color1'>File content unavailable.</span>");
-            }
+function openFile(filename) {
+    const fileData = fileContents[filename];
+    if (fileData) {
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet);
+            fileData.action();
+        } else if (typeof fileData === "string") {
+            output(fileData);
         } else {
-            output("<span class='command-color1'>File not found.</span>");
+            output("<span class='command-color1'>File content unavailable.</span>");
         }
+    } else {
+        output("<span class='command-color1'>File not found.</span>");
     }
+}
 
-    const hiddenInput = document.getElementById('hidden-input');
-    const userInputSpan = document.getElementById('user-input');
-    const outputDiv = document.getElementById('output');
-    const inputLine = document.getElementById('input-line');
+// ---- DOM Elements ----
+const hiddenInput = document.getElementById('hidden-input');
+const userInputSpan = document.getElementById('user-input');
+const outputDiv = document.getElementById('output');
+const inputLine = document.getElementById('input-line');
 
-    // Focus the input on terminal tap
-    document.getElementById('terminal').addEventListener('click', () => {
-        hiddenInput.focus();
-    });
+// ---- Terminal Input Handlers (single block for all events) ----
+document.getElementById('terminal').addEventListener('click', () => {
+    hiddenInput.focus();
+});
+hiddenInput.addEventListener('input', () => {
+    userInputSpan.innerText = hiddenInput.value;
+    scrollTerminal();
+});
+hiddenInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const command = hiddenInput.value.trim();
+        if (!command) return;
+        output(`<span class='command-color1'>${command}</span>`);
+        processCommand(command);
+        hiddenInput.value = '';
+        userInputSpan.innerText = '';
+    }
+});
+window.onload = () => {
+    document.getElementById('terminal').focus();
+    hiddenInput.focus();
+};
 
-    // Show typed characters in visible span
-    hiddenInput.addEventListener('input', () => {
-        userInputSpan.innerText = hiddenInput.value;
+function typingAnimation(text, callback) {
+    let index = 0;
+    const interval = setInterval(() => {
+        if (index < text.length) {
+            outputDiv.innerHTML += `<span class='command-color2'>${text[index]}</span>`;
+            index++;
+        } else {
+            clearInterval(interval);
+            outputDiv.innerHTML += "<br><br>";
+            callback();
+        }
         scrollTerminal();
-    });
+    }, 36);
+}
 
-    // Handle Enter key
-    hiddenInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            const command = hiddenInput.value.trim();
-            if (!command) return;
+// ---- Startup Sequence ----
+typingAnimation("Accessing archives of Nazi-Fascist reprisals... Reviewing provincial records and witness reports. Seek the hidden diary to uncover the final memorial.", () => {
+    output("Type the exact name of a 'folder' or 'file' to open it. Write 'back' to return to the previous directory.");
+    generateRandomFiles();
+    showDirectoryContents();
+});
 
-            // Echo the command
-            output(`<span class='command-color1'>${command}</span>`);
-
-            // Process the command
-            processCommand(command);
-
-            // Clear input
-            hiddenInput.value = '';
-            userInputSpan.innerText = '';
-        }
-    });
-
-    // Ensure mobile keyboard shows on load
-    window.onload = () => {
-        document.getElementById('terminal').focus();
-        hiddenInput.focus();
-    };
-
-    function typingAnimation(text, callback) {
-        let index = 0;
-        const interval = setInterval(() => {
-            if (index < text.length) {
-                outputDiv.innerHTML += `<span class='command-color2'>${text[index]}</span>`;
-                index++;
-            } else {
-                clearInterval(interval);
-                outputDiv.innerHTML += "<br><br>";
-                callback();
-            }
-            scrollTerminal();
-        }, 36);
-    }
-
-    // Historical intro
-    typingAnimation("Accessing archives of Nazi-Fascist reprisals... Reviewing provincial records and witness reports. Seek the hidden diary to uncover the final memorial.", () => {
-        output("Type the exact name of a 'folder' or 'file' to open it. Write 'back' to return to the previous directory.");
-        generateRandomFiles();
-        showDirectoryContents();
-    });
-
-    document.addEventListener('contextmenu', (event) => {
-        event.preventDefault();
-    });
-
+// Prevent context menu
+document.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+});
 </script>
-
 </body>
 </html>
