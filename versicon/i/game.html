@@ -84,7 +84,7 @@
 <div id="bgCanvas"><canvas id="ashCanvas"></canvas></div>
 <div id="terminal" tabindex="0">
     <input type="text" id="hidden-input"
-           style="position:absolute; bottom:10px; left:10px; width:1px; height:1px; opacity:0;"
+           style="position:fixed; bottom:5px; left:8px; width:20px; height:25px; opacity:0.01; z-index:100;"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
            aria-hidden="true"
            placeholder="Type folder or file names. Use 'back' to return.">
@@ -408,11 +408,9 @@ function shutdownSequence() {
     setTimeout(() => {
         const terminal = document.getElementById('terminal');
         terminal.innerHTML = `
-                <div style="color: #b22222; font-size: 1.5em; text-align: center; margin-top: 1em;">IN MEMORIAM</div>
+                <div style="color: #b22222; font-size: 1.5em; text-align: center; margin-top: 1em;"><br><br>IN MEMORIAM</div>
                 <div style="color: #eee; font-size: 0.95em; text-align: left; margin: 1.2em auto; max-width: 900px; line-height: 1.45em;">
                 During the Liberation War against Nazi-Fascism, between 3 September 1943 and 2 May 1945—that is, from the Cassibile Armistice between Italy and the Allied forces to the formal surrender of German troops in the Italian theater—approximately <strong>11,400 Italian soldiers, 44,720 partisans, and 9,180 children, women, and men</strong> lost their lives, either executed after combat or massacred by retreating German forces.
-                <br><br>
-                This virtual installation creates a <strong>place / non-place of memory</strong> for the Italian victims of Nazi-Fascist reprisals who, to this day, have not received adequate justice—especially due to Germany’s historical refusal to recognize the rulings of competent Italian courts—denying both accountability to the perpetrators and full human justice to the victims.
                 <br><br>
                 Mountains, no longer green but scorched, gunmetal gray, washed by oxidized lava, rise against a sky where the sun no longer rises. Yet the molten light—colored Resistance, colored Spring—remains. Meanwhile, General Winter, as in history, suspends operations, imposing a long frost, a prolonged farewell, <em>Bella ciao</em>. Montesole: Alba was taken by 2,000 on 10 October and lost by 200 on 2 November 1944. Watch, Red Star, protect those around the partisan formations from those who seek to exterminate them in the rear, while the Allies remain on the Gothic Line. Tears fall like lapilli, rain rebounds on rubber walls, snow blankets the plains, and factories burn with revolutionary fury, blackened by deportations and soot. Reprisals fall like aerial raids but are carried out by ground troops: too human, too inhuman, indifferent even to Nietzsche.
                 <br><br>
@@ -459,8 +457,9 @@ const userInputSpan = document.getElementById('user-input');
 const outputDiv = document.getElementById('output');
 const inputLine = document.getElementById('input-line');
 
-// ---- Terminal Input Handlers (single block for all events) ----
-document.getElementById('terminal').addEventListener('click', () => {
+// ---- Terminal Input Handlers (MOBILE-FRIENDLY, single block) ----
+const terminalDiv = document.getElementById('terminal');
+terminalDiv.addEventListener('click', () => {
     hiddenInput.focus();
 });
 hiddenInput.addEventListener('input', () => {
@@ -478,8 +477,10 @@ hiddenInput.addEventListener('keydown', (event) => {
     }
 });
 window.onload = () => {
-    document.getElementById('terminal').focus();
-    hiddenInput.focus();
+    // On mobile, focusing input may need to be delayed for keyboard to appear
+    setTimeout(() => {
+        hiddenInput.focus();
+    }, 120);
 };
 
 function typingAnimation(text, callback) {
