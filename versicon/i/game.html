@@ -157,11 +157,11 @@ body, #container{position:relative;z-index:0;}
 <body>
 
 <div id="terminal" tabindex="0">
-    <input type="text" id="hidden-input" 
-           style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"
+    <input type="text" id="hidden-input"
+           style="position:absolute; bottom:10px; left:10px; width:1px; height:1px; opacity:0;"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-           inputmode="none" aria-hidden="true"
-           placeholder="Try typing folder or file names. Use 'back' to return.">
+           aria-hidden="true"
+           placeholder="Type folder or file names. Use 'back' to return.">
     <div id="output"></div>
     <div>
         <span id="input-line">&gt; </span><span id="user-input"></span><span class="cursor">_</span>
@@ -477,29 +477,44 @@ Y - Yield to the history and remember.
     }
 
     const hiddenInput = document.getElementById('hidden-input');
-    // Set hint/placeholder for hidden input
-    hiddenInput.setAttribute("placeholder", "Try typing folder or file names. Use 'back' to return.");
+    const userInputSpan = document.getElementById('user-input');
+    const outputDiv = document.getElementById('output');
+    const inputLine = document.getElementById('input-line');
 
+    // Focus the input on terminal tap
     document.getElementById('terminal').addEventListener('click', () => {
-        hiddenInput.focus(); // opens mobile keyboard
+        hiddenInput.focus();
     });
 
+    // Show typed characters in visible span
     hiddenInput.addEventListener('input', () => {
         userInputSpan.innerText = hiddenInput.value;
         scrollTerminal();
     });
 
-    // custom enter handling - echoes command and processes it
+    // Handle Enter key
     hiddenInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            const command = hiddenInput.value;
-            // echo in historical style
+            const command = hiddenInput.value.trim();
+            if (!command) return;
+
+            // Echo the command
             output(`<span class='command-color1'>${command}</span>`);
+
+            // Process the command
             processCommand(command);
+
+            // Clear input
             hiddenInput.value = '';
             userInputSpan.innerText = '';
         }
     });
+
+    // Ensure mobile keyboard shows on load
+    window.onload = () => {
+        document.getElementById('terminal').focus();
+        hiddenInput.focus();
+    };
 
     function typingAnimation(text, callback) {
         let index = 0;
@@ -527,9 +542,6 @@ Y - Yield to the history and remember.
         event.preventDefault();
     });
 
-    window.onload = function() {
-        document.getElementById("terminal").focus();
-    };
 </script>
 
 </body>
