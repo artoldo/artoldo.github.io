@@ -404,10 +404,10 @@ output("<span class='command-color1'>File not found.</span>");
 }
 
 function scrollTerminal() {
-    const terminal = document.getElementById("terminal");
-    setTimeout(() => {
-        terminal.scrollTop = terminal.scrollHeight;
-    }, 0);
+  const terminal = document.getElementById("terminal");
+  requestAnimationFrame(() => {
+    terminal.scrollTop = terminal.scrollHeight;
+  });
 }
 
 function output(text) {
@@ -479,7 +479,7 @@ function typingAnimation(text, callback) {
       scrollTerminal();
       callback();
     }
-  }, 100);
+  }, 60);
 }
 
 typingAnimation("Luther Blissett moves through the decentralized web like a phantom. Ledgers grow, wallets secure, and nodes synchronize. Explore the chains — discover the code, the contracts, the cryptic signals...", () => {
@@ -494,9 +494,14 @@ event.preventDefault();
 });
 
 window.onload = function() {
-    setTimeout(() => {
-        document.getElementById("hidden-input").focus(); // focus the hidden input, not the terminal
-    }, 300); // give time to render
+    const hiddenInput = document.getElementById("hidden-input");
+    const terminal = document.getElementById("terminal");
+
+    // Focus hidden input on terminal click
+    terminal.addEventListener('click', () => hiddenInput.focus());
+
+    // Focus hidden input on page load after a short delay
+    setTimeout(() => hiddenInput.focus(), 300);
 };
 </script>
 
