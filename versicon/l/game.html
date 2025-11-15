@@ -21,11 +21,7 @@ body {
 /* On small screens / mobile, anchor terminal to top */
 @media screen and (max-width: 768px) {
     body {
-        align-items: flex-start; /* anchor to top */
-    }
-    #terminal {
-        margin-top: 20px;      /* small spacing from top */
-        padding-bottom: 120px; /* extra space for keyboard */
+        align-items: flex-start; /* anchor terminal to top on mobile */
     }
 }
 
@@ -33,8 +29,7 @@ body {
     position: relative;
     width: 80%;
     max-width: 600px;
-    height: auto;           /* allow dynamic height */
-    max-height: 90vh;       /* limit maximum height */
+    max-height: 90vh;  /* use max-height instead of fixed height */
     background: rgba(0,0,0,0.3);
     border-radius: 25px;
     border: 4px solid;
@@ -44,7 +39,7 @@ body {
     padding: 20px;
     padding-bottom: 100px; /* extra space for mobile keyboard */
     box-sizing: border-box;
-    scroll-behavior: auto;
+    scroll-behavior: auto;  /* disable smooth scroll for auto-scrolling */
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
 }
@@ -404,14 +399,10 @@ output("<span class='command-color1'>File not found.</span>");
 }
 
 function scrollTerminal() {
-const terminal = document.getElementById("terminal");
-requestAnimationFrame(() => {
-// Only scroll if content is overflowing
-const maxScroll = terminal.scrollHeight - terminal.clientHeight;
-if (maxScroll > 0) {
-terminal.scrollTop = maxScroll;
-}
-});
+  const terminal = document.getElementById("terminal");
+  requestAnimationFrame(() => {
+    terminal.scrollTop = terminal.scrollHeight;
+  });
 }
 
 function output(text) {
@@ -454,35 +445,36 @@ scrollTerminal();
 });
 
 hiddenInput.addEventListener('keydown', (event) => {
-if (event.key === 'Enter') {
-const command = hiddenInput.value;
-output(`<span class='command-color1'>${command}</span>`);
-processCommand(command);
-hiddenInput.value = '';
-userInputSpan.innerText = '';
-} else if (event.key === 'Backspace') {
-// handled automatically by input
-}
+    if (event.key === 'Enter') {
+        event.preventDefault();  // Prevent page jump
+        const command = hiddenInput.value;
+        output(`<span class='command-color1'>${command}</span>`);
+        processCommand(command);
+        hiddenInput.value = '';
+        userInputSpan.innerText = '';
+    } else if (event.key === 'Backspace') {
+        // handled automatically
+    }
 });
 
 function typingAnimation(text, callback) {
-let index = 0;
-const interval = setInterval(() => {
-if (index < text.length) {
-const span = document.createElement('span');
-span.className = 'command-color1';
-span.textContent = text[index];
-outputDiv.appendChild(span);
-index++;
-scrollTerminal(); // scroll after each character safely
-} else {
-clearInterval(interval);
-outputDiv.appendChild(document.createElement('br'));
-outputDiv.appendChild(document.createElement('br'));
-scrollTerminal();
-callback();
-}
-}, 60); // adjust typing speed
+  let index = 0;
+  const interval = setInterval(() => {
+    if (index < text.length) {
+      const span = document.createElement('span');
+      span.className = 'command-color1';
+      span.textContent = text[index];
+      outputDiv.appendChild(span);
+      index++;
+      scrollTerminal();
+    } else {
+      clearInterval(interval);
+      outputDiv.appendChild(document.createElement('br'));
+      outputDiv.appendChild(document.createElement('br'));
+      scrollTerminal();
+      callback();
+    }
+  }, 60);
 }
 
 typingAnimation("Luther Blissett moves through the decentralized web like a phantom. Ledgers grow, wallets secure, and nodes synchronize. Explore the chains — discover the code, the contracts, the cryptic signals...", () => {
