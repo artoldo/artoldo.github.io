@@ -6,48 +6,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luther Blissett Legacy</title>
 <style>
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: 'Courier New', monospace;
-    overflow: hidden;
-}
-
-/* On small screens / mobile, offset terminal slightly from top */
-@media screen and (max-width: 768px) {
-    body {
-        align-items: flex-start; /* anchor terminal to top for proper scrolling */
-    }
-
-    #terminal {
-        margin-top: 40px;          /* push terminal slightly down */
-        max-height: calc(90vh - 20px); /* ensure it fits inside viewport */
-    }
-}
-
-#terminal {
-    position: relative;
-    width: 80%;
-    max-width: 600px;
-    max-height: 90vh;  /* use max-height instead of fixed height */
-    background: rgba(0,0,0,0.3);
-    border-radius: 25px;
-    border: 4px solid;
-    border-image-slice: 1;
-    border-image-source: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
-    overflow-y: auto;
-    padding: 20px;
-    padding-bottom: 100px; /* extra space for mobile keyboard */
-    box-sizing: border-box;
-    scroll-behavior: auto;  /* disable smooth scroll for auto-scrolling */
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-}
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #terminal {
+            width: 80%;
+            max-width: 600px;
+            height: 90vh;
+            background-color: #000;
+            padding: 20px;
+            padding-bottom: 100px; /* extra space for mobile keyboard */
+            border-radius: 10px;
+            border: 2px solid #00BFFF;
+            overflow-y: auto;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
 
 #terminal:focus {
 outline: none;
@@ -403,17 +385,18 @@ output("<span class='command-color1'>File not found.</span>");
 }
 }
 
-function scrollTerminal() {
-    const terminal = document.getElementById("terminal");
-    setTimeout(() => {
-        terminal.scrollTop = terminal.scrollHeight;
-    }, 0);
-}
+    function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
 
 function output(text) {
-outputDiv.innerHTML += `\n> ${text}\n`;
-scrollTerminal();
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
 }
+
 
 function processCommand(command) {
 const target = command.trim();
@@ -493,11 +476,9 @@ document.addEventListener('contextmenu', (event) => {
 event.preventDefault();
 });
 
-window.onload = function() {
-    setTimeout(() => {
-        document.getElementById("hidden-input").focus(); // focus the hidden input, not the terminal
-    }, 300); // give time to render
-};
+    window.onload = function() {
+        document.getElementById("terminal").focus();
+    };
 </script>
 
 </body>
