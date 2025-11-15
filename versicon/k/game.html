@@ -139,9 +139,16 @@ const fileSystem = {
     "root": { folders: ["experiments","simulations","formulas","archives","reports"], files: [] },
     "root/experiments": { folders: [], files: ["energy-flux.log","thermal-gradient.txt","entropy-measurements.txt","phase-transitions.log"] },
     "root/simulations": { folders: ["fluid_dynamics","heat_transfer","quantum_effects"], files: ["simulation-parameters.zip","results-summary.doc","runtime-config.doc"] },
+    "root/simulations/fluid_dynamics": { folders: [], files: ["turbulence-notes.txt", "laminar-flow.doc"] },
+    "root/simulations/heat_transfer": { folders: [], files: ["conduction-data.csv", "convection-model.doc"] },
     "root/simulations/quantum_effects": { folders: [], files: ["wave-function.doc","energy-states.txt","quantum-fluctuations.doc"] },
     "root/formulas": { folders: ["thermodynamics","statistical","quantum"], files: ["energy-conservation.doc","entropy-equations.conf","heat-capacity.txt"] },
+    "root/formulas/thermodynamics": { folders: [], files: ["entropy-laws.txt", "first-law-summary.doc"] },
+    "root/formulas/statistical": { folders: [], files: ["boltzmann-distribution.txt", "partition-function.doc"] },
+    "root/formulas/quantum": { folders: [], files: ["quantum-tunneling.doc", "superposition-notes.txt"] },
     "root/archives": { folders: ["daily","monthly"], files: ["backup-thermo.zip"] },
+    "root/archives/daily": { folders: [], files: ["daily-log-2025-01-01.txt", "daily-log-2025-01-02.txt"] },
+    "root/archives/monthly": { folders: [], files: ["monthly-summary-jan-2025.doc", "monthly-summary-feb-2025.doc"] },
     "root/reports": { folders: [], files: ["confidential-research.doc"] }
 };
 
@@ -160,7 +167,21 @@ const fileContents = {
     "entropy-equations.conf":"Configuration and derivations of entropy-related formulas.",
     "heat-capacity.txt":"Experimental data on heat capacity under varying pressure and temperature.",
     "backup-thermo.zip":"Compressed archive of all critical thermodynamics research data.",
-    "confidential-research.doc":"CONFIDENTIAL: Ongoing research summary. Access restricted."
+    "confidential-research.doc":"CONFIDENTIAL: Ongoing research summary. Access restricted.",
+    "turbulence-notes.txt": "Observed complex vortex patterns in simulated fluid chambers.",
+    "laminar-flow.doc": "Laminar flow models confirm smooth particle transitions under low Reynolds number.",
+    "conduction-data.csv": "Temperature gradients measured across multiple material samples.",
+    "convection-model.doc": "Simulated convection currents under varied thermal inputs.",
+    "entropy-laws.txt": "The second law still holds, but watch for micro-scale quantum effects.",
+    "first-law-summary.doc": "Energy is conserved globally, but local fluctuations occur.",
+    "boltzmann-distribution.txt": "Particle populations follow expected statistical distributions.",
+    "partition-function.doc": "Computed for N=500 particles in closed quantum system.",
+    "quantum-tunneling.doc": "Tunneling probabilities increase under cryogenic conditions.",
+    "superposition-notes.txt": "Documenting multiple-state overlap in near-zero entropy environment.",
+    "daily-log-2025-01-01.txt": "Daily log: successful calibration of Kaltcaldo apparatus.",
+    "daily-log-2025-01-02.txt": "Daily log: minor fluctuations in quantum coherence observed.",
+    "monthly-summary-jan-2025.doc": "January summary: 15 experiments completed with zero anomalies.",
+    "monthly-summary-feb-2025.doc": "February summary: focus on thermal gradient and energy flux."
 };
 
 function scrollTerminal(){
