@@ -237,10 +237,19 @@ document.getElementById('terminal').addEventListener('click', () => {
 });
 window.onload = () => hiddenInput.focus();
 
-// Reflect typed input
+// Reflect typed input safely on mobile
 hiddenInput.addEventListener('input', () => {
-    userInputSpan.innerText = hiddenInput.value;
-    // Do NOT call scrollTerminal here to prevent mobile jump
+    // Store scroll position
+    const terminal = document.getElementById('terminal');
+    const scrollTop = terminal.scrollTop;
+
+    // Update user input visually
+    requestAnimationFrame(() => {
+        userInputSpan.textContent = hiddenInput.value;
+
+        // Restore scroll position to prevent jumping
+        terminal.scrollTop = scrollTop;
+    });
 });
 
 // Handle Enter key for commands
