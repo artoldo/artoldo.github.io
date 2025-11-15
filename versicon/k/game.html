@@ -163,11 +163,10 @@ const fileContents = {
     "confidential-research.doc":"CONFIDENTIAL: Ongoing research summary. Access restricted."
 };
 
-function scrollTerminal() {
+function scrollTerminal(){
     const terminal = document.getElementById('terminal');
-    requestAnimationFrame(() => {
-        terminal.scrollTop = terminal.scrollHeight;
-    });
+    // Delay scroll slightly to allow mobile keyboard viewport to settle
+    setTimeout(()=>{ terminal.scrollTop = terminal.scrollHeight; }, 60);
 }
 
 function output(text){
@@ -241,6 +240,7 @@ window.onload = () => hiddenInput.focus();
 // Reflect typed input
 hiddenInput.addEventListener('input', () => {
     userInputSpan.innerText = hiddenInput.value;
+    // Do NOT call scrollTerminal here to prevent mobile jump
 });
 
 // Handle Enter key for commands
