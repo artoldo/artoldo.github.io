@@ -55,7 +55,7 @@ body, #container{position:relative;z-index:0;}
 <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 
 <div id="terminal" tabindex="0">
-    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:absolute;top:8px;left:8px;width:1px;height:1px;opacity:0.01;pointer-events:auto;">
+    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;">
     <div id="output"></div>
     <div>
         <span id="input-line"><span class="input-prompt">&gt; </span></span><span id="user-input"></span><span class="cursor">_</span>
@@ -257,27 +257,21 @@ window.onload = () => hiddenInput.focus();
 
 // Reflect typed input safely on mobile
 hiddenInput.addEventListener('input', () => {
-    // Store scroll position
-    const terminal = document.getElementById('terminal');
-    const scrollTop = terminal.scrollTop;
-
-    // Update user input visually
-    requestAnimationFrame(() => {
-        userInputSpan.textContent = hiddenInput.value;
-
-        // Restore scroll position to prevent jumping
-        terminal.scrollTop = scrollTop;
-    });
+    // Reflect typed characters into the visible prompt and keep the terminal scrolled to bottom.
+    userInputSpan.textContent = hiddenInput.value;
+    scrollTerminal();
 });
 
 // Handle Enter key for commands
 hiddenInput.addEventListener('keydown', (event) => {
-    if(event.key === 'Enter') {
+    if (event.key === 'Enter') {
         const command = hiddenInput.value;
         output(`<span class='command-color1'>${command}</span>`);
         processCommand(command);
         hiddenInput.value = '';
         userInputSpan.innerText = '';
+    } else if (event.key === 'Backspace') {
+        // Let the browser handle backspace naturally on the hidden input.
     }
 });
 
@@ -312,8 +306,10 @@ document.addEventListener('contextmenu', e=> e.preventDefault());
 
 
 window.onload = function() {
-        document.getElementById("terminal").focus();
-    };
+    // Ensure the invisible input is focused so mobile keyboards open and keystrokes are captured.
+    const hidden = document.getElementById('hidden-input');
+    if (hidden) hidden.focus();
+};
 
 </script>
 
