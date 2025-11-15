@@ -7,16 +7,28 @@
 <title>Luther Blissett Legacy</title>
 <style>
 body {
-display: flex;
-justify-content: center;
-align-items: center; /* vertical centering */
-height: 100vh;
-margin: 0;
-background-color: #000;
-color: #fff;
-font-family: 'Courier New', monospace;
-overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
 }
+
+/* On small screens / mobile, anchor terminal to top */
+@media screen and (max-width: 768px) {
+    body {
+        align-items: flex-start; /* anchor to top */
+    }
+    #terminal {
+        margin-top: 20px;      /* small spacing from top */
+        padding-bottom: 120px; /* extra space for keyboard */
+    }
+}
+
 #terminal {
     position: relative;
     width: 80%;
