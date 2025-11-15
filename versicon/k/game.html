@@ -163,7 +163,12 @@ const fileContents = {
     "confidential-research.doc":"CONFIDENTIAL: Ongoing research summary. Access restricted."
 };
 
-function scrollTerminal(){ requestAnimationFrame(()=>{document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;}); }
+function scrollTerminal() {
+    const terminal = document.getElementById('terminal');
+    requestAnimationFrame(() => {
+        terminal.scrollTop = terminal.scrollHeight;
+    });
+}
 
 function output(text){
     // Create a container div for the output line
@@ -216,23 +221,28 @@ function processCommand(command){
     } else output("<span class='command-color1'>Folder or file not found.</span>");
 }
 
-// Focus and input handling
-document.getElementById('terminal').addEventListener('click', ()=> hiddenInput.focus());
-window.onload = ()=> hiddenInput.focus();
+// Focus input on click
+document.getElementById('terminal').addEventListener('click', () => {
+    hiddenInput.focus();
+});
+window.onload = () => hiddenInput.focus();
 
-hiddenInput.addEventListener('input', ()=>{ userInputSpan.innerText = hiddenInput.value; scrollTerminal(); });
+// Reflect typed input
+hiddenInput.addEventListener('input', () => {
+    userInputSpan.innerText = hiddenInput.value;
+    scrollTerminal();
+});
 
-function handleKeyDown(event){
-    if(event.target!==hiddenInput) return;
-    if(event.key==="Enter"){
+// Handle Enter key for commands
+hiddenInput.addEventListener('keydown', (event) => {
+    if(event.key === 'Enter') {
         const command = hiddenInput.value;
         output(`<span class='command-color1'>${command}</span>`);
         processCommand(command);
         hiddenInput.value = '';
         userInputSpan.innerText = '';
     }
-}
-hiddenInput.addEventListener('keydown', handleKeyDown);
+});
 
 // Initial animation
 function typingAnimation(text, callback){
