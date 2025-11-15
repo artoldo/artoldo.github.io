@@ -188,11 +188,22 @@ function shutdownSequence(){
     output(">>> Initiating classified thermodynamics data lockdown...");
     setTimeout(()=>{
         const terminal = document.getElementById("terminal");
-        terminal.innerHTML = "<div style='color:#FFF; font-size:2em;text-align:center;'><br><br>Kaltcaldo</div>"+
-            "<p style='color:#FFF; font-size:1em;text-align:left;margin-top:10px;'>Secret formula revealed...</p>";
-        terminal.scrollTop=0;
+        terminal.innerHTML = `
+        <div style='color:#FFF; font-size:2em; text-align:center;'><br><br>Kaltcaldo</div>
+        <p style='color:#FFF; font-size:1em; text-align:left; margin-top:10px;'>
+        After decades of concealed research by the clandestine Quantum Thermodynamics Institute, the terminal finally reveals the Kaltcaldo Principle:
+        <br><br>
+        <strong>ΔS<sub>universe</sub> = ∫(δQ/T)<sub>ext</sub> + iħ∇·Ψ<sub>cold</sub></strong>
+        <br><br>
+        This formula is more than a mere extension of classical entropy—it integrates quantum coherence effects at cryogenic temperatures, allowing controlled manipulation of heat flow in near-absolute-zero environments. In layman's terms, Kaltcaldo unlocks the ability to reverse micro-scale entropy fluctuations without violating the second law, effectively opening pathways to ultra-efficient energy storage and quantum refrigeration.  
+        <br><br>
+        Researchers long feared this knowledge could destabilize conventional energy systems or trigger geopolitical conflicts over “cold tech” supremacy. The formula's digital imprint on this terminal is now the only remaining trace outside the vaults of the Quantum Thermodynamics Institute.  
+        <br><br>
+        Handle with extreme caution: what you do next could ripple through physics itself. <br><br><a href="https://artoldo.github.io/kaltcaldo/" style="text-decoration:underline; color: red;">E N T E R</a>
+        </p>`;
+        terminal.scrollTop = 0;
         document.removeEventListener('keydown', handleKeyDown);
-    },4000);
+    }, 4000);
 }
 
 function openFile(filename){
