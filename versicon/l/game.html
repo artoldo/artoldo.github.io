@@ -18,10 +18,15 @@ body {
     overflow: hidden;
 }
 
-/* On small screens / mobile, anchor terminal to top */
+/* On small screens / mobile, offset terminal slightly from top */
 @media screen and (max-width: 768px) {
     body {
-        align-items: flex-start; /* anchor terminal to top on mobile */
+        align-items: flex-start; /* anchor terminal to top for proper scrolling */
+    }
+
+    #terminal {
+        margin-top: 40px;          /* push terminal slightly down */
+        max-height: calc(90vh - 20px); /* ensure it fits inside viewport */
     }
 }
 
