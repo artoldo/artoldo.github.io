@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luther Blissett Legacy</title>
+<style>
+body {
+display: flex;
+justify-content: center;
+align-items: center; /* vertical centering */
+height: 100vh;
+margin: 0;
+background-color: #000;
+color: #fff;
+font-family: 'Courier New', monospace;
+overflow: hidden;
+}
+#terminal {
+position: relative;
+width: 80%;
+max-width: 600px;
+max-height: 90vh;  /* use max-height, not fixed height */
+background: rgba(0,0,0,0.3);
+border-radius: 25px;
+border: 4px solid;
+border-image-slice: 1;
+border-image-source: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+overflow-y: auto;
+padding: 20px;
+padding-bottom: 40px; /* smaller padding to avoid overshoot */
+box-sizing: border-box;
+scroll-behavior: auto;  /* disable smooth scroll for auto-scrolling */
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
+}
+
+
+#terminal:focus {
+outline: none;
+}
+
+#output {
+white-space: pre-wrap;
+margin-bottom: 10px;
+color: white;
+}
+#input-line {
+display: inline;
+}
+.command-color1 { 
+/* Gradient text with fallback */
+background: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: #00BFFF; /* fallback */
+}
+.command-color2 { 
+/* Gradient text with fallback */
+background: linear-gradient(90deg, #00FFFF, #FF00FF, #FF69B4);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: #00FFFF; /* fallback */
+}
+.command-color3 { 
+/* Gradient text with fallback */
+background: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: #00BFFF; /* fallback */
+}
+.folder { 
+/* Gradient background with fallback */
+background: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+color: #000; 
+padding: 5px 10px; 
+border-radius: 3px; 
+margin-top: 8px; 
+display: inline-block; 
+/* For older browsers fallback */
+background-color: #00BFFF;
+background-image: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BFFF', endColorstr='#FF00FF', GradientType=1);
+}
+.file { 
+/* Gradient text with fallback */
+background: none;
+background-image: linear-gradient(90deg, #00FFFF, #FF00FF, #FF69B4);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: #00FFFF; /* fallback */
+padding: 5px 10px; 
+border-radius: 3px; 
+margin-top: 8px; 
+display: inline-block; 
+}
+.cursor {
+animation: blink 1s steps(2, start) infinite;
+color: #00FFFF;
+}
+@keyframes blink {
+50% { opacity: 0; }
+}
+
+* {
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+</style>
+
+<!-- Background Animation Start -->
+
+<style>
+html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(2px);pointer-events:none;}
+body, #container{position:relative;z-index:0;}
+</style>
+
+<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+<script>
+(function(){
+const canvas = document.getElementById("mainCanvas");
+const ctx = canvas.getContext("2d");
+
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+// Keep the same gradient colors and visual style
+const gradientColors = ["#00BFFF", "#8A2BE2", "#FF00FF"];
+const nodeCount = 180; // Higher density
+const nodes = [];
+
+// Initialize nodes with random positions and velocities
+for(let i=0; i<nodeCount; i++){
+nodes.push({
+x: Math.random()*width,
+y: Math.random()*height,
+vx: (Math.random()-0.5)*0.7, // More speed
+vy: (Math.random()-0.5)*0.7,
+radius: Math.random()*3+2
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,width,height);
+
+// Draw connections
+for(let i=0; i<nodeCount; i++){
+for(let j=i+1; j<nodeCount; j++){
+let dx = nodes[i].x - nodes[j].x;
+let dy = nodes[i].y - nodes[j].y;
+let dist = Math.sqrt(dx*dx + dy*dy);
+if(dist < 120){
+const grad = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
+grad.addColorStop(0, gradientColors[i % gradientColors.length]);
+grad.addColorStop(1, gradientColors[j % gradientColors.length]);
+ctx.strokeStyle = grad;
+ctx.lineWidth = 0.5;
+ctx.beginPath();
+ctx.moveTo(nodes[i].x, nodes[i].y);
+ctx.lineTo(nodes[j].x, nodes[j].y);
+ctx.stroke();
+}
+}
+}
+
+// Draw nodes
+nodes.forEach((node, idx)=>{
+node.x += node.vx;
+node.y += node.vy;
+
+// Bounce off edges
+if(node.x < 0 || node.x > width) node.vx *= -1;
+if(node.y < 0 || node.y > height) node.vy *= -1;
+
+const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius);
+grad.addColorStop(0, gradientColors[idx % gradientColors.length]);
+grad.addColorStop(1, "transparent");
+
+ctx.fillStyle = grad;
+ctx.beginPath();
+ctx.arc(node.x, node.y, node.radius, 0, Math.PI*2);
+ctx.fill();
+});
+}
+
+setInterval(draw, 33);
+
+window.addEventListener("resize", ()=>{
+width = canvas.width = window.innerWidth;
+height = canvas.height = window.innerHeight;
+});
+})();
+</script>
+
+<!-- Background Animation End -->
+
+</head>
+<body>
+
+<div id="terminal" tabindex="0">
+<input type="text" id="hidden-input" style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+<div id="output"></div>
+<div>
+<span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
+</div>
+</div>
+
+<script>
+const outputDiv = document.getElementById('output');
+const userInputSpan = document.getElementById('user-input');
+const inputLine = document.getElementById('input-line');
+
+const ROOT_DIR = 'root';
+let currentDirectory = ROOT_DIR;
+const fileSystem = {
+"root": { folders: ["wallets", "ledgers", "nodes", "smart-contracts", "archives", "protocols"], files: [] },
+"root/wallets": { folders: ["cold-storage", "hot-wallets", "multisig"], files: ["key-recovery.txt", "seed-phrase.txt"] },
+"root/wallets/cold-storage": { folders: [], files: ["vault-instructions.txt", "emergency-access.txt"] },
+"root/wallets/hot-wallets": { folders: [], files: ["daily-transactions.log", "session-keys.txt"] },
+"root/wallets/multisig": { folders: [], files: ["multisig-policy.txt", "signer-list.txt"] },
+"root/ledgers": { folders: ["audit-reports", "forks"], files: ["transaction-history.txt", "block-logs.txt", "consensus-algorithm.log"] },
+"root/ledgers/audit-reports": { folders: [], files: ["2023-audit.txt", "2024-audit.txt"] },
+"root/ledgers/forks": { folders: [], files: ["fork-2021.log", "fork-2022.log"] },
+"root/nodes": { folders: ["validators", "miners"], files: ["node-config.doc"] },
+"root/nodes/validators": { folders: [], files: ["validator-profiles.txt", "stake-records.txt"] },
+"root/nodes/miners": { folders: [], files: ["mining-logs.txt", "hardware-status.txt"] },
+"root/smart-contracts": { folders: ["decentralized-exchange", "governance"], files: ["token-sale.doc"] },
+"root/smart-contracts/decentralized-exchange": { folders: [], files: ["dex-protocol.txt", "liquidity-pools.txt"] },
+"root/smart-contracts/governance": { folders: [], files: ["voting-rules.txt", "proposal-archive.txt"] },
+"root/archives": { folders: ["daily", "monthly"], files: ["blockchain-backup.zip"] },
+"root/archives/daily": { folders: [], files: ["2024-06-01.log", "2024-06-02.log"] },
+"root/archives/monthly": { folders: [], files: ["2024-05.zip", "2024-04.zip"] },
+"root/protocols": { folders: ["encryption", "validation", "smart-contracts"], files: ["whitepaper.zip"] },
+"root/protocols/encryption": { folders: [], files: ["aes-implementation.txt", "post-quantum.txt"] },
+"root/protocols/validation": { folders: [], files: ["proof-of-stake.txt", "proof-of-work.txt"] },
+"root/protocols/smart-contracts": { folders: [], files: ["contract-language.txt", "security-considerations.txt"] }
+};
+
+const fileContents = {
+"key-recovery.txt": "Instructions for recovering lost keys using multi-factor authentication and social recovery mechanisms.",
+"seed-phrase.txt": "Mnemonic seed phrase: twelve random words used to restore wallet access securely.",
+"vault-instructions.txt": "Cold storage vault protocol: Keep offline, encrypted with multi-layer passphrases, and store in geographically separate locations.",
+"emergency-access.txt": "Emergency access protocol: Trusted contacts and secure escrow services for key retrieval under duress.",
+"daily-transactions.log": "Log of daily transactions processed through hot wallets, including timestamps and transaction IDs.",
+"session-keys.txt": "Temporary session keys used for quick wallet access. Rotate keys daily for security.",
+"multisig-policy.txt": "Multisignature wallet policy: Requires 3 of 5 signatures to authorize any transaction, ensuring collective control.",
+"signer-list.txt": "Authorized signers for multisig wallets, including cryptographic fingerprints and contact info.",
+"transaction-history.txt": "Complete record of all transactions validated and appended to the blockchain ledger.",
+"block-logs.txt": "Detailed logs of block creation, including timestamps, miner IDs, and hash values.",
+"consensus-algorithm.log": "Notes on Proof of Work and Proof of Stake consensus mechanisms, their trade-offs and vulnerabilities.",
+"2023-audit.txt": "Audit report for 2023: No discrepancies found; consensus integrity maintained throughout the year.",
+"2024-audit.txt": "Preliminary 2024 audit: Minor latency issues detected during peak hours; mitigation strategies recommended.",
+"fork-2021.log": "Documentation of the 2021 network fork, including causes, resolutions, and community response.",
+"fork-2022.log": "Analysis of the 2022 fork event and its impact on ledger consistency and node synchronization.",
+"node-config.doc": "Configuration file for setting up a full node, including IP whitelisting and port forwarding.",
+"validator-profiles.txt": "Profiles of active validators, including stake amounts, uptime, and performance metrics.",
+"stake-records.txt": "Detailed records of stakes delegated to validators, with timestamps and amounts.",
+"mining-logs.txt": "Logs from mining nodes detailing hash rates, block discoveries, and hardware status.",
+"hardware-status.txt": "Status reports on mining hardware, including temperature, errors, and maintenance schedules.",
+"token-sale.doc": "Details of the initial token offering, smart contract terms, and vesting schedules.",
+"dex-protocol.txt": "Protocol specifications for the decentralized exchange, including trade matching and fee structures.",
+"liquidity-pools.txt": "Information on liquidity pools, token pairs, and reward mechanisms for liquidity providers.",
+"voting-rules.txt": "Governance voting rules, quorum requirements, and proposal submission guidelines.",
+"proposal-archive.txt": "Archive of past governance proposals, voting outcomes, and implementation notes.",
+"blockchain-backup.zip": "Compressed archive containing snapshots of the blockchain at various checkpoints.",
+"2024-06-01.log": "Daily archive log for June 1, 2024: Network stable, 1200 transactions processed.",
+"2024-06-02.log": "Daily archive log for June 2, 2024: Minor fork resolved, no data loss.",
+"2024-05.zip": "Monthly archive for May 2024: Includes all daily logs and snapshots.",
+"2024-04.zip": "Monthly archive for April 2024: Network upgrade applied successfully.",
+"whitepaper.zip": {
+type: "executable",
+action: shutdownSequence,
+snippet: "Executable file detected. Running 'whitepaper.zip'...",
+fullContent: "Decrypting whitepaper... Loading visionary crypto-economic model and decentralized governance framework..."
+},
+"aes-implementation.txt": "Documentation of AES encryption implementation within the protocol stack, including key management.",
+"post-quantum.txt": "Research notes on post-quantum cryptography algorithms to future-proof blockchain security.",
+"proof-of-stake.txt": "Detailed explanation of the Proof of Stake consensus mechanism and its economic incentives.",
+"proof-of-work.txt": "Overview of Proof of Work consensus, mining difficulty adjustments, and energy consumption.",
+"contract-language.txt": "Specification of the smart contract programming language syntax and semantics.",
+"security-considerations.txt": "Security best practices and known vulnerabilities in smart contract development and deployment."
+};
+
+function generateRandomFiles() {
+// Adding random files to the specified directories
+const directories = [
+'root/',
+'root/analysis/cryptography',
+'root/analysis/networking',
+'root/analysis/consensus',
+'root/archives/daily',           
+'root/archives/monthly',         
+'root/protocols/encryption',  
+'root/protocols/validation',  
+'root/protocols/smart-contracts'
+];
+
+// Ensure that the nested directories exist in the file system
+directories.forEach(directory => {
+// Create files in each directory
+const numFiles = Math.floor(Math.random() * 3) + 1; // Random number of files (1-3)
+for (let i = 0; i < numFiles; i++) {
+const fileName = `hash-${Math.floor(Math.random() * 100)}.doc`;
+if (!fileSystem[directory]) {
+fileSystem[directory] = { folders: [], files: [] };
+}
+fileSystem[directory].files.push(fileName);
+fileContents[fileName] = `Encrypted hash: ${Math.random().toString(36).substring(2, 15)}`;
+}
+});
+}
+
+function showDirectoryContents() {
+const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
+const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    
+output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
+
+// OUTPUT - END OF LEVEL
+
+function shutdownSequence() {
+output(">>> Initiating decentralized ledger synchronization...");
+setTimeout(() => {
+const terminal = document.getElementById("terminal");
+
+terminal.innerHTML = `
+<div style="
+font-size: 2em;
+text-align: center;
+margin-bottom: 10px;
+font-weight: bold;
+background: linear-gradient(90deg, #00BFFF, #8A2BE2, #FF00FF);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+color: #00BFFF;">
+<br><br>Luther Blissett Legacy
+</div>
+<p style="
+color: #fff;
+font-size: 1em;
+text-align: left;
+margin-top: 10px;
+text-shadow: 0 0 8px rgba(0,191,255,0.6);">
+Luther Blissett: a name whispered across encrypted channels, a ghost in the decentralized machine. Some say he is the elusive Satoshi Nakamoto, the architect of trustless society.<br><br>
+Within the blocks and chains, his legacy persists — a blueprint for a world unbound by central authority, where code is law and consensus is king. Wallets hold secrets, ledgers tell stories, and nodes pulse with the lifeblood of a new era.<br><br>
+The smart contracts govern with immutable logic, orchestrating exchanges and agreements without intermediaries. Archives hold the history of a revolution, snapshots of a network growing beyond borders and censorship.<br><br>
+In this cryptographic odyssey, identities dissolve into hashes, and power redistributes to the collective. The mystery of Luther Blissett is a cipher itself — a symbol of decentralized hope, a call to build, to disrupt, to imagine.<br><br>
+As the network evolves, so does the legend — a testament to the promise and peril of blockchain, a digital myth for a digital age.<br><br>
+The ledger is open, the code is running, and the future is encrypted.<br><br>
+&mdash; ARTOLDO crypto. <br><br>
+<a href="https://lutherblissettlegacy.github.io/collection" style="color:white;">Read White Paper</a>
+</p>
+`;
+
+// Jump to the top
+terminal.scrollTop = 0;
+
+// Safely remove handler only if it exists
+if (typeof handleKeyDown === 'function') {
+document.removeEventListener('keydown', handleKeyDown);
+}
+}, 4000);
+}
+
+function openFile(filename) {
+const fileData = fileContents[filename];
+if (fileData) {
+if (fileData.type === "executable" && typeof fileData.action === "function") {
+output(fileData.snippet); // Show a snippet that shutdown is starting
+fileData.action(); // Execute the shutdown sequence
+} else {
+if (fileContents[filename]) {
+output(fileContents[filename]);
+} 
+}
+} else {
+output("<span class='command-color1'>File not found.</span>");
+}
+}
+
+function scrollTerminal() {
+const terminal = document.getElementById("terminal");
+requestAnimationFrame(() => {
+// Only scroll if content is overflowing
+const maxScroll = terminal.scrollHeight - terminal.clientHeight;
+if (maxScroll > 0) {
+terminal.scrollTop = maxScroll;
+}
+});
+}
+
+function output(text) {
+outputDiv.innerHTML += `\n> ${text}\n`;
+scrollTerminal();
+}
+
+function processCommand(command) {
+const target = command.trim();
+if (target === "back") {
+if (currentDirectory !== ROOT_DIR) {
+currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+output(`> You are now in ${currentDirectory}`);
+showDirectoryContents();
+} else {
+output("<span class='command-color1'>Already at root.</span>");
+}
+} else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+currentDirectory = `${currentDirectory}/${target}`;
+output(`> You entered ${currentDirectory}`);
+showDirectoryContents();
+} else if (fileSystem[currentDirectory]?.files.includes(target)) {
+output(`> Opening file ${target}...`);
+openFile(target);
+} else {
+output("<span class='command-color1'>Folder or file not found.</span>");
+}
+}
+
+const hiddenInput = document.getElementById('hidden-input');
+// userInputSpan already defined above
+
+document.getElementById('terminal').addEventListener('click', () => {
+hiddenInput.focus(); // opens mobile keyboard
+});
+
+hiddenInput.addEventListener('input', () => {
+userInputSpan.innerText = hiddenInput.value;
+scrollTerminal();
+});
+
+hiddenInput.addEventListener('keydown', (event) => {
+if (event.key === 'Enter') {
+const command = hiddenInput.value;
+output(`<span class='command-color1'>${command}</span>`);
+processCommand(command);
+hiddenInput.value = '';
+userInputSpan.innerText = '';
+} else if (event.key === 'Backspace') {
+// handled automatically by input
+}
+});
+
+function typingAnimation(text, callback) {
+let index = 0;
+const interval = setInterval(() => {
+if (index < text.length) {
+const span = document.createElement('span');
+span.className = 'command-color1';
+span.textContent = text[index];
+outputDiv.appendChild(span);
+index++;
+scrollTerminal(); // scroll after each character safely
+} else {
+clearInterval(interval);
+outputDiv.appendChild(document.createElement('br'));
+outputDiv.appendChild(document.createElement('br'));
+scrollTerminal();
+callback();
+}
+}, 60); // adjust typing speed
+}
+
+typingAnimation("Luther Blissett moves through the decentralized web like a phantom. Ledgers grow, wallets secure, and nodes synchronize. Explore the chains — discover the code, the contracts, the cryptic signals...", () => {
+output("Type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to open it.");
+output("Type <span class='command-color3'>back</span> to return to the previous directory.");
+generateRandomFiles();
+showDirectoryContents();
+});
+
+document.addEventListener('contextmenu', (event) => {
+event.preventDefault();
+});
+
+window.onload = function() {
+document.getElementById("terminal").focus();
+};
+</script>
+
+</body>
+</html>

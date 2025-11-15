@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Start</title>
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000;
+        color: #fff;
+        font-family: sans-serif;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+    }
+    h1 {
+        font-size: 2em;
+    }
+</style>
+</head>
+<body>
+<script>
+const url = "game.html";
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if (isMobile) {
+    // Mobile: show tap message
+    const message = document.createElement('h1');
+    message.textContent = "Tap Anywhere to Start";
+    document.body.appendChild(message);
+
+    document.body.addEventListener('click', function() {
+        window.open(url, '_blank'); // open new tab on mobile
+    }, { once: true }); // only trigger once
+} else {
+    // Desktop: redirect immediately
+    window.location.href = url;
+}
+</script>
+</body>
+</html>
