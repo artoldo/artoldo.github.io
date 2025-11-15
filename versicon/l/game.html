@@ -21,12 +21,12 @@ body {
 /* On small screens / mobile, offset terminal slightly from top */
 @media screen and (max-width: 768px) {
     body {
-        align-items: flex-start; /* anchor terminal to top for proper scrolling */
+        align-items: flex-start; /* anchor terminal to top */
     }
 
     #terminal {
-        margin-top: 40px;          /* push terminal slightly down */
-        max-height: calc(90vh - 20px); /* ensure it fits inside viewport */
+        margin-top: 40px;          /* terminal offset from top */
+        max-height: calc(90vh - 40px); /* leave buffer for keyboard */
     }
 }
 
@@ -451,14 +451,12 @@ scrollTerminal();
 
 hiddenInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        event.preventDefault();  // Prevent page jump
+        event.preventDefault();  // Prevent page jump / scroll
         const command = hiddenInput.value;
         output(`<span class='command-color1'>${command}</span>`);
         processCommand(command);
         hiddenInput.value = '';
         userInputSpan.innerText = '';
-    } else if (event.key === 'Backspace') {
-        // handled automatically
     }
 });
 
