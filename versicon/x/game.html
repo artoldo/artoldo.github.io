@@ -246,7 +246,7 @@ body, #container{position:relative;z-index:0;}
     let currentDirectory = ROOT_DIR;
     const fileSystem = {
         "root": { folders: ["project-files", "research", "experiments", "archives", "testimonies"], files: [] },
-        "root/project-files": { folders: [], files: ["mk-overview.txt", "declassified-index.txt", "timeline-summary.txt"] },
+        "root/project-files": { folders: [], files: ["mk-overview.txt", "declassified-index.txt", "timeline-summary.txt", "operation-mkultra.zip"] },
         "root/research": { folders: ["documents", "reports"], files: ["cia-mkultra-ref.txt", "ethics-review.pdf"] },
         "root/research/documents": { folders: [], files: ["memorandum-1953.txt", "budget-lines.doc"] },
         "root/experiments": { folders: ["subjects", "methods"], files: ["session-logs.txt", "protocol-notes.txt"] },
@@ -316,8 +316,8 @@ function shutdownSequence() {
         const terminal = document.getElementById("terminal");
 
         terminal.innerHTML = 
-            "<div style='color: #0F0; font-size: 2em; text-align: center;'><br><br>XXLaundromat</div>" +
-            "<p style='color: #0F0; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+            "<div style='color: #fff; font-size: 2em; text-align: center;'><br><br>XXLaundromat</div>" +
+            "<p style='color: #fff; font-size: 1em; text-align: left; margin-top: 10px;'>" +
             "The following is a narrative summary drawn from declassified records and survivor accounts. This is a historical account — not operational guidance.\n\n" +
 
             "Project Mindlight (colloquially known in public records as MKULTRA) was a Cold War-era research umbrella that explored interrogation methods, behavior modification, and the effects of certain chemical and psychological interventions. Initiated during a period of intense geopolitical anxiety, the program contracted with universities, hospitals, and private firms to conduct experiments — many of which later raised serious ethical and legal concerns.\n\n" +

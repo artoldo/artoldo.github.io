@@ -7,145 +7,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YouTube Recycling Machine - Prototype | Sacrisoft</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-      padding: 2rem;
-      margin: 0;
-      position: relative;
-      z-index: 1;
-    }
+  :root{
+    --yt-red: #FF0000;
+    --yt-red-strong: #e60000;
+    --bg-dark: #000000;
+    --panel-dark: rgba(20,0,0,0.6);
+    --glass: rgba(255,0,0,0.06);
+    --glow: 0 0 12px rgba(255,0,0,0.9), 0 0 28px rgba(230,0,0,0.6);
+  }
 
-    input[type="text"] {
-      width: 90%;
-      max-width: 600px;
-      padding: 0.6rem;
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      border: 0px;
-      border-radius: 5px;
-      color: #000;
-    }
+  /* Base page */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--yt-red);
+    text-align: center;
+    padding: 2rem;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
 
-    input[type="text"]:focus {
-      border: 2px dashed #000;
-      outline: none;
-    }
+  h1 {
+    color: var(--yt-red);
+    text-shadow: var(--glow);
+    margin-bottom: 1rem;
+  }
 
-    button {
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      margin: 0.5rem;
-      cursor: pointer;
-      background-color: #444;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-    }
+  input[type="text"] {
+    width: 90%;
+    max-width: 600px;
+    padding: 0.6rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(255,0,0,0.35);
+    border-radius: 5px;
+    color: var(--bg-dark);
+    background: linear-gradient(180deg, rgba(255,0,0,0.95), rgba(230,0,0,0.95));
+    box-shadow: 0 6px 18px rgba(255,0,0,0.12), 0 0 14px rgba(255,0,0,0.08) inset;
+    outline: none;
+  }
 
-    button:hover {
-      background-color: #666;
-    }
+  input[type="text"]::placeholder { color: rgba(0,0,0,0.6); }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  input[type="text"]:focus {
+    border: 1px solid var(--yt-red-strong);
+    box-shadow: var(--glow), 0 0 6px rgba(255,0,0,0.18) inset;
+  }
 
-    #controls {
-      margin-top: 1rem;
-    }
+  button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    background: linear-gradient(180deg, #ff4d4d, var(--yt-red));
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 5px;
+    text-shadow: 0 0 6px rgba(255,80,80,0.6);
+    box-shadow: var(--glow);
+    transition: transform 0.12s ease, filter 0.12s ease;
+  }
 
-    #progressContainer, #volumeContainer {
-      width: 90%;
-      max-width: 600px;
-      margin: 1rem auto;
-    }
+  button:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.1) brightness(1.05);
+  }
 
-    input[type="range"] {
-      width: 100%;
-    }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    background: linear-gradient(180deg, rgba(120,0,0,0.5), rgba(150,0,0,0.5));
+  }
 
-    #songTitle {
-      font-size: 1rem;
-      margin-top: 0.5rem;
-      color: #ccc;
-    }
+  #controls { margin-top: 1rem; }
 
-    #playerAudio, #playerVideo {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
+  #progressContainer, #volumeContainer {
+    width: 90%;
+    max-width: 600px;
+    margin: 1rem auto;
+    color: var(--yt-red);
+    text-shadow: var(--glow);
+  }
 
-    #backgroundVideoContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -2;
-      background: #000;
-      overflow: hidden;
-    }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--yt-red);
+    filter: drop-shadow(0 0 6px rgba(255,0,0,0.35));
+  }
 
-    iframe.backgroundVideo {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      pointer-events: none;
-      transition: filter 0.3s ease, opacity 0.3s ease;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+  #songTitle {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    color: var(--yt-red);
+    text-shadow: var(--glow);
+  }
 
-    iframe.overlayVideo {
-      opacity: 0.5;
-      mix-blend-mode: screen;
-    }
+  #playerAudio, #playerVideo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
 
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: -1;
-    }
+  #backgroundVideoContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.06), rgba(0,0,0,0));
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(255,0,0,0.12) inset;
+  }
 
-    .filter-panel {
-      margin-top: 2rem;
-      background: rgba(255,255,255,0.05);
-      padding: 1rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  iframe.backgroundVideo { 
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    pointer-events: none;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    filter: drop-shadow(0 0 24px rgba(255,0,0,0.45)) saturate(1.1);
+  }
 
-    .filter-panel label {
-      display: block;
-      margin: 0.5rem 0 0.2rem;
-      text-align: left;
-    }
-  </style>
+  iframe.overlayVideo { opacity: 0.55; mix-blend-mode: screen; }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  .filter-panel {
+    margin-top: 2rem;
+    background: linear-gradient(180deg, rgba(255,0,0,0.04), rgba(255,0,0,0.02));
+    padding: 1rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255,0,0,0.12);
+    box-shadow: 0 8px 30px rgba(255,0,0,0.08);
+  }
+
+  .filter-panel h2 { color: var(--yt-red); text-shadow: var(--glow); }
+
+  .filter-panel label { display: block; margin: 0.5rem 0 0.2rem; text-align: left; color: var(--yt-red); }
+</style>
 </head>
 <body>
 
 <h1>YouTube Recycling Machine</h1>
 
-<input type="text" id="playlistAudioUrl" placeholder="Audio URL (YouTube)">
+<input type="text" id="playlistAudioUrl" placeholder="Add Audio (YouTube URL)">
 <br>
-<input type="text" id="playlistVideoUrl" placeholder="Primary Video URL (YouTube)">
+<input type="text" id="playlistVideoUrl" placeholder="Add Primary Video (YouTube URL)">
 <br>
-<input type="text" id="overlayVideoUrl" placeholder="Overlay Video URL (YouTube, optional)">
+<input type="text" id="overlayVideoUrl" placeholder="Add Overlay Video (YouTube URL, optional)">
 
 <div id="controls">
   <button onClick="window.location.reload();">Reset</button>
