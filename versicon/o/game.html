@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otium & The City</title>
+<style>
+body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+#terminal {
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    background-color: transparent;
+    padding: 20px;
+    padding-bottom: 100px; /* extra space for mobile keyboard */
+    border-radius: 10px;
+    border: 2px solid #0ff; /* bright cyan neon border */
+    overflow-y: auto;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff; /* neon glow effect */
+}
+
+#terminal:focus { outline: none; }
+
+#output { 
+    white-space: pre-wrap; 
+    margin-bottom: 10px; 
+    color: #0ff; /* neon cyan */
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+}
+
+#input-line { display: inline; }
+#user-input { 
+    color: #ff00ff; /* neon magenta for input */
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}
+
+.command-color1 { 
+    color: #0ff; /* neon cyan commands */
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+}
+.command-color2 { 
+    color: #ff0; /* neon yellow highlight */
+    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 20px #ff0;
+}
+.command-color3 { 
+    color: #ff00ff; /* neon magenta highlight */
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}
+
+.folder { 
+    background-color: #111; 
+    color: #0ff; 
+    padding:5px 10px; 
+    border-radius:3px; 
+    margin-top:8px; 
+    display:inline-block; 
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+}
+.file { 
+    background-color: #111; 
+    color: #ff00ff; 
+    padding:5px 10px; 
+    border-radius:3px; 
+    margin-top:8px; 
+    display:inline-block; 
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}
+
+.cursor { 
+    animation: blink 1s steps(2, start) infinite; 
+    color:#0ff; /* neon cyan blinking cursor */
+    text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+* { 
+    -webkit-user-select:none; 
+    -moz-user-select:none; 
+    -ms-user-select:none; 
+    user-select:none; 
+}
+
+.input-prompt { 
+    color: #ff0; /* neon yellow prompt */
+    text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 20px #ff0;
+}
+</style>
+
+<style>
+html,body{margin:0;padding:0;background:#000;overflow:hidden;}
+#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(1.5px);pointer-events:none;}
+body, #container{position:relative;z-index:0;}
+</style>
+</head>
+<body>
+
+<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+<div id="terminal" tabindex="0">
+    <input type="text" id="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;">
+    <div id="output"></div>
+    <div>
+        <span id="input-line"><span class="input-prompt">&gt; </span></span><span id="user-input"></span><span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+// Particle background with atom-like energy feel
+(function(){
+    const canvas = document.getElementById("mainCanvas");
+    const ctx = canvas.getContext("2d");
+    let width = window.innerWidth, height = window.innerHeight;
+    canvas.width = width; canvas.height = height;
+
+    class Particle {
+        constructor(){
+            this.x = Math.random()*width;
+            this.y = Math.random()*height;
+            this.radius = 1 + Math.random()*2; // smaller nuclei
+            this.vx = (Math.random()-0.5)*2;   // faster orbiting motion
+            this.vy = (Math.random()-0.5)*2;
+            this.alpha = 0.4 + Math.random()*0.6;
+        }
+        update(){
+            this.x += this.vx; this.y += this.vy;
+            if(this.x<0||this.x>width) this.vx*=-1;
+            if(this.y<0||this.y>height) this.vy*=-1;
+        }
+        draw(ctx){
+            // Glowing nucleus
+            const grad = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.radius*5);
+            grad.addColorStop(0, `rgba(255,215,0,${this.alpha})`); // golden nucleus
+            grad.addColorStop(1,'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.radius*5,0,Math.PI*2);
+            ctx.fill();
+
+            // Electron particle
+            ctx.fillStyle = `rgba(173,216,230,${this.alpha})`; // light blue electrons
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+            ctx.fill();
+        }
+    }
+
+    const NUM_PARTICLES = 100; // slightly fewer but more distinct
+    const particles = Array.from({length: NUM_PARTICLES},()=>new Particle());
+
+    function animate(){
+        ctx.clearRect(0,0,width,height);
+
+        // Draw connecting energy lines like atomic bonds
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                const p1 = particles[i], p2 = particles[j];
+                const dist = Math.hypot(p1.x-p2.x, p1.y-p2.y);
+                if(dist<100){
+                    ctx.strokeStyle = `rgba(173,216,230,${0.5-dist/200})`; // soft blue atomic lines
+                    ctx.lineWidth = 0.7;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x,p1.y);
+                    ctx.lineTo(p2.x,p2.y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        particles.forEach(p=>{p.update(); p.draw(ctx);});
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+    window.addEventListener("resize",()=>{
+        width=window.innerWidth;
+        height=window.innerHeight;
+        canvas.width=width;
+        canvas.height=height;
+    });
+})();
+</script>
+
+<script>
+// Terminal logic
+const outputDiv = document.getElementById('output');
+const userInputSpan = document.getElementById('user-input');
+const hiddenInput = document.getElementById('hidden-input');
+
+const ROOT_DIR = 'root';
+let currentDirectory = ROOT_DIR;
+const fileSystem = {
+    "root": { folders: ["discoveries","labs","formulas","archives","reports"], files: [] },
+    "root/discoveries": { folders: [], files: ["otium-core.log","energy-distribution.txt","city-power-map.txt","stability-assessment.log"] },
+    "root/labs": { folders: ["fusion_tests","quantum_storage","energy_conversion"], files: ["lab-parameters.zip","experiment-summary.doc","runtime-config.doc"] },
+    "root/labs/fusion_tests": { folders: [], files: ["plasma-stability.txt", "fusion-output.doc"] },
+    "root/labs/quantum_storage": { folders: [], files: ["quantum-battery.doc", "otium-states.txt"] },
+    "root/labs/energy_conversion": { folders: [], files: ["conversion-efficiency.csv", "heat-to-energy-model.doc"] },
+    "root/formulas": { folders: ["otium-dynamics","quantum-interfacing"], files: ["energy-conservation.doc","otium-equations.conf","storage-capacity.txt"] },
+    "root/formulas/otium-dynamics": { folders: [], files: ["otium-laws.txt", "first-principle-summary.doc"] },
+    "root/formulas/quantum-interfacing": { folders: [], files: ["quantum-coupling.txt", "superposition-notes.txt"] },
+    "root/archives": { folders: ["daily","monthly"], files: ["backup-otium.zip"] },
+    "root/archives/daily": { folders: [], files: ["daily-log-2025-01-01.txt", "daily-log-2025-01-02.txt"] },
+    "root/archives/monthly": { folders: [], files: ["monthly-summary-jan-2025.doc", "monthly-summary-feb-2025.doc"] },
+    "root/reports": { folders: [], files: ["confidential-energy.doc"] }
+};
+
+const fileContents = {
+    "otium-core.log":"Discovery of Otium's core structure: a self-sustaining energy lattice capable of powering entire cities indefinitely.",
+    "energy-distribution.txt":"Mapping of Otium energy distribution across test grids. Stability levels indicate possible city-wide energy applications.",
+    "city-power-map.txt":"Projected energy output per city sector using Otium. Potentially enough to sustain urban life for hundreds of years.",
+    "stability-assessment.log":"Otium stability assessment under different environmental conditions. Certain excitations may allow controlled city-level power surges.",
+    "lab-parameters.zip":{ type:"executable", action:shutdownSequence, snippet:"Executable file detected. Running 'otium_secret.zip'..." },
+    "experiment-summary.doc":"Summary of lab experiments testing Otium energy transfer efficiency, city-scale simulations completed successfully.",
+    "runtime-config.doc":"Configuration for lab equipment controlling Otium energy outputs in simulated environments.",
+    "plasma-stability.txt":"Observed plasma lattice stability under high-intensity Otium injections. No decay after 5000 hours.",
+    "fusion-output.doc":"Fusion test results indicate Otium can replace traditional fuel sources for major urban centers.",
+    "quantum-battery.doc":"Prototype quantum battery using Otium energy demonstrates 100% efficiency retention over prolonged tests.",
+    "otium-states.txt":"Documenting energy states of Otium. Certain quantum states may enable controlled energy sharing across cities.",
+    "conversion-efficiency.csv":"Conversion efficiency of Otium energy to electrical grids. Peak output exceeds conventional sources by 120%.",
+    "heat-to-energy-model.doc":"Models predicting thermal-to-energy conversion for urban applications of Otium.",
+    "energy-conservation.doc":"Fundamental energy conservation principles adapted to Otium's persistent lattice.",
+    "otium-equations.conf":"Configuration and derivations for Otium energy equations, including city-scale applications.",
+    "storage-capacity.txt":"Estimated Otium storage capacities per facility, enough for decades of urban energy needs.",
+    "otium-laws.txt":"Laws governing Otium energy flow, including limits, stability constraints, and amplification effects.",
+    "first-principle-summary.doc":"Otium first principles: energy can be harvested and sustained across temporal scales without degradation.",
+    "quantum-coupling.txt":"Coupling Otium with quantum systems to transfer power instantaneously across nodes.",
+    "superposition-notes.txt":"Observations on superposition effects in Otium-enabled quantum grids.",
+    "backup-otium.zip":"Compressed archive of all critical Otium research data.",
+    "confidential-energy.doc":"CONFIDENTIAL: Only holders of Otium energy may lead future cities. Access restricted.",
+    "daily-log-2025-01-01.txt":"Daily log: successful synthesis of initial Otium lattice structure.",
+    "daily-log-2025-01-02.txt":"Daily log: city-scale energy tests initiated. Stability maintained over multiple cycles.",
+    "monthly-summary-jan-2025.doc":"January summary: Otium experiments completed across three major urban grids, no energy loss observed.",
+    "monthly-summary-feb-2025.doc":"February summary: focus on quantum-state manipulation and city energy distribution."
+};
+
+function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
+function output(text) {
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
+}
+
+function showDirectoryContents(){
+    const folders = fileSystem[currentDirectory].folders.map(f=>`<span class="folder">${f}</span>`).join("  ");
+    const files = fileSystem[currentDirectory].files.map(f=>`<span class="file">${f}</span>`).join("  ");
+    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
+
+function shutdownSequence(){
+    output(">>> Initiating classified Otium energy lockdown...");
+    setTimeout(()=>{
+        const terminal = document.getElementById("terminal");
+        terminal.innerHTML = `
+        <div style='color:#FFF; font-size:2em; text-align:center;'><br><br>Otium & The City</div>
+        <p style='color:#FFF; font-size:1em; text-align:left; margin-top:10px;'>
+        After decades of concealed research by the clandestine Otium Energy Institute, this terminal finally reveals the secret of the Otium & The City Principle:
+        <br><br>
+        <strong>Ψ<sub>Otium</sub> = ∫E<sub>core</sub> dt + iħ∇·Ψ<sub>urban</sub></strong>
+        <br><br>
+        This discovery is far beyond conventional energy sources—it harnesses quantum-stable Otium lattices capable of powering entire cities for hundreds of years. In practical terms, whoever controls Otium wields the power to sustain urban life indefinitely and lead civilizations with unmatched energy supremacy.  
+        <br><br>
+        Researchers feared that uncontrolled dissemination could spark global conflicts over city-scale energy dominance. The digital imprint you see is now the only trace of Otium knowledge outside the secret vaults of the Institute.  
+        <br><br>
+        Handle with extreme caution: the choices you make here could shape the future of cities—and the fate of those who inhabit them. <br><br><a href="https://artoldo.github.io/otium" style="text-decoration:underline; color: white;">E N T E R</a>
+        </p>`;
+        terminal.scrollTop = 0;
+        document.removeEventListener('keydown', handleKeyDown);
+    }, 4000);
+}
+
+function openFile(filename){
+    const fileData = fileContents[filename];
+    if(fileData){
+        if(fileData.type==="executable") { output(fileData.snippet); fileData.action(); }
+        else { output(fileData); }
+    } else { output("<span class='command-color1'>File not found.</span>"); }
+}
+
+function processCommand(command){
+    const target = command.trim();
+    if(target==="back"){
+        if(currentDirectory!==ROOT_DIR){
+            currentDirectory = currentDirectory.split("/").slice(0,-1).join("/")||ROOT_DIR;
+            output(`> You are now in ${currentDirectory}`);
+            showDirectoryContents();
+        } else output("<span class='command-color1'>Already at root.</span>");
+    } else if(fileSystem[currentDirectory]?.folders.includes(target)){
+        currentDirectory = `${currentDirectory}/${target}`;
+        output(`> You entered ${currentDirectory}`);
+        showDirectoryContents();
+    } else if(fileSystem[currentDirectory]?.files.includes(target)){
+        output(`> Opening file ${target}...`);
+        openFile(target);
+    } else output("<span class='command-color1'>Folder or file not found.</span>");
+}
+
+// Focus input on click
+document.getElementById('terminal').addEventListener('click', () => {
+    hiddenInput.focus();
+});
+window.onload = () => hiddenInput.focus();
+
+// Reflect typed input safely on mobile
+hiddenInput.addEventListener('input', () => {
+    // Reflect typed characters into the visible prompt and keep the terminal scrolled to bottom.
+    userInputSpan.textContent = hiddenInput.value;
+    scrollTerminal();
+});
+
+// Handle Enter key for commands
+hiddenInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const command = hiddenInput.value;
+        output(`<span class='command-color1'>${command}</span>`);
+        processCommand(command);
+        hiddenInput.value = '';
+        userInputSpan.innerText = '';
+    } else if (event.key === 'Backspace') {
+        // Let the browser handle backspace naturally on the hidden input.
+    }
+});
+
+// Initial animation
+function typingAnimation(text, callback){
+    let index=0;
+    function appendChar(){
+        if(index < text.length){
+            const span = document.createElement('span');
+            span.style.color = '#FFF';
+            span.textContent = text[index];
+            outputDiv.appendChild(span);
+            scrollTerminal();
+            index++;
+            setTimeout(appendChar, 100);
+        } else {
+            outputDiv.appendChild(document.createElement('br'));
+            outputDiv.appendChild(document.createElement('br'));
+            callback();
+        }
+    }
+    appendChar();
+}
+
+typingAnimation("Accessing undiscovered Otium energy research... Explore labs and formulas to uncover the power that can sustain entire cities for centuries...", ()=>{
+    output("Type the name of a <u>folder</u> or a <u>file</u> to open it.");
+    output("Type <u>back</u> to return to the previous directory.");
+    showDirectoryContents();
+});
+
+document.addEventListener('contextmenu', e=> e.preventDefault());
+
+
+window.onload = function() {
+    // Ensure the invisible input is focused so mobile keyboards open and keystrokes are captured.
+    const hidden = document.getElementById('hidden-input');
+    if (hidden) hidden.focus();
+};
+
+</script>
+
+</body>
+</html>

@@ -126,7 +126,16 @@ body, #container{position:relative;z-index:0;}
 <body>
 
 <div id="terminal" tabindex="0">
-    <input type="text" id="hidden-input" style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;">
+    <input
+        type="text"
+        id="hidden-input"
+        style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="none"
+    >
     <div id="output"></div>
     <div>
         <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>

@@ -1,0 +1,438 @@
+<!-- Version: 1.0.0 | Last Update: 2025-11-19 | Author: Sacrisoft | © All rights reserved -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Recycling Machine - Prototype | Sacrisoft</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      max-width: 600px;
+      padding: 0.6rem;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      border: 0px;
+      border-radius: 5px;
+      color: #000;
+    }
+
+    input[type="text"]:focus {
+      border: 2px dashed #000;
+      outline: none;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      margin: 0.5rem;
+      cursor: pointer;
+      background-color: #444;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #controls {
+      margin-top: 1rem;
+    }
+
+    #progressContainer, #volumeContainer {
+      width: 90%;
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    #songTitle {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      color: #ccc;
+    }
+
+    #playerAudio, #playerVideo {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #backgroundVideoContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      background: #000;
+      overflow: hidden;
+    }
+
+    iframe.backgroundVideo {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      pointer-events: none;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    iframe.overlayVideo {
+      opacity: 0.5;
+      mix-blend-mode: screen;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
+
+    .filter-panel {
+      margin-top: 2rem;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .filter-panel label {
+      display: block;
+      margin: 0.5rem 0 0.2rem;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h1>YouTube Recycling Machine</h1>
+
+<input type="text" id="playlistAudioUrl" placeholder="Audio URL (YouTube)">
+<br>
+<input type="text" id="playlistVideoUrl" placeholder="Primary Video URL (YouTube)">
+<br>
+<input type="text" id="overlayVideoUrl" placeholder="Overlay Video URL (YouTube, optional)">
+
+<div id="controls">
+  <button onClick="window.location.reload();">Reset</button>
+  <button id="loadBtn">Load</button>
+  <button id="playPauseBtn" disabled>Play Music</button>
+  <button id="loopBtn" disabled>Loop Music: On</button>
+  <button id="fullscreenBtn">Fullscreen Video</button>
+</div>
+
+<div id="progressContainer">
+  <div>Progress</div>
+  <input type="range" id="seekbar" min="0" max="100" value="0">
+</div>
+
+<div id="volumeContainer">
+  <label for="volume">Volume</label>
+  <input type="range" id="volume" min="0" max="100" value="100">
+</div>
+
+<div id="songTitle">Title: -</div>
+
+<div class="filter-panel">
+  <h2>Video Filters</h2>
+  <label for="filterBlur">Blur</label>
+  <input type="range" id="filterBlur" min="0" max="10" step="0.5" value="0">
+
+  <label for="filterGrayscale">Grayscale</label>
+  <input type="range" id="filterGrayscale" min="0" max="100" step="10" value="0">
+
+  <label for="filterBrightness">Brightness</label>
+  <input type="range" id="filterBrightness" min="50" max="150" step="10" value="100">
+
+  <label for="filterContrast">Contrast</label>
+  <input type="range" id="filterContrast" min="50" max="150" step="10" value="100">
+
+  <label for="filterSepia">Sepia</label>
+  <input type="range" id="filterSepia" min="0" max="100" step="10" value="0">
+
+  <label for="filterSaturate">Saturate</label>
+  <input type="range" id="filterSaturate" min="0" max="200" step="10" value="100">
+
+  <label for="filterInvert">Invert</label>
+  <input type="range" id="filterInvert" min="0" max="100" step="1" value="0">
+
+  <label for="filterHueRotate">Hue Rotate</label>
+  <input type="range" id="filterHueRotate" min="0" max="360" step="1" value="0">
+
+  <label for="overlayOpacity">Overlay Opacity</label>
+  <input type="range" id="overlayOpacity" min="0" max="100" step="1" value="50">
+</div>
+
+<div id="playerAudio"></div>
+<div id="playerVideo"></div>
+
+<div id="backgroundVideoContainer"></div>
+
+<script>
+  let audioPlayer, videoPlayer;
+  let isPlaying = false;
+  let currentVideoId = '';
+  let updateInterval;
+
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+
+  function extractVideoId(url) {
+    const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:\?|&|$)/);
+    return match ? match[1] : null;
+  }
+
+  function extractPlaylistId(url) {
+    const match = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : null;
+  }
+
+  function isPlaylist(url) {
+    return url.includes("list=");
+  }
+
+  function onYouTubeIframeAPIReady() {}
+
+  document.getElementById('loadBtn').addEventListener('click', () => {
+    const audioInput = document.getElementById('playlistAudioUrl').value;
+    const videoInput = document.getElementById('playlistVideoUrl').value;
+    const overlayInput = document.getElementById('overlayVideoUrl').value;
+
+    const audioId = isPlaylist(audioInput) ? extractPlaylistId(audioInput) : extractVideoId(audioInput);
+    const videoId = isPlaylist(videoInput) ? extractPlaylistId(videoInput) : extractVideoId(videoInput);
+    const overlayId = overlayInput ? (isPlaylist(overlayInput) ? extractPlaylistId(overlayInput) : extractVideoId(overlayInput)) : null;
+
+    if (!audioId || !videoId) {
+      return alert("Please enter valid audio and primary video URLs.");
+    }
+
+    if (audioPlayer) {
+      if (isPlaylist(audioInput)) {
+        audioPlayer.loadPlaylist({ list: audioId });
+      } else {
+        audioPlayer.loadVideoById(audioId);
+      }
+    } else {
+      audioPlayer = new YT.Player('playerAudio', {
+        height: '1',
+        width: '1',
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          loop: 1,
+          playlist: isPlaylist(audioInput) ? undefined : audioId
+        },
+        events: {
+          'onReady': onAudioPlayerReady,
+          'onStateChange': onAudioStateChange
+        }
+      });
+    }
+
+    if (videoPlayer) {
+      if (isPlaylist(videoInput)) {
+        videoPlayer.loadPlaylist({ list: videoId });
+      } else {
+        videoPlayer.loadVideoById(videoId);
+      }
+    } else {
+      videoPlayer = new YT.Player('playerVideo', {
+        height: '1',
+        width: '1',
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          mute: 1,
+          loop: 1,
+          playlist: isPlaylist(videoInput) ? undefined : videoId
+        },
+        events: {
+          'onReady': (e) => {
+            e.target.mute();
+            e.target.playVideo();
+            embedBackgroundVideo(videoId, overlayId, isPlaylist(videoInput));
+          }
+        }
+      });
+    }
+  });
+
+  function embedBackgroundVideo(primaryId, overlayId, isPlaylistVideo) {
+    const container = document.getElementById('backgroundVideoContainer');
+    const primarySrc = isPlaylistVideo
+      ? `https://www.youtube.com/embed?listType=playlist&list=${primaryId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`
+      : `https://www.youtube.com/embed/${primaryId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`;
+
+    let overlaySrc = '';
+    if (overlayId) {
+      const isOverlayPlaylist = overlayId.length !== 11;
+      overlaySrc = isOverlayPlaylist
+        ? `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allowfullscreen></iframe>`
+        : `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allowfullscreen></iframe>`;
+    }
+
+    container.innerHTML = `
+      <iframe class="backgroundVideo primaryVideo" src="${primarySrc}" frameborder="0" allowfullscreen></iframe>
+      ${overlaySrc}
+    `;
+    applyVideoFilters();
+  }
+
+  function onAudioPlayerReady(event) {
+    document.getElementById('playPauseBtn').disabled = false;
+    document.getElementById('loopBtn').disabled = false;
+    audioPlayer.setVolume(document.getElementById('volume').value);
+    document.getElementById('volume').addEventListener('input', () => {
+      audioPlayer.setVolume(document.getElementById('volume').value);
+    });
+    updateSongInfo();
+    startUpdatingSeekbar();
+    audioPlayer.playVideo();
+  }
+
+  function onAudioStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      audioPlayer.playVideo(); // loop manually if loop fails
+    }
+    if (event.data === YT.PlayerState.PLAYING) {
+      isPlaying = true;
+      document.getElementById('playPauseBtn').textContent = 'Pause Music';
+      updateSongInfo();
+      startUpdatingSeekbar();
+    } else {
+      isPlaying = false;
+      document.getElementById('playPauseBtn').textContent = 'Play Music';
+      clearInterval(updateInterval);
+    }
+  }
+
+  document.getElementById('playPauseBtn').addEventListener('click', () => {
+    if (!audioPlayer) return;
+    if (isPlaying) {
+      audioPlayer.pauseVideo();
+    } else {
+      audioPlayer.playVideo();
+    }
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (audioPlayer) audioPlayer.previousVideo();
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (audioPlayer) audioPlayer.nextVideo();
+  });
+
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    const container = document.getElementById('backgroundVideoContainer');
+    if (container.requestFullscreen) container.requestFullscreen();
+    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+    else if (container.msRequestFullscreen) container.msRequestFullscreen();
+  });
+
+  document.getElementById('seekbar').addEventListener('input', () => {
+    if (audioPlayer && audioPlayer.getDuration) {
+      const duration = audioPlayer.getDuration();
+      const seekTo = (document.getElementById('seekbar').value / 100) * duration;
+      audioPlayer.seekTo(seekTo, true);
+    }
+  });
+
+  function startUpdatingSeekbar() {
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if (audioPlayer && audioPlayer.getCurrentTime && audioPlayer.getDuration) {
+        const currentTime = audioPlayer.getCurrentTime();
+        const duration = audioPlayer.getDuration();
+        if (duration > 0) {
+          document.getElementById('seekbar').value = (currentTime / duration) * 100;
+        }
+        if (audioPlayer.getVideoData().video_id !== currentVideoId) {
+          updateSongInfo();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateSongInfo() {
+    const videoData = audioPlayer.getVideoData();
+    if (videoData && videoData.title) {
+      document.getElementById('songTitle').textContent = `Title: ${videoData.title}`;
+      currentVideoId = videoData.video_id;
+    }
+  }
+
+  function applyVideoFilters() {
+    const filters = [
+      `blur(${document.getElementById('filterBlur').value}px)`,
+      `grayscale(${document.getElementById('filterGrayscale').value}%)`,
+      `brightness(${document.getElementById('filterBrightness').value}%)`,
+      `contrast(${document.getElementById('filterContrast').value}%)`,
+      `sepia(${document.getElementById('filterSepia').value}%)`,
+      `saturate(${document.getElementById('filterSaturate').value}%)`,
+      `invert(${document.getElementById('filterInvert').value}%)`,
+      `hue-rotate(${document.getElementById('filterHueRotate').value}deg)`
+    ].join(' ');
+
+    document.querySelectorAll('.backgroundVideo').forEach(iframe => {
+      iframe.style.filter = filters;
+    });
+
+    const overlay = document.querySelector('.overlayVideo');
+    if (overlay) {
+      overlay.style.opacity = document.getElementById('overlayOpacity').value / 100;
+    }
+  }
+
+  [
+    'filterBlur',
+    'filterGrayscale',
+    'filterBrightness',
+    'filterContrast',
+    'filterSepia',
+    'filterSaturate',
+    'filterInvert',
+    'filterHueRotate',
+    'overlayOpacity'
+  ].forEach(id => {
+    document.getElementById(id).addEventListener('input', applyVideoFilters);
+  });
+</script>
+
+</body>
+</html>

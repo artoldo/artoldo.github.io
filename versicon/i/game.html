@@ -83,14 +83,19 @@
 <body>
 <div id="bgCanvas"><canvas id="ashCanvas"></canvas></div>
 <div id="terminal" tabindex="0">
-    <input type="text" id="hidden-input"
-           style="position:fixed; bottom:5px; left:8px; width:20px; height:25px; opacity:0.01; z-index:100;"
-           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-           aria-hidden="true"
-           placeholder="Type folder or file names. Use 'back' to return.">
+    <input
+        type="text"
+        id="hidden-input"
+        style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="none"
+    >
     <div id="output"></div>
     <div>
-        <span id="input-line">&gt; </span><span id="user-input"></span><span class="cursor">_</span>
+        <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
     </div>
 </div>
 

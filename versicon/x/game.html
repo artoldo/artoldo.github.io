@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XXLaundromat</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+#terminal {
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    padding-bottom: 100px;
+    border-radius: 10px;
+    border: 2px solid #FFFFFF; /* white border */
+    overflow-y: auto;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+#terminal:focus {
+    outline: none;
+}
+
+#output {
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+    color: #e0e0ff; /* soft white/blue for output text */
+}
+#input-line {
+    display: inline;
+}
+.command-color1 { color: #FFFFFF; } /* white commands */
+.command-color2 { color: #1E90FF; } /* bright blue */
+.command-color3 { color: #FF6EC7; } /* pink */
+.folder { background-color: #FFFFFF; color: #000; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+.file { background-color: #0a0a0a; color: #FFFFFF; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+.cursor {
+    animation: blink 1s steps(2, start) infinite;
+    color: #FFFF00; /* yellow cursor */
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    </style>
+
+<!-- Background Animation Start -->
+
+<style>
+html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(0.8px) contrast(1.05);pointer-events:none;}
+body, #container{position:relative;z-index:0;}
+</style>
+
+<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+<script>
+(function(){
+  const canvas = document.getElementById("mainCanvas");
+  const ctx = canvas.getContext("2d");
+
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+
+  let time = 0;
+  const center = () => ({ x: canvas.width/2, y: canvas.height/2 });
+
+  const words = ["OBEY","FORGET","TRUST","SILENCE","REMEMBER","LISTEN","FOLLOW","CONTROL","THINK","QUESTION","SUBMIT","REPEAT","ACCEPT","AWAIT","SEE","HEAR","KNOW"];
+  const floating = [];
+  const density = 150;
+  for(let i=0;i<density;i++){
+    floating.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      vx: (Math.random()-0.5)*0.05,
+      vy: 0.1 + Math.random()*0.15,
+      size: 10 + Math.random()*28,
+      word: words[Math.floor(Math.random()*words.length)],
+      color: '#FFFFFF',
+      phase: Math.random()*Math.PI*2,
+      alpha: 0
+    });
+  }
+
+  let highlightedWordIndex = Math.floor(Math.random() * floating.length);
+  let highlightTimer = 0;
+
+  function drawSpiral(t){
+    const c = center();
+    ctx.save();
+    ctx.translate(c.x, c.y);
+
+    const turns = 6;
+    const maxR = Math.min(canvas.width, canvas.height) * 0.8;
+    ctx.beginPath();
+    for(let i=0;i<360*turns;i+=1){
+      const pct = i/(360*turns);
+      const angle = pct * turns * Math.PI*2 + t*0.001; /* rotate clockwise */
+      const r = pct * maxR;
+      const x = Math.cos(angle) * r;
+      const y = Math.sin(angle) * r;
+      if(i===0){
+        ctx.moveTo(x,y);
+      } else {
+        ctx.lineTo(x,y);
+      }
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; /* white spiral */
+    ctx.lineWidth = 16;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawPulse(t){
+    const c = center();
+    const pulse = 0.3 + 0.25*Math.sin(t/1200);
+    const grd = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, Math.max(canvas.width, canvas.height));
+    grd.addColorStop(0, `rgba(255,255,255,${0.008*pulse})`);
+    grd.addColorStop(0.6, `rgba(0,0,0,0)`);
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+
+  function drawFloating(t){
+    highlightTimer += 1;
+    if(highlightTimer > 60){
+      highlightTimer = 0;
+      highlightedWordIndex = Math.floor(Math.random() * floating.length);
+    }
+
+    for(let i=0;i<floating.length;i++){
+      const f = floating[i];
+      f.x += f.vx + Math.sin(t/1600 + f.phase)*0.003;
+      f.y += f.vy;
+      if(f.y > canvas.height) f.y = -20;
+      f.alpha = 0.02 + 0.4*(0.5 + 0.5*Math.sin(t/1000 + f.phase));
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.02, Math.min(0.5, f.alpha));
+      ctx.font = `${f.size}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = (i === highlightedWordIndex) ? '#FF5555' : '#FFFFFF';
+      ctx.fillText(f.word, f.x, f.y);
+      ctx.restore();
+    }
+  }
+
+  let lastFlash = 0;
+  function maybeFlash(t){
+    if(t - lastFlash > 9000 + Math.random()*10000){
+      lastFlash = t;
+      const flashAlpha = 0.02 + Math.random()*0.03;
+      const c = center();
+      ctx.save();
+      ctx.globalAlpha = flashAlpha;
+      ctx.fillStyle = '#FF5555';
+      ctx.font = '500 48px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(words[Math.floor(Math.random()*words.length)], c.x, c.y + 24);
+      ctx.restore();
+    }
+  }
+
+  function chromaOverlay(){
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.02;
+    ctx.fillStyle = 'rgba(30,30,60,0.02)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function render(t){
+    time = t;
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    drawSpiral(t);
+    drawPulse(t);
+    drawFloating(t);
+    maybeFlash(t);
+
+    if(Math.floor(t/1000) % 6 === 0) chromaOverlay();
+
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(render);
+})();
+</script>
+
+<!-- Background Animation End -->
+</head>
+<body>
+
+<div id="terminal" tabindex="0">
+    <input
+        type="text"
+        id="hidden-input"
+        style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="none"
+    >
+    <div id="output"></div>
+    <div>
+        <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+    const outputDiv = document.getElementById('output');
+    const userInputSpan = document.getElementById('user-input');
+    const inputLine = document.getElementById('input-line');
+
+    const ROOT_DIR = 'root';
+    let currentDirectory = ROOT_DIR;
+    const fileSystem = {
+        "root": { folders: ["project-files", "research", "experiments", "archives", "testimonies"], files: [] },
+        "root/project-files": { folders: [], files: ["mk-overview.txt", "declassified-index.txt", "timeline-summary.txt"] },
+        "root/research": { folders: ["documents", "reports"], files: ["cia-mkultra-ref.txt", "ethics-review.pdf"] },
+        "root/research/documents": { folders: [], files: ["memorandum-1953.txt", "budget-lines.doc"] },
+        "root/experiments": { folders: ["subjects", "methods"], files: ["session-logs.txt", "protocol-notes.txt"] },
+        "root/archives": { folders: ["daily", "monthly"], files: ["archive-index.zip"] },
+        "root/testimonies": { folders: [], files: ["witness-Audio.log", "testimony-summary.txt"] }
+    };
+
+    const fileContents = {
+        "mk-overview.txt": "MKULTRA: A set of CIA programs, active primarily in the 1950s–1960s, focused on interrogation, behavior modification research, and testing of chemical and psychological techniques. Many details were later declassified; investigations revealed ethical violations and human experimentation without informed consent.",
+        "declassified-index.txt": "Declassified records catalog: Volumes A–G. Contains redacted memos, contracts, and internal correspondence. See 'timeline-summary.txt' for key dates.",
+        "timeline-summary.txt": "1953 - Program authorized. 1963 - Internal reviews begin. 1973–1975 - Investigations and partial document disclosures. 1977 - Senate hearings increase public scrutiny.",
+        "cia-mkultra-ref.txt": "Internal reference: Project files reference experimental funding lines and contractor names (redacted in public releases).",
+        "ethics-review.pdf": "Report: Retrospective ethical review highlights failures in oversight and consent.",
+        "memorandum-1953.txt": "Authorization memorandum: 'Conduct research and testing to explore methods of influencing human behavior.' (redacted passages).",
+        "budget-lines.doc": "Budget allocations to external contractors and academic collaborators (some invoices later destroyed).",
+        "session-logs.txt": "Selected session logs: brief notes on administered substances, duration, and observed responses (heavily redacted in public versions).",
+        "protocol-notes.txt": "Research notes on interview techniques, conditioning experiments, and sensory deprivation tests. Not a how-to — archival summary only.",
+        "archive-index.zip": "Compressed collection: scanned memos, correspondence, and investigative reports.",
+        "witness-Audio.log": "Audio transcripts of survivor testimonies and interviews with researchers (redactions applied).",
+        "testimony-summary.txt": "Summary: survivors described non-consensual experimentation, memory gaps, and aftereffects; many sought reparations decades later.",
+        "operation-mkultra.zip": {
+            type: "executable",
+            action: shutdownSequence,
+            snippet: "Executable archive detected. Preparing secured archive viewer...",
+            fullContent: "Opening sealed archive: Project Mindlight — historical dossier loading..."
+        }
+    };
+
+function generateRandomFiles() {
+    // Adding random placeholder files to the specified directories
+    const directories = [
+        'root/',
+        'root/research/documents',
+        'root/experiments/subjects',
+        'root/experiments/methods',
+        'root/archives/daily',           
+        'root/archives/monthly',         
+        'root/research/reports',  
+        'root/project-files'
+    ];
+
+    directories.forEach(directory => {
+        const numFiles = Math.floor(Math.random() * 3) + 1; // Random number of files (1-3)
+        for (let i = 0; i < numFiles; i++) {
+            const fileName = `file-${Math.floor(Math.random() * 100)}.txt`;
+            if (!fileSystem[directory]) {
+                fileSystem[directory] = { folders: [], files: [] };
+            }
+            fileSystem[directory].files.push(fileName);
+            fileContents[fileName] = `Archival note: ${Math.random().toString(36).substring(2, 15)}`;
+        }
+    });
+}
+
+function showDirectoryContents() {
+    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
+    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    
+    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
+
+// OUTPUT - END OF LEVEL
+
+function shutdownSequence() {
+    output(">>> Securing historical dossier and initiating controlled archive reveal...");
+    setTimeout(() => {
+        const terminal = document.getElementById("terminal");
+
+        terminal.innerHTML = 
+            "<div style='color: #0F0; font-size: 2em; text-align: center;'><br><br>XXLaundromat</div>" +
+            "<p style='color: #0F0; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+            "The following is a narrative summary drawn from declassified records and survivor accounts. This is a historical account — not operational guidance.\n\n" +
+
+            "Project Mindlight (colloquially known in public records as MKULTRA) was a Cold War-era research umbrella that explored interrogation methods, behavior modification, and the effects of certain chemical and psychological interventions. Initiated during a period of intense geopolitical anxiety, the program contracted with universities, hospitals, and private firms to conduct experiments — many of which later raised serious ethical and legal concerns.\n\n" +
+
+            "Investigations and hearings in the 1970s revealed that subjects were sometimes experimented on without informed consent, and that recordkeeping was intentionally obfuscated in parts. The fallout reshaped oversight: stronger regulations, ethical review boards, and transparency measures were developed in response.\n\n" +
+
+            "Survivor testimonies and partial archives illustrate the human cost: long-term psychological damage, loss of trust in institutions, and lifelong struggles for recognition and repair. The declassified legacy serves as a cautionary historical lesson about the abuse of state power in the name of security.\n\n" +
+
+            "Today, scholars continue to study the program to better understand institutional failures and to ensure past mistakes are not repeated.\n\n" +
+
+            "END OF DOSSIER." +
+            "</p>";
+
+        // Jump to the top
+        terminal.scrollTop = 0;
+
+        // Disable further input
+        document.removeEventListener('keydown', handleKeyDown);
+    }, 2500);
+}
+
+function openFile(filename) {
+    const fileData = fileContents[filename];
+    if (fileData) {
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet); // Show a snippet that shutdown is starting
+            fileData.action(); // Execute the shutdown sequence
+        } else {
+            if (fileContents[filename]) {
+            output(fileContents[filename]);
+            } 
+        }
+    } else {
+        output("<span class='command-color1'>File not found.</span>");
+    }
+}
+
+    function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
+function output(text) {
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
+}
+
+function processCommand(command) {
+    const target = command.trim();
+    if (target === "back") {
+        if (currentDirectory !== ROOT_DIR) {
+            currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+            output(`> You are now in ${currentDirectory}`);
+            showDirectoryContents();
+        } else {
+            output("<span class='command-color1'>Already at root.</span>");
+        }
+    } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+        currentDirectory = `${currentDirectory}/${target}`;
+        output(`> You entered ${currentDirectory}`);
+        showDirectoryContents();
+    } else if (fileSystem[currentDirectory]?.files.includes(target)) {
+        output(`> Opening file ${target}...`);
+        openFile(target);
+    } else {
+        output("<span class='command-color1'>Folder or file not found.</span>");
+    }
+}
+
+    const hiddenInput = document.getElementById('hidden-input');
+    // userInputSpan already defined above
+
+    document.getElementById('terminal').addEventListener('click', () => {
+        hiddenInput.focus(); // opens mobile keyboard
+    });
+
+    hiddenInput.addEventListener('input', () => {
+        userInputSpan.innerText = hiddenInput.value;
+        scrollTerminal();
+    });
+
+    hiddenInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const command = hiddenInput.value;
+            output(`<span class='command-color1'>${command}</span>`);
+            processCommand(command);
+            hiddenInput.value = '';
+            userInputSpan.innerText = '';
+        } else if (event.key === 'Backspace') {
+            // handled automatically by input
+        }
+    });
+
+    function typingAnimation(text, callback) {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < text.length) {
+                outputDiv.innerHTML += `<span class='command-color1'>${text[index]}</span>`;
+                index++;
+            } else {
+                clearInterval(interval);
+                outputDiv.innerHTML += "<br><br>";
+                callback();
+            }
+        }, 60);
+    }
+
+    typingAnimation("Compiling declassified files... Indexing MKULTRA case files... Cross-referencing survivor testimonies and timelines... Access the folders to explore the historical dossier.", () => {
+        output("Type the name of a <span class='command-color2'>folder</span> or a <span class='command-color3'>file</span> to open it.");
+        output("Type 'back' to return to the previous directory.");
+        generateRandomFiles();
+        showDirectoryContents();
+    });
+
+    document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+    });
+
+    window.onload = function() {
+        document.getElementById("terminal").focus();
+    };
+</script>
+
+</body>
+</html>

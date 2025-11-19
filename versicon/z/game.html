@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoroaster Superstar</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+       #terminal {
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    background-color: #000; /* keep black */
+    padding: 20px;
+    padding-bottom: 100px; /* extra space for mobile keyboard */
+    border-radius: 10px;
+    border: 2px solid #00FFFF; /* cyan border to match animation */
+    box-shadow:
+      0 8px 30px rgba(0,255,255,0.03),
+      inset 0 0 30px rgba(0,255,255,0.02),
+      0 0 40px rgba(255,246,102,0.02); /* tiny yellow ambient */
+    overflow-y: auto;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+#terminal:focus {
+    outline: none;
+}
+
+/* Terminal text color — pale cyan for readability on black */
+#output {
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+    color: #E6FFFF; /* soft cyan text */
+}
+
+#input-line {
+    display: inline;
+}
+
+/* Command colors — yellow and cyan accents */
+.command-color1 { color: #FFFF66; } /* primary highlight (warm yellow) */
+.command-color2 { color: #00FFFF; } /* secondary highlight (cyan) */
+.command-color3 { color: #FFFF66; }
+
+/* Folder chips: yellow background, black text (classic button look) */
+.folder {
+    background-color: #FFFF66; /* yellow */
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-top: 8px;
+    display: inline-block;
+    box-shadow: 0 6px 18px rgba(255,246,102,0.06);
+}
+
+/* File chips: transparent black with cyan text and subtle cyan border */
+.file {
+    background-color: rgba(0,0,0,0.45);
+    color: #00FFFF;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-top: 8px;
+    display: inline-block;
+    border: 1px solid rgba(0,255,255,0.12);
+    box-shadow: 0 6px 18px rgba(0,255,255,0.02);
+}
+
+/* Cursor stays cyan and blinks */
+.cursor {
+    animation: blink 1s steps(2, start) infinite;
+    color: #00FFFF;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* Keep selection prevented as before */
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    </style>
+
+<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+<style>
+  /* Canvas background stays behind terminal and doesn't block input */
+  #bgCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  #mainCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<script>
+(function(){
+  const canvas = document.getElementById('mainCanvas');
+  const ctx = canvas.getContext('2d', { alpha: true });
+
+  // crisp on high-DPI screens
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    width = window.innerWidth;
+    height = window.innerHeight;
+  }
+
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  resize();
+
+  window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    resize();
+  });
+
+  // Settings
+  const FAR = 0.25, MID = 0.6, NEAR = 1.0;
+  const NUM_FAR = 140, NUM_MID = 80, NUM_NEAR = 40;
+  const glyphs = ['♫','♪','☆','✦','☾','✡','⚡'];
+  const colors = ['#00FFFF', '#FFFF66']; // cyan, soft yellow
+
+  // Utility
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  // Build layered starfields
+  const layer = (count, speedFactor, sizeRange, alphaRange) => {
+    const arr = [];
+    for (let i=0;i<count;i++){
+      arr.push({
+        x: Math.random()*width,
+        y: Math.random()*height,
+        baseSize: rand(sizeRange[0], sizeRange[1]),
+        speed: rand(0.2, 1.2) * speedFactor,
+        twinkle: Math.random()*Math.PI*2,
+        color: Math.random()>0.5 ? colors[0] : colors[1],
+        alphaBase: rand(alphaRange[0], alphaRange[1])
+      });
+    }
+    return arr;
+  };
+
+  const starsFar = layer(NUM_FAR, FAR, [0.6, 1.2], [0.05, 0.18]);
+  const starsMid = layer(NUM_MID, MID, [0.8, 1.8], [0.12, 0.28]);
+  const starsNear = layer(NUM_NEAR, NEAR, [1.2, 3.0], [0.2, 0.6]);
+
+  // Orbital glyphs (occult + music) for theatrical feel
+  const glyphNodes = [];
+  for (let i=0;i<28;i++){
+    glyphNodes.push({
+      angle: Math.random()*Math.PI*2,
+      radius: rand(60, Math.min(width, height)*0.5),
+      orbitSpeed: rand(0.0008, 0.0025),
+      xOffset: width*0.5,
+      yOffset: height*0.45,
+      glyph: glyphs[Math.floor(Math.random()*glyphs.length)],
+      color: Math.random()>0.5 ? colors[0] : colors[1],
+      size: rand(12, 36),
+      phase: Math.random()*Math.PI*2
+    });
+  }
+
+  // Comet-like streaks for blockbuster motion
+  const streaks = [];
+  function spawnStreak() {
+    streaks.push({
+      x: rand(-width*0.2, width*0.2),
+      y: rand(-height*0.2, height*0.2),
+      vx: rand(6, 14),
+      vy: rand(-1.5, 1.5),
+      life: rand(60, 140),
+      size: rand(1.6, 3.8),
+      color: Math.random()>0.5 ? colors[0] : colors[1],
+      trail: []
+    });
+  }
+
+  // Simulated "beat" driver (sine wave + random accent)
+  let tStart = performance.now();
+  function beat(time) {
+    // base tempo ~ 70-90bpm (0.8-1.5Hz) but we vary
+    const s = (time - tStart) * 0.001;
+    const bpm = 80 + 6 * Math.sin(s*0.03); // gentle drift
+    const freq = bpm/60;
+    const phase = s * freq * Math.PI * 2;
+    const pulse = (Math.sin(phase) + 1) / 2; // 0..1
+    const accent = Math.pow(Math.max(0, Math.sin(phase*2)), 6); // snappy accents
+    return Math.min(1, pulse*0.9 + accent*0.6);
+  }
+
+  // Glow helper
+  function glowCircle(x,y,r,color,alpha) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r*3);
+    g.addColorStop(0, `rgba(${color.r},${color.g},${color.b},${alpha})`);
+    g.addColorStop(0.2, `rgba(${color.r},${color.g},${color.b},${alpha*0.6})`);
+    g.addColorStop(1, `rgba(${color.r},${color.g},${color.b},0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(x-r*3, y-r*3, r*6, r*6);
+    ctx.restore();
+  }
+
+  // Convert hex to rgb
+  function hexToRgb(hex) {
+    const h = hex.replace('#','');
+    return {
+      r: parseInt(h.substring(0,2),16),
+      g: parseInt(h.substring(2,4),16),
+      b: parseInt(h.substring(4,6),16)
+    };
+  }
+  const rgbCyan = hexToRgb(colors[0]);
+  const rgbYell = hexToRgb(colors[1]);
+
+  // Main draw loop
+  let lastSpawn = 0;
+  function draw(now) {
+    const time = now || performance.now();
+    const s = (time - tStart) * 0.001;
+    const pulse = beat(time);
+
+    // subtle background dim (slightly oscillates with pulse)
+    ctx.fillStyle = `rgba(0,0,0,${0.14 + 0.06 * (pulse*0.8)})`;
+    ctx.fillRect(0,0,width,height);
+
+    // slight vignette for cinematic depth
+    ctx.save();
+    const vignette = ctx.createRadialGradient(width/2, height/2, Math.min(width,height)*0.2, width/2, height/2, Math.max(width,height)*0.8);
+    vignette.addColorStop(0, 'rgba(0,0,0,0)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0,0,width,height);
+    ctx.restore();
+
+    // Draw far stars (slow, tiny, soft)
+    for (let sObj of starsFar) {
+      sObj.x += 0.1 * (0.4 + pulse*0.8) * sObj.speed;
+      sObj.twinkle += 0.01 + 0.02 * Math.sin(s*0.3);
+      const rr = sObj.baseSize * (0.75 + 0.25*Math.sin(sObj.twinkle + s*0.5));
+      ctx.beginPath();
+      ctx.fillStyle = sObj.color;
+      ctx.globalAlpha = Math.max(0.03, sObj.alphaBase + 0.12 * Math.sin(sObj.twinkle + s*0.4));
+      ctx.fillRect(sObj.x, sObj.y, rr, rr);
+    }
+
+    // Middle stars (more visible)
+    for (let sObj of starsMid) {
+      sObj.x += 0.25 * (0.6 + pulse) * sObj.speed;
+      sObj.twinkle += 0.02;
+      const rr = sObj.baseSize * (0.85 + 0.3*Math.sin(sObj.twinkle));
+      ctx.globalAlpha = Math.max(0.08, sObj.alphaBase + 0.25 * Math.sin(sObj.twinkle + s*0.6));
+      ctx.beginPath();
+      ctx.fillStyle = sObj.color;
+      ctx.fillRect(sObj.x, sObj.y, rr, rr);
+      // soft glow
+      glowCircle(sObj.x + rr/2, sObj.y + rr/2, rr*0.8, hexToRgb(sObj.color), 0.06 * (1 + pulse*0.8));
+    }
+
+    // Near stars (twinkle + larger, react to pulse)
+    for (let sObj of starsNear) {
+      sObj.x += 0.6 * (0.9 + pulse*1.5) * sObj.speed;
+      sObj.twinkle += 0.03;
+      const rr = sObj.baseSize * (1 + 0.6 * Math.sin(sObj.twinkle + s*1.0) + 0.6*pulse);
+      ctx.globalAlpha = Math.max(0.12, sObj.alphaBase + 0.35 * Math.sin(sObj.twinkle + s*0.9) + 0.45*pulse);
+      ctx.beginPath();
+      ctx.fillStyle = sObj.color;
+      ctx.arc(sObj.x, sObj.y, Math.abs(rr), 0, Math.PI*2);
+      ctx.fill();
+      glowCircle(sObj.x, sObj.y, Math.abs(rr), hexToRgb(sObj.color), 0.12 * (1 + pulse));
+    }
+
+    // Wrap star positions
+    const wrap = (obj) => {
+      if (obj.x > width + 20) obj.x = -20;
+      if (obj.x < -20) obj.x = width + 20;
+      if (obj.y > height + 20) obj.y = -20;
+      if (obj.y < -20) obj.y = height + 20;
+    };
+    starsFar.forEach(wrap);
+    starsMid.forEach(wrap);
+    starsNear.forEach(wrap);
+
+    // Spawn occasional streaks synced to accent
+    if (time - lastSpawn > 800 - 500*pulse) {
+      if (Math.random() < 0.85) spawnStreak();
+      lastSpawn = time;
+    }
+
+    // Update and draw streaks (comet trails)
+    for (let i = streaks.length - 1; i >= 0; i--) {
+      const st = streaks[i];
+      st.trail.unshift({x: st.x, y: st.y, size: st.size});
+      st.x += st.vx;
+      st.y += st.vy;
+      st.life--;
+      // draw trail
+      ctx.globalCompositeOperation = 'lighter';
+      for (let j = 0; j < st.trail.length; j += 1) {
+        const p = st.trail[j];
+        const alpha = Math.max(0, (st.trail.length - j) / st.trail.length) * 0.25;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        ctx.fillStyle = st.color;
+        ctx.arc(p.x, p.y, p.size * (1 + j*0.02), 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      if (st.life <= 0 || st.x > width + 200) streaks.splice(i,1);
+      if (st.trail.length > 30) st.trail.pop();
+    }
+
+    // Glyph orbits: occult + musical signs
+    ctx.save();
+    ctx.font = 'bold 20px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.globalCompositeOperation = 'lighter';
+    for (let g of glyphNodes) {
+      // orbit radius subtly breathes with pulse
+      const r = g.radius * (1 + 0.08 * Math.sin(s*0.6 + g.phase) + 0.18*pulse);
+      g.angle += g.orbitSpeed * (1 + 0.5*pulse);
+      const gx = g.xOffset + Math.cos(g.angle) * r * (0.8 + 0.2*Math.sin(g.phase + s*0.5));
+      const gy = g.yOffset + Math.sin(g.angle*1.02) * r * (0.55 + 0.35*Math.cos(g.phase + s*0.3));
+
+      // size breathing
+      const gsize = g.size * (0.9 + 0.6*pulse + 0.2*Math.sin(g.phase + s));
+      // subtle shadow/glow
+      ctx.shadowBlur = 28 * (0.6 + pulse*0.8);
+      ctx.shadowColor = g.color;
+      ctx.fillStyle = g.color;
+      ctx.globalAlpha = 0.9;
+      ctx.font = `${Math.max(12, gsize)}px "Courier New", monospace`;
+      ctx.fillText(g.glyph, gx, gy);
+
+      // small bloom
+      glowCircle(gx, gy, Math.max(6, gsize*0.6), hexToRgb(g.color), 0.08 + 0.12*pulse);
+    }
+    ctx.restore();
+
+    // Cinematic overlay flare (very subtle)
+    if (pulse > 0.75) {
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(255,250,230,${(pulse-0.75)*0.06})`;
+      ctx.beginPath();
+      const cx = width*0.12 + Math.sin(s*0.4)*50;
+      const cy = height*0.18 + Math.cos(s*0.6)*40;
+      ctx.ellipse(cx, cy, width*0.22, height*0.06, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // subtle chromatic wash to amplify occulty mood (very low opacity)
+    ctx.fillStyle = `rgba(0,255,255,${0.008 + 0.02*pulse})`;
+    ctx.fillRect(0,0,width*0.25, height);
+    ctx.fillStyle = `rgba(255,245,140,${0.006 + 0.018*pulse})`;
+    ctx.fillRect(width*0.75,0,width*0.25,height);
+
+    requestAnimationFrame(draw);
+  }
+
+  // Start with some initial streaks
+  for (let i=0;i<3;i++) spawnStreak();
+
+  draw();
+
+})();
+</script>
+
+</head>
+<body>
+
+<div id="terminal" tabindex="0">
+    <input
+        type="text"
+        id="hidden-input"
+        style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="none"
+    >
+    <div id="output"></div>
+    <div>
+        <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+    const outputDiv = document.getElementById('output');
+    const userInputSpan = document.getElementById('user-input');
+    const inputLine = document.getElementById('input-line');
+
+    const ROOT_DIR = 'root';
+    let currentDirectory = ROOT_DIR;
+const fileSystem = {
+    "root": { folders: ["artists", "albums", "analysis", "archives", "secret"], files: ["overview.txt"] },
+
+    "root/artists": { folders: ["David_Bowie", "Queen"], files: [] },
+
+    "root/artists/David_Bowie": { 
+        folders: ["albums", "interviews"], 
+        files: ["biography.txt"] 
+    },
+    "root/artists/Queen": { 
+        folders: ["albums", "interviews"], 
+        files: ["biography.txt"] 
+    },
+
+    "root/albums": { folders: ["Ziggy_Stardust", "Hot_Space"], files: [] },
+
+    "root/albums/Ziggy_Stardust": { 
+        folders: [], 
+        files: ["lyrics.txt", "liner_notes.txt"] 
+    },
+    "root/albums/Hot_Space": { 
+        folders: [], 
+        files: ["lyrics.txt", "liner_notes.txt"] 
+    },
+
+    "root/analysis": { folders: ["lyrics_themes", "symbolism"], files: ["zoroaster_influence.txt"] },
+    "root/analysis/lyrics_themes": { folders: [], files: ["bowie_zoro.txt", "queen_zoro.txt"] },
+    "root/analysis/symbolism": { folders: [], files: ["fire_and_light.txt", "dualism.txt"] },
+
+    "root/archives": { folders: ["magazine_clippings", "fan_letters"], files: ["timeline.log"] },
+    "root/archives/magazine_clippings": { folders: [], files: ["1972_reviews.pdf", "1982_article.txt"] },
+    "root/archives/fan_letters": { folders: [], files: ["letters_70s.zip", "letters_80s.zip"] },
+
+    "root/secret": { folders: [], files: ["lost_mix.zip"] }
+};
+
+const fileContents = {
+    "overview.txt": "Explore the influence of Zoroastrian motifs in pop music — from David Bowie's Ziggy Stardust to Queen's cosmic references.",
+
+    "biography.txt": "David Bowie (1947–2016): Pioneer of theatrical rock, glam, and spiritual references.\nQueen (1970–1991): Known for cosmic and mystical themes, incorporating esoteric references.",
+
+    "lyrics.txt": "Sample lyrics from the album showcasing fire, light, and dualism themes.",
+
+    "liner_notes.txt": "Album liner notes reveal intentional use of Zoroastrian motifs: the eternal flame, Ahura Mazda symbolism, and dualistic struggles.",
+
+    "zoroaster_influence.txt": "Tracks and performances hint at the eternal struggle between good and evil, light and dark — core Zoroastrian concepts.",
+
+    "bowie_zoro.txt": "Analysis: Bowie's 'Ziggy Stardust' persona channels Zoroastrian duality — chaos vs. order, cosmic light vs. darkness.",
+
+    "queen_zoro.txt": "Analysis: Queen’s 'Hot Space' album features fire/light imagery reminiscent of Zoroastrian symbolism.",
+
+    "fire_and_light.txt": "Symbolism: Fire is sacred in Zoroastrianism, representing purity and divine presence.",
+
+    "dualism.txt": "Dualism: Zoroastrianism emphasizes the battle between Ahura Mazda (light) and Angra Mainyu (darkness).",
+
+    "timeline.log": "Timeline of albums and performances referencing Zoroastrian motifs.",
+
+    "1972_reviews.pdf": "Scanned magazine review highlighting mystical imagery in David Bowie's early performances.",
+    "1982_article.txt": "Fan article linking Queen's 'Hot Space' album with cosmic dualism and Zoroastrian themes.",
+
+    "letters_70s.zip": "Archived fan letters discussing Bowie’s spiritual symbolism.",
+    "letters_80s.zip": "Archived fan letters discussing Queen’s mystical and cosmic themes.",
+
+    "lost_mix.zip": {
+        type: "executable",
+        action: shutdownSequence,
+        snippet: "Decrypting lost mix... Cosmic Zoroastrian energy detected in the tracks...",
+        fullContent: "The hidden mix plays: ethereal harmonics, ancient chants, and celestial melodies merge. You can feel the duality of light and dark pulsing through every note."
+    }
+};
+
+
+function generateRandomFiles() {
+    // Adding random files to the specified directories
+const directories = [
+    'root/analysis/lyrics_themes',
+    'root/analysis/symbolism',
+    'root/archives/magazine_clippings',
+    'root/archives/fan_letters'
+];
+
+    // Ensure that the nested directories exist in the file system
+    directories.forEach(directory => {
+        // Create files in each directory
+        const numFiles = Math.floor(Math.random() * 3) + 1; // Random number of files (1-3)
+        for (let i = 0; i < numFiles; i++) {
+            const fileName = `signal-${Math.floor(Math.random() * 100)}.doc`;
+            if (!fileSystem[directory]) {
+                fileSystem[directory] = { folders: [], files: [] };
+            }
+            fileSystem[directory].files.push(fileName);
+            fileContents[fileName] = `Encrypted token: ${Math.random().toString(36).substring(2, 15)}`;
+        }
+    });
+}
+
+function showDirectoryContents() {
+    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
+    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    
+    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
+
+// OUTPUT - END OF LEVEL
+
+function shutdownSequence() {
+    output(">>> Initiating cosmic playback sequence...");
+    setTimeout(() => {
+        const terminal = document.getElementById("terminal");
+
+        terminal.innerHTML = 
+            "<div style='color: yellow; font-size: 2em; text-align: center;'><br><br>Zoroaster Superstar</div>" +
+            "<p style='color: #00FFFF; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+            "The archives unfold: Bowie’s Ziggy Stardust persona channels cosmic duality, Queen’s harmonics shimmer with fire and light. \n\n" +
+            "Every lyric is a thread; every fan letter, a clue. Hidden motifs of Ahura Mazda and Angra Mainyu appear amidst synthesizers and guitar riffs. \n\n" +
+            "Lost mixes hum with celestial energy, interviews hint at spiritual influences, and liner notes whisper the secrets of ancient dualism.\n\n" +
+            "As you navigate these folders, you witness the fusion of pop culture and Zoroastrian philosophy: cosmic order, chaos, light, and shadow dancing across the stage. \n\n" +
+            "The music, like fire in Zoroastrian temples, burns eternally — a reminder of the struggle between light and darkness, between sound and silence.\n\n" +
+            "\u2014 ARCHIVE OF COSMIC HARMONICS" +
+            "</p>" +
+            "<a href='https://artoldo.github.io/zoroaster' target='_blank' style='display:block; text-align:center; margin-top:20px; color:#00FFFF; text-decoration:underline; font-weight:bold;'>E N T E R</a>";
+
+        // Jump to top
+        terminal.scrollTop = 0;
+
+        // Disable further input
+        document.removeEventListener('keydown', handleKeyDown);
+    }, 4000);
+}
+
+function openFile(filename) {
+    const fileData = fileContents[filename];
+    if (fileData) {
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet); // Show a snippet that shutdown is starting
+            fileData.action(); // Execute the shutdown sequence
+        } else {
+            if (fileContents[filename]) {
+            output(fileContents[filename]);
+            } 
+        }
+    } else {
+        output("<span class='command-color1'>File not found.</span>");
+    }
+}
+
+    function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
+function output(text) {
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
+}
+
+function processCommand(command) {
+    const target = command.trim();
+    if (target === "back") {
+        if (currentDirectory !== ROOT_DIR) {
+            currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+            output(`> You are now in ${currentDirectory}`);
+            showDirectoryContents();
+        } else {
+            output("<span class='command-color1'>Already at root.</span>");
+        }
+    } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+        currentDirectory = `${currentDirectory}/${target}`;
+        output(`> You entered ${currentDirectory}`);
+        showDirectoryContents();
+    } else if (fileSystem[currentDirectory]?.files.includes(target)) {
+        output(`> Opening file ${target}...`);
+        openFile(target);
+    } else {
+        output("<span class='command-color1'>Folder or file not found.</span>");
+    }
+}
+
+    const hiddenInput = document.getElementById('hidden-input');
+    // userInputSpan already defined above
+
+    document.getElementById('terminal').addEventListener('click', () => {
+        hiddenInput.focus(); // opens mobile keyboard
+    });
+
+    hiddenInput.addEventListener('input', () => {
+        userInputSpan.innerText = hiddenInput.value;
+        scrollTerminal();
+    });
+
+    hiddenInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const command = hiddenInput.value;
+            output(`<span class='command-color1'>${command}</span>`);
+            processCommand(command);
+            hiddenInput.value = '';
+            userInputSpan.innerText = '';
+        } else if (event.key === 'Backspace') {
+            // handled automatically by input
+        }
+    });
+
+    function typingAnimation(text, callback) {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < text.length) {
+                outputDiv.innerHTML += `<span class='command-color1'>${text[index]}</span>`;
+                index++;
+            } else {
+                clearInterval(interval);
+                outputDiv.innerHTML += "<br><br>";
+                callback();
+            }
+        }, 100);
+    }
+
+typingAnimation(
+  "Welcome, seeker. The stage lights flicker, cosmic chords echo, and whispers of fire and duality pulse through the music. Navigate through the archives — uncover the Zoroastrian threads woven into Bowie and Queen’s melodies...",
+  () => {
+      output("Type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to explore it.");
+      output("Type <u>back</u> to return to the previous directory.");
+      generateRandomFiles();
+      showDirectoryContents();
+  }
+);
+
+    document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+    });
+
+    window.onload = function() {
+        document.getElementById("terminal").focus();
+    };
+</script>
+
+</body>
+</html>

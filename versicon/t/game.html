@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timor Panicus</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+ #terminal {
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    background-color: transparent;
+    padding: 20px;
+    padding-bottom: 100px; /* extra space for mobile keyboard */
+    border-radius: 10px;
+    border: 2px solid #00FFFF; /* bright cyan border for Atlantis feel */
+    overflow-y: auto;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+#terminal:focus {
+    outline: none;
+}
+
+#output {
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+    color: #00CED1; /* aqua text */
+}
+
+#input-line {
+    display: inline;
+}
+
+.command-color1 { color: #00FFFF; } /* bright cyan for commands */
+.command-color2 { color: #40E0D0; } /* turquoise for folders */
+.command-color3 { color: #20B2AA; } /* teal for files */
+
+.folder { 
+    background-color: #00CED1; 
+    color: #001022; 
+    padding: 5px 10px; 
+    border-radius: 3px; 
+    margin-top: 8px; 
+    display: inline-block; 
+}
+
+.file { 
+    background-color: #001022; 
+    color: #00FFFF; 
+    padding: 5px 10px; 
+    border-radius: 3px; 
+    margin-top: 8px; 
+    display: inline-block; 
+}
+
+.cursor {
+    animation: blink 1s steps(2, start) infinite;
+    color: #00FFFF;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+    </style>
+
+<div id="bgCanvas"><canvas id="particleCanvas"></canvas></div>
+
+<style>
+  #bgCanvas { 
+    position: fixed; 
+    inset: 0; 
+    z-index: -10; 
+    pointer-events: none; 
+    background: #001020; /* deep underwater color */
+  }
+  #particleCanvas { 
+    width: 100%; 
+    height: 100%; 
+    display: block; 
+  }
+</style>
+
+<script>
+(function() {
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const numBubbles = 80;
+  const bubbles = [];
+
+  for (let i = 0; i < numBubbles; i++) {
+    bubbles.push({
+      x: Math.random() * width,
+      y: height + Math.random() * height,
+      radius: 2 + Math.random() * 8,
+      speed: 0.5 + Math.random() * 1.5,
+      alpha: 0.2 + Math.random() * 0.4,
+      wobble: Math.random() * 0.5
+    });
+  }
+
+  function draw() {
+    // Clear with slight opacity for trails
+    ctx.fillStyle = 'rgba(0,16,32,0.2)';
+    ctx.fillRect(0, 0, width, height);
+
+    for (let bubble of bubbles) {
+      // rising motion with slight horizontal wobble
+      bubble.y -= bubble.speed;
+      bubble.x += Math.sin(bubble.y * 0.05) * bubble.wobble;
+
+      // reset when bubbles reach the top
+      if (bubble.y + bubble.radius < 0) {
+        bubble.y = height + bubble.radius;
+        bubble.x = Math.random() * width;
+        bubble.radius = 2 + Math.random() * 8;
+        bubble.speed = 0.5 + Math.random() * 1.5;
+        bubble.alpha = 0.2 + Math.random() * 0.4;
+      }
+
+      // draw bubble with subtle glow
+      const gradient = ctx.createRadialGradient(
+        bubble.x, bubble.y, 0,
+        bubble.x, bubble.y, bubble.radius
+      );
+      gradient.addColorStop(0, `rgba(180,255,255,${bubble.alpha})`);
+      gradient.addColorStop(0.7, `rgba(0,128,255,${bubble.alpha * 0.4})`);
+      gradient.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+})();
+</script>
+
+</head>
+<body>
+
+<div id="terminal" tabindex="0">
+    <input
+        type="text"
+        id="hidden-input"
+        style="position:fixed;top:0;left:0;opacity:0;width:1px;height:1px;pointer-events:none;"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        inputmode="none"
+    >
+    <div id="output"></div>
+    <div>
+        <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+    const outputDiv = document.getElementById('output');
+    const userInputSpan = document.getElementById('user-input');
+    const inputLine = document.getElementById('input-line');
+
+    const ROOT_DIR = 'root';
+    let currentDirectory = ROOT_DIR;
+    const fileSystem = {
+    "root": { folders: ["archives", "maps", "artifacts", "research", "legends"], files: [] },
+    "root/archives": { folders: ["daily-reports", "historical"], files: ["expedition-log.txt", "underwater-scan.dat"] },
+    "root/maps": { folders: ["ancient", "modern"], files: ["atlantean-coordinates.map", "ocean-currents.doc"] },
+    "root/artifacts": { folders: ["recovered", "replicas"], files: ["trident.obj", "crystal-orb.txt", "amulet.dat", "activate-artifact.zip"] },
+    "root/research": { folders: ["linguistics", "energy"], files: ["sonar-readings.doc", "pressure-analysis.txt"] },
+    "root/research/linguistics": { folders: [], files: ["atlantean-script.doc", "glyph-decipher.txt"] },
+    "root/research/energy": { folders: [], files: ["crystal-energy.log", "resonance-patterns.txt"] },
+    "root/legends": { folders: ["myths", "prophecies"], files: ["plato-text.doc", "ancient-scroll.txt"] },
+};
+
+const fileContents = {
+    "expedition-log.txt": "Day 47: Crew reports unusual magnetic readings near the underwater ruins. Visibility remains low.",
+    "underwater-scan.dat": "Sonar scan complete. Structures detected beneath 2000 meters of water, resembling circular city layouts.",
+    "atlantean-coordinates.map": "Coordinates suggest the ruins lie at 31.3°N, 24.6°W, near the mid-Atlantic ridge.",
+    "ocean-currents.doc": "Current patterns may have preserved or shifted debris over millennia. Adjust dive paths accordingly.",
+    "trident.obj": "3D model of a ceremonial trident recovered from the ruins. Material composition unknown.",
+    "crystal-orb.txt": "The orb emits faint pulses of light and harmonic resonance when near seawater.",
+    "amulet.dat": "Encoded symbols engraved on a gold amulet. Language unknown.",
+    "sonar-readings.doc": "Multiple sonar pings indicate hidden chambers below collapsed domes.",
+    "pressure-analysis.txt": "Pressure levels in the main chamber exceed 250 bars; material durability verified.",
+    "atlantean-script.doc": "Translation attempt: symbols appear to represent elemental concepts: water, fire, air, earth.",
+    "glyph-decipher.txt": "Certain glyphs correlate with star constellations, possibly a navigation system.",
+    "crystal-energy.log": "Energy resonance detected in multiple crystal formations. Frequency: 7.2 Hz.",
+    "resonance-patterns.txt": "Harmonic sequences suggest intentional amplification. Possibly a communication system.",
+    "plato-text.doc": "Excerpt from Plato's Timaeus and Critias describing Atlantis as a mighty island civilization.",
+    "ancient-scroll.txt": "Scroll describes Atlantis’ fall due to hubris and a catastrophic flood.",
+    "activate-artifact.zip": {
+        type: "executable",
+        action: shutdownSequence,
+        snippet: ">>> Decrypting..."
+    },
+};
+
+function generateAtlantisRandomFiles() {
+    const directories = [
+        'root/',
+        'root/maps/ancient',
+        'root/maps/modern',
+        'root/artifacts/recovered',
+        'root/artifacts/replicas',
+        'root/research/linguistics',
+        'root/research/energy',
+        'root/legends/myths',
+        'root/legends/prophecies'
+    ];
+
+    directories.forEach(directory => {
+        const numFiles = Math.floor(Math.random() * 3) + 1; // 1–3 random files
+        for (let i = 0; i < numFiles; i++) {
+            const fileName = `atlanta-${Math.floor(Math.random() * 100)}.txt`;
+            if (!fileSystem[directory]) {
+                fileSystem[directory] = { folders: [], files: [] };
+            }
+            fileSystem[directory].files.push(fileName);
+            fileContents[fileName] = `Encrypted Atlantean record: ${Math.random().toString(36).substring(2, 15)}`;
+        }
+    });
+}
+
+function showDirectoryContents() {
+    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
+    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    
+    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+}
+
+// OUTPUT - END OF LEVEL
+
+function shutdownSequence() {
+    output(">>> Initializing Atlantean artifact...");
+    setTimeout(() => {
+        const terminal = document.getElementById("terminal");
+
+        terminal.innerHTML = 
+            "<div style='color: #0FF; font-size: 2em; text-align: center;'><br><br>Timor Panicus</div>" +
+            "<p style='color: #0FF; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+            "Deep beneath the rolling waves of the Atlantic, the lost city of Atlantis lay hidden for millennia. Coral and stone structures formed intricate circular patterns, evidence of a civilization both advanced and mysterious.<br><br>" +
+
+            "Tonight, the research submersibles picked up unusual energy readings. Crystalline formations pulsed with harmonic resonance, seemingly responding to the explorers’ instruments. Every chamber revealed fragments of a long-lost culture, its secrets preserved beneath layers of sediment and time.<br><br>" +
+
+            "Inside the central dome, bioluminescent flora cast an eerie green glow over inscriptions etched into walls of polished stone. Glyphs, relics, and artifacts were cataloged, each one revealing hints of Atlantis’ mastery over energy, water, and the elements. The patterns suggested intelligence, precision, and purpose beyond modern comprehension.<br><br>" +
+
+            "For hours, the team documented every detail, capturing sonar maps, photographic records, and resonance readings. Outside, ocean currents swirled silently, carrying whispers of a civilization that had once dominated the seas.<br><br>" +
+
+            "When the final artifact had been secured and analyzed, the team sealed the chambers. Energy flows stabilized, crystal formations dimmed, and the city rested once more in its silent aquatic grave. The discovery was monumental, yet fragile—Atlantis remained a secret the world was not yet ready to fully behold.<br><br>" +
+
+            "Above the waves, the moonlight shimmered across the ocean. Somewhere below, the city awaited further exploration, its legacy preserved in stone and crystal. The researchers’ instruments blinked one final message:<br><br>" +
+            "<a href='https://filmfreeway.com/timorpanicus' target='_blank' style='color:#0FF;text-decoration:underline;'>E N T E R</a>" +
+            "</p>";
+
+        // Jump to the top
+        terminal.scrollTop = 0;
+
+        // Disable further input
+        document.removeEventListener('keydown', handleKeyDown);
+    }, 4000);
+}
+
+function openFile(filename) {
+    const fileData = fileContents[filename];
+    if (fileData) {
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet); // Show a snippet that shutdown is starting
+            fileData.action(); // Execute the shutdown sequence
+        } else {
+            if (fileContents[filename]) {
+            output(fileContents[filename]);
+            } 
+        }
+    } else {
+        output("<span class='command-color1'>File not found.</span>");
+    }
+}
+
+    function scrollTerminal() {
+        const terminal = document.getElementById("terminal");
+        requestAnimationFrame(() => {
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
+function output(text) {
+    outputDiv.innerHTML += `\n> ${text}\n`;
+    scrollTerminal();
+}
+
+function processCommand(command) {
+    const target = command.trim();
+    if (target === "back") {
+        if (currentDirectory !== ROOT_DIR) {
+            currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+            output(`> You are now in ${currentDirectory}`);
+            showDirectoryContents();
+        } else {
+            output("<span class='command-color1'>Already at root.</span>");
+        }
+    } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+        currentDirectory = `${currentDirectory}/${target}`;
+        output(`> You entered ${currentDirectory}`);
+        showDirectoryContents();
+    } else if (fileSystem[currentDirectory]?.files.includes(target)) {
+        output(`> Opening file ${target}...`);
+        openFile(target);
+    } else {
+        output("<span class='command-color1'>Folder or file not found.</span>");
+    }
+}
+
+    const hiddenInput = document.getElementById('hidden-input');
+    // userInputSpan already defined above
+
+    document.getElementById('terminal').addEventListener('click', () => {
+        hiddenInput.focus(); // opens mobile keyboard
+    });
+
+    hiddenInput.addEventListener('input', () => {
+        userInputSpan.innerText = hiddenInput.value;
+        scrollTerminal();
+    });
+
+    hiddenInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const command = hiddenInput.value;
+            output(`<span class='command-color1'>${command}</span>`);
+            processCommand(command);
+            hiddenInput.value = '';
+            userInputSpan.innerText = '';
+        } else if (event.key === 'Backspace') {
+            // handled automatically by input
+        }
+    });
+
+    function typingAnimation(text, callback) {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < text.length) {
+                outputDiv.innerHTML += `<span class='command-color1'>${text[index]}</span>`;
+                index++;
+            } else {
+                clearInterval(interval);
+                outputDiv.innerHTML += "<br><br>";
+                callback();
+            }
+        }, 100);
+    }
+
+   typingAnimation(
+    "Activating Atlantean archives... Scanning underwater ruins... Analyzing recovered artifacts... Access the files to uncover the secrets of Atlantis...", 
+    () => {
+        output("Type the name of a <span class='command-color2'>folder</span> or a <span class='command-color3'>file</span> to open it.");
+        output("Type <span class='command-color1'>back</span> to return to the previous directory.");
+        generateAtlantisRandomFiles(); // use the Atlantis random files function
+        showDirectoryContents();
+    }
+);
+
+document.addEventListener('contextmenu', (event) => {
+    event.preventDefault(); // disables right-click menu
+});
+
+window.onload = function() {
+    document.getElementById("terminal").focus(); // focus terminal on page load
+};
+
+</script>
+
+</body>
+</html>
