@@ -21,7 +21,7 @@
             width: 80%;
             max-width: 600px;
             height: 90vh;
-            background-color: #000;
+            background-color: transparent;
             padding: 20px;
             padding-bottom: 100px; /* extra space for mobile keyboard */
             border-radius: 10px;
@@ -131,7 +131,7 @@ let height = canvas.height = window.innerHeight;
 
 // Keep the same gradient colors and visual style
 const gradientColors = ["#00BFFF", "#8A2BE2", "#FF00FF"];
-const nodeCount = 180; // Higher density
+const nodeCount = 100; // Higher density
 const nodes = [];
 
 // Initialize nodes with random positions and velocities
@@ -188,7 +188,11 @@ ctx.fill();
 });
 }
 
-setInterval(draw, 33);
+function animate() {
+    draw();
+    requestAnimationFrame(animate);
+}
+animate();
 
 window.addEventListener("resize", ()=>{
 width = canvas.width = window.innerWidth;
