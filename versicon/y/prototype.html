@@ -335,26 +335,40 @@
     }
   });
 
-  function embedBackgroundVideo(primaryId, overlayId, isPlaylistVideo) {
-    const container = document.getElementById('backgroundVideoContainer');
-    const primarySrc = isPlaylistVideo
-      ? `https://www.youtube.com/embed?listType=playlist&list=${primaryId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`
-      : `https://www.youtube.com/embed/${primaryId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`;
+function embedBackgroundVideo(primaryId, overlayId, isPlaylistVideo) {
+  const container = document.getElementById('backgroundVideoContainer');
 
-    let overlaySrc = '';
-    if (overlayId) {
-      const isOverlayPlaylist = overlayId.length !== 11;
-      overlaySrc = isOverlayPlaylist
-        ? `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`
-        : `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
-    }
+  const primarySrc = isPlaylistVideo
+    ? `https://www.youtube.com/embed?listType=playlist&list=${primaryId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`
+    : `https://www.youtube.com/embed/${primaryId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`;
 
-    container.innerHTML = `
-      <iframe class="backgroundVideo primaryVideo" src="${primarySrc}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-      ${overlaySrc}
-    `;
-    applyVideoFilters();
+  const primaryIframe = document.createElement('iframe');
+  primaryIframe.className = 'backgroundVideo primaryVideo';
+  primaryIframe.src = primarySrc;
+  primaryIframe.setAttribute('frameborder', '0');
+  primaryIframe.setAttribute('allow', 'autoplay; fullscreen');
+  primaryIframe.setAttribute('allowfullscreen', '');
+
+  container.innerHTML = '';
+  container.appendChild(primaryIframe);
+
+  if (overlayId) {
+    const isOverlayPlaylist = overlayId.length !== 11;
+    const overlaySrc = isOverlayPlaylist
+      ? `https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}`
+      : `https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}`;
+
+    const overlayIframe = document.createElement('iframe');
+    overlayIframe.className = 'backgroundVideo overlayVideo';
+    overlayIframe.src = overlaySrc;
+    overlayIframe.setAttribute('frameborder', '0');
+    overlayIframe.setAttribute('allow', 'autoplay; fullscreen');
+    overlayIframe.setAttribute('allowfullscreen', '');
+    container.appendChild(overlayIframe);
   }
+
+  applyVideoFilters();
+}
 
   function onAudioPlayerReady(event) {
     document.getElementById('playPauseBtn').disabled = false;
@@ -441,22 +455,24 @@
     }
   }
 
-  function applyVideoFilters() {
-    const filters = [
-      `blur(${document.getElementById('filterBlur').value}px)`,
-      `grayscale(${document.getElementById('filterGrayscale').value}%)`,
-      `brightness(${document.getElementById('filterBrightness').value}%)`,
-      `contrast(${document.getElementById('filterContrast').value}%)`,
-      `sepia(${document.getElementById('filterSepia').value}%)`,
-      `saturate(${document.getElementById('filterSaturate').value}%)`,
-      `invert(${document.getElementById('filterInvert').value}%)`,
-      `hue-rotate(${document.getElementById('filterHueRotate').value}deg)`
-    ].join(' ');
+function applyVideoFilters() {
+  const filterValues = [
+    `blur(${document.getElementById('filterBlur').value}px)`,
+    `grayscale(${document.getElementById('filterGrayscale').value}%)`,
+    `brightness(${document.getElementById('filterBrightness').value}%)`,
+    `contrast(${document.getElementById('filterContrast').value}%)`,
+    `sepia(${document.getElementById('filterSepia').value}%)`,
+    `saturate(${document.getElementById('filterSaturate').value}%)`,
+    `invert(${document.getElementById('filterInvert').value}%)`,
+    `hue-rotate(${document.getElementById('filterHueRotate').value}deg)`
+  ].join(' ');
 
-    const overlay = document.getElementById('videoFilterOverlay');
-    overlay.style.filter = filters;
-    overlay.style.opacity = document.getElementById('overlayOpacity').value / 100;
-  }
+  const videos = document.querySelectorAll('.backgroundVideo');
+  videos.forEach(v => {
+    v.style.filter = filterValues;
+    v.style.opacity = document.getElementById('overlayOpacity').value / 100;
+  });
+}
 
   [
     'filterBlur',
