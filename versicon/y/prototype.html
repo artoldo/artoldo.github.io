@@ -136,6 +136,20 @@
     filter: drop-shadow(0 0 24px rgba(255,0,0,0.45)) saturate(1.1);
   }
 
+  #videoFilterOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    mix-blend-mode: normal;
+    background: black;
+    z-index: -1; /* same layer as background video */
+    transition: filter 0.3s ease, opacity 0.3s ease;
+    opacity: 0.5; /* default opacity for seeing video below */
+  }
+
   iframe.overlayVideo { opacity: 0.55; mix-blend-mode: screen; }
 
   body::before {
@@ -331,12 +345,12 @@
     if (overlayId) {
       const isOverlayPlaylist = overlayId.length !== 11;
       overlaySrc = isOverlayPlaylist
-        ? `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allowfullscreen></iframe>`
-        : `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allowfullscreen></iframe>`;
+        ? `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`
+        : `<iframe class="backgroundVideo overlayVideo" src="https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
     }
 
     container.innerHTML = `
-      <iframe class="backgroundVideo primaryVideo" src="${primarySrc}" frameborder="0" allowfullscreen></iframe>
+      <iframe class="backgroundVideo primaryVideo" src="${primarySrc}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
       ${overlaySrc}
     `;
     applyVideoFilters();
@@ -388,10 +402,11 @@
   });
 
   document.getElementById('fullscreenBtn').addEventListener('click', () => {
-    const container = document.getElementById('backgroundVideoContainer');
-    if (container.requestFullscreen) container.requestFullscreen();
-    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
-    else if (container.msRequestFullscreen) container.msRequestFullscreen();
+    const iframe = document.querySelector('.backgroundVideo.primaryVideo');
+    if (!iframe) return;
+    if (iframe.requestFullscreen) iframe.requestFullscreen();
+    else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+    else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
   });
 
   document.getElementById('seekbar').addEventListener('input', () => {
@@ -438,14 +453,9 @@
       `hue-rotate(${document.getElementById('filterHueRotate').value}deg)`
     ].join(' ');
 
-    document.querySelectorAll('.backgroundVideo').forEach(iframe => {
-      iframe.style.filter = filters;
-    });
-
-    const overlay = document.querySelector('.overlayVideo');
-    if (overlay) {
-      overlay.style.opacity = document.getElementById('overlayOpacity').value / 100;
-    }
+    const overlay = document.getElementById('videoFilterOverlay');
+    overlay.style.filter = filters;
+    overlay.style.opacity = document.getElementById('overlayOpacity').value / 100;
   }
 
   [
@@ -464,4 +474,5 @@
 </script>
 
 </body>
+<div id="videoFilterOverlay"></div>
 </html>
