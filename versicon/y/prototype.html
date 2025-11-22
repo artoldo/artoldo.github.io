@@ -1,494 +1,338 @@
 <!-- Version: 1.0.0 | Last Update: 2025-11-19 | Author: Sacrisoft | © All rights reserved -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>YouTube Recycling Machine - Prototype | Sacrisoft</title>
-  <style>
-  :root{
-    --yt-red: #FF0000;
-    --yt-red-strong: #e60000;
-    --bg-dark: #000000;
-    --panel-dark: rgba(20,0,0,0.6);
-    --glass: rgba(255,0,0,0.06);
-    --glow: 0 0 12px rgba(255,0,0,0.9), 0 0 28px rgba(230,0,0,0.6);
-  }
+  <meta name="robots" content="noindex, nofollow">
+  <title>YouTube Recycling Machine</title>
+<style>
+    :root{
+      --yt-red: #FF0000;
+      --yt-red-strong: #e60000;
+      --bg-dark: #000000;
+      --panel-dark: rgba(20,0,0,0.6);
+      --glass: rgba(255,0,0,0.06);
+      --glow: 0 0 12px rgba(255,0,0,0.9), 0 0 28px rgba(230,0,0,0.6);
+    }
 
-  /* Base page */
-  body {
-    font-family: Arial, sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--yt-red);
-    text-align: center;
-    padding: 2rem;
-    margin: 0;
-    position: relative;
-    z-index: 1;
-  }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--yt-red);
+      text-align: center;
+      padding: 2rem;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
 
-  h1 {
-    color: var(--yt-red);
-    text-shadow: var(--glow);
-    margin-bottom: 1rem;
-  }
+    h1 {
+      color: var(--yt-red);
+      text-shadow: var(--glow);
+      margin-bottom: 1rem;
+    }
 
-  input[type="text"] {
-    width: 90%;
-    max-width: 600px;
-    padding: 0.6rem;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid rgba(255,0,0,0.35);
-    border-radius: 5px;
-    color: var(--bg-dark);
-    background: linear-gradient(180deg, rgba(255,0,0,0.95), rgba(230,0,0,0.95));
-    box-shadow: 0 6px 18px rgba(255,0,0,0.12), 0 0 14px rgba(255,0,0,0.08) inset;
-    outline: none;
-  }
+    input[type="text"] {
+      width: 90%;
+      max-width: 640px;
+      padding: 0.6rem;
+      font-size: 1rem;
+      margin: 0.35rem 0;
+      border: 1px solid rgba(255,0,0,0.35);
+      border-radius: 8px;
+      color: var(--bg-dark);
+      background: linear-gradient(180deg, rgba(255,0,0,0.95), rgba(230,0,0,0.95));
+      box-shadow: 0 6px 18px rgba(255,0,0,0.12), 0 0 14px rgba(255,0,0,0.08) inset;
+      outline: none;
+    }
 
-  input[type="text"]::placeholder { color: rgba(0,0,0,0.6); }
+    input[type="text"]::placeholder { color: rgba(0,0,0,0.6); }
 
-  input[type="text"]:focus {
-    border: 1px solid var(--yt-red-strong);
-    box-shadow: var(--glow), 0 0 6px rgba(255,0,0,0.18) inset;
-  }
+    input[type="text"]:focus {
+      border: 1px solid var(--yt-red-strong);
+      box-shadow: var(--glow), 0 0 6px rgba(255,0,0,0.18) inset;
+    }
 
-  button {
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    margin: 0.5rem;
-    cursor: pointer;
-    background: linear-gradient(180deg, #ff4d4d, var(--yt-red));
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 5px;
-    text-shadow: 0 0 6px rgba(255,80,80,0.6);
-    box-shadow: var(--glow);
-    transition: transform 0.12s ease, filter 0.12s ease;
-  }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      margin: 0.35rem;
+      cursor: pointer;
+      background: linear-gradient(180deg, #ff4d4d, var(--yt-red));
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      text-shadow: 0 0 6px rgba(255,80,80,0.6);
+      box-shadow: var(--glow);
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
 
-  button:hover {
-    transform: translateY(-2px);
-    filter: saturate(1.1) brightness(1.05);
-  }
+    button:hover {
+      transform: translateY(-2px);
+      filter: saturate(1.1) brightness(1.05);
+    }
 
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-    background: linear-gradient(180deg, rgba(120,0,0,0.5), rgba(150,0,0,0.5));
-  }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+      background: linear-gradient(180deg, rgba(120,0,0,0.5), rgba(150,0,0,0.5));
+    }
 
-  #controls { margin-top: 1rem; }
+    #controls { margin-top: 1rem; }
 
-  #progressContainer, #volumeContainer {
-    width: 90%;
-    max-width: 600px;
-    margin: 1rem auto;
-    color: var(--yt-red);
-    text-shadow: var(--glow);
-  }
+    #progressContainer, #volumeContainer {
+      width: 90%;
+      max-width: 640px;
+      margin: 1rem auto;
+      color: var(--yt-red);
+      text-shadow: var(--glow);
+    }
 
-  input[type="range"] {
-    width: 100%;
-    accent-color: var(--yt-red);
-    filter: drop-shadow(0 0 6px rgba(255,0,0,0.35));
-  }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--yt-red);
+      filter: drop-shadow(0 0 6px rgba(255,0,0,0.35));
+    }
 
-  #songTitle {
-    font-size: 1rem;
-    margin-top: 0.5rem;
-    color: var(--yt-red);
-    text-shadow: var(--glow);
-  }
+    #songTitle {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      color: var(--yt-red);
+      text-shadow: var(--glow);
+    }
 
-  #playerAudio, #playerVideo {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-  }
+    #playerAudio, #playerVideo {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
 
-  #backgroundVideoContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -2;
-    background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.06), rgba(0,0,0,0));
-    overflow: hidden;
-    box-shadow: 0 0 60px rgba(255,0,0,0.12) inset;
-  }
+    #backgroundVideoContainer {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(circle at 50% 50%, rgba(255,0,0,0.06), rgba(0,0,0,0));
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(255,0,0,0.12) inset;
+    }
 
-  iframe.backgroundVideo { 
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    pointer-events: none;
-    transition: filter 0.3s ease, opacity 0.3s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    filter: drop-shadow(0 0 24px rgba(255,0,0,0.45)) saturate(1.1);
-  }
+    iframe.backgroundVideo { 
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      pointer-events: none;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+      filter: drop-shadow(0 0 24px rgba(255,0,0,0.45)) saturate(1.1);
+    }
 
-  #videoFilterOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    mix-blend-mode: normal;
-    background: black;
-    z-index: -1; /* same layer as background video */
-    transition: filter 0.3s ease, opacity 0.3s ease;
-    opacity: 0.5; /* default opacity for seeing video below */
-  }
+    iframe.overlayVideo { opacity: 0.55; mix-blend-mode: screen; }
 
-  iframe.overlayVideo { opacity: 0.55; mix-blend-mode: screen; }
+    body::before {
+      content:"";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
 
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
-  }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,0,0,0.04), rgba(255,0,0,0.02));
+      padding: 1rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 640px;
+      margin: 1rem auto;
+      border: 1px solid rgba(255,0,0,0.12);
+      box-shadow: 0 8px 30px rgba(255,0,0,0.08);
+    }
 
-  .filter-panel {
-    margin-top: 2rem;
-    background: linear-gradient(180deg, rgba(255,0,0,0.04), rgba(255,0,0,0.02));
-    padding: 1rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid rgba(255,0,0,0.12);
-    box-shadow: 0 8px 30px rgba(255,0,0,0.08);
-  }
+    .panel h2 { color: var(--yt-red); text-shadow: var(--glow); }
 
-  .filter-panel h2 { color: var(--yt-red); text-shadow: var(--glow); }
-
-  .filter-panel label { display: block; margin: 0.5rem 0 0.2rem; text-align: left; color: var(--yt-red); }
-</style>
+    .panel label { display: block; margin: 0.5rem 0 0.2rem; text-align: left; color: var(--yt-red); }
+  </style>
 </head>
 <body>
+  <h1>YouTube Recycling Machine<br><br><sup>– Prototype –</sup></h1>
+  <input type="text" id="playlistAudioUrl" placeholder="Audio URL (YouTube: single OR playlist)">
+  <br>
+  <input type="text" id="playlistVideoUrl" placeholder="Primary Video URL (YouTube: single OR playlist)">
+  <br>
+  <input type="text" id="overlayVideoUrl" placeholder="Overlay Video URL (YouTube: single OR playlist, optional)">
 
-<h1>YouTube Recycling Machine</h1>
+  <div id="controls">
+    <button onclick="window.location.reload()">Reset</button>
+    <button id="loadBtn">Load</button>
+    <button id="playPauseBtn" disabled>Play Music</button>
+    <button id="prevBtn" disabled>Previous</button>
+    <button id="nextBtn" disabled>Next</button>
+    <button id="loopBtn" disabled>Loop Music: Off</button>
+    <button id="fullscreenBtn">Fullscreen Video</button>
+  </div>
 
-<input type="text" id="playlistAudioUrl" placeholder="Add Audio (YouTube URL)">
-<br>
-<input type="text" id="playlistVideoUrl" placeholder="Add Primary Video (YouTube URL)">
-<br>
-<input type="text" id="overlayVideoUrl" placeholder="Add Overlay Video (YouTube URL)">
+  <div id="progressContainer" class="panel">
+    <div>Progress</div>
+    <input type="range" id="seekbar" min="0" max="100" value="0">
+  </div>
 
-<div id="controls">
-  <button onClick="window.location.reload();">Reset</button>
-  <button id="loadBtn">Load</button>
-  <button id="playPauseBtn" disabled>Play Music</button>
-  <button id="loopBtn" disabled>Loop Music: On</button>
-  <button id="fullscreenBtn">Fullscreen Video</button>
-</div>
+  <div id="volumeContainer" class="panel">
+    <label for="volume">Volume</label>
+    <input type="range" id="volume" min="0" max="100" value="100">
+  </div>
 
-<div id="progressContainer">
-  <div>Progress</div>
-  <input type="range" id="seekbar" min="0" max="100" value="0">
-</div>
+  <div id="songTitle">Title: -</div>
 
-<div id="volumeContainer">
-  <label for="volume">Volume</label>
-  <input type="range" id="volume" min="0" max="100" value="100">
-</div>
+  <div class="panel">
+    <h2>Video Filters</h2>
+    <label for="filterBlur">Blur</label>
+    <input type="range" id="filterBlur" min="0" max="10" step="0.5" value="0">
+    <label for="filterGrayscale">Grayscale</label>
+    <input type="range" id="filterGrayscale" min="0" max="100" step="10" value="0">
+    <label for="filterBrightness">Brightness</label>
+    <input type="range" id="filterBrightness" min="50" max="150" step="10" value="100">
+    <label for="filterContrast">Contrast</label>
+    <input type="range" id="filterContrast" min="50" max="150" step="10" value="100">
+    <label for="filterSepia">Sepia</label>
+    <input type="range" id="filterSepia" min="0" max="100" step="10" value="0">
+    <label for="filterSaturate">Saturate</label>
+    <input type="range" id="filterSaturate" min="0" max="200" step="10" value="100">
+    <label for="filterInvert">Invert</label>
+    <input type="range" id="filterInvert" min="0" max="100" step="1" value="0">
+    <label for="filterHueRotate">Hue Rotate</label>
+    <input type="range" id="filterHueRotate" min="0" max="360" step="1" value="0">
+    <label for="overlayOpacity">Overlay Opacity</label>
+    <input type="range" id="overlayOpacity" min="0" max="100" step="1" value="50">
+  </div>
 
-<div id="songTitle">Title: -</div>
+  <div id="playerAudio"></div>
+  <div id="playerVideo"></div>
+  <div id="backgroundVideoContainer"></div>
 
-<div class="filter-panel">
-  <h2>Video Filters</h2>
-  <label for="filterBlur">Blur</label>
-  <input type="range" id="filterBlur" min="0" max="10" step="0.5" value="0">
+  <script>
+    // --- Robust YT API readiness ---
+    let ytReadyResolve;
+    const whenYTReady = new Promise(r=>{ ytReadyResolve = r; });
+    window.onYouTubeIframeAPIReady = () => ytReadyResolve();
+    (function(){ const s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.body.appendChild(s); })();
 
-  <label for="filterGrayscale">Grayscale</label>
-  <input type="range" id="filterGrayscale" min="0" max="100" step="10" value="0">
+    // --- Utilities shared by both originals ---
+    const $ = (id)=>document.getElementById(id);
+    function extractVideoId(url){
+      if(!url) return null;
+      const pats=[
+        /youtu\.be\/([0-9A-Za-z_-]{11})/,
+        /v=([0-9A-Za-z_-]{11})/,
+        /\/shorts\/([0-9A-Za-z_-]{11})/,
+        /\/embed\/([0-9A-Za-z_-]{11})/,
+        /\/([0-9A-Za-z_-]{11})(?:\?|&|$)/
+      ];
+      for(const p of pats){ const m=url.match(p); if(m) return m[1]; }
+      return null;
+    }
+    function extractPlaylistId(url){ if(!url) return null; const m=url.match(/[?&]list=([a-zA-Z0-9_-]+)/); return m?m[1]:null; }
+    const isPlaylist = (url)=>!!(url&&url.includes('list='));
+    const makeEmbedSrc=(id,isList)=> isList
+      ? `https://www.youtube.com/embed?listType=playlist&list=${id}&autoplay=1&mute=1&controls=0&loop=1&playlist=${id}`
+      : `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}`; // single loop hack
 
-  <label for="filterBrightness">Brightness</label>
-  <input type="range" id="filterBrightness" min="50" max="150" step="10" value="100">
+    let audioPlayer=null, videoPlayer=null, isPlaying=false, isLooping=false, updateInterval=null, currentVideoId='';
 
-  <label for="filterContrast">Contrast</label>
-  <input type="range" id="filterContrast" min="50" max="150" step="10" value="100">
-
-  <label for="filterSepia">Sepia</label>
-  <input type="range" id="filterSepia" min="0" max="100" step="10" value="0">
-
-  <label for="filterSaturate">Saturate</label>
-  <input type="range" id="filterSaturate" min="0" max="200" step="10" value="100">
-
-  <label for="filterInvert">Invert</label>
-  <input type="range" id="filterInvert" min="0" max="100" step="1" value="0">
-
-  <label for="filterHueRotate">Hue Rotate</label>
-  <input type="range" id="filterHueRotate" min="0" max="360" step="1" value="0">
-
-  <label for="overlayOpacity">Overlay Opacity</label>
-  <input type="range" id="overlayOpacity" min="0" max="100" step="1" value="50">
-</div>
-
-<div id="playerAudio"></div>
-<div id="playerVideo"></div>
-
-<div id="backgroundVideoContainer"></div>
-
-<script>
-  let audioPlayer, videoPlayer;
-  let isPlaying = false;
-  let currentVideoId = '';
-  let updateInterval;
-
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.body.appendChild(tag);
-
-  function extractVideoId(url) {
-    const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:\?|&|$)/);
-    return match ? match[1] : null;
-  }
-
-  function extractPlaylistId(url) {
-    const match = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
-    return match ? match[1] : null;
-  }
-
-  function isPlaylist(url) {
-    return url.includes("list=");
-  }
-
-  function onYouTubeIframeAPIReady() {}
-
-  document.getElementById('loadBtn').addEventListener('click', () => {
-    const audioInput = document.getElementById('playlistAudioUrl').value;
-    const videoInput = document.getElementById('playlistVideoUrl').value;
-    const overlayInput = document.getElementById('overlayVideoUrl').value;
-
-    const audioId = isPlaylist(audioInput) ? extractPlaylistId(audioInput) : extractVideoId(audioInput);
-    const videoId = isPlaylist(videoInput) ? extractPlaylistId(videoInput) : extractVideoId(videoInput);
-    const overlayId = overlayInput ? (isPlaylist(overlayInput) ? extractPlaylistId(overlayInput) : extractVideoId(overlayInput)) : null;
-
-    if (!audioId || !videoId) {
-      return alert("Please enter valid audio and primary video URLs.");
+    // --- Build background embeds (primary + optional overlay) ---
+    function embedBackgroundVideo(primary, overlay){
+      const c = $('backgroundVideoContainer');
+      const primarySrc = makeEmbedSrc(primary.id, primary.isList);
+      const overlaySrc = overlay ? `<iframe class="backgroundVideo overlayVideo" src="${makeEmbedSrc(overlay.id, overlay.isList)}" frameborder="0" allowfullscreen></iframe>` : '';
+      c.innerHTML = `<iframe class="backgroundVideo primaryVideo" src="${primarySrc}" frameborder="0" allowfullscreen></iframe>` + overlaySrc;
+      applyVideoFilters();
     }
 
-    if (audioPlayer) {
-      if (isPlaylist(audioInput)) {
-        audioPlayer.loadPlaylist({ list: audioId });
-      } else {
-        audioPlayer.loadVideoById(audioId);
+    // --- Filters ---
+    function applyVideoFilters(){
+      const filters = [
+        `blur(${$('filterBlur').value}px)`,
+        `grayscale(${$('filterGrayscale').value}%)`,
+        `brightness(${$('filterBrightness').value}%)`,
+        `contrast(${$('filterContrast').value}%)`,
+        `sepia(${$('filterSepia').value}%)`,
+        `saturate(${$('filterSaturate').value}%)`,
+        `invert(${$('filterInvert').value}%)`,
+        `hue-rotate(${$('filterHueRotate').value}deg)`
+      ].join(' ');
+      document.querySelectorAll('.backgroundVideo').forEach(f=>{ f.style.filter=filters; });
+      const ov = document.querySelector('.overlayVideo'); if(ov) ov.style.opacity = $('overlayOpacity').value/100;
+    }
+    ['filterBlur','filterGrayscale','filterBrightness','filterContrast','filterSepia','filterSaturate','filterInvert','filterHueRotate','overlayOpacity'].forEach(id=>$ (id).addEventListener('input',applyVideoFilters));
+
+    // --- Controls & events ---
+    $('loadBtn').addEventListener('click', async ()=>{
+      await whenYTReady; // ensure YT API is ready BEFORE using YT.Player
+      const audioInput = $('playlistAudioUrl').value.trim();
+      const videoInput = $('playlistVideoUrl').value.trim();
+      const overlayInput = $('overlayVideoUrl').value.trim();
+
+      const aIsList = isPlaylist(audioInput), aId = aIsList? extractPlaylistId(audioInput): extractVideoId(audioInput);
+      const vIsList = isPlaylist(videoInput), vId = vIsList? extractPlaylistId(videoInput): extractVideoId(videoInput);
+      const oIsList = isPlaylist(overlayInput), oId = overlayInput ? (oIsList? extractPlaylistId(overlayInput): extractVideoId(overlayInput)) : null;
+
+      if(!aId || !vId){ alert('Please enter valid Audio and Primary Video URLs (single or playlist).'); return; }
+
+      // Audio player (merge behaviors safely)
+      if(audioPlayer){ aIsList ? audioPlayer.loadPlaylist({list:aId}) : audioPlayer.loadVideoById(aId); }
+      else {
+        audioPlayer = new YT.Player('playerAudio', {
+          height:'1', width:'1',
+          playerVars: aIsList ? { listType:'playlist', list:aId, autoplay:0, controls:0 } : { autoplay:0, controls:0, loop:1, playlist:aId },
+          events:{ onReady:onAudioPlayerReady, onStateChange:onAudioStateChange, onError:()=>alert('Audio player error (check URL)') }
+        });
       }
-    } else {
-      audioPlayer = new YT.Player('playerAudio', {
-        height: '1',
-        width: '1',
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          loop: 1,
-          playlist: isPlaylist(audioInput) ? undefined : audioId
-        },
-        events: {
-          'onReady': onAudioPlayerReady,
-          'onStateChange': onAudioStateChange
-        }
-      });
-    }
 
-    if (videoPlayer) {
-      if (isPlaylist(videoInput)) {
-        videoPlayer.loadPlaylist({ list: videoId });
-      } else {
-        videoPlayer.loadVideoById(videoId);
+      // Video player (auto muted playing like the PRO)
+      if(videoPlayer){ vIsList ? videoPlayer.loadPlaylist({list:vId}) : videoPlayer.loadVideoById(vId); }
+      else {
+        videoPlayer = new YT.Player('playerVideo', {
+          height:'1', width:'1',
+          playerVars: vIsList ? { listType:'playlist', list:vId, autoplay:1, mute:1, controls:0, loop:1 } : { autoplay:1, mute:1, controls:0, loop:1, playlist:vId },
+          events:{ onReady:(e)=>{ try{e.target.mute();}catch(_){} e.target.playVideo(); }, onError:()=>alert('Video player error (check URL)') }
+        });
       }
-    } else {
-      videoPlayer = new YT.Player('playerVideo', {
-        height: '1',
-        width: '1',
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          mute: 1,
-          loop: 1,
-          playlist: isPlaylist(videoInput) ? undefined : videoId
-        },
-        events: {
-          'onReady': (e) => {
-            e.target.mute();
-            e.target.playVideo();
-            embedBackgroundVideo(videoId, overlayId, isPlaylist(videoInput));
-          }
-        }
-      });
-    }
-  });
 
-function embedBackgroundVideo(primaryId, overlayId, isPlaylistVideo) {
-  const container = document.getElementById('backgroundVideoContainer');
+      // Background visual embeds for aesthetics + filters
+      embedBackgroundVideo({id:vId, isList:vIsList}, oId ? {id:oId, isList:oIsList} : null);
 
-  const primarySrc = isPlaylistVideo
-    ? `https://www.youtube.com/embed?listType=playlist&list=${primaryId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`
-    : `https://www.youtube.com/embed/${primaryId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${primaryId}`;
-
-  const primaryIframe = document.createElement('iframe');
-  primaryIframe.className = 'backgroundVideo primaryVideo';
-  primaryIframe.src = primarySrc;
-  primaryIframe.setAttribute('frameborder', '0');
-  primaryIframe.setAttribute('allow', 'autoplay; fullscreen');
-  primaryIframe.setAttribute('allowfullscreen', '');
-
-  container.innerHTML = '';
-  container.appendChild(primaryIframe);
-
-  if (overlayId) {
-    const isOverlayPlaylist = overlayId.length !== 11;
-    const overlaySrc = isOverlayPlaylist
-      ? `https://www.youtube.com/embed?listType=playlist&list=${overlayId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}`
-      : `https://www.youtube.com/embed/${overlayId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${overlayId}`;
-
-    const overlayIframe = document.createElement('iframe');
-    overlayIframe.className = 'backgroundVideo overlayVideo';
-    overlayIframe.src = overlaySrc;
-    overlayIframe.setAttribute('frameborder', '0');
-    overlayIframe.setAttribute('allow', 'autoplay; fullscreen');
-    overlayIframe.setAttribute('allowfullscreen', '');
-    container.appendChild(overlayIframe);
-  }
-
-  applyVideoFilters();
-}
-
-  function onAudioPlayerReady(event) {
-    document.getElementById('playPauseBtn').disabled = false;
-    document.getElementById('loopBtn').disabled = false;
-    audioPlayer.setVolume(document.getElementById('volume').value);
-    document.getElementById('volume').addEventListener('input', () => {
-      audioPlayer.setVolume(document.getElementById('volume').value);
+      // Enable buttons
+      $('prevBtn').disabled = false; $('nextBtn').disabled = false; $('loopBtn').disabled = false;
     });
-    updateSongInfo();
-    startUpdatingSeekbar();
-    audioPlayer.playVideo();
-  }
 
-  function onAudioStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
-      audioPlayer.playVideo(); // loop manually if loop fails
+    function onAudioPlayerReady(){
+      $('playPauseBtn').disabled = false; $('loopBtn').disabled = false;
+      try{ audioPlayer.setVolume($('volume').value); }catch(_){ }
+      $('volume').addEventListener('input', ()=>{ try{ audioPlayer.setVolume($('volume').value); }catch(_){ } });
+      updateSongInfo(); startUpdatingSeekbar();
     }
-    if (event.data === YT.PlayerState.PLAYING) {
-      isPlaying = true;
-      document.getElementById('playPauseBtn').textContent = 'Pause Music';
-      updateSongInfo();
-      startUpdatingSeekbar();
-    } else {
-      isPlaying = false;
-      document.getElementById('playPauseBtn').textContent = 'Play Music';
-      clearInterval(updateInterval);
+    function onAudioStateChange(e){
+      if(e.data===YT.PlayerState.ENDED){ if(isLooping){ try{audioPlayer.playVideo();}catch(_){}} }
+      if(e.data===YT.PlayerState.PLAYING){ isPlaying=true; $('playPauseBtn').textContent='Pause Music'; updateSongInfo(); startUpdatingSeekbar(); }
+      if(e.data===YT.PlayerState.PAUSED){ isPlaying=false; $('playPauseBtn').textContent='Play Music'; }
     }
-  }
 
-  document.getElementById('playPauseBtn').addEventListener('click', () => {
-    if (!audioPlayer) return;
-    if (isPlaying) {
-      audioPlayer.pauseVideo();
-    } else {
-      audioPlayer.playVideo();
-    }
-  });
+    $('playPauseBtn').addEventListener('click', ()=>{ if(!audioPlayer) return; isPlaying? audioPlayer.pauseVideo(): audioPlayer.playVideo(); });
+    $('prevBtn').addEventListener('click', ()=>{ if(audioPlayer&&audioPlayer.previousVideo) audioPlayer.previousVideo(); });
+    $('nextBtn').addEventListener('click', ()=>{ if(audioPlayer&&audioPlayer.nextVideo) audioPlayer.nextVideo(); });
+    $('loopBtn').addEventListener('click', ()=>{ isLooping=!isLooping; if(audioPlayer&&audioPlayer.setLoop) audioPlayer.setLoop(isLooping); $('loopBtn').textContent='Loop Music: '+(isLooping?'On':'Off'); });
 
-  document.getElementById('prevBtn').addEventListener('click', () => {
-    if (audioPlayer) audioPlayer.previousVideo();
-  });
+    $('fullscreenBtn').addEventListener('click', ()=>{ const c=$('backgroundVideoContainer'); if(c.requestFullscreen) c.requestFullscreen(); });
 
-  document.getElementById('nextBtn').addEventListener('click', () => {
-    if (audioPlayer) audioPlayer.nextVideo();
-  });
+    $('seekbar').addEventListener('input', ()=>{ if(audioPlayer&&audioPlayer.getDuration){ const d=audioPlayer.getDuration(); const t=($('seekbar').value/100)*d; audioPlayer.seekTo(t, true); } });
 
-  document.getElementById('fullscreenBtn').addEventListener('click', () => {
-    const iframe = document.querySelector('.backgroundVideo.primaryVideo');
-    if (!iframe) return;
-    if (iframe.requestFullscreen) iframe.requestFullscreen();
-    else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
-    else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
-  });
-
-  document.getElementById('seekbar').addEventListener('input', () => {
-    if (audioPlayer && audioPlayer.getDuration) {
-      const duration = audioPlayer.getDuration();
-      const seekTo = (document.getElementById('seekbar').value / 100) * duration;
-      audioPlayer.seekTo(seekTo, true);
-    }
-  });
-
-  function startUpdatingSeekbar() {
-    if (updateInterval) clearInterval(updateInterval);
-    updateInterval = setInterval(() => {
-      if (audioPlayer && audioPlayer.getCurrentTime && audioPlayer.getDuration) {
-        const currentTime = audioPlayer.getCurrentTime();
-        const duration = audioPlayer.getDuration();
-        if (duration > 0) {
-          document.getElementById('seekbar').value = (currentTime / duration) * 100;
-        }
-        if (audioPlayer.getVideoData().video_id !== currentVideoId) {
-          updateSongInfo();
-        }
-      }
-    }, 1000);
-  }
-
-  function updateSongInfo() {
-    const videoData = audioPlayer.getVideoData();
-    if (videoData && videoData.title) {
-      document.getElementById('songTitle').textContent = `Title: ${videoData.title}`;
-      currentVideoId = videoData.video_id;
-    }
-  }
-
-function applyVideoFilters() {
-  const filterValues = [
-    `blur(${document.getElementById('filterBlur').value}px)`,
-    `grayscale(${document.getElementById('filterGrayscale').value}%)`,
-    `brightness(${document.getElementById('filterBrightness').value}%)`,
-    `contrast(${document.getElementById('filterContrast').value}%)`,
-    `sepia(${document.getElementById('filterSepia').value}%)`,
-    `saturate(${document.getElementById('filterSaturate').value}%)`,
-    `invert(${document.getElementById('filterInvert').value}%)`,
-    `hue-rotate(${document.getElementById('filterHueRotate').value}deg)`
-  ].join(' ');
-
-  const videos = document.querySelectorAll('.backgroundVideo');
-  videos.forEach(v => {
-    v.style.filter = filterValues;
-    v.style.opacity = document.getElementById('overlayOpacity').value / 100;
-  });
-}
-
-  [
-    'filterBlur',
-    'filterGrayscale',
-    'filterBrightness',
-    'filterContrast',
-    'filterSepia',
-    'filterSaturate',
-    'filterInvert',
-    'filterHueRotate',
-    'overlayOpacity'
-  ].forEach(id => {
-    document.getElementById(id).addEventListener('input', applyVideoFilters);
-  });
-</script>
-
+    function startUpdatingSeekbar(){ if(updateInterval) clearInterval(updateInterval); updateInterval = setInterval(()=>{ if(audioPlayer&&audioPlayer.getCurrentTime&&audioPlayer.getDuration){ const ct=audioPlayer.getCurrentTime(); const d=audioPlayer.getDuration(); if(d>0){ $('seekbar').value=(ct/d)*100; } if(audioPlayer.getVideoData&&audioPlayer.getVideoData().video_id!==currentVideoId){ updateSongInfo(); } } }, 1000); }
+    function updateSongInfo(){ if(!audioPlayer||!audioPlayer.getVideoData) return; const vd=audioPlayer.getVideoData(); if(vd&&vd.title){ $('songTitle').textContent = `Title: ${vd.title}`; currentVideoId=vd.video_id; } }
+  </script>
+<p>© 2025 Sacrisoft – All rights reserved.</p>
 </body>
-<div id="videoFilterOverlay"></div>
 </html>
