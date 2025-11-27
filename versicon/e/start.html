@@ -25,17 +25,27 @@
 <body>
 <script>
 const url = "game.html";
-const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+// Improved mobile / iPad detection for iPadOS 13+ (which reports a Mac userAgent)
+const userAgent = navigator.userAgent || '';
+const isIpad = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || /iPad/.test(userAgent);
+const isMobileUA = /Mobi|Android|iPhone|iPod/.test(userAgent);
+const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+const isMobile = isMobileUA || isIpad || (isTouch && !/Macintosh/.test(userAgent));
 
 if (isMobile) {
-    // Mobile: show tap message
+    // Show a tappable message on touch devices (including modern iPads)
     const message = document.createElement('h1');
     message.textContent = "Tap Anywhere to Start";
     document.body.appendChild(message);
 
-    document.body.addEventListener('click', function() {
-        window.open(url, '_blank'); // open new tab on mobile
-    }, { once: true }); // only trigger once
+    // Use location.href (safer on iOS than window.open which may be blocked)
+    const start = function() {
+        window.location.href = url;
+    };
+
+    // Listen for both touchstart and click (touchstart may fire earlier on some devices)
+    document.body.addEventListener('touchstart', start, { once: true, passive: true });
+    document.body.addEventListener('click', start, { once: true, passive: true });
 } else {
     // Desktop: redirect immediately
     window.location.href = url;
