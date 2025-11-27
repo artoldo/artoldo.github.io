@@ -5,42 +5,47 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Start</title>
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #000;
-        color: #fff;
-        font-family: sans-serif;
-        text-align: center;
-        cursor: pointer;
-        user-select: none;
-    }
-    h1 {
-        font-size: 2em;
-    }
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    text-align: center;
+}
+a.start-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    font-size: 2em;
+    line-height: 100vh;
+}
 </style>
 </head>
 <body>
+
 <script>
 const url = "game.html";
-const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-if (isMobile) {
-    // Mobile: show tap message
-    const message = document.createElement('h1');
-    message.textContent = "Tap Anywhere to Start";
-    document.body.appendChild(message);
-
-    document.body.addEventListener('click', function() {
-        window.open(url, '_blank'); // open new tab on mobile
-    }, { once: true }); // only trigger once
+if (isTouchDevice) {
+    // Only show link on touch devices
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = "_blank";
+    a.className = "start-link";
+    a.textContent = "Tap Anywhere to Start";
+    document.body.appendChild(a);
 } else {
-    // Desktop: redirect immediately
+    // Desktop: redirect immediately in same tab
     window.location.href = url;
 }
 </script>
+
 </body>
 </html>
