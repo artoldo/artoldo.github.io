@@ -2,54 +2,50 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <title>Start</title>
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #000;
-        color: #fff;
-        font-family: sans-serif;
-        text-align: center;
-        cursor: pointer;
-        user-select: none;
-    }
-    h1 {
-        font-size: 2em;
-    }
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    text-align: center;
+}
+a.start-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    font-size: 3em;
+    line-height: 100vh;
+}
 </style>
 </head>
 <body>
+
 <script>
 const url = "game.html";
-// Improved mobile / iPad detection for iPadOS 13+ (which reports a Mac userAgent)
-const userAgent = navigator.userAgent || '';
-const isIpad = (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || /iPad/.test(userAgent);
-const isMobileUA = /Mobi|Android|iPhone|iPod/.test(userAgent);
-const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-const isMobile = isMobileUA || isIpad || (isTouch && !/Macintosh/.test(userAgent));
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-if (isMobile) {
-    // Show a tappable message on touch devices (including modern iPads)
-    const message = document.createElement('h1');
-    message.textContent = "Tap Anywhere to Start";
-    document.body.appendChild(message);
-
-    // Use location.href (safer on iOS than window.open which may be blocked)
-    const start = function() {
-        window.location.href = url;
-    };
-
-    // Listen for both touchstart and click (touchstart may fire earlier on some devices)
-    document.body.addEventListener('touchstart', start, { once: true, passive: true });
-    document.body.addEventListener('click', start, { once: true, passive: true });
+if (isTouchDevice) {
+    // Only show link on touch devices
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = "_blank";
+    a.className = "start-link";
+    a.textContent = "Tap Anywhere to Start";
+    document.body.appendChild(a);
 } else {
-    // Desktop: redirect immediately
+    // Desktop: redirect immediately in same tab
     window.location.href = url;
 }
 </script>
+
 </body>
 </html>
