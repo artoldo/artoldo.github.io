@@ -146,43 +146,51 @@ body, #container{position:relative;z-index:0;}
     const userInputSpan = document.getElementById('user-input');
     const inputLine = document.getElementById('input-line');
 
-    const ROOT_DIR = 'root';
-    let currentDirectory = ROOT_DIR;
-    const fileSystem = {
-        "root": { folders: ["signals", "decryption", "analysis", "archives", "transmissions"], files: [] },
-        "root/signals": { folders: [], files: ["extraterrestrial.log", "decoded-message.txt", "anomaly-report.txt", "signal-patterns.log"] },
-        "root/decryption": { folders: ["keys", "algorithms", "protocols"], files: ["cipher.zip", "decryption-manual.doc", "encoded-data.doc"] },
-        "root/decryption/algorithms": { folders: [], files: ["quantum-key.doc", "frequency-map.txt", "encryption-sequence.doc"] },
-        "root/analysis": { folders: ["spectral", "linguistics", "patterns"], files: ["analysis-map.doc", "frequency-settings.conf", "suspicious-signals.txt"] },
-        "root/archives": { folders: ["daily", "monthly"], files: ["emergency-backup.zip"] }
-    };
+const ROOT_DIR = 'root';
+let currentDirectory = ROOT_DIR;
 
-    const fileContents = {
-        "extraterrestrial.log": "Signal intercepted. Source coordinates: 42.7N, 73.5W. Signal type: Unknown modulation.",
-        "decoded-message.txt": "Partial translation: 'We come in peace. Await further contact.'",
-        "anomaly-report.txt": "Unusual energy spikes detected during signal reception. Possible interference.",
-        "signal-patterns.log": "Pattern sequences correlate with prime number intervals.",
-        "decryption-manual.doc": "Instructions for advanced alien cipher decryption techniques.",
-        "encoded-data.doc": "Encrypted data block. Requires quantum key for access.",
-        "cipher.zip": {
+const fileSystem = {
+    "root": { folders: ["signals", "decryption", "analysis", "archives", "transmissions"], files: [] },
+    "root/signals": { folders: [], files: ["extraterrestrial.log", "decoded-message.txt", "anomaly-report.txt", "signal-patterns.log"] },
+    "root/decryption": { folders: ["keys", "algorithms", "protocols"], files: ["cipher.zip", "decryption-manual.doc", "encoded-data.doc"] },
+    "root/decryption/algorithms": { folders: [], files: ["quantum-key.doc", "frequency-map.txt", "encryption-sequence.doc"] },
+    "root/decryption/keys": { folders: [], files: [] },
+    "root/decryption/protocols": { folders: [], files: [] },
+    "root/analysis": { folders: ["spectral", "linguistics", "patterns"], files: ["analysis-map.doc", "frequency-settings.conf", "suspicious-signals.txt"] },
+    "root/analysis/spectral": { folders: [], files: [] },
+    "root/analysis/linguistics": { folders: [], files: [] },
+    "root/analysis/patterns": { folders: [], files: [] },
+    "root/archives": { folders: ["daily", "monthly"], files: ["emergency-backup.zip"] },
+    "root/archives/daily": { folders: [], files: [] },
+    "root/archives/monthly": { folders: [], files: [] },
+    "root/transmissions": { folders: [], files: [] }
+};
+
+const fileContents = {
+    "extraterrestrial.log": "Signal intercepted. Source coordinates: 42.7N, 73.5W. Signal type: Unknown modulation.",
+    "decoded-message.txt": "Partial translation: 'We come in peace. Await further contact.'",
+    "anomaly-report.txt": "Unusual energy spikes detected during signal reception. Possible interference.",
+    "signal-patterns.log": "Pattern sequences correlate with prime number intervals.",
+    "decryption-manual.doc": "Instructions for advanced alien cipher decryption techniques.",
+    "encoded-data.doc": "Encrypted data block. Requires quantum key for access.",
+    "cipher.zip": {
         type: "executable",
         action: shutdownSequence,
         snippet: "Executable file detected. Running 'cipher.zip'...",
         fullContent: "Decryption process initiated. System lockdown triggered..."
     },
-        "quantum-key.doc": "Quantum encryption key: ZX9Q-47LM-3TNV-8YWP",
-        "frequency-map.txt": "Map of signal frequencies and their probable meanings.",
-        "encryption-sequence.doc": "Sequence for encoding outgoing transmissions.",
-        "analysis-map.doc": "Map showing signal strength and origin points.",
-        "frequency-settings.conf": "Configuration file for signal frequency adjustments.",
-        "suspicious-signals.txt": "List of signals flagged for irregular patterns.",
-        "emergency-backup.zip": "Compressed archive of intercepted data.",
-    };
+    "quantum-key.doc": "Quantum encryption key: ZX9Q-47LM-3TNV-8YWP",
+    "frequency-map.txt": "Map of signal frequencies and their probable meanings.",
+    "encryption-sequence.doc": "Sequence for encoding outgoing transmissions.",
+    "analysis-map.doc": "Map showing signal strength and origin points.",
+    "frequency-settings.conf": "Configuration file for signal frequency adjustments.",
+    "suspicious-signals.txt": "List of signals flagged for irregular patterns.",
+    "emergency-backup.zip": "Compressed archive of intercepted data."
+};
 
 function generateRandomFiles() {
-    // Adding random files to the specified directories
     const directories = [
-        'root/',
+        'root',
         'root/analysis/spectral',
         'root/analysis/linguistics',
         'root/analysis/patterns',
@@ -193,15 +201,14 @@ function generateRandomFiles() {
         'root/decryption/algorithms'
     ];
 
-    // Ensure that the nested directories exist in the file system
     directories.forEach(directory => {
-        // Create files in each directory
-        const numFiles = Math.floor(Math.random() * 3) + 1; // Random number of files (1-3)
+        if (!fileSystem[directory]) {
+            fileSystem[directory] = { folders: [], files: [] };
+        }
+
+        const numFiles = Math.floor(Math.random() * 3) + 1; // 1-3 files
         for (let i = 0; i < numFiles; i++) {
             const fileName = `signal-${Math.floor(Math.random() * 100)}.doc`;
-            if (!fileSystem[directory]) {
-                fileSystem[directory] = { folders: [], files: [] };
-            }
             fileSystem[directory].files.push(fileName);
             fileContents[fileName] = `Encrypted token: ${Math.random().toString(36).substring(2, 15)}`;
         }
@@ -209,8 +216,12 @@ function generateRandomFiles() {
 }
 
 function showDirectoryContents() {
-    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
-    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
+    const folders = fileSystem[currentDirectory].folders
+        .map(folder => `<span class="folder">${folder}</span>`)
+        .join("  ");
+    const files = fileSystem[currentDirectory].files
+        .map(file => `<span class="file">${file}</span>`)
+        .join("  ");
     
     output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
 }
