@@ -48,6 +48,9 @@
         .command-color3 { color: #D4AF37; }
         .folder { background-color: #D4AF37; color: #000; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
         .file { background-color: #000; color: #D4AF37; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+        .inactive {
+            pointer-events: none;
+        }
         .cursor {
             animation: blink 1s steps(2, start) infinite;
             color: #fff;
@@ -285,9 +288,56 @@ function generateRandomFiles() {
 }
 
 function showDirectoryContents() {
-    const spells = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
-    const grimoires = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
-    output(`\nSpells:\n${spells || "None"}\n\nGrimoires:\n${grimoires || "None"}`);
+    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+    let foldersHTML = dirData.folders
+        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+        .join("  ");
+    let filesHTML = dirData.files
+        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+        .join("  ");
+
+    // Add a back button if not in root (even if folder is empty)
+    if (currentDirectory !== ROOT_DIR) {
+        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
+            (foldersHTML ? "  " + foldersHTML : "");
+    }
+
+    // Mark all previous directory and file blocks as inactive
+    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+    oldDirBlocks.forEach(block => block.classList.add('inactive'));
+    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+
+    // Create a new directory block
+    const dirBlock = document.createElement('div');
+    dirBlock.className = 'dir-block';
+    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+    outputDiv.appendChild(dirBlock);
+    scrollTerminal();
+
+    // Attach click handlers only to current block
+    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+    clickableItems.forEach(item => {
+        item.style.cursor = "pointer";
+        item.addEventListener('click', () => {
+            const type = item.getAttribute('data-type');
+            const name = item.getAttribute('data-name');
+
+            if (type === "folder") {
+                currentDirectory = `${currentDirectory}/${name}`;
+                output(`> You entered ${currentDirectory}`);
+                showDirectoryContents();
+            } else if (type === "file") {
+                output(`> Opening file ${name}...`);
+                openFile(name);
+            } else if (type === "back") {
+                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                output(`> You are now in ${currentDirectory}`);
+                showDirectoryContents();
+            }
+        });
+    });
 }
 
 function output(text) {
@@ -351,17 +401,38 @@ function shutdownSequence() {
 
 function openFile(filename) {
     const fileData = fileContents[filename];
-    if (fileData) {
-        if (fileData.type === "executable" && typeof fileData.action === "function") {
-            output(fileData.snippet); // Show a snippet that ritual is starting
-            fileData.action(); // Execute the ritual sequence
-        } else {
-            if (fileContents[filename]) {
-            output(fileContents[filename]);
-            } 
-        }
+    if (!fileData) {
+        output("<span class='command-color1'>File not found.</span>");
+        return;
+    }
+
+    if (fileData.type === "executable" && typeof fileData.action === "function") {
+        output(fileData.snippet); // Show snippet
+        fileData.action(); // Execute shutdown sequence
     } else {
-        output("<span class='command-color1'>Grimoire not found.</span>");
+        output(fileContents[filename]);
+
+        // Mark all previous file blocks as inactive
+        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+        oldFileBlocks.forEach(block => block.classList.add('inactive'));
+
+        // Also mark previous directory blocks inactive to avoid back button conflicts
+        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+        oldDirBlocks.forEach(block => block.classList.add('inactive'));
+
+        // Create new file block
+        const fileBlock = document.createElement('div');
+        fileBlock.className = 'file-block';
+        fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back</span>`;
+        outputDiv.appendChild(fileBlock);
+        scrollTerminal();
+
+        // Only attach click handler to current back button
+        const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+        backButton.style.cursor = 'pointer';
+        backButton.addEventListener('click', () => {
+            showDirectoryContents();
+        });
     }
 }
 
