@@ -63,6 +63,10 @@
             user-select: none;
         }
 
+.inactive {
+    pointer-events: none;
+}
+
     </style>
 
 <!-- Background Animation Start -->
@@ -209,10 +213,55 @@ function generateRandomFiles() {
 }
 
 function showDirectoryContents() {
-    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
-    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
-    
-    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+    let foldersHTML = dirData.folders
+        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+        .join("  ");
+    let filesHTML = dirData.files
+        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+        .join("  ");
+
+    if (currentDirectory !== ROOT_DIR) {
+        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
+            (foldersHTML ? "  " + foldersHTML : "");
+    }
+
+    // Deactivate previous directory and file blocks
+    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+    oldDirBlocks.forEach(block => block.classList.add('inactive'));
+    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+
+    // Create new directory block
+    const dirBlock = document.createElement('div');
+    dirBlock.className = 'dir-block';
+    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+    outputDiv.appendChild(dirBlock);
+    scrollTerminal();
+
+    // Attach click handlers only to current block
+    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+    clickableItems.forEach(item => {
+        item.style.cursor = "pointer";
+        item.addEventListener('click', () => {
+            const type = item.getAttribute('data-type');
+            const name = item.getAttribute('data-name');
+
+            if (type === "folder") {
+                currentDirectory = `${currentDirectory}/${name}`;
+                output(`> You entered ${currentDirectory}`);
+                showDirectoryContents();
+            } else if (type === "file") {
+                output(`> Opening file ${name}...`);
+                openFile(name);
+            } else if (type === "back") {
+                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                output(`> You are now in ${currentDirectory}`);
+                showDirectoryContents();
+            }
+        });
+    });
 }
 
 // OUTPUT - END OF LEVEL
@@ -246,20 +295,38 @@ function shutdownSequence() {
 
 function openFile(filename) {
     const fileData = fileContents[filename];
-    if (fileData) {
-        if (fileData.type === "executable" && typeof fileData.action === "function") {
-            output(fileData.snippet); // Show a snippet that shutdown is starting
-            fileData.action(); // Execute the shutdown sequence
-        } else {
-            if (fileContents[filename]) {
-            output(fileContents[filename]);
-            } 
-        }
-    } else {
+    if (!fileData) {
         output("<span class='command-color1'>File not found.</span>");
+        return;
+    }
+
+    if (fileData.type === "executable" && typeof fileData.action === "function") {
+        output(fileData.snippet);
+        fileData.action();
+    } else {
+        output(fileContents[filename]);
+
+        // Deactivate previous file and directory blocks
+        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+        oldFileBlocks.forEach(block => block.classList.add('inactive'));
+        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+        oldDirBlocks.forEach(block => block.classList.add('inactive'));
+
+        // Create new file block with back button
+        const fileBlock = document.createElement('div');
+        fileBlock.className = 'file-block';
+        fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
+        outputDiv.appendChild(fileBlock);
+        scrollTerminal();
+
+        // Attach click handler to current back button
+        const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+        backButton.style.cursor = 'pointer';
+        backButton.addEventListener('click', () => {
+            showDirectoryContents();
+        });
     }
 }
-
     function scrollTerminal() {
         const terminal = document.getElementById("terminal");
         requestAnimationFrame(() => {
@@ -333,8 +400,8 @@ function processCommand(command) {
     }
 
     typingAnimation("Anonymous is watching. Threads twist, screenshots leak, and outrage multiplies. Dig through the boards — see who rises, who falls, who disappears...", () => {
-        output("Type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to open it.");
-        output("Type <u>back</u> to return to the previous directory.");
+        output("Click or type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to open it.");
+        output("Click or type <u>back</u> to return to the previous directory.");
         generateRandomFiles();
         showDirectoryContents();
     });

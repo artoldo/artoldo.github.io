@@ -100,6 +100,10 @@
     user-select: none;
 }
 
+.inactive {
+    pointer-events: none;
+}
+
     </style>
 
 <!-- Polaroid Floating Background Start -->
@@ -274,11 +278,58 @@ function output(text){
     scrollTerminal();
 }
 
-function showDirectoryContents(){
-    const folders = fileSystem[currentDirectory].folders.map(f=>`<span class="folder">${f}</span>`).join("  ");
-    const files = fileSystem[currentDirectory].files.map(f=>`<span class="file">${f}</span>`).join("  ");
-    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
+function showDirectoryContents() {
+    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+    let foldersHTML = dirData.folders
+        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+        .join("  ");
+    let filesHTML = dirData.files
+        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+        .join("  ");
+
+    if (currentDirectory !== ROOT_DIR) {
+        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
+            (foldersHTML ? "  " + foldersHTML : "");
+    }
+
+    // Deactivate previous directory and file blocks
+    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+    oldDirBlocks.forEach(block => block.classList.add('inactive'));
+    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+
+    // Create new directory block
+    const dirBlock = document.createElement('div');
+    dirBlock.className = 'dir-block';
+    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+    outputDiv.appendChild(dirBlock);
+    scrollTerminal();
+
+    // Attach click handlers only to current block
+    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+    clickableItems.forEach(item => {
+        item.style.cursor = "pointer";
+        item.addEventListener('click', () => {
+            const type = item.getAttribute('data-type');
+            const name = item.getAttribute('data-name');
+
+            if (type === "folder") {
+                currentDirectory = `${currentDirectory}/${name}`;
+                output(`> You entered ${currentDirectory}`);
+                showDirectoryContents();
+            } else if (type === "file") {
+                output(`> Opening file ${name}...`);
+                openFile(name);
+            } else if (type === "back") {
+                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                output(`> You are now in ${currentDirectory}`);
+                showDirectoryContents();
+            }
+        });
+    });
 }
+
 
 function revealPolaroids() {
     output(">>> Revealing vintage Milano Photo Dia Reels...");
@@ -288,8 +339,7 @@ function revealPolaroids() {
         terminal.innerHTML = 
             "<div style='color: #D4AF37; font-size: 2em; text-align: center;'><br><br>Prampolini-Menarini Express</div>" +
             "<p style='color: #D4AF37; font-size: 1em; text-align: left; margin-top: 10px;'>" +
-
-            "Come visualizzare, offrendo e prendendone visione, vite disperse in oggetti ritrovati per caso in una casa, da altri, noi, presa e da alcuni, loro, data in affitto.<br><br>" +
+"Come visualizzare, offrendo e prendendone visione, vite disperse in oggetti ritrovati per caso in una casa, da altri, noi, presa e da alcuni, loro, data in affitto.<br><br>" +
 
             "Quella era in questo caso un appartamento a Milano, ammobiliato con tanto di oggetti di casa, tanti, tutti appartenenti ad un altoatesino, all’epoca sarà per poco ancora vivente e ad una bolognese, già trapassata e in quegli stessi oggetti oggettivati di nuovo assieme, redivivi.<br><br>" +
 
@@ -338,12 +388,39 @@ function revealPolaroids() {
 }
 
 // Open a file
-function openFile(filename){
+function openFile(filename) {
     const fileData = fileContents[filename];
-    if(fileData){
-        if(fileData.type==="executable") { output(fileData.snippet); fileData.action(); }
-        else { output(fileData); }
-    } else { output("<span class='command-color1'>File not found.</span>"); }
+    if (!fileData) {
+        output("<span class='command-color1'>File not found.</span>");
+        return;
+    }
+
+    if (fileData.type === "executable" && typeof fileData.action === "function") {
+        output(fileData.snippet);
+        fileData.action();
+    } else {
+        output(fileContents[filename]);
+
+        // Deactivate previous file and directory blocks
+        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+        oldFileBlocks.forEach(block => block.classList.add('inactive'));
+        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+        oldDirBlocks.forEach(block => block.classList.add('inactive'));
+
+        // Create new file block with back button
+        const fileBlock = document.createElement('div');
+        fileBlock.className = 'file-block';
+        fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
+        outputDiv.appendChild(fileBlock);
+        scrollTerminal();
+
+        // Attach click handler to current back button
+        const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+        backButton.style.cursor = 'pointer';
+        backButton.addEventListener('click', () => {
+            showDirectoryContents();
+        });
+    }
 }
 
 // Command processor
@@ -391,7 +468,7 @@ function typingAnimation(text, callback){
 }
 
 typingAnimation("Exploring vintage 1950/60s Milano diaries, sketches, letters, and Polaroids... uncover secret loves, fashion ideas, and hidden moments.", ()=>{
-    output("Type a <u>folder</u> or <u>file</u> to explore. Type <u>back</u> to go up a directory.");
+    output("Click or type a <u>folder</u> or <u>file</u> to explore. Click or type <u>back</u> to go up a directory.");
     showDirectoryContents();
 });
 

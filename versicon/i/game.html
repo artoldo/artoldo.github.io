@@ -5,6 +5,7 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Il Falegname Di Ottobrunn</title>
+
     <style>
         body {
             background-color: #000;
@@ -32,31 +33,40 @@
             color: #eee;
         }
 
-        #terminal:focus {
-            outline: none;
-        }
+        #terminal:focus { outline: none; }
 
         #output {
             white-space: pre-wrap;
             margin-bottom: 10px;
             color: #eee;
         }
-        #input-line {
-            display: inline;
-            color: #b22222;
-        }
+        #input-line { display: inline; color: #b22222; }
         .command-color1 { color: #b22222; }
         .command-color2 { color: #aaa; }
         .command-color3 { color: #eee; }
-        .folder { background-color: #b22222; color: #fff; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
-        .file { background-color: #100000; color: #b22222; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+
+        .folder {
+            background-color: #b22222;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+        .file {
+            background-color: #100000;
+            color: #b22222;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
         .cursor {
             animation: blink 1s steps(2, start) infinite;
             color: #eee;
         }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
 
         * {
             -webkit-user-select: none;
@@ -69,17 +79,33 @@
         @media (max-width: 700px) {
             #terminal { padding: 14px; }
         }
+
+        /* CSS for scrollback-safe terminal */
+        .inactive { pointer-events: none; }
+
+        /* File-view back button: left aligned, minimal spacing/padding */
+        .file-back-wrap{
+            margin-top: 8px;
+            padding: 0;
+            text-align: left;
+        }
+       
+        .page-break {
+         height: 16px; /* adjust spacing here */
+        }
+
     </style>
 
     <!-- Background Animation Start -->
     <style>
-    html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
-    #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-    #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;pointer-events:none;}
-    body, #container{position:relative;z-index:0;}
+        html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+        #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+        #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;pointer-events:none;}
+        body, #container{position:relative;z-index:0;}
     </style>
     <!-- Background Animation End -->
 </head>
+
 <body>
 <div id="bgCanvas"><canvas id="ashCanvas"></canvas></div>
 
@@ -162,43 +188,44 @@
 // ---- End Ash Animation ----
 
 // ---- Terminal and File System Logic ----
-let currentDirectory = "root";
+const ROOT_DIR = "root";
+let currentDirectory = ROOT_DIR;
+
 const fileSystem = {
-        "root": { folders: ["archives","records","reports","chronicles","testimonies","provinces"], files: [] },
-        "root/archives": { folders: ["daily","monthly"], files: ["central-catalog.txt"] },
-        "root/records": { folders: ["orders","military","civilians"], files: ["registration-index.txt","missing-persons.txt"] },
-        "root/records/orders": { folders: [], files: ["military-orders.txt","occupation-log.txt"] },
-        "root/reports": { folders: ["investigations","eyewitness"], files: ["summary-report.txt"] },
-        "root/reports/eyewitness": { folders: [], files: ["eyewitness-account-1.txt","eyewitness-account-2.txt"] },
-        "root/chronicles": { folders: ["towns","massacres"], files: ["chronicle-index.txt","secret-diary.txt","memorial-sequence.txt"] },
-        "root/testimonies": { folders: [], files: ["audio-transcripts.zip"] },
-        "root/provinces": { folders: [], files: [
-            "Agrigento.txt","Alessandria.txt","Ancona.txt","Aosta.txt","Arezzo.txt","Ascoli Piceno.txt","Asti.txt","Avellino.txt","Bari.txt","Barletta-Andria-Trani.txt",
-            "Belluno.txt","Benevento.txt","Bergamo.txt","Biella.txt","Bologna.txt","Bolzano.txt","Brescia.txt","Brindisi.txt","Cagliari.txt","Caltanissetta.txt",
-            "Campobasso.txt","Caserta.txt","Catania.txt","Catanzaro.txt","Chieti.txt","Como.txt","Cosenza.txt","Cremona.txt","Crotone.txt","Cuneo.txt",
-            "Enna.txt","Fermo.txt","Ferrara.txt","Firenze.txt","Foggia.txt","Forlì-Cesena.txt","Frosinone.txt","Genova.txt","Gorizia.txt","Grosseto.txt",
-            "Imperia.txt","Isernia.txt","La Spezia.txt","L'Aquila.txt","Latina.txt","Lecce.txt","Lecco.txt","Livorno.txt","Lodi.txt","Lucca.txt",
-            "Macerata.txt","Mantova.txt","Massa-Carrara.txt","Matera.txt","Messina.txt","Milano.txt","Modena.txt","Monza e della Brianza.txt","Napoli.txt","Novara.txt",
-            "Nuoro.txt","Oristano.txt","Padova.txt","Palermo.txt","Parma.txt","Pavia.txt","Perugia.txt","Pesaro e Urbino.txt","Pescara.txt","Piacenza.txt",
-            "Pisa.txt","Pistoia.txt","Pordenone.txt","Potenza.txt","Prato.txt","Ragusa.txt","Ravenna.txt","Reggio Calabria.txt","Reggio Emilia.txt","Rieti.txt",
-            "Rimini.txt","Roma.txt","Rovigo.txt","Salerno.txt","Sassari.txt","Savona.txt","Siena.txt","Siracusa.txt","Sondrio.txt","Taranto.txt",
-            "Teramo.txt","Terni.txt","Torino.txt","Trapani.txt","Trento.txt","Treviso.txt","Trieste.txt","Udine.txt","Varese.txt","Venezia.txt",
-            "Verbano-Cusio-Ossola.txt","Vercelli.txt","Verona.txt","Vibo Valentia.txt","Vicenza.txt","Viterbo.txt"
-        ] }
-    };
+    "root": { folders: ["archives","records","reports","chronicles","testimonies","provinces"], files: [] },
+    "root/archives": { folders: ["daily","monthly"], files: ["central-catalog.txt"] },
+    "root/records": { folders: ["orders","military","civilians"], files: ["registration-index.txt","missing-persons.txt"] },
+    "root/records/orders": { folders: [], files: ["military-orders.txt","occupation-log.txt"] },
+    "root/reports": { folders: ["investigations","eyewitness"], files: ["summary-report.txt"] },
+    "root/reports/eyewitness": { folders: [], files: ["eyewitness-account-1.txt","eyewitness-account-2.txt"] },
+    "root/chronicles": { folders: ["towns","massacres"], files: ["chronicle-index.txt","secret-diary.txt","memorial-sequence.txt"] },
+    "root/testimonies": { folders: [], files: ["audio-transcripts.zip"] },
+    "root/provinces": { folders: [], files: [
+        "Agrigento.txt","Alessandria.txt","Ancona.txt","Aosta.txt","Arezzo.txt","Ascoli Piceno.txt","Asti.txt","Avellino.txt","Bari.txt","Barletta-Andria-Trani.txt",
+        "Belluno.txt","Benevento.txt","Bergamo.txt","Biella.txt","Bologna.txt","Bolzano.txt","Brescia.txt","Brindisi.txt","Cagliari.txt","Caltanissetta.txt",
+        "Campobasso.txt","Caserta.txt","Catania.txt","Catanzaro.txt","Chieti.txt","Como.txt","Cosenza.txt","Cremona.txt","Crotone.txt","Cuneo.txt",
+        "Enna.txt","Fermo.txt","Ferrara.txt","Firenze.txt","Foggia.txt","Forlì-Cesena.txt","Frosinone.txt","Genova.txt","Gorizia.txt","Grosseto.txt",
+        "Imperia.txt","Isernia.txt","La Spezia.txt","L'Aquila.txt","Latina.txt","Lecce.txt","Lecco.txt","Livorno.txt","Lodi.txt","Lucca.txt",
+        "Macerata.txt","Mantova.txt","Massa-Carrara.txt","Matera.txt","Messina.txt","Milano.txt","Modena.txt","Monza e della Brianza.txt","Napoli.txt","Novara.txt",
+        "Nuoro.txt","Oristano.txt","Padova.txt","Palermo.txt","Parma.txt","Pavia.txt","Perugia.txt","Pesaro e Urbino.txt","Pescara.txt","Piacenza.txt",
+        "Pisa.txt","Pistoia.txt","Pordenone.txt","Potenza.txt","Prato.txt","Ragusa.txt","Ravenna.txt","Reggio Calabria.txt","Reggio Emilia.txt","Rieti.txt",
+        "Rimini.txt","Roma.txt","Rovigo.txt","Salerno.txt","Sassari.txt","Savona.txt","Siena.txt","Siracusa.txt","Sondrio.txt","Taranto.txt",
+        "Teramo.txt","Terni.txt","Torino.txt","Trapani.txt","Trento.txt","Treviso.txt","Trieste.txt","Udine.txt","Varese.txt","Venezia.txt",
+        "Verbano-Cusio-Ossola.txt","Vercelli.txt","Verona.txt","Vibo Valentia.txt","Vicenza.txt","Viterbo.txt"
+    ] }
+};
 
 const fileContents = {
-        "war-diary.txt": "War diary excerpt: 1943-1945. Multiple entries describing occupation and reprisals.",
-        "eyewitness-account.txt": "Eyewitness account: civilians describe round-ups, executions, and reprisals.",
-        "military-orders.txt": "Military orders: directives issued by occupying forces. (redacted)",
-        "repression-report.txt": "Report on reprisals and summary executions in occupied provinces.",
-        "central-catalog.txt": "Central catalog: index of provincial reports and memorial plaques.",
-        "registration-index.txt": "Registry: documented incidents and dates as recorded by local authorities.",
-        "missing-persons.txt": "Missing persons list compiled from civilian reports during 1943-1945.",
-        "military-orders.txt": "Captured orders and notes from occupying units (partial).",
-        "occupation-log.txt": "Occupation log: troop movements, curfews, and local decrees.",
-        "summary-report.txt": "Summary report: overview of reprisals and judicial follow-ups where available.",
-        "chronicle-index.txt": 
+    "war-diary.txt": "War diary excerpt: 1943-1945. Multiple entries describing occupation and reprisals.",
+    "eyewitness-account.txt": "Eyewitness account: civilians describe round-ups, executions, and reprisals.",
+    "military-orders.txt": "Military orders: directives issued by occupying forces. (redacted)",
+    "repression-report.txt": "Report on reprisals and summary executions in occupied provinces.",
+    "central-catalog.txt": "Central catalog: index of provincial reports and memorial plaques.",
+    "registration-index.txt": "Registry: documented incidents and dates as recorded by local authorities.",
+    "missing-persons.txt": "Missing persons list compiled from civilian reports during 1943-1945.",
+    "occupation-log.txt": "Occupation log: troop movements, curfews, and local decrees.",
+    "summary-report.txt": "Summary report: overview of reprisals and judicial follow-ups where available.",
+    "chronicle-index.txt":
 `<br>
 S - Study the archives carefully.
 E - Examine each province report.
@@ -212,124 +239,124 @@ A - Access the root directory once ready.
 R - Read the file that holds the memorial.
 Y - Yield to the history and remember.
 `,
-        "audio-transcripts.zip": "Compressed transcripts of recorded testimonies.",
-        "secret-diary.txt": "Open 'memorial-sequence.txt' in the chronicles folder.",
-        "memorial-sequence.txt": {
-            type: "executable",
-            action: shutdownSequence,
-            snippet: "Executable file detected. Running 'memorial-sequence.txt' (final memorial sequence)...",
-            fullContent: "Declassification / memorial sequence initiated..."
-        }
-    };
+    "audio-transcripts.zip": "Compressed transcripts of recorded testimonies.",
+    "secret-diary.txt": "Open 'memorial-sequence.txt' in the chronicles folder.",
+    "memorial-sequence.txt": {
+        type: "executable",
+        action: shutdownSequence,
+        snippet: "Executable file detected. Running 'memorial-sequence.txt' (final memorial sequence)...",
+        fullContent: "Declassification / memorial sequence initiated..."
+    }
+};
 
 const provincesData = {
-        "Agrigento.txt": "Province: Agrigento\n12 July 1943\n[6 victims in 1 episode]",
-        "Alessandria.txt": "Province: Alessandria\n9 September 1943 - 26 April 1945\n[336 victims in 93 episodes]",
-        "Ancona.txt": "Province: Ancona\n6 February 1944 - 8 August 1944\n[163 victims in 59 episodes]",
-        "Aosta.txt": "Province: Aosta\n28 April 1944 - 31 March 1945\n[142 victims in 31 episodes]",
-        "Arezzo.txt": "Province: Arezzo\n8 March 1944 - 18 December 1944\n[1178 victims in 211 episodes]",
-        "Ascoli Piceno.txt": "Province: Ascoli Piceno\n28 November 1943 - 18 June 1944\n[81 victims in 26 episodes]",
-        "Asti.txt": "Province: Asti\n7 January 1944 - 24 April 1945\n[80 victims in 50 episodes]",
-        "Avellino.txt": "Province: Avellino\n10 September 1943 - 30 September 1943\n[18 victims in 12 episodes]",
-        "Bari.txt": "Province: Bari\n9 September 1943 - 19 October 1943\n[20 victims in 10 episodes]",
-        "Barletta-Andria-Trani.txt": "Province: Barletta-Andria-Trani\n10 September 1943 - 16 September 1943\n[58 victims in 5 episodes]",
-        "Belluno.txt": "Province: Belluno\n31 October 1943 - 4 May 1945\n[373 victims in 151 episodes]",
-        "Benevento.txt": "Province: Benevento\n21 September 1943 - 27 October 1943\n[30 victims in 17 episodes]",
-        "Bergamo.txt": "Province: Bergamo\n7 December 1943 - 28 April 1945\n[201 victims in 44 episodes]",
-        "Biella.txt": "Province: Biella\n12 December 1943 - 1 May 1945\n[186 victims in 43 episodes]",
-        "Bologna.txt": "Province: Bologna\n10 September 1943 - 21 April 1945\n[1977 victims in 297 episodes]",
-        "Bolzano.txt": "Province: Bolzano\n9 September 1943 - 4 May 1945\n[104 victims in 12 episodes]",
-        "Brescia.txt": "Province: Brescia\n13 November 1943 - 27 April 1945\n[115 victims in 48 episodes]",
-        "Brindisi.txt": "Province: Brindisi\n(see archival records)\n[--]",
-        "Cagliari.txt": "Province: Cagliari\n(see archival records)\n[--]",
-        "Caltanissetta.txt": "Province: Caltanissetta\n(see archival records)\n[--]",
-        "Campobasso.txt": "Province: Campobasso\n30 September 1943 - 21 October 1943\n[11 victims in 8 episodes]",
-        "Caserta.txt": "Province: Caserta\n9 September 1943 - 22 December 1943\n[755 victims in 278 episodes]",
-        "Catania.txt": "Province: Catania\n17 July 1943 - 12 August 1943\n[38 victims in 9 episodes]",
-        "Catanzaro.txt": "Province: Catanzaro\n(see archival records)\n[--]",
-        "Chieti.txt": "Province: Chieti\n14 September 1943 - 5 June 1944\n[389 victims in 162 episodes]",
-        "Como.txt": "Province: Como\n23 December 1943 - 24 April 1945\n[32 victims in 13 episodes]",
-        "Cosenza.txt": "Province: Cosenza\n9 September 1943\n[1 victim in 1 episode]",
-        "Cremona.txt": "Province: Cremona\n9 September 1943 - 28 April 1945\n[110 victims in 41 episodes]",
-        "Crotone.txt": "Province: Crotone\n(see archival records)\n[--]",
-        "Cuneo.txt": "Province: Cuneo\n11 September 1943 - 29 April 1945\n[864 victims in 165 episodes]",
-        "Enna.txt": "Province: Enna\n(see archival records)\n[--]",
-        "Fermo.txt": "Province: Fermo\n2 October 1943 - 20 June 1944\n[31 victims in 18 episodes]",
-        "Ferrara.txt": "Province: Ferrara\n15 November 1943 - 22 April 1945\n[77 victims in 25 episodes]",
-        "Firenze.txt": "Province: Firenze\n2 December 1943 - 6 September 1944\n[591 victims in 130 episodes]",
-        "Foggia.txt": "Province: Foggia\n9 September 1943 - 20 October 1943\n[51 victims in 13 episodes]",
-        "Forlì-Cesena.txt": "Province: Forlì-Cesena\n25 September 1943 - 23 November 1944\n[396 victims in 107 episodes]",
-        "Frosinone.txt": "Province: Frosinone\n24 February 1944 - 4 June 1944\n[154 victims in 43 episodes]",
-        "Genova.txt": "Province: Genova\n14 January 1944 - 24 April 1945\n[224 victims in 28 episodes]",
-        "Gorizia.txt": "Province: Gorizia\n15 September 1943 - 8 April 1945\n[33 victims in 13 episodes]",
-        "Grosseto.txt": "Province: Grosseto\n25 October 1943 - 28 June 1944\n[134 victims in 75 episodes]",
-        "Imperia.txt": "Province: Imperia\n1 July 1944 - 8 April 1945\n[323 victims in 51 episodes]",
-        "Isernia.txt": "Province: Isernia\n3 October 1943 - 18 December 1943\n[38 victims in 16 episodes]",
-        "La Spezia.txt": "Province: La Spezia\n10 September 1943 - 20 April 1945\n[159 victims in 50 episodes]",
-        "L'Aquila.txt": "Province: L'Aquila\n12 September 1943 - 12 June 1944\n[371 victims in 137 episodes]",
-        "Latina.txt": "Province: Latina\n9 September 1943 - 26 May 1944\n[42 victims in 25 episodes]",
-        "Lecce.txt": "Province: Lecce\n(see archival records)\n[--]",
-        "Lecco.txt": "Province: Lecco\n16 October 1943 - 8 January 1945\n[38 victims in 7 episodes]",
-        "Livorno.txt": "Province: Livorno\n17 September 1943 - 22 July 1944\n[57 victims in 17 episodes]",
-        "Lodi.txt": "Province: Lodi\n7 January 1944 - 27 April 1945\n[73 victims in 25 episodes]",
-        "Lucca.txt": "Province: Lucca\n10 September 1943 - 25 March 1945\n[730 victims in 74 episodes]",
-        "Macerata.txt": "Province: Macerata\n1 October 1943 - 17 July 1944\n[282 victims in 97 episodes]",
-        "Mantova.txt": "Province: Mantova\n9 September 1943 - 29 April 1945\n[51 victims in 18 episodes]",
-        "Massa-Carrara.txt": "Province: Massa-Carrara\n8 March 1944 - 23 April 1945\n[931 victims in 72 episodes]",
-        "Matera.txt": "Province: Matera\n21 September 1943\n[26 victims in 1 episode]",
-        "Messina.txt": "Province: Messina\n1 August 1943 - 15 August 1943\n[14 victims in 6 episodes]",
-        "Milano.txt": "Province: Milano\n12 September 1943 - 26 April 1945\n[249 victims in 123 episodes]",
-        "Modena.txt": "Province: Modena\n9 September 1943 - 23 April 1945\n[799 victims in 191 episodes]",
-        "Monza e della Brianza.txt": "Province: Monza e della Brianza\n29 September 1943 - 26 April 1945\n[41 victims in 22 episodes]",
-        "Napoli.txt": "Province: Napoli\n9 September 1943 - 9 October 1943\n[570 victims in 172 episodes]",
-        "Novara.txt": "Province: Novara\n15 September 1943 - 27 April 1945\n[164 victims in 47 episodes]",
-        "Nuoro.txt": "Province: Nuoro\n(see archival records)\n[--]",
-        "Oristano.txt": "Province: Oristano\n(see archival records)\n[--]",
-        "Padova.txt": "Province: Padova\n20 February 1944 - 29 April 1945\n[513 victims in 129 episodes]",
-        "Palermo.txt": "Province: Palermo\n(see archival records)\n[--]",
-        "Parma.txt": "Province: Parma\n1 January 1944 - 27 April 1945\n[412 victims in 117 episodes]",
-        "Pavia.txt": "Province: Pavia\n9 September 1943 - 8 May 1945\n[235 victims in 125 episodes]",
-        "Perugia.txt": "Province: Perugia\n31 October 1943 - 18 August 1944\n[410 victims in 149 episodes]",
-        "Pesaro e Urbino.txt": "Province: Pesaro e Urbino\n23 September 1943 - 21 September 1944\n[132 victims in 64 episodes]",
-        "Pescara.txt": "Province: Pescara\n15 September 1943 - 11 June 1944\n[65 victims in 32 episodes]",
-        "Piacenza.txt": "Province: Piacenza\n28 October 1943 - 21 March 1945\n[85 victims in 18 episodes]",
-        "Pisa.txt": "Province: Pisa\n25 March 1944 - 2 September 1944\n[380 victims in 54 episodes]",
-        "Pistoia.txt": "Province: Pistoia\n12 September 1943 - 9 October 1944\n[235 victims in 77 episodes]",
-        "Pordenone.txt": "Province: Pordenone\n14 April 1944 - 1 May 1945\n[156 victims in 69 episodes]",
-        "Potenza.txt": "Province: Potenza\n9 September 1943 - 24 September 1943\n[26 victims in 7 episodes]",
-        "Prato.txt": "Province: Prato\n1 June 1944 - 26 September 1944\n[47 victims in 9 episodes]",
-        "Ragusa.txt": "Province: Ragusa\n(see archival records)\n[--]",
-        "Ravenna.txt": "Province: Ravenna\n24 October 1943 - 10 April 1945\n[472 victims in 119 episodes]",
-        "Reggio Calabria.txt": "Province: Reggio Calabria\n12 August 1943 - 6 September 1943\n[19 victims in 3 episodes]",
-        "Reggio Emilia.txt": "Province: Reggio Emilia\n28 December 1943 - 23 April 1945\n[439 victims in 69 episodes]",
-        "Rieti.txt": "Province: Rieti\n27 September 1943 - 14 June 1944\n[213 victims in 47 episodes]",
-        "Rimini.txt": "Province: Rimini\n10 October 1943 - 26 September 1944\n[121 victims in 52 episodes]",
-        "Roma.txt": "Province: Roma\n8 September 1943 - 14 June 1944\n[721 victims in 105 episodes]",
-        "Rovigo.txt": "Province: Rovigo\n26 May 1944 - 26 April 1945\n[101 victims in 28 episodes]",
-        "Salerno.txt": "Province: Salerno\n8 September 1943 - 2 October 1943\n[36 victims in 22 episodes]",
-        "Sassari.txt": "Province: Sassari\n(see archival records)\n[--]",
-        "Savona.txt": "Province: Savona\n11 September 1943 - 24 April 1945\n[200 victims in 53 episodes]",
-        "Siena.txt": "Province: Siena\n15 January 1944 - 17 July 1944\n[186 victims in 102 episodes]",
-        "Siracusa.txt": "Province: Siracusa\nJuly 1943\n[2 victims in 1 episode]",
-        "Sondrio.txt": "Province: Sondrio\n19 March 1944 - 27 April 1945\n[69 victims in 36 episodes]",
-        "Taranto.txt": "Province: Taranto\n19 September 1943\n[1 victim in 1 episode]",
-        "Teramo.txt": "Province: Teramo\n25 September 1943 - 17 June 1944\n[78 victims in 28 episodes]",
-        "Terni.txt": "Province: Terni\n12 September 1943 - 18 June 1944\n[67 victims in 32 episodes]",
-        "Torino.txt": "Province: Torino\n10 September 1943 - 1 May 1945\n[945 victims in 163 episodes]",
-        "Trapani.txt": "Province: Trapani\n(see archival records)\n[--]",
-        "Trento.txt": "Province: Trento\n9 September 1943 - 6 May 1945\n[157 victims in 56 episodes]",
-        "Treviso.txt": "Province: Treviso\n12 April 1944 - 1 May 1945\n[254 victims in 86 episodes]",
-        "Trieste.txt": "Province: Trieste\n7 March 1944 - 28 April 1945\n[730 victims in 74 episodes]",
-        "Udine.txt": "Province: Udine\n2 October 1943 - 5 May 1945\n[726 victims in 154 episodes]",
-        "Varese.txt": "Province: Varese\n9 January 1944 - 19 March 1945\n[22 victims in 10 episodes]",
-        "Venezia.txt": "Province: Venezia\n25 February 1944 - 28 April 1945\n[120 victims in 48 episodes]",
-        "Verbano-Cusio-Ossola.txt": "Province: Verbano-Cusio-Ossola\n15 September 1943 - 15 April 1945\n[275 victims in 52 episodes]",
-        "Vercelli.txt": "Province: Vercelli\n21 December 1943 - 29 April 1945\n[210 victims in 35 episodes]",
-        "Verona.txt": "Province: Verona\n9 September 1943 - 29 April 1945\n[205 victims in 75 episodes]",
-        "Vibo Valentia.txt": "Province: Vibo Valentia\n(see archival records)\n[--]",
-        "Vicenza.txt": "Province: Vicenza\n10 September 1943 - 30 April 1945\n[751 victims in 186 episodes]",
-        "Viterbo.txt": "Province: Viterbo\n14 October 1943 - 17 June 1944\n[96 victims in 20 episodes]"
-    };
+    "Agrigento.txt": "Province: Agrigento\n12 July 1943\n[6 victims in 1 episode]",
+    "Alessandria.txt": "Province: Alessandria\n9 September 1943 - 26 April 1945\n[336 victims in 93 episodes]",
+    "Ancona.txt": "Province: Ancona\n6 February 1944 - 8 August 1944\n[163 victims in 59 episodes]",
+    "Aosta.txt": "Province: Aosta\n28 April 1944 - 31 March 1945\n[142 victims in 31 episodes]",
+    "Arezzo.txt": "Province: Arezzo\n8 March 1944 - 18 December 1944\n[1178 victims in 211 episodes]",
+    "Ascoli Piceno.txt": "Province: Ascoli Piceno\n28 November 1943 - 18 June 1944\n[81 victims in 26 episodes]",
+    "Asti.txt": "Province: Asti\n7 January 1944 - 24 April 1945\n[80 victims in 50 episodes]",
+    "Avellino.txt": "Province: Avellino\n10 September 1943 - 30 September 1943\n[18 victims in 12 episodes]",
+    "Bari.txt": "Province: Bari\n9 September 1943 - 19 October 1943\n[20 victims in 10 episodes]",
+    "Barletta-Andria-Trani.txt": "Province: Barletta-Andria-Trani\n10 September 1943 - 16 September 1943\n[58 victims in 5 episodes]",
+    "Belluno.txt": "Province: Belluno\n31 October 1943 - 4 May 1945\n[373 victims in 151 episodes]",
+    "Benevento.txt": "Province: Benevento\n21 September 1943 - 27 October 1943\n[30 victims in 17 episodes]",
+    "Bergamo.txt": "Province: Bergamo\n7 December 1943 - 28 April 1945\n[201 victims in 44 episodes]",
+    "Biella.txt": "Province: Biella\n12 December 1943 - 1 May 1945\n[186 victims in 43 episodes]",
+    "Bologna.txt": "Province: Bologna\n10 September 1943 - 21 April 1945\n[1977 victims in 297 episodes]",
+    "Bolzano.txt": "Province: Bolzano\n9 September 1943 - 4 May 1945\n[104 victims in 12 episodes]",
+    "Brescia.txt": "Province: Brescia\n13 November 1943 - 27 April 1945\n[115 victims in 48 episodes]",
+    "Brindisi.txt": "Province: Brindisi\n(see archival records)\n[--]",
+    "Cagliari.txt": "Province: Cagliari\n(see archival records)\n[--]",
+    "Caltanissetta.txt": "Province: Caltanissetta\n(see archival records)\n[--]",
+    "Campobasso.txt": "Province: Campobasso\n30 September 1943 - 21 October 1943\n[11 victims in 8 episodes]",
+    "Caserta.txt": "Province: Caserta\n9 September 1943 - 22 December 1943\n[755 victims in 278 episodes]",
+    "Catania.txt": "Province: Catania\n17 July 1943 - 12 August 1943\n[38 victims in 9 episodes]",
+    "Catanzaro.txt": "Province: Catanzaro\n(see archival records)\n[--]",
+    "Chieti.txt": "Province: Chieti\n14 September 1943 - 5 June 1944\n[389 victims in 162 episodes]",
+    "Como.txt": "Province: Como\n23 December 1943 - 24 April 1945\n[32 victims in 13 episodes]",
+    "Cosenza.txt": "Province: Cosenza\n9 September 1943\n[1 victim in 1 episode]",
+    "Cremona.txt": "Province: Cremona\n9 September 1943 - 28 April 1945\n[110 victims in 41 episodes]",
+    "Crotone.txt": "Province: Crotone\n(see archival records)\n[--]",
+    "Cuneo.txt": "Province: Cuneo\n11 September 1943 - 29 April 1945\n[864 victims in 165 episodes]",
+    "Enna.txt": "Province: Enna\n(see archival records)\n[--]",
+    "Fermo.txt": "Province: Fermo\n2 October 1943 - 20 June 1944\n[31 victims in 18 episodes]",
+    "Ferrara.txt": "Province: Ferrara\n15 November 1943 - 22 April 1945\n[77 victims in 25 episodes]",
+    "Firenze.txt": "Province: Firenze\n2 December 1943 - 6 September 1944\n[591 victims in 130 episodes]",
+    "Foggia.txt": "Province: Foggia\n9 September 1943 - 20 October 1943\n[51 victims in 13 episodes]",
+    "Forlì-Cesena.txt": "Province: Forlì-Cesena\n25 September 1943 - 23 November 1944\n[396 victims in 107 episodes]",
+    "Frosinone.txt": "Province: Frosinone\n24 February 1944 - 4 June 1944\n[154 victims in 43 episodes]",
+    "Genova.txt": "Province: Genova\n14 January 1944 - 24 April 1945\n[224 victims in 28 episodes]",
+    "Gorizia.txt": "Province: Gorizia\n15 September 1943 - 8 April 1945\n[33 victims in 13 episodes]",
+    "Grosseto.txt": "Province: Grosseto\n25 October 1943 - 28 June 1944\n[134 victims in 75 episodes]",
+    "Imperia.txt": "Province: Imperia\n1 July 1944 - 8 April 1945\n[323 victims in 51 episodes]",
+    "Isernia.txt": "Province: Isernia\n3 October 1943 - 18 December 1943\n[38 victims in 16 episodes]",
+    "La Spezia.txt": "Province: La Spezia\n10 September 1943 - 20 April 1945\n[159 victims in 50 episodes]",
+    "L'Aquila.txt": "Province: L'Aquila\n12 September 1943 - 12 June 1944\n[371 victims in 137 episodes]",
+    "Latina.txt": "Province: Latina\n9 September 1943 - 26 May 1944\n[42 victims in 25 episodes]",
+    "Lecce.txt": "Province: Lecce\n(see archival records)\n[--]",
+    "Lecco.txt": "Province: Lecco\n16 October 1943 - 8 January 1945\n[38 victims in 7 episodes]",
+    "Livorno.txt": "Province: Livorno\n17 September 1943 - 22 July 1944\n[57 victims in 17 episodes]",
+    "Lodi.txt": "Province: Lodi\n7 January 1944 - 27 April 1945\n[73 victims in 25 episodes]",
+    "Lucca.txt": "Province: Lucca\n10 September 1943 - 25 March 1945\n[730 victims in 74 episodes]",
+    "Macerata.txt": "Province: Macerata\n1 October 1943 - 17 July 1944\n[282 victims in 97 episodes]",
+    "Mantova.txt": "Province: Mantova\n9 September 1943 - 29 April 1945\n[51 victims in 18 episodes]",
+    "Massa-Carrara.txt": "Province: Massa-Carrara\n8 March 1944 - 23 April 1945\n[931 victims in 72 episodes]",
+    "Matera.txt": "Province: Matera\n21 September 1943\n[26 victims in 1 episode]",
+    "Messina.txt": "Province: Messina\n1 August 1943 - 15 August 1943\n[14 victims in 6 episodes]",
+    "Milano.txt": "Province: Milano\n12 September 1943 - 26 April 1945\n[249 victims in 123 episodes]",
+    "Modena.txt": "Province: Modena\n9 September 1943 - 23 April 1945\n[799 victims in 191 episodes]",
+    "Monza e della Brianza.txt": "Province: Monza e della Brianza\n29 September 1943 - 26 April 1945\n[41 victims in 22 episodes]",
+    "Napoli.txt": "Province: Napoli\n9 September 1943 - 9 October 1943\n[570 victims in 172 episodes]",
+    "Novara.txt": "Province: Novara\n15 September 1943 - 27 April 1945\n[164 victims in 47 episodes]",
+    "Nuoro.txt": "Province: Nuoro\n(see archival records)\n[--]",
+    "Oristano.txt": "Province: Oristano\n(see archival records)\n[--]",
+    "Padova.txt": "Province: Padova\n20 February 1944 - 29 April 1945\n[513 victims in 129 episodes]",
+    "Palermo.txt": "Province: Palermo\n(see archival records)\n[--]",
+    "Parma.txt": "Province: Parma\n1 January 1944 - 27 April 1945\n[412 victims in 117 episodes]",
+    "Pavia.txt": "Province: Pavia\n9 September 1943 - 8 May 1945\n[235 victims in 125 episodes]",
+    "Perugia.txt": "Province: Perugia\n31 October 1943 - 18 August 1944\n[410 victims in 149 episodes]",
+    "Pesaro e Urbino.txt": "Province: Pesaro e Urbino\n23 September 1943 - 21 September 1944\n[132 victims in 64 episodes]",
+    "Pescara.txt": "Province: Pescara\n15 September 1943 - 11 June 1944\n[65 victims in 32 episodes]",
+    "Piacenza.txt": "Province: Piacenza\n28 October 1943 - 21 March 1945\n[85 victims in 18 episodes]",
+    "Pisa.txt": "Province: Pisa\n25 March 1944 - 2 September 1944\n[380 victims in 54 episodes]",
+    "Pistoia.txt": "Province: Pistoia\n12 September 1943 - 9 October 1944\n[235 victims in 77 episodes]",
+    "Pordenone.txt": "Province: Pordenone\n14 April 1944 - 1 May 1945\n[156 victims in 69 episodes]",
+    "Potenza.txt": "Province: Potenza\n9 September 1943 - 24 September 1943\n[26 victims in 7 episodes]",
+    "Prato.txt": "Province: Prato\n1 June 1944 - 26 September 1944\n[47 victims in 9 episodes]",
+    "Ragusa.txt": "Province: Ragusa\n(see archival records)\n[--]",
+    "Ravenna.txt": "Province: Ravenna\n24 October 1943 - 10 April 1945\n[472 victims in 119 episodes]",
+    "Reggio Calabria.txt": "Province: Reggio Calabria\n12 August 1943 - 6 September 1943\n[19 victims in 3 episodes]",
+    "Reggio Emilia.txt": "Province: Reggio Emilia\n28 December 1943 - 23 April 1945\n[439 victims in 69 episodes]",
+    "Rieti.txt": "Province: Rieti\n27 September 1943 - 14 June 1944\n[213 victims in 47 episodes]",
+    "Rimini.txt": "Province: Rimini\n10 October 1943 - 26 September 1944\n[121 victims in 52 episodes]",
+    "Roma.txt": "Province: Roma\n8 September 1943 - 14 June 1944\n[721 victims in 105 episodes]",
+    "Rovigo.txt": "Province: Rovigo\n26 May 1944 - 26 April 1945\n[101 victims in 28 episodes]",
+    "Salerno.txt": "Province: Salerno\n8 September 1943 - 2 October 1943\n[36 victims in 22 episodes]",
+    "Sassari.txt": "Province: Sassari\n(see archival records)\n[--]",
+    "Savona.txt": "Province: Savona\n11 September 1943 - 24 April 1945\n[200 victims in 53 episodes]",
+    "Siena.txt": "Province: Siena\n15 January 1944 - 17 July 1944\n[186 victims in 102 episodes]",
+    "Siracusa.txt": "Province: Siracusa\nJuly 1943\n[2 victims in 1 episode]",
+    "Sondrio.txt": "Province: Sondrio\n19 March 1944 - 27 April 1945\n[69 victims in 36 episodes]",
+    "Taranto.txt": "Province: Taranto\n19 September 1943\n[1 victim in 1 episode]",
+    "Teramo.txt": "Province: Teramo\n25 September 1943 - 17 June 1944\n[78 victims in 28 episodes]",
+    "Terni.txt": "Province: Terni\n12 September 1943 - 18 June 1944\n[67 victims in 32 episodes]",
+    "Torino.txt": "Province: Torino\n10 September 1943 - 1 May 1945\n[945 victims in 163 episodes]",
+    "Trapani.txt": "Province: Trapani\n(see archival records)\n[--]",
+    "Trento.txt": "Province: Trento\n9 September 1943 - 6 May 1945\n[157 victims in 56 episodes]",
+    "Treviso.txt": "Province: Treviso\n12 April 1944 - 1 May 1945\n[254 victims in 86 episodes]",
+    "Trieste.txt": "Province: Trieste\n7 March 1944 - 28 April 1945\n[730 victims in 74 episodes]",
+    "Udine.txt": "Province: Udine\n2 October 1943 - 5 May 1945\n[726 victims in 154 episodes]",
+    "Varese.txt": "Province: Varese\n9 January 1944 - 19 March 1945\n[22 victims in 10 episodes]",
+    "Venezia.txt": "Province: Venezia\n25 February 1944 - 28 April 1945\n[120 victims in 48 episodes]",
+    "Verbano-Cusio-Ossola.txt": "Province: Verbano-Cusio-Ossola\n15 September 1943 - 15 April 1945\n[275 victims in 52 episodes]",
+    "Vercelli.txt": "Province: Vercelli\n21 December 1943 - 29 April 1945\n[210 victims in 35 episodes]",
+    "Verona.txt": "Province: Verona\n9 September 1943 - 29 April 1945\n[205 victims in 75 episodes]",
+    "Vibo Valentia.txt": "Province: Vibo Valentia\n(see archival records)\n[--]",
+    "Vicenza.txt": "Province: Vicenza\n10 September 1943 - 30 April 1945\n[751 victims in 186 episodes]",
+    "Viterbo.txt": "Province: Viterbo\n14 October 1943 - 17 June 1944\n[96 victims in 20 episodes]"
+};
 
 // Add province data to fileContents
 for (const [k, v] of Object.entries(provincesData)) {
@@ -358,16 +385,6 @@ function generateRandomFiles() {
     });
 }
 
-function showDirectoryContents() {
-    if (!fileSystem[currentDirectory]) {
-        output("<span class='command-color1'>Archive not found.</span>");
-        return;
-    }
-    const folders = fileSystem[currentDirectory].folders.map(folder => `<span class="folder">${folder}</span>`).join("  ");
-    const files = fileSystem[currentDirectory].files.map(file => `<span class="file">${file}</span>`).join("  ");
-    output(`\nFolders:\n${folders || "None"}\n\nFiles:\n${files || "None"}`);
-}
-
 function output(text) {
     outputDiv.innerHTML += `\n> ${text}\n`;
     scrollTerminal();
@@ -382,11 +399,12 @@ function scrollTerminal() {
 
 function processCommand(command) {
     const target = command.trim();
+
     if (target === "back") {
-        if (currentDirectory !== "root") {
+        if (currentDirectory !== ROOT_DIR) {
             const parts = currentDirectory.split('/');
             parts.pop();
-            currentDirectory = parts.join('/') || "root";
+            currentDirectory = parts.join('/') || ROOT_DIR;
             output(`> Returned to ${currentDirectory}`);
             showDirectoryContents();
         } else {
@@ -394,17 +412,20 @@ function processCommand(command) {
         }
         return;
     }
+
     if (fileSystem[currentDirectory]?.folders.includes(target)) {
         currentDirectory = `${currentDirectory}/${target}`;
         output(`> You entered ${currentDirectory}`);
         showDirectoryContents();
         return;
     }
+
     if (fileSystem[currentDirectory]?.files.includes(target)) {
         output(`> Opening file ${target}...`);
         openFile(target);
         return;
     }
+
     output("<span class='command-color1'>Command not recognized or resource not found.</span>");
 }
 
@@ -413,20 +434,21 @@ function shutdownSequence() {
     setTimeout(() => {
         const terminal = document.getElementById('terminal');
         terminal.innerHTML = `
-                <div style="color: #b22222; font-size: 1.5em; text-align: center; margin-top: 1em;"><br><br>IN MEMORIAM</div>
-                <div style="color: #eee; font-size: 0.95em; text-align: left; margin: 1.2em auto; max-width: 900px; line-height: 1.45em;">
-                During the Liberation War against Nazi-Fascism, between 3 September 1943 and 2 May 1945—that is, from the Cassibile Armistice between Italy and the Allied forces to the formal surrender of German troops in the Italian theater—approximately <strong>11,400 Italian soldiers, 44,720 partisans, and 9,180 children, women, and men</strong> lost their lives, either executed after combat or massacred by retreating German forces.
-                <br><br>
-                Mountains, no longer green but scorched, gunmetal gray, washed by oxidized lava, rise against a sky where the sun no longer rises. Yet the molten light—colored Resistance, colored Spring—remains. Meanwhile, General Winter, as in history, suspends operations, imposing a long frost, a prolonged farewell, <em>Bella ciao</em>. Montesole: Alba was taken by 2,000 on 10 October and lost by 200 on 2 November 1944. Watch, Red Star, protect those around the partisan formations from those who seek to exterminate them in the rear, while the Allies remain on the Gothic Line. Tears fall like lapilli, rain rebounds on rubber walls, snow blankets the plains, and factories burn with revolutionary fury, blackened by deportations and soot. Reprisals fall like aerial raids but are carried out by ground troops: too human, too inhuman, indifferent even to Nietzsche.
-                <br><br>
-                The invaders’ cowardly excuse for their trail of blood—their flood of deaths—was the vulgar, implausible propaganda slogan: <strong>“fight the bands!”</strong> Partisan formations, sympathizers, supporters—and by extension, the entire population encountered—were labeled “bandits.” <em>Achtung! Banditen!</em> was scrawled on the walls of targeted homes, in blatant violation of criminal and international law, aiming solely to terrorize the population and punish what the Germans perceived as a change of allegiance. Ideology of race and Lebensraum justified massacres against anyone deemed non-Germanic, often aided by local fascists. Villages like Sant’Anna, Stazzema, and hundreds of others became scenes of atrocity.
-                <br><br>
-                With the solemn awareness of the tragic distance that separates us from these events, we respond to the impudence of the real bandits—occupying executioners—who dared to call others “bandits,” with a question mark for disbelief and an exclamation point for outrage. Sadly, acts of such cowardice can become so incredible that they are forgotten, leaving room for denial and, shockingly, revisionist thought even today. Disbelief under the sign of the banality of evil—nothing new under the sun, yet all the more haunting, carried out in the name of the ideology known as Nazi-Fascism.
-                <br><br>
-                This memorial is dedicated to the memory of those who perished and to the duty of remembrance: to record, to bear witness, and to demand justice.
-                </div>
-            `;
+            <div style="color: #b22222; font-size: 1.5em; text-align: center; margin-top: 1em;"><br><br>IN MEMORIAM</div>
+            <div style="color: #eee; font-size: 0.95em; text-align: left; margin: 1.2em auto; max-width: 900px; line-height: 1.45em;">
+            During the Liberation War against Nazi-Fascism, between 3 September 1943 and 2 May 1945—that is, from the Cassibile Armistice between Italy and the Allied forces to the formal surrender of German troops in the Italian theater—approximately <strong>11,400 Italian soldiers, 44,720 partisans, and 9,180 children, women, and men</strong> lost their lives, either executed after combat or massacred by retreating German forces.
+            <br><br>
+            Mountains, no longer green but scorched, gunmetal gray, washed by oxidized lava, rise against a sky where the sun no longer rises. Yet the molten light—colored Resistance, colored Spring—remains. Meanwhile, General Winter, as in history, suspends operations, imposing a long frost, a prolonged farewell, <em>Bella ciao</em>. Montesole: Alba was taken by 2,000 on 10 October and lost by 200 on 2 November 1944. Watch, Red Star, protect those around the partisan formations from those who seek to exterminate them in the rear, while the Allies remain on the Gothic Line. Tears fall like lapilli, rain rebounds on rubber walls, snow blankets the plains, and factories burn with revolutionary fury, blackened by deportations and soot. Reprisals fall like aerial raids but are carried out by ground troops: too human, too inhuman, indifferent even to Nietzsche.
+            <br><br>
+            The invaders’ cowardly excuse for their trail of blood—their flood of deaths—was the vulgar, implausible propaganda slogan: <strong>“fight the bands!”</strong> Partisan formations, sympathizers, supporters—and by extension, the entire population encountered—were labeled “bandits.” <em>Achtung! Banditen!</em> was scrawled on the walls of targeted homes, in blatant violation of criminal and international law, aiming solely to terrorize the population and punish what the Germans perceived as a change of allegiance. Ideology of race and Lebensraum justified massacres against anyone deemed non-Germanic, often aided by local fascists. Villages like Sant’Anna, Stazzema, and hundreds of others became scenes of atrocity.
+            <br><br>
+            With the solemn awareness of the tragic distance that separates us from these events, we respond to the impudence of the real bandits—occupying executioners—who dared to call others “bandits,” with a question mark for disbelief and an exclamation point for outrage. Sadly, acts of such cowardice can become so incredible that they are forgotten, leaving room for denial and, shockingly, revisionist thought even today. Disbelief under the sign of the banality of evil—nothing new under the sun, yet all the more haunting, carried out in the name of the ideology known as Nazi-Fascism.
+            <br><br>
+            This memorial is dedicated to the memory of those who perished and to the duty of remembrance: to record, to bear witness, and to demand justice.
+            </div>
+        `;
         terminal.scrollTop = 0;
+
         // Disable further input and hide UI input elements
         const hiddenInput = document.getElementById('hidden-input');
         const userInputSpan = document.getElementById('user-input');
@@ -440,19 +462,110 @@ function shutdownSequence() {
     }, 600);
 }
 
+/* ===========================
+   Scrollback-safe functions
+   =========================== */
+
+function showDirectoryContents() {
+    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+
+    let foldersHTML = dirData.folders
+        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+        .join("  ");
+
+    const filesHTML = dirData.files
+        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+        .join("  ");
+
+    if (currentDirectory !== ROOT_DIR) {
+        foldersHTML =
+            `<span class="folder" data-type="back">&lt;&lt; back</span>` +
+            (foldersHTML ? "  " + foldersHTML : "");
+    }
+
+    // Deactivate previous directory and file blocks
+    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+    oldDirBlocks.forEach(block => block.classList.add('inactive'));
+    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+
+    // Create new directory block
+    const dirBlock = document.createElement('div');
+    dirBlock.className = 'dir-block';
+    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+    outputDiv.appendChild(dirBlock);
+    scrollTerminal();
+
+    // Attach click handlers only to current block
+    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+    clickableItems.forEach(item => {
+        item.style.cursor = "pointer";
+        item.addEventListener('click', () => {
+            const type = item.getAttribute('data-type');
+            const name = item.getAttribute('data-name');
+
+            if (type === "folder") {
+                currentDirectory = `${currentDirectory}/${name}`;
+                output(`> You entered ${currentDirectory}`);
+                showDirectoryContents();
+            } else if (type === "file") {
+                output(`> Opening file ${name}...`);
+                openFile(name);
+            } else if (type === "back") {
+                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                output(`> You are now in ${currentDirectory}`);
+                showDirectoryContents();
+            }
+        });
+    });
+}
+
 function openFile(filename) {
     const fileData = fileContents[filename];
-    if (fileData) {
-        if (fileData.type === "executable" && typeof fileData.action === "function") {
-            output(fileData.snippet);
-            fileData.action();
-        } else if (typeof fileData === "string") {
-            output(fileData);
-        } else {
-            output("<span class='command-color1'>File content unavailable.</span>");
-        }
-    } else {
+    if (!fileData) {
         output("<span class='command-color1'>File not found.</span>");
+        return;
+    }
+
+    // Executable files
+    if (fileData.type === "executable" && typeof fileData.action === "function") {
+        output(fileData.snippet);
+        fileData.action();
+        return;
+    }
+
+    // Deactivate previous blocks
+    outputDiv.querySelectorAll('.file-block').forEach(b => b.classList.add('inactive'));
+    outputDiv.querySelectorAll('.dir-block').forEach(b => b.classList.add('inactive'));
+
+    // Page break gap (cannot capture clicks)
+    const pageBreak = document.createElement('div');
+    pageBreak.className = 'page-break';
+    pageBreak.style.pointerEvents = 'none'; // extra safety in case CSS is missed
+    outputDiv.appendChild(pageBreak);
+
+    // Create new file block
+    const fileBlock = document.createElement('div');
+    fileBlock.className = 'file-block';
+
+    const contentHTML =
+        (typeof fileData === "string")
+            ? fileData
+            : (fileData.fullContent || "File content unavailable.");
+
+    // Back button uses ONLY "folder" class => same look as directory back button
+    fileBlock.innerHTML =
+        `${contentHTML}<div class="file-back-wrap"><span class="folder" data-type="back-file">&lt;&lt; back</span></div>`;
+
+    outputDiv.appendChild(fileBlock);
+    scrollTerminal();
+
+    // Back handler
+    const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+    if (backButton) {
+        backButton.style.cursor = 'pointer';
+        backButton.addEventListener('click', () => showDirectoryContents());
     }
 }
 
@@ -482,7 +595,6 @@ hiddenInput.addEventListener('keydown', (event) => {
     }
 });
 window.onload = () => {
-    // On mobile, focusing input may need to be delayed for keyboard to appear
     setTimeout(() => {
         hiddenInput.focus();
     }, 120);
@@ -504,11 +616,14 @@ function typingAnimation(text, callback) {
 }
 
 // ---- Startup Sequence ----
-typingAnimation("Accessing archives of Nazi-Fascist reprisals... Reviewing provincial records and witness reports. Seek the hidden diary to uncover the final memorial.", () => {
-    output("Type the exact name of a 'folder' or 'file' to open it. Write 'back' to return to the previous directory.");
-    generateRandomFiles();
-    showDirectoryContents();
-});
+typingAnimation(
+    "Accessing archives of Nazi-Fascist reprisals... Reviewing provincial records and witness reports. Seek the hidden diary to uncover the final memorial.",
+    () => {
+        output("Click or type the exact name of a 'folder' or 'file' to open it. Click or write 'back' to return to the previous directory.");
+        generateRandomFiles();
+        showDirectoryContents();
+    }
+);
 
 // Prevent context menu
 document.addEventListener('contextmenu', (event) => {
