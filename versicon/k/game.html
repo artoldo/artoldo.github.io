@@ -6,53 +6,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kaltcaldo</title>
 <style>
-body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-        #terminal {
-            width: 80%;
-            max-width: 600px;
-            height: 90vh;
-            background-color: transparent;
-            padding: 20px;
-            padding-bottom: 100px; /* extra space for mobile keyboard */
-            border-radius: 10px;
-            border: 2px solid #333;
-            overflow-y: auto;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
-    #terminal:focus { outline: none; }
-    #output { white-space: pre-wrap; margin-bottom: 10px; color: #FFFFFF; }
-    #input-line { display: inline; }
-    #user-input { color: #FFFFFF; }
-    .command-color1, .command-color2, .command-color3 { color: #FFFFFF; }
-    .folder { background-color: #fff; color: #000; padding:5px 10px; border-radius:3px; margin-top:8px; display:inline-block; }
-    .file { background-color: #333; color: #FFF; padding:5px 10px; border-radius:3px; margin-top:8px; display:inline-block; }
-    .cursor { animation: blink 1s steps(2, start) infinite; color:#FFFFFF; }
-    @keyframes blink { 50% { opacity: 0; } }
-    * { -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
-    .input-prompt { color: #FFFFFF; }
+    body{
+        background-color:#000;
+        color:#fff;
+        font-family:'Courier New', Courier, monospace;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+        margin:0;
+        overflow:hidden;
+    }
+    #terminal{
+        width:80%;
+        max-width:600px;
+        height:90vh;
+        background-color:transparent;
+        padding:20px;
+        padding-bottom:100px; /* extra space for mobile keyboard */
+        border-radius:10px;
+        border:2px solid #333;
+        overflow-y:auto;
+        box-sizing:border-box;
+        scroll-behavior:smooth;
+    }
+    #terminal:focus{ outline:none; }
+    #output{ white-space:pre-wrap; margin-bottom:10px; color:#FFFFFF; }
+    #input-line{ display:inline; }
+    #user-input{ color:#FFFFFF; }
+    .command-color1,.command-color2,.command-color3{ color:#FFFFFF; }
+    .folder{ background-color:#fff; color:#000; padding:5px 10px; border-radius:3px; margin-top:8px; display:inline-block; }
+    .file{ background-color:#333; color:#FFF; padding:5px 10px; border-radius:3px; margin-top:8px; display:inline-block; }
+    .cursor{ animation:blink 1s steps(2,start) infinite; color:#FFFFFF; }
+    @keyframes blink{ 50%{ opacity:0; } }
+    *{ -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; }
+    .input-prompt{ color:#FFFFFF; }
+
+    .inactive{ pointer-events:none; }
 </style>
 
 <style>
-html,body{margin:0;padding:0;background:#000;overflow:hidden;}
-#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(1.5px);pointer-events:none;}
-body, #container{position:relative;z-index:0;}
-
-.inactive {
-    pointer-events: none;
-}
-
+    html,body{margin:0;padding:0;background:#000;overflow:hidden;}
+    #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+    #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(1.5px);pointer-events:none;}
+    body,#container{position:relative;z-index:0;}
 </style>
 </head>
 <body>
@@ -135,18 +132,26 @@ body, #container{position:relative;z-index:0;}
         requestAnimationFrame(animate);
     }
     animate();
-    window.addEventListener("resize",()=>{width=window.innerWidth;height=window.innerHeight;canvas.width=width;canvas.height=height;});
+    window.addEventListener("resize",()=>{
+        width=window.innerWidth;height=window.innerHeight;
+        canvas.width=width;canvas.height=height;
+    });
 })();
 </script>
 
 <script>
-// Terminal logic
+// Terminal logic (mobile-proof ending scroll)
+const terminalDiv = document.getElementById('terminal');
 const outputDiv = document.getElementById('output');
 const userInputSpan = document.getElementById('user-input');
+const inputLine = document.getElementById('input-line');
 const hiddenInput = document.getElementById('hidden-input');
+
+let isEnding = false;
 
 const ROOT_DIR = 'root';
 let currentDirectory = ROOT_DIR;
+
 const fileSystem = {
     "root": { folders: ["experiments","simulations","formulas","archives","reports"], files: [] },
     "root/experiments": { folders: [], files: ["energy-flux.log","thermal-gradient.txt","entropy-measurements.txt","phase-transitions.log"] },
@@ -197,11 +202,11 @@ const fileContents = {
 };
 
 function scrollTerminal() {
-        const terminal = document.getElementById("terminal");
-        requestAnimationFrame(() => {
-            terminal.scrollTop = terminal.scrollHeight;
-        });
-    }
+    if (isEnding) return;
+    requestAnimationFrame(() => {
+        terminalDiv.scrollTop = terminalDiv.scrollHeight;
+    });
+}
 
 function output(text) {
     outputDiv.innerHTML += `\n> ${text}\n`;
@@ -222,13 +227,9 @@ function showDirectoryContents() {
             (foldersHTML ? "  " + foldersHTML : "");
     }
 
-    // Deactivate previous directory and file blocks
-    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-    oldDirBlocks.forEach(block => block.classList.add('inactive'));
-    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+    outputDiv.querySelectorAll('.dir-block').forEach(b => b.classList.add('inactive'));
+    outputDiv.querySelectorAll('.file-block').forEach(b => b.classList.add('inactive'));
 
-    // Create new directory block
     const dirBlock = document.createElement('div');
     dirBlock.className = 'dir-block';
     dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
@@ -236,11 +237,12 @@ function showDirectoryContents() {
     outputDiv.appendChild(dirBlock);
     scrollTerminal();
 
-    // Attach click handlers only to current block
     const clickableItems = dirBlock.querySelectorAll('.folder, .file');
     clickableItems.forEach(item => {
         item.style.cursor = "pointer";
         item.addEventListener('click', () => {
+            if (isEnding) return;
+
             const type = item.getAttribute('data-type');
             const name = item.getAttribute('data-name');
 
@@ -258,63 +260,6 @@ function showDirectoryContents() {
             }
         });
     });
-}
-
-function shutdownSequence(){
-    output(">>> Initiating classified thermodynamics data lockdown...");
-    setTimeout(()=>{
-        const terminal = document.getElementById("terminal");
-        terminal.innerHTML = `
-        <div style='color:#FFF; font-size:2em; text-align:center;'><br><br>Kaltcaldo</div>
-        <p style='color:#FFF; font-size:1em; text-align:left; margin-top:10px;'>
-        After decades of concealed research by the clandestine Quantum Thermodynamics Institute, the terminal finally reveals the Kaltcaldo Principle:
-        <br><br>
-        <strong>ΔS<sub>universe</sub> = ∫(δQ/T)<sub>ext</sub> + iħ∇·Ψ<sub>cold</sub></strong>
-        <br><br>
-        This formula is more than a mere extension of classical entropy—it integrates quantum coherence effects at cryogenic temperatures, allowing controlled manipulation of heat flow in near-absolute-zero environments. In layman's terms, Kaltcaldo unlocks the ability to reverse micro-scale entropy fluctuations without violating the second law, effectively opening pathways to ultra-efficient energy storage and quantum refrigeration.  
-        <br><br>
-        Researchers long feared this knowledge could destabilize conventional energy systems or trigger geopolitical conflicts over “cold tech” supremacy. The formula's digital imprint on this terminal is now the only remaining trace outside the vaults of the Quantum Thermodynamics Institute.  
-        <br><br>
-        Handle with extreme caution: what you do next could ripple through physics itself. <br><br><a href="https://artoldo.github.io/kaltcaldo/" style="text-decoration:underline; color: red;">E N T E R</a>
-        </p>`;
-        terminal.scrollTop = 0;
-        document.removeEventListener('keydown', handleKeyDown);
-    }, 4000);
-}
-
-function openFile(filename) {
-    const fileData = fileContents[filename];
-    if (!fileData) {
-        output("<span class='command-color1'>File not found.</span>");
-        return;
-    }
-
-    if (fileData.type === "executable" && typeof fileData.action === "function") {
-        output(fileData.snippet);
-        fileData.action();
-    } else {
-        output(fileContents[filename]);
-
-        // Deactivate previous file and directory blocks
-        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-        oldFileBlocks.forEach(block => block.classList.add('inactive'));
-        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-        oldDirBlocks.forEach(block => block.classList.add('inactive'));
-
-        // Create new file block with back button
-        const fileBlock = document.createElement('div');
-        fileBlock.className = 'file-block';
-        fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
-        outputDiv.appendChild(fileBlock);
-        scrollTerminal();
-
-        // Attach click handler to current back button
-        const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
-        backButton.style.cursor = 'pointer';
-        backButton.addEventListener('click', () => {
-            showDirectoryContents();
-        });
-    }
 }
 
 function processCommand(command){
@@ -335,51 +280,132 @@ function processCommand(command){
     } else output("<span class='command-color1'>Folder or file not found.</span>");
 }
 
-// Focus input on click
-document.getElementById('terminal').addEventListener('click', () => {
+function openFile(filename) {
+    const fileData = fileContents[filename];
+    if (!fileData) {
+        output("<span class='command-color1'>File not found.</span>");
+        return;
+    }
+
+    if (fileData.type === "executable" && typeof fileData.action === "function") {
+        output(fileData.snippet);
+        fileData.action();
+        return;
+    }
+
+    output(fileContents[filename]);
+
+    outputDiv.querySelectorAll('.file-block').forEach(b => b.classList.add('inactive'));
+    outputDiv.querySelectorAll('.dir-block').forEach(b => b.classList.add('inactive'));
+
+    const fileBlock = document.createElement('div');
+    fileBlock.className = 'file-block';
+    fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
+    outputDiv.appendChild(fileBlock);
+    scrollTerminal();
+
+    const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+    backButton.style.cursor = 'pointer';
+    backButton.addEventListener('click', () => {
+        if (isEnding) return;
+        showDirectoryContents();
+    });
+}
+
+/* ===========================
+   MOBILE-PROOF END SEQUENCE
+   =========================== */
+function shutdownSequence(){
+    output(">>> Initiating classified thermodynamics data lockdown...");
+    setTimeout(()=>{
+        isEnding = true;
+
+        // Disable the input/caret FIRST (prevents iOS scroll-to-caret “fight”)
+        if (hiddenInput) {
+            hiddenInput.disabled = true;
+            hiddenInput.blur();
+        }
+        if (document.activeElement && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+        }
+        if (userInputSpan) userInputSpan.textContent = "";
+        if (inputLine) inputLine.style.visibility = "hidden";
+        const cursor = terminalDiv.querySelector('.cursor');
+        if (cursor) cursor.style.visibility = "hidden";
+
+        terminalDiv.innerHTML = `
+        <div style='color:#FFF; font-size:2em; text-align:center;'><br><br>Kaltcaldo</div>
+        <p style='color:#FFF; font-size:1em; text-align:left; margin-top:10px;'>
+        After decades of concealed research by the clandestine Quantum Thermodynamics Institute, the terminal finally reveals the Kaltcaldo Principle:
+        <br><br>
+        <strong>ΔS<sub>universe</sub> = ∫(δQ/T)<sub>ext</sub> + iħ∇·Ψ<sub>cold</sub></strong>
+        <br><br>
+        This formula is more than a mere extension of classical entropy—it integrates quantum coherence effects at cryogenic temperatures, allowing controlled manipulation of heat flow in near-absolute-zero environments. In layman's terms, Kaltcaldo unlocks the ability to reverse micro-scale entropy fluctuations without violating the second law, effectively opening pathways to ultra-efficient energy storage and quantum refrigeration.
+        <br><br>
+        Researchers long feared this knowledge could destabilize conventional energy systems or trigger geopolitical conflicts over “cold tech” supremacy. The formula's digital imprint on this terminal is now the only remaining trace outside the vaults of the Quantum Thermodynamics Institute.
+        <br><br>
+        Handle with extreme caution: what you do next could ripple through physics itself.
+        <br><br>
+        <a href="https://artoldo.github.io/kaltcaldo/" style="text-decoration:underline; color:red;">E N T E R</a>
+        </p>`;
+
+        // Force top reliably (avoid smooth scroll + wait for layout)
+        terminalDiv.style.scrollBehavior = "auto";
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                terminalDiv.scrollTop = 0;
+            });
+        });
+
+        if (typeof handleKeyDown === 'function') {
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    }, 4000);
+}
+
+// Focus input on click (mobile)
+terminalDiv.addEventListener('click', () => {
+    if (isEnding) return;
     hiddenInput.focus();
 });
-window.onload = () => hiddenInput.focus();
 
 // Reflect typed input safely on mobile
 hiddenInput.addEventListener('input', () => {
-    // Reflect typed characters into the visible prompt and keep the terminal scrolled to bottom.
+    if (isEnding) return;
     userInputSpan.textContent = hiddenInput.value;
     scrollTerminal();
 });
 
 // Handle Enter key for commands
 hiddenInput.addEventListener('keydown', (event) => {
+    if (isEnding) return;
     if (event.key === 'Enter') {
         const command = hiddenInput.value;
         output(`<span class='command-color1'>${command}</span>`);
         processCommand(command);
         hiddenInput.value = '';
-        userInputSpan.innerText = '';
-    } else if (event.key === 'Backspace') {
-        // Let the browser handle backspace naturally on the hidden input.
+        userInputSpan.textContent = '';
     }
 });
 
 // Initial animation
 function typingAnimation(text, callback){
-    let index=0;
-    function appendChar(){
-        if(index < text.length){
+    let index = 0;
+    const interval = setInterval(() => {
+        if (index < text.length) {
             const span = document.createElement('span');
             span.style.color = '#FFF';
             span.textContent = text[index];
             outputDiv.appendChild(span);
             scrollTerminal();
             index++;
-            setTimeout(appendChar, 100);
         } else {
+            clearInterval(interval);
             outputDiv.appendChild(document.createElement('br'));
             outputDiv.appendChild(document.createElement('br'));
             callback();
         }
-    }
-    appendChar();
+    }, 100);
 }
 
 typingAnimation("Accessing classified thermodynamics research... Explore directories to uncover secret formulas...", ()=>{
@@ -388,15 +414,18 @@ typingAnimation("Accessing classified thermodynamics research... Explore directo
     showDirectoryContents();
 });
 
-document.addEventListener('contextmenu', e=> e.preventDefault());
+// Prevent context menu
+document.addEventListener('contextmenu', e => e.preventDefault());
 
-
+// One (and only one) onload
 window.onload = function() {
-    // Ensure the invisible input is focused so mobile keyboards open and keystrokes are captured.
-    const hidden = document.getElementById('hidden-input');
-    if (hidden) hidden.focus();
+    setTimeout(() => {
+        if (!isEnding) hiddenInput.focus();
+    }, 120);
 };
 
+// Optional placeholder
+function handleKeyDown(e){ /* placeholder */ }
 </script>
 
 </body>

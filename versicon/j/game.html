@@ -31,30 +31,27 @@
             scroll-behavior: smooth;
         }
 
-        #terminal:focus {
-            outline: none;
-        }
+        #terminal:focus { outline: none; }
 
         #output {
             white-space: pre-wrap;
             margin-bottom: 10px;
             color: white;
         }
-        #input-line {
-            display: inline;
-        }
+        #input-line { display: inline; }
+
         .command-color1 { color: #8A2BE2; }
         .command-color2 { color: #00FFFF; }
         .command-color3 { color: #8A2BE2; }
+
         .folder { background-color: #8A2BE2; color: #000; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
         .file { background-color: #000; color: #00FFFF; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
+
         .cursor {
             animation: blink 1s steps(2, start) infinite;
             color: #00FFFF;
         }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
 
         * {
             -webkit-user-select: none;
@@ -63,73 +60,65 @@
             user-select: none;
         }
 
-.inactive {
-    pointer-events: none;
-}
-
+        .inactive { pointer-events: none; }
     </style>
 
-<!-- Background Animation Start -->
+    <!-- Background Animation Start -->
+    <style>
+        html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+        #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+        #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(2px);pointer-events:none;}
+        body, #container{position:relative;z-index:0;}
+    </style>
 
-<style>
-html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
-#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(2px);pointer-events:none;}
-body, #container{position:relative;z-index:0;}
-</style>
+    <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 
-<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+    <script>
+    (function(){
+      const canvas = document.getElementById("mainCanvas");
+      const ctx = canvas.getContext("2d");
 
-<script>
-(function(){
-  const canvas = document.getElementById("mainCanvas");
-  const ctx = canvas.getContext("2d");
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
 
-  let width = canvas.width = window.innerWidth;
-  let height = canvas.height = window.innerHeight;
+      const letters = "010000110100100010010000101001001010001010100101000100101001010010101010100101010";
+      const fontSize = 20;
+      const rows = Math.floor(height / fontSize);
+      const drops = [];
 
-  const letters = "010000110100100010010000101001001010001010100101000100101001010010101010100101010";
-  const fontSize = 20;
-  const rows = Math.floor(canvas.height / fontSize);
-  const drops = [];
-
-  // Each row will move horizontally
-  for(let i = 0; i < rows; i++){
-    drops[i] = Math.random() * width / fontSize;
-  }
-
-  function draw(){
-    // Original style: semi-transparent black overlay for trails
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0,0,width,height);
-
-    ctx.fillStyle = "#8A2BE2"; // original color
-    ctx.font = fontSize + "px monospace"; // original font
-
-    for(let i=0; i<rows; i++){
-      const text = letters.charAt(Math.floor(Math.random()*letters.length));
-      // horizontal movement: x = drops[i], y = row position
-      ctx.fillText(text, drops[i]*fontSize, i*fontSize);
-
-      drops[i] += 0.5 + Math.random(); // move right
-      if(drops[i]*fontSize > width && Math.random() > 0.975){
-        drops[i] = 0; // reset left
+      for(let i = 0; i < rows; i++){
+        drops[i] = Math.random() * width / fontSize;
       }
-    }
-  }
 
-  setInterval(draw,33); // original speed
+      function draw(){
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
+        ctx.fillRect(0,0,width,height);
 
-  window.addEventListener("resize",()=>{
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  });
-})();
-</script>
+        ctx.fillStyle = "#8A2BE2";
+        ctx.font = fontSize + "px monospace";
 
-<!-- Background Animation End -->
+        for(let i=0; i<rows; i++){
+          const text = letters.charAt(Math.floor(Math.random()*letters.length));
+          ctx.fillText(text, drops[i]*fontSize, i*fontSize);
 
+          drops[i] += 0.5 + Math.random();
+          if(drops[i]*fontSize > width && Math.random() > 0.975){
+            drops[i] = 0;
+          }
+        }
+      }
+
+      setInterval(draw,33);
+
+      window.addEventListener("resize",()=>{
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+    })();
+    </script>
+    <!-- Background Animation End -->
 </head>
+
 <body>
 
 <div id="terminal" tabindex="0">
@@ -149,239 +138,253 @@ body, #container{position:relative;z-index:0;}
 </div>
 
 <script>
+    // ---- DOM Elements ----
+    const terminalDiv = document.getElementById('terminal');
+    const hiddenInput = document.getElementById('hidden-input');
     const outputDiv = document.getElementById('output');
     const userInputSpan = document.getElementById('user-input');
     const inputLine = document.getElementById('input-line');
 
+    // Ending guard: prevents scroll-to-bottom + caret wars on mobile
+    let isEnding = false;
+
     const ROOT_DIR = 'root';
     let currentDirectory = ROOT_DIR;
+
     const fileSystem = {
-    "root": { folders: ["boards", "threads", "ops", "evidence", "archives", "action"], files: [] },
-    "root/boards": { folders: ["pol", "b", "r9k"], files: ["sticky-greentext.txt", "operation-manifesto.txt"] },
-    "root/threads": { folders: [], files: ["cancel-list.txt", "dox-hypothesis.txt", "timeline.log"] },
-    "root/ops": { folders: ["coord", "assets"], files: ["exfiltration-plan.doc"] },
-    "root/evidence": { folders: ["screenshots", "archives"], files: ["compiled-threads.zip", "anomaly-thread.txt"] },
-    "root/archives": { folders: ["daily", "monthly"], files: ["backup-4chan-archive.zip"] },
-    "root/action": { folders: [], files: ["anonymous.zip"] }
-};
+        "root": { folders: ["boards", "threads", "ops", "evidence", "archives", "action"], files: [] },
+        "root/boards": { folders: ["pol", "b", "r9k"], files: ["sticky-greentext.txt", "operation-manifesto.txt"] },
+        "root/threads": { folders: [], files: ["cancel-list.txt", "dox-hypothesis.txt", "timeline.log"] },
+        "root/ops": { folders: ["coord", "assets"], files: ["exfiltration-plan.doc"] },
+        "root/evidence": { folders: ["screenshots", "archives"], files: ["compiled-threads.zip", "anomaly-thread.txt"] },
+        "root/archives": { folders: ["daily", "monthly"], files: ["backup-4chan-archive.zip"] },
+        "root/action": { folders: [], files: ["anonymous.zip"] }
+    };
 
     const fileContents = {
-    "sticky-greentext.txt": ">> Anonymous 11/14/25 (Fri) -  /pol/ sticky: How Cancel Culture REALLY works\n\nA step-by-step greentext: they request, they smear, they erase. Follow the breadcrumbs, anon.",
-    "operation-manifesto.txt": "Operation: Echo Chamber \u2014 a plan to weaponize outrage for influence. Notes on timing, hashtags, and plausible deniability.",
-    "cancel-list.txt": "List compiled from dozens of threads: public figures, articles, influencers flagged for 'deplatforming'. Metadata scrubbed.",
-    "dox-hypothesis.txt": "Hypothesis: coordinated reports + viral pile-ons = engineered cancellations. Evidence: matching timestamps across boards.",
-    "timeline.log": "Thread 001 - seed post -> amplification -> mainstream pickup -> retraction. Repeat pattern observed across sample threads.",
-    "exfiltration-plan.doc": "Steps to archive volatile threads before takedown. Use automated crawlers, mirrored buckets, and redundancy.",
-    "compiled-threads.zip": "Archive of captured threads and screenshots collected by anonymous contributors.",
-    "anomaly-thread.txt": "This thread notes an unusual actor seeding narratives across multiple boards \u2014 possible false-flag operation.",
-    "backup-4chan-archive.zip": "Redundant backup of scraped public posts and conversation logs.",
-    "anonymous.zip": {
-        type: "executable",
-        action: shutdownSequence,
-        snippet: "Executable file detected. Running 'anonymous.zip'...",
-        fullContent: "Decryption process initiated. System lockdown triggered..."
-    }
-};
-
-function generateRandomFiles() {
-    // Adding random files to the specified directories
-    const directories = [
-        'root/',
-        'root/analysis/spectral',
-        'root/analysis/linguistics',
-        'root/analysis/patterns',
-        'root/archives/daily',           
-        'root/archives/monthly',         
-        'root/action/keys',  
-        'root/action/protocols',  
-        'root/action/algorithms'
-    ];
-
-    // Ensure that the nested directories exist in the file system
-    directories.forEach(directory => {
-        // Create files in each directory
-        const numFiles = Math.floor(Math.random() * 3) + 1; // Random number of files (1-3)
-        for (let i = 0; i < numFiles; i++) {
-            const fileName = `signal-${Math.floor(Math.random() * 100)}.doc`;
-            if (!fileSystem[directory]) {
-                fileSystem[directory] = { folders: [], files: [] };
-            }
-            fileSystem[directory].files.push(fileName);
-            fileContents[fileName] = `Encrypted token: ${Math.random().toString(36).substring(2, 15)}`;
+        "sticky-greentext.txt": ">> Anonymous 11/14/25 (Fri) -  /pol/ sticky: How Cancel Culture REALLY works\n\nA step-by-step greentext: they request, they smear, they erase. Follow the breadcrumbs, anon.",
+        "operation-manifesto.txt": "Operation: Echo Chamber — a plan to weaponize outrage for influence. Notes on timing, hashtags, and plausible deniability.",
+        "cancel-list.txt": "List compiled from dozens of threads: public figures, articles, influencers flagged for 'deplatforming'. Metadata scrubbed.",
+        "dox-hypothesis.txt": "Hypothesis: coordinated reports + viral pile-ons = engineered cancellations. Evidence: matching timestamps across boards.",
+        "timeline.log": "Thread 001 - seed post -> amplification -> mainstream pickup -> retraction. Repeat pattern observed across sample threads.",
+        "exfiltration-plan.doc": "Steps to archive volatile threads before takedown. Use automated crawlers, mirrored buckets, and redundancy.",
+        "compiled-threads.zip": "Archive of captured threads and screenshots collected by anonymous contributors.",
+        "anomaly-thread.txt": "This thread notes an unusual actor seeding narratives across multiple boards — possible false-flag operation.",
+        "backup-4chan-archive.zip": "Redundant backup of scraped public posts and conversation logs.",
+        "anonymous.zip": {
+            type: "executable",
+            action: shutdownSequence,
+            snippet: "Executable file detected. Running 'anonymous.zip'...",
+            fullContent: "Decryption process initiated. System lockdown triggered..."
         }
-    });
-}
+    };
 
-function showDirectoryContents() {
-    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
-    let foldersHTML = dirData.folders
-        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
-        .join("  ");
-    let filesHTML = dirData.files
-        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
-        .join("  ");
+    function generateRandomFiles() {
+        const directories = [
+            'root/',
+            'root/analysis/spectral',
+            'root/analysis/linguistics',
+            'root/analysis/patterns',
+            'root/archives/daily',
+            'root/archives/monthly',
+            'root/action/keys',
+            'root/action/protocols',
+            'root/action/algorithms'
+        ];
 
-    if (currentDirectory !== ROOT_DIR) {
-        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
-            (foldersHTML ? "  " + foldersHTML : "");
+        directories.forEach(directory => {
+            const numFiles = Math.floor(Math.random() * 3) + 1;
+            for (let i = 0; i < numFiles; i++) {
+                const fileName = `signal-${Math.floor(Math.random() * 100)}.doc`;
+                if (!fileSystem[directory]) {
+                    fileSystem[directory] = { folders: [], files: [] };
+                }
+                fileSystem[directory].files.push(fileName);
+                fileContents[fileName] = `Encrypted token: ${Math.random().toString(36).substring(2, 15)}`;
+            }
+        });
     }
 
-    // Deactivate previous directory and file blocks
-    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-    oldDirBlocks.forEach(block => block.classList.add('inactive'));
-    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+    function scrollTerminal() {
+        if (isEnding) return;
+        requestAnimationFrame(() => {
+            terminalDiv.scrollTop = terminalDiv.scrollHeight;
+        });
+    }
 
-    // Create new directory block
-    const dirBlock = document.createElement('div');
-    dirBlock.className = 'dir-block';
-    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+    function output(text) {
+        outputDiv.innerHTML += `\n> ${text}\n`;
+        scrollTerminal();
+    }
 
-    outputDiv.appendChild(dirBlock);
-    scrollTerminal();
+    function showDirectoryContents() {
+        const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+        let foldersHTML = dirData.folders
+            .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+            .join("  ");
+        let filesHTML = dirData.files
+            .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+            .join("  ");
 
-    // Attach click handlers only to current block
-    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
-    clickableItems.forEach(item => {
-        item.style.cursor = "pointer";
-        item.addEventListener('click', () => {
-            const type = item.getAttribute('data-type');
-            const name = item.getAttribute('data-name');
+        if (currentDirectory !== ROOT_DIR) {
+            foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
+                (foldersHTML ? "  " + foldersHTML : "");
+        }
 
-            if (type === "folder") {
-                currentDirectory = `${currentDirectory}/${name}`;
-                output(`> You entered ${currentDirectory}`);
-                showDirectoryContents();
-            } else if (type === "file") {
-                output(`> Opening file ${name}...`);
-                openFile(name);
-            } else if (type === "back") {
+        outputDiv.querySelectorAll('.dir-block').forEach(b => b.classList.add('inactive'));
+        outputDiv.querySelectorAll('.file-block').forEach(b => b.classList.add('inactive'));
+
+        const dirBlock = document.createElement('div');
+        dirBlock.className = 'dir-block';
+        dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+        outputDiv.appendChild(dirBlock);
+        scrollTerminal();
+
+        const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+        clickableItems.forEach(item => {
+            item.style.cursor = "pointer";
+            item.addEventListener('click', () => {
+                if (isEnding) return;
+
+                const type = item.getAttribute('data-type');
+                const name = item.getAttribute('data-name');
+
+                if (type === "folder") {
+                    currentDirectory = `${currentDirectory}/${name}`;
+                    output(`> You entered ${currentDirectory}`);
+                    showDirectoryContents();
+                } else if (type === "file") {
+                    output(`> Opening file ${name}...`);
+                    openFile(name);
+                } else if (type === "back") {
+                    currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                    output(`> You are now in ${currentDirectory}`);
+                    showDirectoryContents();
+                }
+            });
+        });
+    }
+
+    function processCommand(command) {
+        const target = command.trim();
+        if (target === "back") {
+            if (currentDirectory !== ROOT_DIR) {
                 currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
                 output(`> You are now in ${currentDirectory}`);
                 showDirectoryContents();
+            } else {
+                output("<span class='command-color1'>Already at root.</span>");
             }
-        });
-    });
-}
-
-// OUTPUT - END OF LEVEL
-
-function shutdownSequence() {
-    output(">>> Initiating signal decryption sequence...");
-    setTimeout(() => {
-        const terminal = document.getElementById("terminal");
-
-        terminal.innerHTML = 
-            "<div style='color: #8A2BE2; font-size: 2em; text-align: center;'><br><br>Jobs Act: Cancel Culture</div>" +
-            "<p style='color: #00FFFF; font-size: 1em; text-align: left; margin-top: 10px;'>" +
-            "The boards hum with anonymous posts \u2014 greentexts, screencaps, and midnight manifests. What started as inside jokes escalated into a coordinated chorus: threads planted narratives, images weaponized, and outrage engineered. Every repost was a ripple; every screenshot, a ledger.\n\n" +
-            "Within these virtual halls, users debated tactics and tracked the effects: how a single suggestion could balloon into mainstream accusations, how targeted reports triggered moderation cascades, and how the architecture of attention rewarded sensationalism over nuance.\n\n" +
-            "Some called it activism; others called it warfare by proxy. Anons traded instructions on timing, suggested hashtags, and proposed plausible deniability. Evidence was cataloged into lists, timelines, and hashed archives \u2014 all saved in mirrors that mirrored the ephemeral nature of the web.\n\n" +
-            "As moderators and platforms reacted, threads would morph: the origin story buried, the outcome amplified. Names were redacted here and there, but the pattern remained \u2014 a conveyor belt of outrage that transformed rumor into consequence.\n\n" +
-            "Outside the boards, journalists and influencers unknowingly became spokes in the machine: a screenshot here, an excerpt there, until narrative met the news cycle and deletion requests followed. The real power was not in any single post but in the networked shape of amplification.\n\n" +
-            "In late-night logs someone wrote a grim summary: 'Cancel Culture isn't a mob \u2014 it's an ecosystem.' It wasn't purely anger or justice; it was incentives, tooling, and timing. The files saved in hidden buckets held the blueprints \u2014 timestamps, mirror links, and the little scripts that kept the operation humming.\n\n" +
-            "When the archive was finally compiled, it revealed something else: a small number of coordinated seeds could produce outsized waves. Whether for righteous exposes or manipulative erasures, the mechanism proved frighteningly effective.\n\n" +
-            "If there is a lesson in that nocturnal catalog, it is this: systems amplify and forget; people feel and endure. The more the network rewards outrage, the more likely it is to be weaponized \u2014 intentionally or not.\n\n" +
-            "\u2014 ANON ARCHIVE." +
-            "</p>";
-
-        // Jump to the top
-        terminal.scrollTop = 0;
-
-        // Disable further input
-        document.removeEventListener('keydown', handleKeyDown);
-    }, 4000);
-}
-
-function openFile(filename) {
-    const fileData = fileContents[filename];
-    if (!fileData) {
-        output("<span class='command-color1'>File not found.</span>");
-        return;
+        } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+            currentDirectory = `${currentDirectory}/${target}`;
+            output(`> You entered ${currentDirectory}`);
+            showDirectoryContents();
+        } else if (fileSystem[currentDirectory]?.files.includes(target)) {
+            output(`> Opening file ${target}...`);
+            openFile(target);
+        } else {
+            output("<span class='command-color1'>Folder or file not found.</span>");
+        }
     }
 
-    if (fileData.type === "executable" && typeof fileData.action === "function") {
-        output(fileData.snippet);
-        fileData.action();
-    } else {
+    /* ===========================
+       MOBILE-PROOF END SEQUENCE
+       =========================== */
+    function shutdownSequence() {
+        output(">>> Initiating signal decryption sequence...");
+        setTimeout(() => {
+            isEnding = true;
+
+            // kill the caret/keyboard scroll source BEFORE replacing DOM
+            if (hiddenInput) {
+                hiddenInput.disabled = true;
+                hiddenInput.blur();
+            }
+            if (document.activeElement && typeof document.activeElement.blur === "function") {
+                document.activeElement.blur();
+            }
+
+            terminalDiv.innerHTML =
+                "<div style='color: #8A2BE2; font-size: 2em; text-align: center;'><br><br>Jobs Act: Cancel Culture</div>" +
+                "<p style='color: #00FFFF; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+                "The boards hum with anonymous posts — greentexts, screencaps, and midnight manifests. What started as inside jokes escalated into a coordinated chorus: threads planted narratives, images weaponized, and outrage engineered. Every repost was a ripple; every screenshot, a ledger.<br><br>" +
+                "Within these virtual halls, users debated tactics and tracked the effects: how a single suggestion could balloon into mainstream accusations, how targeted reports triggered moderation cascades, and how the architecture of attention rewarded sensationalism over nuance.<br><br>" +
+                "Some called it activism; others called it warfare by proxy. Anons traded instructions on timing, suggested hashtags, and proposed plausible deniability. Evidence was cataloged into lists, timelines, and hashed archives — all saved in mirrors that mirrored the ephemeral nature of the web.<br><br>" +
+                "As moderators and platforms reacted, threads would morph: the origin story buried, the outcome amplified. Names were redacted here and there, but the pattern remained — a conveyor belt of outrage that transformed rumor into consequence.<br><br>" +
+                "Outside the boards, journalists and influencers unknowingly became spokes in the machine: a screenshot here, an excerpt there, until narrative met the news cycle and deletion requests followed. The real power was not in any single post but in the networked shape of amplification.<br><br>" +
+                "In late-night logs someone wrote a grim summary: 'Cancel Culture isn't a mob — it's an ecosystem.' It wasn't purely anger or justice; it was incentives, tooling, and timing. The files saved in hidden buckets held the blueprints — timestamps, mirror links, and the little scripts that kept the operation humming.<br><br>" +
+                "When the archive was finally compiled, it revealed something else: a small number of coordinated seeds could produce outsized waves. Whether for righteous exposes or manipulative erasures, the mechanism proved frighteningly effective.<br><br>" +
+                "If there is a lesson in that nocturnal catalog, it is this: systems amplify and forget; people feel and endure. The more the network rewards outrage, the more likely it is to be weaponized — intentionally or not.<br><br>" +
+                "— ANON ARCHIVE." +
+                "</p>";
+
+            // force top reliably (avoid smooth scrolling + wait for layout)
+            terminalDiv.style.scrollBehavior = "auto";
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    terminalDiv.scrollTop = 0;
+                });
+            });
+
+            if (typeof handleKeyDown === 'function') {
+                document.removeEventListener('keydown', handleKeyDown);
+            }
+        }, 4000);
+    }
+
+    function openFile(filename) {
+        const fileData = fileContents[filename];
+        if (!fileData) {
+            output("<span class='command-color1'>File not found.</span>");
+            return;
+        }
+
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet);
+            fileData.action();
+            return;
+        }
+
         output(fileContents[filename]);
 
-        // Deactivate previous file and directory blocks
-        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-        oldFileBlocks.forEach(block => block.classList.add('inactive'));
-        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-        oldDirBlocks.forEach(block => block.classList.add('inactive'));
+        outputDiv.querySelectorAll('.file-block').forEach(b => b.classList.add('inactive'));
+        outputDiv.querySelectorAll('.dir-block').forEach(b => b.classList.add('inactive'));
 
-        // Create new file block with back button
         const fileBlock = document.createElement('div');
         fileBlock.className = 'file-block';
         fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
         outputDiv.appendChild(fileBlock);
         scrollTerminal();
 
-        // Attach click handler to current back button
         const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
         backButton.style.cursor = 'pointer';
         backButton.addEventListener('click', () => {
+            if (isEnding) return;
             showDirectoryContents();
         });
     }
-}
-    function scrollTerminal() {
-        const terminal = document.getElementById("terminal");
-        requestAnimationFrame(() => {
-            terminal.scrollTop = terminal.scrollHeight;
-        });
-    }
 
-function output(text) {
-    outputDiv.innerHTML += `\n> ${text}\n`;
-    scrollTerminal();
-}
-
-function processCommand(command) {
-    const target = command.trim();
-    if (target === "back") {
-        if (currentDirectory !== ROOT_DIR) {
-            currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
-            output(`> You are now in ${currentDirectory}`);
-            showDirectoryContents();
-        } else {
-            output("<span class='command-color1'>Already at root.</span>");
-        }
-    } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
-        currentDirectory = `${currentDirectory}/${target}`;
-        output(`> You entered ${currentDirectory}`);
-        showDirectoryContents();
-    } else if (fileSystem[currentDirectory]?.files.includes(target)) {
-        output(`> Opening file ${target}...`);
-        openFile(target);
-    } else {
-        output("<span class='command-color1'>Folder or file not found.</span>");
-    }
-}
-
-    const hiddenInput = document.getElementById('hidden-input');
-    // userInputSpan already defined above
-
-    document.getElementById('terminal').addEventListener('click', () => {
-        hiddenInput.focus(); // opens mobile keyboard
+    // ---- Mobile-friendly input ----
+    terminalDiv.addEventListener('click', () => {
+        if (isEnding) return;
+        hiddenInput.focus();
     });
 
     hiddenInput.addEventListener('input', () => {
+        if (isEnding) return;
         userInputSpan.innerText = hiddenInput.value;
         scrollTerminal();
     });
 
     hiddenInput.addEventListener('keydown', (event) => {
+        if (isEnding) return;
         if (event.key === 'Enter') {
             const command = hiddenInput.value;
             output(`<span class='command-color1'>${command}</span>`);
             processCommand(command);
             hiddenInput.value = '';
             userInputSpan.innerText = '';
-        } else if (event.key === 'Backspace') {
-            // handled automatically by input
         }
     });
 
@@ -399,20 +402,29 @@ function processCommand(command) {
         }, 100);
     }
 
-    typingAnimation("Anonymous is watching. Threads twist, screenshots leak, and outrage multiplies. Dig through the boards — see who rises, who falls, who disappears...", () => {
-        output("Click or type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to open it.");
-        output("Click or type <u>back</u> to return to the previous directory.");
-        generateRandomFiles();
-        showDirectoryContents();
-    });
+    typingAnimation(
+        "Anonymous is watching. Threads twist, screenshots leak, and outrage multiplies. Dig through the boards — see who rises, who falls, who disappears...",
+        () => {
+            output("Click or type the name of a <span class='command-color3'>folder</span> or a <span class='command-color2'>file</span> to open it.");
+            output("Click or type <u>back</u> to return to the previous directory.");
+            generateRandomFiles();
+            showDirectoryContents();
+        }
+    );
 
     document.addEventListener('contextmenu', (event) => {
         event.preventDefault();
     });
 
     window.onload = function() {
-        document.getElementById("terminal").focus();
+        // focusing hidden input is what actually helps on iOS; terminal focus alone may not
+        setTimeout(() => {
+            if (!isEnding) hiddenInput.focus();
+        }, 120);
     };
+
+    // optional placeholder (safe)
+    function handleKeyDown(e){ /* placeholder */ }
 </script>
 
 </body>

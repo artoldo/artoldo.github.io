@@ -1,479 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prampolini-Menarini Express</title>
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prampolini-Menarini Express</title>
 
-#terminal {
-    width: 80%;
-    max-width: 600px;
-    height: 90vh;
-    background-color: #1a1a1a; /* deep charcoal for contrast, soft on eyes */
-    padding: 20px;
-    padding-bottom: 100px;
-    border-radius: 10px;
-    border: 2px solid #D4AF37; /* antique gold accent */
-    overflow-y: auto;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
-    color: #fdf6e3; /* soft cream text by default */
-    font-family: 'Courier New', Courier, monospace;
-    text-shadow: 0 0 3px rgba(212,175,55,0.6);
-}
-
-#terminal:focus {
-    outline: none;
-}
-
-#output {
-    white-space: pre-wrap;
-    margin-bottom: 10px;
-    color: #fdf6e3; /* cream */
-    text-shadow: 0 0 3px rgba(212,175,55,0.4);
-}
-
-#input-line {
-    display: inline;
-}
-
-.command-color1 { 
-    color: #D4AF37; /* antique gold commands */
-    text-shadow: 0 0 2px rgba(212,175,55,0.7);
-}
-.command-color2 { 
-    color: #f5deb3; /* wheat-like soft highlight */
-    text-shadow: 0 0 2px rgba(245,222,179,0.6);
-}
-.command-color3 { 
-    color: #deb887; /* burlywood tone for secondary highlights */
-    text-shadow: 0 0 2px rgba(222,184,135,0.6);
-}
-
-.folder { 
-    background-color: #D4AF37; /* antique gold folders */
-    color: #1a1a1a; /* dark text */
-    padding: 5px 10px; 
-    border-radius: 3px; 
-    margin-top: 8px; 
-    display: inline-block; 
-    text-shadow: 0 0 2px rgba(212,175,55,0.7);
-}
-
-.file { 
-    background-color: #2b2b2b; /* dark chocolate-like background */
-    color: #fdf6e3; /* soft cream */
-    padding: 5px 10px; 
-    border-radius: 3px; 
-    margin-top: 8px; 
-    display: inline-block; 
-    text-shadow: 0 0 2px rgba(245,222,179,0.4);
-}
-
-.cursor {
-    animation: blink 1s steps(2, start) infinite;
-    color: #fdf6e3; /* cream blinking cursor */
-    text-shadow: 0 0 3px rgba(212,175,55,0.6);
-}
-
-@keyframes blink {
-    50% { opacity: 0; }
-}
-
-* {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.inactive {
-    pointer-events: none;
-}
-
-    </style>
-
-<!-- Polaroid Floating Background Start -->
-<style>
-#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(1.5px);}
-</style>
-
-<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
-
-<script>
-(function(){
-    const canvas = document.getElementById("mainCanvas");
-    const ctx = canvas.getContext("2d");
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    class Polaroid {
-        constructor(){
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.angle = (Math.random() - 0.5) * 0.2; // subtle tilt
-            this.size = 60 + Math.random() * 60;
-            this.vx = (Math.random() - 0.5) * 0.2;
-            this.vy = (Math.random() - 0.5) * 0.2;
-
-            // Golden-yellow palette with some variation
-            const baseGold = 212 + Math.random()*20;  // near #D4AF37
-            const baseWheat = 175 + Math.random()*30; // near #f5deb3
-            const baseBrown = 55 + Math.random()*30;  // subtle contrast
-            this.color = `rgba(${baseGold},${baseWheat},${baseBrown},0.7)`;
-
-            // Add glow effect
-            this.glow = 0.2 + Math.random()*0.5;
-            this.glowDirection = Math.random() < 0.5 ? 1 : -1;
-        }
-
-        update(){
-            this.x += this.vx;
-            this.y += this.vy;
-            this.glow += 0.005 * this.glowDirection;
-            if(this.glow > 0.8 || this.glow < 0.2) this.glowDirection *= -1;
-
-            if(this.x < -this.size) this.x = width + this.size;
-            if(this.x > width + this.size) this.x = -this.size;
-            if(this.y < -this.size) this.y = height + this.size;
-            if(this.y > height + this.size) this.y = -this.size;
-        }
-
-        draw(ctx){
-            ctx.save();
-            ctx.translate(this.x,this.y);
-            ctx.rotate(this.angle);
-            ctx.fillStyle = this.color;
-            ctx.shadowColor = `rgba(212,175,55,${this.glow})`; // golden glow
-            ctx.shadowBlur = 10;
-            ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size*0.8); // Polaroid shape
-            ctx.strokeStyle = "rgba(212,175,55,0.8)"; // golden border
-            ctx.lineWidth = 2;
-            ctx.strokeRect(-this.size/2, -this.size/2, this.size, this.size*0.8);
-            ctx.restore();
-        }
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
     }
 
-    const NUM_POLAROIDS = 40;
-    const polaroids = Array.from({length:NUM_POLAROIDS},()=>new Polaroid());
-
-    function animate(){
-        ctx.fillStyle = "#000"; // dark background
-        ctx.fillRect(0,0,width,height);
-
-        polaroids.forEach(p=>{
-            p.update();
-            p.draw(ctx);
-        });
-
-        requestAnimationFrame(animate);
+    #terminal {
+      width: 80%;
+      max-width: 600px;
+      height: 90vh;
+      background-color: #1a1a1a; /* deep charcoal */
+      padding: 20px;
+      padding-bottom: 100px; /* mobile keyboard space */
+      border-radius: 10px;
+      border: 2px solid #D4AF37; /* antique gold */
+      overflow-y: auto;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      color: #fdf6e3;
+      text-shadow: 0 0 3px rgba(212,175,55,0.6);
     }
 
-    animate();
+    #terminal:focus { outline: none; }
 
-    window.addEventListener("resize", ()=>{
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    });
-})();
-</script>
-<!-- Polaroid Floating Background End -->
+    #output {
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+      color: #fdf6e3;
+      text-shadow: 0 0 3px rgba(212,175,55,0.4);
+    }
+
+    #input-line { display: inline; }
+
+    .command-color1 {
+      color: #D4AF37;
+      text-shadow: 0 0 2px rgba(212,175,55,0.7);
+    }
+    .command-color2 {
+      color: #f5deb3;
+      text-shadow: 0 0 2px rgba(245,222,179,0.6);
+    }
+    .command-color3 {
+      color: #deb887;
+      text-shadow: 0 0 2px rgba(222,184,135,0.6);
+    }
+
+    .folder {
+      background-color: #D4AF37;
+      color: #1a1a1a;
+      padding: 5px 10px;
+      border-radius: 3px;
+      margin-top: 8px;
+      display: inline-block;
+      text-shadow: 0 0 2px rgba(212,175,55,0.7);
+    }
+
+    .file {
+      background-color: #2b2b2b;
+      color: #fdf6e3;
+      padding: 5px 10px;
+      border-radius: 3px;
+      margin-top: 8px;
+      display: inline-block;
+      text-shadow: 0 0 2px rgba(245,222,179,0.4);
+    }
+
+    .cursor {
+      animation: blink 1s steps(2, start) infinite;
+      color: #fdf6e3;
+      text-shadow: 0 0 3px rgba(212,175,55,0.6);
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .inactive { pointer-events: none; }
+  </style>
+
+  <!-- Polaroid Floating Background Start -->
+  <style>
+    #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+    #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(1.5px);}
+  </style>
+
+  <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+
+  <script>
+  (function(){
+      const canvas = document.getElementById("mainCanvas");
+      const ctx = canvas.getContext("2d");
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      class Polaroid {
+          constructor(){
+              this.x = Math.random() * width;
+              this.y = Math.random() * height;
+              this.angle = (Math.random() - 0.5) * 0.2;
+              this.size = 60 + Math.random() * 60;
+              this.vx = (Math.random() - 0.5) * 0.2;
+              this.vy = (Math.random() - 0.5) * 0.2;
+
+              const baseGold = 212 + Math.random()*20;
+              const baseWheat = 175 + Math.random()*30;
+              const baseBrown = 55 + Math.random()*30;
+              this.color = `rgba(${baseGold},${baseWheat},${baseBrown},0.7)`;
+
+              this.glow = 0.2 + Math.random()*0.5;
+              this.glowDirection = Math.random() < 0.5 ? 1 : -1;
+          }
+
+          update(){
+              this.x += this.vx;
+              this.y += this.vy;
+              this.glow += 0.005 * this.glowDirection;
+              if(this.glow > 0.8 || this.glow < 0.2) this.glowDirection *= -1;
+
+              if(this.x < -this.size) this.x = width + this.size;
+              if(this.x > width + this.size) this.x = -this.size;
+              if(this.y < -this.size) this.y = height + this.size;
+              if(this.y > height + this.size) this.y = -this.size;
+          }
+
+          draw(ctx){
+              ctx.save();
+              ctx.translate(this.x,this.y);
+              ctx.rotate(this.angle);
+              ctx.fillStyle = this.color;
+              ctx.shadowColor = `rgba(212,175,55,${this.glow})`;
+              ctx.shadowBlur = 10;
+              ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size*0.8);
+              ctx.strokeStyle = "rgba(212,175,55,0.8)";
+              ctx.lineWidth = 2;
+              ctx.strokeRect(-this.size/2, -this.size/2, this.size, this.size*0.8);
+              ctx.restore();
+          }
+      }
+
+      const NUM_POLAROIDS = 40;
+      const polaroids = Array.from({length:NUM_POLAROIDS},()=>new Polaroid());
+
+      function animate(){
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0,0,width,height);
+
+          polaroids.forEach(p=>{
+              p.update();
+              p.draw(ctx);
+          });
+
+          requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      window.addEventListener("resize", ()=>{
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+      });
+  })();
+  </script>
+  <!-- Polaroid Floating Background End -->
 </head>
+
 <body>
+  <div id="terminal" tabindex="0">
+      <input
+          type="text"
+          id="hidden-input"
+          style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;caret-color:transparent;"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+      >
+      <div id="output"></div>
+      <div>
+          <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
+      </div>
+  </div>
 
-<div id="terminal" tabindex="0">
-    <input
-        type="text"
-        id="hidden-input"
-        style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;caret-color:transparent;"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false"
-    >
-    <div id="output"></div>
-    <div>
-        <span id="input-line">> </span><span id="user-input"></span><span class="cursor">_</span>
-    </div>
-</div>
+  <script>
+  // ===========================
+  // Terminal dataset + logic
+  // (mobile-safe + clean ending)
+  // ===========================
+  const terminalEl = document.getElementById('terminal');
+  const outputDiv = document.getElementById('output');
+  const userInputSpan = document.getElementById('user-input');
+  const inputLine = document.getElementById('input-line');
+  const hiddenInput = document.getElementById('hidden-input');
 
-<script>
-// Terminal dataset for Prampolini-Menarini Express
-const outputDiv = document.getElementById('output');
-const userInputSpan = document.getElementById('user-input');
-const ROOT_DIR = "Prampolini-Menarini";
-let currentDirectory = ROOT_DIR;
+  let isEnding = false;
 
-// Folder structure
-const fileSystem = {
-    [ROOT_DIR]: { folders: ["polaroids","diaries","sketches","letters","archives"], files: [] },
-    [ROOT_DIR + "/polaroids"]: { folders: [], files: ["milan-streets-1955.jpg","fashion-show-1960.jpg","piazza-duomo-1958.jpg","cafes-and-lamps-1959.jpg"] },
-    [ROOT_DIR + "/diaries"]: { folders: [], files: ["amore-1955.txt","studio-life-1957.txt","letter-to-gina-1959.txt","summer-love-1960.txt"] },
-    [ROOT_DIR + "/sketches"]: { folders: ["fashion","architecture"], files: ["hat-designs-1956.sketch","coat-patterns-1958.sketch","street-lamp-study-1957.sketch","duomo-perspective-1960.sketch"] },
-    [ROOT_DIR + "/sketches/fashion"]: { folders: [], files: [] },
-    [ROOT_DIR + "/sketches/architecture"]: { folders: [], files: [] },
-    [ROOT_DIR + "/letters"]: { folders: [], files: ["love-letter-gina-1955.txt","postcard-romina-1956.txt","thank-you-milano-1959.txt","secret-invitation-1960.txt"] },
-    [ROOT_DIR + "/archives"]: { folders: ["daily-logs","monthly-collections"], files: ["vintage-film-rolls.zip"] },
-    [ROOT_DIR + "/archives/daily-logs"]: { folders: [], files: ["1955-06-01.txt","1956-09-12.txt","1957-04-23.txt"] },
-    [ROOT_DIR + "/archives/monthly-collections"]: { folders: [], files: ["jan-1958-summary.txt","jul-1960-summary.txt"] }
-};
+  const ROOT_DIR = "Prampolini-Menarini";
+  let currentDirectory = ROOT_DIR;
 
-// File contents
-const fileContents = {
-    // Polaroids
-    "milan-streets-1955.jpg":"<i>Black-and-white street photo; young couples, scooters, cobblestones glistening.</i>",
-    "fashion-show-1960.jpg":"<i>Runway with structured coats and bold hats, first neon lighting glimpses.</i>",
-    "piazza-duomo-1958.jpg":"<i>Afternoon sun casting shadows on Duomo; playful pigeons and couples in chic coats.</i>",
-    "cafes-and-lamps-1959.jpg":"<i>Romantic café terraces with flickering lamps; jazz notes seem to float in the air.</i>",
+  const fileSystem = {
+      [ROOT_DIR]: { folders: ["polaroids","diaries","sketches","letters","archives"], files: [] },
+      [ROOT_DIR + "/polaroids"]: { folders: [], files: ["milan-streets-1955.jpg","fashion-show-1960.jpg","piazza-duomo-1958.jpg","cafes-and-lamps-1959.jpg"] },
+      [ROOT_DIR + "/diaries"]: { folders: [], files: ["amore-1955.txt","studio-life-1957.txt","letter-to-gina-1959.txt","summer-love-1960.txt"] },
+      [ROOT_DIR + "/sketches"]: { folders: ["fashion","architecture"], files: ["hat-designs-1956.sketch","coat-patterns-1958.sketch","street-lamp-study-1957.sketch","duomo-perspective-1960.sketch"] },
+      [ROOT_DIR + "/sketches/fashion"]: { folders: [], files: [] },
+      [ROOT_DIR + "/sketches/architecture"]: { folders: [], files: [] },
+      [ROOT_DIR + "/letters"]: { folders: [], files: ["love-letter-gina-1955.txt","postcard-romina-1956.txt","thank-you-milano-1959.txt","secret-invitation-1960.txt"] },
+      [ROOT_DIR + "/archives"]: { folders: ["daily-logs","monthly-collections"], files: ["vintage-film-rolls.zip"] },
+      [ROOT_DIR + "/archives/daily-logs"]: { folders: [], files: ["1955-06-01.txt","1956-09-12.txt","1957-04-23.txt"] },
+      [ROOT_DIR + "/archives/monthly-collections"]: { folders: [], files: ["jan-1958-summary.txt","jul-1960-summary.txt"] }
+  };
 
-    // Diaries
-    "amore-1955.txt":"First love in Milan; longing notes and sketches of hands intertwined.",
-    "studio-life-1957.txt":"Design studio journal; sketches, fabric samples, and late-night inspirations.",
-    "letter-to-gina-1959.txt":"Handwritten love letter; hidden sketches of hats and gloves in margins.",
-    "summer-love-1960.txt":"Holiday romance along the canals; poems, sketches, pressed flowers.",
+  const fileContents = {
+      "milan-streets-1955.jpg":"<i>Black-and-white street photo; young couples, scooters, cobblestones glistening.</i>",
+      "fashion-show-1960.jpg":"<i>Runway with structured coats and bold hats, first neon lighting glimpses.</i>",
+      "piazza-duomo-1958.jpg":"<i>Afternoon sun casting shadows on Duomo; playful pigeons and couples in chic coats.</i>",
+      "cafes-and-lamps-1959.jpg":"<i>Romantic café terraces with flickering lamps; jazz notes seem to float in the air.</i>",
 
-    // Sketches
-    "hat-designs-1956.sketch":"Pencil sketches of cloche hats and feather details.",
-    "coat-patterns-1958.sketch":"Detailed measurements, texture notes, button placements.",
-    "street-lamp-study-1957.sketch":"Perspective studies of ornate lamp posts.",
-    "duomo-perspective-1960.sketch":"Angled sketches of cathedral façade exploring shadows and silhouettes.",
+      "amore-1955.txt":"First love in Milan; longing notes and sketches of hands intertwined.",
+      "studio-life-1957.txt":"Design studio journal; sketches, fabric samples, and late-night inspirations.",
+      "letter-to-gina-1959.txt":"Handwritten love letter; hidden sketches of hats and gloves in margins.",
+      "summer-love-1960.txt":"Holiday romance along the canals; poems, sketches, pressed flowers.",
 
-    // Letters
-    "love-letter-gina-1955.txt":"Romantic lines describing a stolen kiss near the canals.",
-    "postcard-romina-1956.txt":"Short notes about fashion shows, capturing fleeting glances.",
-    "thank-you-milano-1959.txt":"Gratitude for hospitality and cafés; subtle romantic undertones.",
-    "secret-invitation-1960.txt":"Whispered invitation to a masked ball in the Brera district; playful intrigue.",
+      "hat-designs-1956.sketch":"Pencil sketches of cloche hats and feather details.",
+      "coat-patterns-1958.sketch":"Detailed measurements, texture notes, button placements.",
+      "street-lamp-study-1957.sketch":"Perspective studies of ornate lamp posts.",
+      "duomo-perspective-1960.sketch":"Angled sketches of cathedral façade exploring shadows and silhouettes.",
 
-    // Archives
-    "vintage-film-rolls.zip":{ type:"executable", action:revealPolaroids, snippet:"Loading vintage film rolls...", fullContent:"Polaroid collection revealed: Milan streets, cafés, fashion shows, and secret diary sketches." },
-    "1955-06-01.txt":"Diary snippet: morning coffee in the Brera district; first sketches of cloche hats.",
-    "1956-09-12.txt":"Diary snippet: late summer evening walks; hidden letters exchanged under lamplight.",
-    "1957-04-23.txt":"Diary snippet: studio experiment with fabrics and shadows; sketches of new coat patterns.",
-    "jan-1958-summary.txt":"Monthly summary: Polaroid experiments, diary notes, fashion sketches compiled.",
-    "jul-1960-summary.txt":"Monthly summary: Summer love and secret letters; fashion shows documented."
-};
+      "love-letter-gina-1955.txt":"Romantic lines describing a stolen kiss near the canals.",
+      "postcard-romina-1956.txt":"Short notes about fashion shows, capturing fleeting glances.",
+      "thank-you-milano-1959.txt":"Gratitude for hospitality and cafés; subtle romantic undertones.",
+      "secret-invitation-1960.txt":"Whispered invitation to a masked ball in the Brera district; playful intrigue.",
 
-// --- Utility Functions ---
-function scrollTerminal() {
-    const terminal = document.getElementById("terminal");
-    requestAnimationFrame(() => { terminal.scrollTop = terminal.scrollHeight; });
-}
+      "vintage-film-rolls.zip":{ type:"executable", action:revealPolaroids, snippet:"Loading vintage film rolls..." },
+      "1955-06-01.txt":"Diary snippet: morning coffee in the Brera district; first sketches of cloche hats.",
+      "1956-09-12.txt":"Diary snippet: late summer evening walks; hidden letters exchanged under lamplight.",
+      "1957-04-23.txt":"Diary snippet: studio experiment with fabrics and shadows; sketches of new coat patterns.",
+      "jan-1958-summary.txt":"Monthly summary: Polaroid experiments, diary notes, fashion sketches compiled.",
+      "jul-1960-summary.txt":"Monthly summary: Summer love and secret letters; fashion shows documented."
+  };
 
-function output(text){
-    outputDiv.innerHTML += `\n> ${text}\n`;
-    scrollTerminal();
-}
+  function scrollTerminal() {
+      if (isEnding) return;
+      requestAnimationFrame(() => { terminalEl.scrollTop = terminalEl.scrollHeight; });
+  }
 
-function showDirectoryContents() {
-    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
-    let foldersHTML = dirData.folders
-        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
-        .join("  ");
-    let filesHTML = dirData.files
-        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
-        .join("  ");
+  function output(text){
+      outputDiv.innerHTML += `\n> ${text}\n`;
+      scrollTerminal();
+  }
 
-    if (currentDirectory !== ROOT_DIR) {
-        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
-            (foldersHTML ? "  " + foldersHTML : "");
+  function showDirectoryContents() {
+      const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+
+      let foldersHTML = dirData.folders
+          .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+          .join("  ");
+
+      let filesHTML = dirData.files
+          .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+          .join("  ");
+
+      if (currentDirectory !== ROOT_DIR) {
+          foldersHTML = `<span class="folder" data-type="back">&lt;&lt; back</span>` +
+              (foldersHTML ? "  " + foldersHTML : "");
+      }
+
+      outputDiv.querySelectorAll('.dir-block').forEach(block => block.classList.add('inactive'));
+      outputDiv.querySelectorAll('.file-block').forEach(block => block.classList.add('inactive'));
+
+      const dirBlock = document.createElement('div');
+      dirBlock.className = 'dir-block';
+      dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+      outputDiv.appendChild(dirBlock);
+      scrollTerminal();
+
+      const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+      clickableItems.forEach(item => {
+          item.style.cursor = "pointer";
+          item.addEventListener('click', () => {
+              if (isEnding) return;
+
+              const type = item.getAttribute('data-type');
+              const name = item.getAttribute('data-name');
+
+              if (type === "folder") {
+                  currentDirectory = `${currentDirectory}/${name}`;
+                  output(`> You entered ${currentDirectory}`);
+                  showDirectoryContents();
+              } else if (type === "file") {
+                  output(`> Opening file ${name}...`);
+                  openFile(name);
+              } else if (type === "back") {
+                  currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                  output(`> You are now in ${currentDirectory}`);
+                  showDirectoryContents();
+              }
+          });
+      });
+  }
+
+  function openFile(filename) {
+      const fileData = fileContents[filename];
+      if (!fileData) {
+          output("<span class='command-color1'>File not found.</span>");
+          return;
+      }
+
+      if (fileData.type === "executable" && typeof fileData.action === "function") {
+          output(fileData.snippet);
+          fileData.action();
+          return;
+      }
+
+      output(fileContents[filename]);
+
+      outputDiv.querySelectorAll('.file-block').forEach(block => block.classList.add('inactive'));
+      outputDiv.querySelectorAll('.dir-block').forEach(block => block.classList.add('inactive'));
+
+      const fileBlock = document.createElement('div');
+      fileBlock.className = 'file-block';
+      fileBlock.innerHTML = `\n<span class="folder" data-type="back-file">&lt;&lt; back</span>`;
+      outputDiv.appendChild(fileBlock);
+      scrollTerminal();
+
+      const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
+      backButton.style.cursor = 'pointer';
+      backButton.addEventListener('click', () => {
+          if (isEnding) return;
+          showDirectoryContents();
+      });
+  }
+
+  function processCommand(command){
+      const target = command.trim();
+      if (!target) return;
+
+      if(target === "back"){
+          if(currentDirectory !== ROOT_DIR){
+              currentDirectory = currentDirectory.split("/").slice(0,-1).join("/")||ROOT_DIR;
+              output(`> You are now in ${currentDirectory}`);
+              showDirectoryContents();
+          } else {
+              output("<span class='command-color1'>Already at root.</span>");
+          }
+          return;
+      }
+
+      if(fileSystem[currentDirectory]?.folders.includes(target)){
+          currentDirectory = `${currentDirectory}/${target}`;
+          output(`> You entered ${currentDirectory}`);
+          showDirectoryContents();
+          return;
+      }
+
+      if(fileSystem[currentDirectory]?.files.includes(target)){
+          output(`> Opening file ${target}...`);
+          openFile(target);
+          return;
+      }
+
+      output("<span class='command-color1'>Folder or file not found.</span>");
+  }
+
+  function revealPolaroids() {
+      output(">>> Revealing vintage Milano Photo Dia Reels...");
+
+      setTimeout(() => {
+          isEnding = true;
+
+          // Stop keyboard/scroll fights on mobile
+          if (hiddenInput) {
+              hiddenInput.disabled = true;
+              hiddenInput.blur();
+          }
+          if (document.activeElement && typeof document.activeElement.blur === "function") {
+              document.activeElement.blur();
+          }
+
+          // Hide prompt/cursor (since we're about to replace DOM anyway)
+          userInputSpan.textContent = "";
+          inputLine.style.visibility = "hidden";
+          const cursor = terminalEl.querySelector(".cursor");
+          if (cursor) cursor.style.visibility = "hidden";
+
+          terminalEl.innerHTML =
+              "<div style='color: #D4AF37; font-size: 2em; text-align: center;'><br><br>Prampolini-Menarini Express</div>" +
+              "<p style='color: #D4AF37; font-size: 1em; text-align: left; margin-top: 10px; line-height:1.5;'>" +
+
+              "Come visualizzare, offrendo e prendendone visione, vite disperse in oggetti ritrovati per caso in una casa, da altri, noi, presa e da alcuni, loro, data in affitto.<br><br>" +
+
+              "Quella era in questo caso un appartamento a Milano, ammobiliato con tanto di oggetti di casa, tanti, tutti appartenenti ad un altoatesino, all’epoca sarà per poco ancora vivente e ad una bolognese, già trapassata e in quegli stessi oggetti oggettivati di nuovo assieme, redivivi.<br><br>" +
+
+              "Coppia borghese tra l’affiatato e da un certo ignoto punto in poi, a pensar male, il mal assortito, proprio come è quando deve andare così, sebbene i posteri non sìano chiamati ad esprimere tali ardue sentenze, bensì, in veste di pubblico, allettati a ripercorrere momenti di vita di quei due immortalati in diapositive ritrovate in soffitta o in cantina.<br><br>" +
+
+              "Il film gioca a montarle dando loro un flusso temporale che non può che essere inattuale altresì inatteso, perché interpuntato da immobili spaccati di vita, quadri di vita vissuta, fissati in close-up su mobili con sopra posati gli oggetti, i loro, ora passati ad essere altrui, in momenti ora propri dei film-maker stessi, riutilizzatori e riadattatori di quegli oggetti alla propria quotidianità di oggi, con un occhio di riguardo e una strizzata d’occhio a quei mezzi sconosciuti antichi proprietari.<br><br>" +
+
+              "Sono gli oggetti della coppia Prampolini-Menarini, per quel che se n’è evinto da sparute e sparse informazioni e cenni e drammi ricostruiti, la fu coppia poi scoppiata e senza eredi del bilocale milanese, lei scomparsa in solitudine soltanto accompagnata alla fine dalla fondazione di un noto ospedale a tema tumori, lui sopravvissutole come usufruttuario, riaccompagnato da dama losannese novella al seguito, conosciuta sul Lago Lemano, dove lui, Benito Maria si era trasferito, chissà se già pre o solo post dipartita della moglie Laura - con lui firmeremo il contratto d’affitto e di lui scomparso presso un rifugio nella Suisse occidentale sapremo dal suo amico avvocato, cointestatario del conto su cui arrivava regolare il nostro affitto.<br><br>" +
+
+              "Deceduto mentre oltre i settanta si arrampicava oltre i tremila a mille e quattro dalla cima del Cervino, ma dalla via svizzera, ormai prediletta, dove la stessa medesima montagna si chiama Matterhorn. Il cuore dell'ingegnere lo aveva lasciato sulle ubique montagne, onnipresenti, oblique, amate.<br><br>" +
+
+              "Molti degli oggetti migreranno in altre case, come una scarna eredità di un misconosciuto zio americano, che non si può dire scarsa, che lo zio non era nemmeno alla lontana nostro parente, vige pur sempre quel: a cavall donato non si guarda in bocca, anche ad non essere di bocca buona.<br><br>" +
+
+              "Di casa-loro non ci sono immagini, né di chi l’ha lì rivissuta, tempi in cui non si fotografava troppo, troppo sfuggenti in una metropoli troppo veloce, ridondante di possibilità da sconcertato inizio millennio, oggi denominati eventi, ieri già lo erano in tempi non sospetti, piuttosto sospesi tra settembrini attacchi a grattacièli americani e primaverili incidenti nostrani, come quel 18 aprile 2002 con lo schianto di un veivolo monoposto da turismo sul Pirelli, quasi all'ombra di cui, nella via Filzi con rotaie per tram vintage arancioni con sedili di legno vetrificato giaceva vivissimo e placido al floreale civico 10 delle Belle Arti l’appartamento liberty in oggetto.<br><br>" +
+
+              "Non rimaneva che rimetterli in scena in una seduta spiritica spiritata, a volte spiritosa, di tremolii spiriticamente evocati, di racconti tra loro inattuali come utensili tratti da natura morta che servono pranzi e cene di altre vite spesso sorprese divertite al pensare ai primigèni proprietari come fossero parenti acquisiti da altri disconosciuti.<br><br>" +
+
+              "La pellicola, del tempo, rivivificante rivestimento di redivive immagini-ritrovate, rianimate, passate in rassegna, riviste del tempo-che fu, rivisitate.<br><br>" +
+
+              "Quel revival di diapositive rinvenute solitarie in solaio in compagnia di un proiettore-carosello in una soffitta sfitta di un appartamento in affitto.<br><br>" +
+
+              "E un vestito da sposa cangiante di panna, cassata e un po’ di pena, crema, come da Cassandra.<br><br>" +
+
+              "Pieno zeppo, fitto, zuppo di ricordi inaccessibili, di estranei sconosciuti conoscibili ora, ormai e per sempre solamente attraverso diapositive: dia, prefisso greco per attraverso, appunto attraversate da una luce adesso proiettata da altri per mano loro, non proprio brevi manu, ultimi giri di giostra come vacanze finite, appunti appuntati a quel che resta del giorno alla fine della fiera.<br><br>" +
+
+              "Un fine vacanza reiterato, vacanze programmate riprogrammate per ogni stagione, ce n’è per tutti e tutte le mete, scelte a metà di due cuori e una capanna finemente arredata, pied-à-terre repositorio di oggetti, buone cose di gusto per un pessimo quotidiano, oggi, per noi, objets trouvés.<br><br>" +
+
+              "Marche svizzere, bernesi e vallési, italico design simpatico ma senza troppa ironia, infatti nei fatti solidamente borghese con cipiglio da ingegnere e piglio da mogliettina modello più malinconica e misurata originalità, brezzolina timidamente esotica.<br><br>" +
+
+              "Libri illustrati da coffee-table che approfondiscono temi legati alle vacanze romane, veneziane, alpigiane, rivierasche di lago e di mare.<br><br>" +
+
+              "Cime, litorali, lidi, campielli, campi da golf, sci, golfini perbene, occhialetti da sole spericolati, mise stravaganti di una messa-in-scena di abitini bon ton, bikini per atolli italo-francesi e interi anche da interni, calzettoni da scarponi e arrampicate estremamente raffinate perché non per finta, assieme a zoccoletti marini su gambe tornite di profilo da pin-up modestina, un figurino con contegno da assennata modaiola vorrei ma non troppo, il buon gusto addomesticato da domestica dimestichezza studiatamente dimessa per non scontentare nessuno o alcunché.<br><br>" +
+
+              "Da stato statico a immagini in movimento filmico filmograficamente filmato, d’epoca.<br><br>" +
+
+              "Filmate da stativo ostativo del movimento condotto invece a sprigionarlo, al contempo suo ostaggio come in algiche-ostalgie, come in ostali perduti, sperduti in un’intima elegia-aleatoria altresì aleggiante, altre antalgiche algide volte, meno.<br><br>" +
+
+              "<a href='https://filmfreeway.com/PrampoliniMenariniExpress' style='color: #D4AF37; text-decoration: underline;'>Guarda ora</a>" +
+              "</p>";
+
+          // Hard jump to top (double rAF for mobile Safari quirks)
+          terminalEl.style.scrollBehavior = "auto";
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{ terminalEl.scrollTop = 0; }));
+
+          // Remove only if it exists
+          if (typeof handleKeyDown === 'function') {
+              document.removeEventListener('keydown', handleKeyDown);
+          }
+      }, 4000);
+  }
+
+  // Hidden input focus for mobile typing
+  terminalEl.addEventListener('click', () => {
+      if (isEnding) return;
+      hiddenInput.focus();
+  });
+
+  hiddenInput.addEventListener('input', () => {
+      if (isEnding) return;
+      userInputSpan.textContent = hiddenInput.value;
+      scrollTerminal();
+  });
+
+  hiddenInput.addEventListener('keydown', (event) => {
+      if (isEnding) return;
+      if(event.key === "Enter"){
+          event.preventDefault(); // prevent page jump on mobile
+          const command = hiddenInput.value;
+          output(`<span class='command-color1'>${command}</span>`);
+          processCommand(command);
+          hiddenInput.value = '';
+          userInputSpan.textContent = '';
+      }
+  });
+
+  function typingAnimation(text, callback){
+      let index = 0;
+      const interval = setInterval(()=>{
+          if(index < text.length){
+              outputDiv.innerHTML += `<span class='command-color1'>${text[index]}</span>`;
+              index++;
+              scrollTerminal();
+          } else {
+              clearInterval(interval);
+              outputDiv.innerHTML += "<br><br>";
+              callback();
+          }
+      }, 80);
+  }
+
+  typingAnimation(
+    "Exploring vintage 1950/60s Milano diaries, sketches, letters, and Polaroids... uncover secret loves, fashion ideas, and hidden moments.",
+    ()=>{
+      output("Click or type a <u>folder</u> or <u>file</u> to explore. Click or type <u>back</u> to go up a directory.");
+      showDirectoryContents();
     }
+  );
 
-    // Deactivate previous directory and file blocks
-    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-    oldDirBlocks.forEach(block => block.classList.add('inactive'));
-    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-    oldFileBlocks.forEach(block => block.classList.add('inactive'));
+  document.addEventListener('contextmenu', e=>e.preventDefault());
 
-    // Create new directory block
-    const dirBlock = document.createElement('div');
-    dirBlock.className = 'dir-block';
-    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+  // One clean onload focus
+  window.addEventListener('load', ()=>{
+      setTimeout(()=>{ if(!isEnding) hiddenInput.focus(); }, 120);
+  });
 
-    outputDiv.appendChild(dirBlock);
-    scrollTerminal();
-
-    // Attach click handlers only to current block
-    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
-    clickableItems.forEach(item => {
-        item.style.cursor = "pointer";
-        item.addEventListener('click', () => {
-            const type = item.getAttribute('data-type');
-            const name = item.getAttribute('data-name');
-
-            if (type === "folder") {
-                currentDirectory = `${currentDirectory}/${name}`;
-                output(`> You entered ${currentDirectory}`);
-                showDirectoryContents();
-            } else if (type === "file") {
-                output(`> Opening file ${name}...`);
-                openFile(name);
-            } else if (type === "back") {
-                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
-                output(`> You are now in ${currentDirectory}`);
-                showDirectoryContents();
-            }
-        });
-    });
-}
-
-
-function revealPolaroids() {
-    output(">>> Revealing vintage Milano Photo Dia Reels...");
-    setTimeout(() => {
-        const terminal = document.getElementById("terminal");
-
-        terminal.innerHTML = 
-            "<div style='color: #D4AF37; font-size: 2em; text-align: center;'><br><br>Prampolini-Menarini Express</div>" +
-            "<p style='color: #D4AF37; font-size: 1em; text-align: left; margin-top: 10px;'>" +
-"Come visualizzare, offrendo e prendendone visione, vite disperse in oggetti ritrovati per caso in una casa, da altri, noi, presa e da alcuni, loro, data in affitto.<br><br>" +
-
-            "Quella era in questo caso un appartamento a Milano, ammobiliato con tanto di oggetti di casa, tanti, tutti appartenenti ad un altoatesino, all’epoca sarà per poco ancora vivente e ad una bolognese, già trapassata e in quegli stessi oggetti oggettivati di nuovo assieme, redivivi.<br><br>" +
-
-            "Coppia borghese tra l’affiatato e da un certo ignoto punto in poi, a pensar male, il mal assortito, proprio come è quando deve andare così, sebbene i posteri non sìano chiamati ad esprimere tali ardue sentenze, bensì, in veste di pubblico, allettati a ripercorrere momenti di vita di quei due immortalati in diapositive ritrovate in soffitta o in cantina.<br><br>" +
-
-            "Il film gioca a montarle dando loro un flusso temporale che non può che essere inattuale altresì inatteso, perché interpuntato da immobili spaccati di vita, quadri di vita vissuta, fissati in close-up su mobili con sopra posati gli oggetti, i loro, ora passati ad essere altrui, in momenti ora propri dei film-maker stessi, riutilizzatori e riadattatori di quegli oggetti alla propria quotidianità di oggi, con un occhio di riguardo e una strizzata d’occhio a quei mezzi sconosciuti antichi proprietari.<br><br>" +
-
-            "Sono gli oggetti della coppia Prampolini-Menarini, per quel che se n’è evinto da sparute e sparse informazioni e cenni e drammi ricostruiti, la fu coppia poi scoppiata e senza eredi del bilocale milanese, lei scomparsa in solitudine soltanto accompagnata alla fine dalla fondazione di un noto ospedale a tema tumori, lui sopravvissutole come usufruttuario, riaccompagnato da dama losannese novella al seguito, conosciuta sul Lago Lemano, dove lui, Benito Maria si era trasferito, chissà se già pre o solo post dipartita della moglie Laura - con lui firmeremo il contratto d’affitto e di lui scomparso presso un rifugio nella Suisse occidentale sapremo dal suo amico avvocato, cointestatario del conto su cui arrivava regolare il nostro affitto.<br><br>" +
-
-            "Deceduto mentre oltre i settanta si arrampicava oltre i tremila a mille e quattro dalla cima del Cervino, ma dalla via svizzera, ormai prediletta, dove la stessa medesima montagna si chiama Matterhorn. Il cuore dell'ingegnere lo aveva lasciato sulle ubique montagne, onnipresenti, oblique, amate.<br><br>" +
-
-            "Molti degli oggetti migreranno in altre case, come una scarna eredità di un misconosciuto zio americano, che non si può dire scarsa, che lo zio non era nemmeno alla lontana nostro parente, vige pur sempre quel: a cavall donato non si guarda in bocca, anche ad non essere di bocca buona.<br><br>" +
-
-            "Di casa-loro non ci sono immagini, né di chi l’ha lì rivissuta, tempi in cui non si fotografava troppo, troppo sfuggenti in una metropoli troppo veloce, ridondante di possibilità da sconcertato inizio millennio, oggi denominati eventi, ieri già lo erano in tempi non sospetti, piuttosto sospesi tra settembrini attacchi a grattacièli americani e primaverili incidenti nostrani, come quel 18 aprile 2002 con lo schianto di un veivolo monoposto da turismo sul Pirelli, quasi all'ombra di cui, nella via Filzi con rotaie per tram vintage arancioni con sedili di legno vetrificato giaceva vivissimo e placido al floreale civico 10 delle Belle Arti l’appartamento liberty in oggetto.<br><br>" +
-
-            "Non rimaneva che rimetterli in scena in una seduta spiritica spiritata, a volte spiritosa, di tremolii spiriticamente evocati, di racconti tra loro inattuali come utensili tratti da natura morta che servono pranzi e cene di altre vite spesso sorprese divertite al pensare ai primigèni proprietari come fossero parenti acquisiti da altri disconosciuti.<br><br>" +
-
-            "La pellicola, del tempo, rivivificante rivestimento di redivive immagini-ritrovate, rianimate, passate in rassegna, riviste del tempo-che fu, rivisitate.<br><br>" +
-
-            "Quel revival di diapositive rinvenute solitarie in solaio in compagnia di un proiettore-carosello in una soffitta sfitta di un appartamento in affitto.<br><br>" +
-
-            "E un vestito da sposa cangiante di panna, cassata e un po’ di pena, crema, come da Cassandra.<br><br>" +
-
-            "Pieno zeppo, fitto, zuppo di ricordi inaccessibili, di estranei sconosciuti conoscibili ora, ormai e per sempre solamente attraverso diapositive: dia, prefisso greco per attraverso, appunto attraversate da una luce adesso proiettata da altri per mano loro, non proprio brevi manu, ultimi giri di giostra come vacanze finite, appunti appuntati a quel che resta del giorno alla fine della fiera.<br><br>" +
-
-            "Un fine vacanza reiterato, vacanze programmate riprogrammate per ogni stagione, ce n’è per tutti e tutte le mete, scelte a metà di due cuori e una capanna finemente arredata, pied-à-terre repositorio di oggetti, buone cose di gusto per un pessimo quotidiano, oggi, per noi, objets trouvés.<br><br>" +
-
-            "Marche svizzere, bernesi e vallési, italico design simpatico ma senza troppa ironia, infatti nei fatti solidamente borghese con cipiglio da ingegnere e piglio da mogliettina modello più malinconica e misurata originalità, brezzolina timidamente esotica.<br><br>" +
-
-            "Libri illustrati da coffee-table che approfondiscono temi legati alle vacanze romane, veneziane, alpigiane, rivierasche di lago e di mare.<br><br>" +
-
-            "Cime, litorali, lidi, campielli, campi da golf, sci, golfini perbene, occhialetti da sole spericolati, mise stravaganti di una messa-in-scena di abitini bon ton, bikini per atolli italo-francesi e interi anche da interni, calzettoni da scarponi e arrampicate estremamente raffinate perché non per finta, assieme a zoccoletti marini su gambe tornite di profilo da pin-up modestina, un figurino con contegno da assennata modaiola vorrei ma non troppo, il buon gusto addomesticato da domestica dimestichezza studiatamente dimessa per non scontentare nessuno o alcunché.<br><br>" +
-
-            "Da stato statico a immagini in movimento filmico filmograficamente filmato, d’epoca.<br><br>" +
-
-"Filmate da stativo ostativo del movimento condotto invece a sprigionarlo, al contempo suo ostaggio come in algiche-ostalgie, come in ostali perduti, sperduti in un’intima elegia-aleatoria altresì aleggiante, altre antalgiche algide volte, meno.<br><br>" +
-"<a href='https://filmfreeway.com/PrampoliniMenariniExpress' style='color: #D4AF37; text-decoration: underline;'>Guarda ora</a>" +
-"</p>";
-
-        // Jump to the top
-        terminal.scrollTop = 0;
-
-        // Disable further input
-        document.removeEventListener('keydown', handleKeyDown);
-    }, 4000);
-}
-
-// Open a file
-function openFile(filename) {
-    const fileData = fileContents[filename];
-    if (!fileData) {
-        output("<span class='command-color1'>File not found.</span>");
-        return;
-    }
-
-    if (fileData.type === "executable" && typeof fileData.action === "function") {
-        output(fileData.snippet);
-        fileData.action();
-    } else {
-        output(fileContents[filename]);
-
-        // Deactivate previous file and directory blocks
-        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-        oldFileBlocks.forEach(block => block.classList.add('inactive'));
-        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-        oldDirBlocks.forEach(block => block.classList.add('inactive'));
-
-        // Create new file block with back button
-        const fileBlock = document.createElement('div');
-        fileBlock.className = 'file-block';
-        fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back </span>`;
-        outputDiv.appendChild(fileBlock);
-        scrollTerminal();
-
-        // Attach click handler to current back button
-        const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
-        backButton.style.cursor = 'pointer';
-        backButton.addEventListener('click', () => {
-            showDirectoryContents();
-        });
-    }
-}
-
-// Command processor
-function processCommand(command){
-    const target = command.trim();
-    if(target==="back"){
-        if(currentDirectory!==ROOT_DIR){
-            currentDirectory = currentDirectory.split("/").slice(0,-1).join("/")||ROOT_DIR;
-            output(`> You are now in ${currentDirectory}`);
-            showDirectoryContents();
-        } else output("<span class='command-color1'>Already at root.</span>");
-    } else if(fileSystem[currentDirectory]?.folders.includes(target)){
-        currentDirectory = `${currentDirectory}/${target}`;
-        output(`> You entered ${currentDirectory}`);
-        showDirectoryContents();
-    } else if(fileSystem[currentDirectory]?.files.includes(target)){
-        output(`> Opening file ${target}...`);
-        openFile(target);
-    } else output("<span class='command-color1'>Folder or file not found.</span>");
-}
-
-// Focus hidden input for typing
-const hiddenInput = document.getElementById('hidden-input');
-document.getElementById('terminal').addEventListener('click', () => hiddenInput.focus());
-hiddenInput.addEventListener('input', () => { userInputSpan.textContent = hiddenInput.value; scrollTerminal(); });
-hiddenInput.addEventListener('keydown', (event) => {
-    if(event.key==="Enter"){
-        const command = hiddenInput.value;
-        output(`<span class='command-color1'>${command}</span>`);
-        processCommand(command);
-        hiddenInput.value='';
-        userInputSpan.textContent='';
-    }
-});
-
-// Startup animation
-function typingAnimation(text, callback){
-    let index=0;
-    const interval=setInterval(()=>{
-        if(index<text.length){
-            outputDiv.innerHTML += `<span class='command-color1'>${text[index]}</span>`;
-            index++;
-        } else { clearInterval(interval); outputDiv.innerHTML+="<br><br>"; callback(); }
-    },80);
-}
-
-typingAnimation("Exploring vintage 1950/60s Milano diaries, sketches, letters, and Polaroids... uncover secret loves, fashion ideas, and hidden moments.", ()=>{
-    output("Click or type a <u>folder</u> or <u>file</u> to explore. Click or type <u>back</u> to go up a directory.");
-    showDirectoryContents();
-});
-
-document.addEventListener('contextmenu', e=>e.preventDefault());
-</script>
-
+  // Placeholder in case anything references it
+  function handleKeyDown(e){ /* placeholder */ }
+  </script>
 </body>
 </html>

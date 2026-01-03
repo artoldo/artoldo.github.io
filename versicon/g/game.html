@@ -31,33 +31,27 @@
             scroll-behavior: smooth;
         }
 
-        #terminal:focus {
-            outline: none;
-        }
+        #terminal:focus { outline: none; }
 
         #output {
             white-space: pre-wrap;
             margin-bottom: 10px;
             color: white;
         }
-        #input-line {
-            display: inline;
-        }
+        #input-line { display: inline; }
         .command-color1 { color: #D4AF37; }
         .command-color2 { color: #D4AF37; }
         .command-color3 { color: #D4AF37; }
         .folder { background-color: #D4AF37; color: #000; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
         .file { background-color: #000; color: #D4AF37; padding: 5px 10px; border-radius: 3px; margin-top: 8px; display: inline-block; }
-        .inactive {
-            pointer-events: none;
-        }
+
+        .inactive { pointer-events: none; }
+
         .cursor {
             animation: blink 1s steps(2, start) infinite;
             color: #fff;
         }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        @keyframes blink { 50% { opacity: 0; } }
 
         * {
             -webkit-user-select: none;
@@ -65,145 +59,127 @@
             -ms-user-select: none;
             user-select: none;
         }
-
     </style>
 
-<!-- Background Animation Start -->
+    <!-- Background Animation Start -->
+    <style>
+        html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
+        #bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
+        #bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(2px);pointer-events:none;}
+        body, #container{position:relative;z-index:0;}
+    </style>
 
-<style>
-html,body{margin:0;padding:0;background:#000000;overflow:hidden;}
-#bgCanvas{position:fixed;inset:0;margin:0;padding:0;z-index:-10;pointer-events:none;}
-#bgCanvas canvas{position:fixed;top:0;left:0;width:100%;height:100%;display:block;filter:blur(2px);pointer-events:none;}
-body, #container{position:relative;z-index:0;}
-</style>
+    <div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
 
-<div id="bgCanvas"><canvas id="mainCanvas"></canvas></div>
+    <script>
+    (function(){
+      const canvas = document.getElementById("mainCanvas");
+      const ctx = canvas.getContext("2d");
 
-<script>
-(function(){
-  const canvas = document.getElementById("mainCanvas");
-  const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+      // ---- Labyrinth Settings ----
+      const cellSize = 25;
+      let cols = Math.floor(canvas.width / cellSize);
+      let rows = Math.floor(canvas.height / cellSize);
 
-  // ---- Labyrinth Settings ----
-  const cellSize = 25;
-  let cols = Math.floor(canvas.width / cellSize);
-  let rows = Math.floor(canvas.height / cellSize);
+      let grid = [];
+      let stack = [];
+      let current = null;
 
-  let grid = [];
-  let stack = [];
-  let current = null;
+      function Cell(x, y){
+        this.x = x;
+        this.y = y;
+        this.walls = {top:true, right:true, bottom:true, left:true};
+        this.visited = false;
 
-  // Cell object
-  function Cell(x, y){
-    this.x = x;
-    this.y = y;
-    this.walls = {top:true, right:true, bottom:true, left:true};
-    this.visited = false;
+        this.checkNeighbors = function(){
+          const neighbors = [];
+          const index = (x, y) => y * cols + x;
 
-    this.checkNeighbors = function(){
-      const neighbors = [];
-      const index = (x, y) => y * cols + x;
+          const top = this.y > 0 ? grid[index(this.x, this.y-1)] : undefined;
+          const right = this.x < cols-1 ? grid[index(this.x+1, this.y)] : undefined;
+          const bottom = this.y < rows-1 ? grid[index(this.x, this.y+1)] : undefined;
+          const left = this.x > 0 ? grid[index(this.x-1, this.y)] : undefined;
 
-      const top = this.y > 0 ? grid[index(this.x, this.y-1)] : undefined;
-      const right = this.x < cols-1 ? grid[index(this.x+1, this.y)] : undefined;
-      const bottom = this.y < rows-1 ? grid[index(this.x, this.y+1)] : undefined;
-      const left = this.x > 0 ? grid[index(this.x-1, this.y)] : undefined;
+          if(top && !top.visited) neighbors.push(top);
+          if(right && !right.visited) neighbors.push(right);
+          if(bottom && !bottom.visited) neighbors.push(bottom);
+          if(left && !left.visited) neighbors.push(left);
 
-      if(top && !top.visited) neighbors.push(top);
-      if(right && !right.visited) neighbors.push(right);
-      if(bottom && !bottom.visited) neighbors.push(bottom);
-      if(left && !left.visited) neighbors.push(left);
-
-      if(neighbors.length > 0){
-        return neighbors[Math.floor(Math.random()*neighbors.length)];
+          if(neighbors.length > 0){
+            return neighbors[Math.floor(Math.random()*neighbors.length)];
+          }
+          return undefined;
+        }
       }
-      return undefined;
-    }
-  }
 
-  // Remove walls
-  function removeWalls(a, b){
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
+      function removeWalls(a, b){
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
 
-    if(dx === 1){ a.walls.left = false; b.walls.right = false; }
-    else if(dx === -1){ a.walls.right = false; b.walls.left = false; }
-    if(dy === 1){ a.walls.top = false; b.walls.bottom = false; }
-    else if(dy === -1){ a.walls.bottom = false; b.walls.top = false; }
-  }
-
-  // Build grid
-  for(let y=0; y<rows; y++){
-    for(let x=0; x<cols; x++){
-      grid.push(new Cell(x,y));
-    }
-  }
-
-  current = grid[0];
-  stack.push(current);
-  current.visited = true;
-
-  function draw(){
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.strokeStyle = "#D4AF37";
-    ctx.lineWidth = 2;
-
-    for(const cell of grid){
-      const x = cell.x * cellSize;
-      const y = cell.y * cellSize;
-
-      // draw walls
-      ctx.beginPath();
-      if(cell.walls.top){
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + cellSize, y);
+        if(dx === 1){ a.walls.left = false; b.walls.right = false; }
+        else if(dx === -1){ a.walls.right = false; b.walls.left = false; }
+        if(dy === 1){ a.walls.top = false; b.walls.bottom = false; }
+        else if(dy === -1){ a.walls.bottom = false; b.walls.top = false; }
       }
-      if(cell.walls.right){
-        ctx.moveTo(x + cellSize, y);
-        ctx.lineTo(x + cellSize, y + cellSize);
+
+      // Build grid
+      for(let y=0; y<rows; y++){
+        for(let x=0; x<cols; x++){
+          grid.push(new Cell(x,y));
+        }
       }
-      if(cell.walls.bottom){
-        ctx.moveTo(x + cellSize, y + cellSize);
-        ctx.lineTo(x, y + cellSize);
+
+      current = grid[0];
+      stack.push(current);
+      current.visited = true;
+
+      function draw(){
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.strokeStyle = "#D4AF37";
+        ctx.lineWidth = 2;
+
+        for(const cell of grid){
+          const x = cell.x * cellSize;
+          const y = cell.y * cellSize;
+
+          ctx.beginPath();
+          if(cell.walls.top){ ctx.moveTo(x, y); ctx.lineTo(x + cellSize, y); }
+          if(cell.walls.right){ ctx.moveTo(x + cellSize, y); ctx.lineTo(x + cellSize, y + cellSize); }
+          if(cell.walls.bottom){ ctx.moveTo(x + cellSize, y + cellSize); ctx.lineTo(x, y + cellSize); }
+          if(cell.walls.left){ ctx.moveTo(x, y + cellSize); ctx.lineTo(x, y); }
+          ctx.stroke();
+        }
+
+        const next = current.checkNeighbors();
+        if(next){
+          next.visited = true;
+          stack.push(next);
+          removeWalls(current, next);
+          current = next;
+        } else if(stack.length > 0){
+          current = stack.pop();
+        }
       }
-      if(cell.walls.left){
-        ctx.moveTo(x, y + cellSize);
-        ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
 
-    // Maze generation step
-    const next = current.checkNeighbors();
-    if(next){
-      next.visited = true;
-      stack.push(next);
-      removeWalls(current, next);
-      current = next;
-    } else if(stack.length > 0){
-      current = stack.pop();
-    }
-  }
+      setInterval(draw, 33);
 
-  setInterval(draw, 33);
-
-  window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    cols = Math.floor(canvas.width / cellSize);
-    rows = Math.floor(canvas.height / cellSize);
-  });
-})();
-</script>
-
-<!-- Background Animation End -->
-
+      // Note: resize recalculates cols/rows; we keep it simple (visual only)
+      window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cols = Math.floor(canvas.width / cellSize);
+        rows = Math.floor(canvas.height / cellSize);
+      });
+    })();
+    </script>
+    <!-- Background Animation End -->
 </head>
+
 <body>
 
 <div id="terminal" tabindex="0">
@@ -223,12 +199,19 @@ body, #container{position:relative;z-index:0;}
 </div>
 
 <script>
+    // ---- DOM Elements ----
+    const terminalDiv = document.getElementById('terminal');
+    const hiddenInput = document.getElementById('hidden-input');
     const outputDiv = document.getElementById('output');
     const userInputSpan = document.getElementById('user-input');
     const inputLine = document.getElementById('input-line');
 
+    // === Ending mode flag (prevents mobile scroll-to-bottom fights) ===
+    let isEnding = false;
+
     const ROOT_DIR = "Germania-Segreta";
     let currentDirectory = ROOT_DIR;
+
     const fileSystem = {
         [ROOT_DIR]: { folders: ["spells", "grimoires", "runes", "archives", "rituals"], files: [] },
         [ROOT_DIR + "/spells"]: { folders: [], files: ["invocation.sigil", "translated-rune.glyph", "sigil-anomaly.glyph", "pattern-log.glyph"] },
@@ -257,215 +240,217 @@ body, #container{position:relative;z-index:0;}
         "analysis-map.codex": "Map showing rune strength and probable treasure points.",
         "frequency-settings.conf": "Configuration for chant frequency harmonics.",
         "suspicious-runes.glyph": "List of rune fragments flagged as likely markers of caches.",
-        "emergency-backup.talis": "Compressed archive of all discovered runic fragments.",
+        "emergency-backup.talis": "Compressed archive of all discovered runic fragments."
     };
 
-function generateRandomFiles() {
-    // Adding random grimoire filenames to the specified directories
-    const directories = [
-        ROOT_DIR + '/',
-        ROOT_DIR + '/runes/spectral',
-        ROOT_DIR + '/runes/linguistics',
-        ROOT_DIR + '/runes/patterns',
-        ROOT_DIR + '/archives/daily',           
-        ROOT_DIR + '/archives/monthly',         
-        ROOT_DIR + '/grimoires/keys',  
-        ROOT_DIR + '/grimoires/protocols',  
-        ROOT_DIR + '/grimoires/algorithms'
-    ];
+    function generateRandomFiles() {
+        const directories = [
+            ROOT_DIR,
+            ROOT_DIR + "/runes/spectral",
+            ROOT_DIR + "/runes/linguistics",
+            ROOT_DIR + "/runes/patterns",
+            ROOT_DIR + "/archives/daily",
+            ROOT_DIR + "/archives/monthly",
+            ROOT_DIR + "/grimoires/keys",
+            ROOT_DIR + "/grimoires/protocols",
+            ROOT_DIR + "/grimoires/algorithms"
+        ];
 
-    directories.forEach(directory => {
-        const numFiles = Math.floor(Math.random() * 3) + 1; // 1-3
-        for (let i = 0; i < numFiles; i++) {
-            const fileName = `grimoire-${Math.floor(Math.random() * 100)}.sigil`;
-            if (!fileSystem[directory]) {
-                fileSystem[directory] = { folders: [], files: [] };
-            }
-            fileSystem[directory].files.push(fileName);
-            fileContents[fileName] = `Rune token: ${Math.random().toString(36).substring(2, 15)}`;
-        }
-    });
-}
-
-function showDirectoryContents() {
-    const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
-    let foldersHTML = dirData.folders
-        .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
-        .join("  ");
-    let filesHTML = dirData.files
-        .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
-        .join("  ");
-
-    // Add a back button if not in root (even if folder is empty)
-    if (currentDirectory !== ROOT_DIR) {
-        foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
-            (foldersHTML ? "  " + foldersHTML : "");
-    }
-
-    // Mark all previous directory and file blocks as inactive
-    const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
-    oldDirBlocks.forEach(block => block.classList.add('inactive'));
-    const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
-    oldFileBlocks.forEach(block => block.classList.add('inactive'));
-
-    // Create a new directory block
-    const dirBlock = document.createElement('div');
-    dirBlock.className = 'dir-block';
-    dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
-
-    outputDiv.appendChild(dirBlock);
-    scrollTerminal();
-
-    // Attach click handlers only to current block
-    const clickableItems = dirBlock.querySelectorAll('.folder, .file');
-    clickableItems.forEach(item => {
-        item.style.cursor = "pointer";
-        item.addEventListener('click', () => {
-            const type = item.getAttribute('data-type');
-            const name = item.getAttribute('data-name');
-
-            if (type === "folder") {
-                currentDirectory = `${currentDirectory}/${name}`;
-                output(`> You entered ${currentDirectory}`);
-                showDirectoryContents();
-            } else if (type === "file") {
-                output(`> Opening file ${name}...`);
-                openFile(name);
-            } else if (type === "back") {
-                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
-                output(`> You are now in ${currentDirectory}`);
-                showDirectoryContents();
+        directories.forEach(directory => {
+            const numFiles = Math.floor(Math.random() * 3) + 1; // 1-3
+            for (let i = 0; i < numFiles; i++) {
+                const fileName = `grimoire-${Math.floor(Math.random() * 100)}.sigil`;
+                if (!fileSystem[directory]) {
+                    fileSystem[directory] = { folders: [], files: [] };
+                }
+                fileSystem[directory].files.push(fileName);
+                fileContents[fileName] = `Rune token: ${Math.random().toString(36).substring(2, 15)}`;
             }
         });
-    });
-}
+    }
 
-function output(text) {
-    outputDiv.innerHTML += `\n> ${text}\n`;
-    scrollTerminal();
-}
+    function scrollTerminal() {
+        if (isEnding) return;
+        requestAnimationFrame(() => {
+            terminalDiv.scrollTop = terminalDiv.scrollHeight;
+        });
+    }
 
-function processCommand(command) {
-    const target = command.trim();
-    if (target === "back") {
+    function output(text) {
+        outputDiv.innerHTML += `\n> ${text}\n`;
+        scrollTerminal();
+    }
+
+    function showDirectoryContents() {
+        const dirData = fileSystem[currentDirectory] || { folders: [], files: [] };
+        let foldersHTML = dirData.folders
+            .map(folder => `<span class="folder" data-type="folder" data-name="${folder}">${folder}</span>`)
+            .join("  ");
+        let filesHTML = dirData.files
+            .map(file => `<span class="file" data-type="file" data-name="${file}">${file}</span>`)
+            .join("  ");
+
         if (currentDirectory !== ROOT_DIR) {
-            currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
-            output(`> You step into the sacred vault of <span class='command-color2'>${currentDirectory}</span>, where ancient codices await.`);
-            showDirectoryContents();
-        } else {
-            output(`The veil of the ${ROOT_DIR} vault blocks your path; you cannot go further back.`);
+            foldersHTML = `<span class="folder" data-type="back"><< back </span>` +
+                (foldersHTML ? "  " + foldersHTML : "");
         }
-    } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
-        currentDirectory = `${currentDirectory}/${target}`;
-        output(`> You entered ${currentDirectory}`);
-        showDirectoryContents();
-    } else if (fileSystem[currentDirectory]?.files.includes(target)) {
-        output(`> Opening grimoire ${target}...`);
-        openFile(target);
-    } else {
-        output("<span class='command-color1'>Spell or grimoire not found.</span>");
-    }
-}
 
-// OUTPUT - END OF LEVEL
-
-function shutdownSequence() {
-    output(">>> Initiating ritual decryption sequence...");
-    setTimeout(() => {
-        const terminal = document.getElementById("terminal");
-
-        terminal.innerHTML = 
-            "<div style='color: #D4AF37; font-size: 2em; text-align: center;'><br><br>Germania Segreta</div>" +
-            "<p style='color: #D4AF37; font-size: 1em; text-align: left; margin-top: 10px;'>" +
-
-            "Beneath the ancient mists of the Rhine and in the shadow of long-forgotten halls, the legends of the Nibelungen took Germania-Segreta. Generations whispered of a hoard — not merely gold and jewels, but artefacts of old power: rings that bind, swords that burn like dawn, and seals that lock away wyrm-guarded secrets.<br><br>" +
-
-            "The old maps point to hidden cairns and river-locked vaults, encoded into runic riddles and protected by rites lost to the common world. For centuries, seekers and scholars have found only fragments: a broken seal here, a ciphered verse there. Yet the trail remained, a faint constellation of clues across valleys and vaults.<br><br>" +
-
-            "Tonight, the archive’s instruments — not of steel but of ink and song — have aligned. Grimoires and whispered spells have been cross-referenced; rune-sheaves combined with clandestine rituals bring a single image into focus: the probable resting place of a portion of the Nibelungen hoard. Old wards begin to shimmer as the ritual completes, revealing pathways hidden in shadow and time.<br><br>" +
-
-            "You stand at the threshold of Germania-Segreta — a quiet, secret order of places and rites — with a map spun out of chant and cipher. The treasure waits guarded by cunning puzzles and old magicks. Those who would claim it must be cunning, patient, and bold, for the hoard answers only to those who understand the songs that summon it.<br><br>" +
-
-            "The terminal fades. The map is etched in memory. Go now: seek the runes, unravel the riddles, and may the old songs guide you to the Nibelungen treasure.<br><br>" +
-
-            "IN GOLD, IN BLOOD, THE PAST REMEMBERS." +
-            "</p>";
-
-        // Jump to the top
-        terminal.scrollTop = 0;
-
-        // Disable further input
-        document.removeEventListener('keydown', handleKeyDown);
-    }, 4000);
-}
-
-function openFile(filename) {
-    const fileData = fileContents[filename];
-    if (!fileData) {
-        output("<span class='command-color1'>File not found.</span>");
-        return;
-    }
-
-    if (fileData.type === "executable" && typeof fileData.action === "function") {
-        output(fileData.snippet); // Show snippet
-        fileData.action(); // Execute shutdown sequence
-    } else {
-        output(fileContents[filename]);
-
-        // Mark all previous file blocks as inactive
+        const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
+        oldDirBlocks.forEach(block => block.classList.add('inactive'));
         const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
         oldFileBlocks.forEach(block => block.classList.add('inactive'));
 
-        // Also mark previous directory blocks inactive to avoid back button conflicts
+        const dirBlock = document.createElement('div');
+        dirBlock.className = 'dir-block';
+        dirBlock.innerHTML = `\nFolders:\n${foldersHTML || "None"}\n\nFiles:\n${filesHTML || "None"}`;
+
+        outputDiv.appendChild(dirBlock);
+        scrollTerminal();
+
+        const clickableItems = dirBlock.querySelectorAll('.folder, .file');
+        clickableItems.forEach(item => {
+            item.style.cursor = "pointer";
+            item.addEventListener('click', () => {
+                if (isEnding) return;
+
+                const type = item.getAttribute('data-type');
+                const name = item.getAttribute('data-name');
+
+                if (type === "folder") {
+                    currentDirectory = `${currentDirectory}/${name}`;
+                    output(`> You entered ${currentDirectory}`);
+                    showDirectoryContents();
+                } else if (type === "file") {
+                    output(`> Opening file ${name}...`);
+                    openFile(name);
+                } else if (type === "back") {
+                    currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                    output(`> You are now in ${currentDirectory}`);
+                    showDirectoryContents();
+                }
+            });
+        });
+    }
+
+    function processCommand(command) {
+        const target = command.trim();
+        if (target === "back") {
+            if (currentDirectory !== ROOT_DIR) {
+                currentDirectory = currentDirectory.split("/").slice(0, -1).join("/") || ROOT_DIR;
+                output(`> You step into the sacred vault of <span class='command-color2'>${currentDirectory}</span>, where ancient codices await.`);
+                showDirectoryContents();
+            } else {
+                output(`The veil of the ${ROOT_DIR} vault blocks your path; you cannot go further back.`);
+            }
+        } else if (fileSystem[currentDirectory]?.folders.includes(target)) {
+            currentDirectory = `${currentDirectory}/${target}`;
+            output(`> You entered ${currentDirectory}`);
+            showDirectoryContents();
+        } else if (fileSystem[currentDirectory]?.files.includes(target)) {
+            output(`> Opening grimoire ${target}...`);
+            openFile(target);
+        } else {
+            output("<span class='command-color1'>Spell or grimoire not found.</span>");
+        }
+    }
+
+    /* ===========================
+       MOBILE-PROOF END SEQUENCE
+       =========================== */
+    function shutdownSequence() {
+        output(">>> Initiating ritual decryption sequence...");
+        setTimeout(() => {
+            isEnding = true;
+
+            // Stop mobile caret/keyboard auto-scrolling BEFORE DOM replacement
+            if (hiddenInput) {
+                hiddenInput.disabled = true;
+                hiddenInput.blur();
+            }
+            if (document.activeElement && typeof document.activeElement.blur === "function") {
+                document.activeElement.blur();
+            }
+
+            terminalDiv.innerHTML =
+                "<div style='color: #D4AF37; font-size: 2em; text-align: center;'><br><br>Germania Segreta</div>" +
+                "<p style='color: #D4AF37; font-size: 1em; text-align: left; margin-top: 10px;'>" +
+                "Beneath the ancient mists of the Rhine and in the shadow of long-forgotten halls, the legends of the Nibelungen took Germania-Segreta. Generations whispered of a hoard — not merely gold and jewels, but artefacts of old power: rings that bind, swords that burn like dawn, and seals that lock away wyrm-guarded secrets.<br><br>" +
+                "The old maps point to hidden cairns and river-locked vaults, encoded into runic riddles and protected by rites lost to the common world. For centuries, seekers and scholars have found only fragments: a broken seal here, a ciphered verse there. Yet the trail remained, a faint constellation of clues across valleys and vaults.<br><br>" +
+                "Tonight, the archive’s instruments — not of steel but of ink and song — have aligned. Grimoires and whispered spells have been cross-referenced; rune-sheaves combined with clandestine rituals bring a single image into focus: the probable resting place of a portion of the Nibelungen hoard. Old wards begin to shimmer as the ritual completes, revealing pathways hidden in shadow and time.<br><br>" +
+                "You stand at the threshold of Germania-Segreta — a quiet, secret order of places and rites — with a map spun out of chant and cipher. The treasure waits guarded by cunning puzzles and old magicks. Those who would claim it must be cunning, patient, and bold, for the hoard answers only to those who understand the songs that summon it.<br><br>" +
+                "The terminal fades. The map is etched in memory. Go now: seek the runes, unravel the riddles, and may the old songs guide you to the Nibelungen treasure.<br><br>" +
+                "IN GOLD, IN BLOOD, THE PAST REMEMBERS." +
+                "</p>";
+
+            // Force top reliably (avoid smooth-scroll + wait for layout)
+            terminalDiv.style.scrollBehavior = "auto";
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    terminalDiv.scrollTop = 0;
+                });
+            });
+
+            // Safe remove (prevents ReferenceError)
+            if (typeof handleKeyDown === 'function') {
+                document.removeEventListener('keydown', handleKeyDown);
+            }
+        }, 4000);
+    }
+
+    function openFile(filename) {
+        const fileData = fileContents[filename];
+        if (!fileData) {
+            output("<span class='command-color1'>File not found.</span>");
+            return;
+        }
+
+        if (fileData.type === "executable" && typeof fileData.action === "function") {
+            output(fileData.snippet);
+            fileData.action();
+            return;
+        }
+
+        output(fileContents[filename]);
+
+        const oldFileBlocks = outputDiv.querySelectorAll('.file-block');
+        oldFileBlocks.forEach(block => block.classList.add('inactive'));
         const oldDirBlocks = outputDiv.querySelectorAll('.dir-block');
         oldDirBlocks.forEach(block => block.classList.add('inactive'));
 
-        // Create new file block
         const fileBlock = document.createElement('div');
         fileBlock.className = 'file-block';
         fileBlock.innerHTML = `\n<span class="folder" data-type="back-file"><< back</span>`;
         outputDiv.appendChild(fileBlock);
         scrollTerminal();
 
-        // Only attach click handler to current back button
         const backButton = fileBlock.querySelector('.folder[data-type="back-file"]');
         backButton.style.cursor = 'pointer';
         backButton.addEventListener('click', () => {
+            if (isEnding) return;
             showDirectoryContents();
         });
     }
-}
 
-    function scrollTerminal() {
-        const terminal = document.getElementById("terminal");
-        requestAnimationFrame(() => {
-            terminal.scrollTop = terminal.scrollHeight;
-        });
-    }
-
-    // (Removed duplicate output and processCommand functions)
-
-    const hiddenInput = document.getElementById('hidden-input');
-    // userInputSpan already defined above
-
-    document.getElementById('terminal').addEventListener('click', () => {
-        hiddenInput.focus(); // opens mobile keyboard
+    // ---- Terminal Input Handlers (mobile-friendly) ----
+    terminalDiv.addEventListener('click', () => {
+        if (isEnding) return;
+        hiddenInput.focus();
     });
 
     hiddenInput.addEventListener('input', () => {
+        if (isEnding) return;
         userInputSpan.innerText = hiddenInput.value;
         scrollTerminal();
     });
 
     hiddenInput.addEventListener('keydown', (event) => {
+        if (isEnding) return;
         if (event.key === 'Enter') {
             const command = hiddenInput.value;
             output(`<span class='command-color1'>${command}</span>`);
             processCommand(command);
             hiddenInput.value = '';
             userInputSpan.innerText = '';
-        } else if (event.key === 'Backspace') {
-            // handled automatically by input
         }
     });
 
@@ -483,24 +468,29 @@ function openFile(filename) {
         }, 100);
     }
 
-    typingAnimation("Uncovering ancient runes... Deciphering Nibelungen lore... Searching for the hidden hoard... Access the grimoires to reveal the path...", () => {
-        output("Choose a <span class='command-color2'>ritual</span> or a <span class='command-color3'>codex</span> to unveil its secrets.");
-output("Invoke <span class='command-color1'>back</span> to retrace your steps through the vaults of lore.");
-        generateRandomFiles();
-        showDirectoryContents();
-    });
+    typingAnimation(
+        "Uncovering ancient runes... Deciphering Nibelungen lore... Searching for the hidden hoard... Access the grimoires to reveal the path...",
+        () => {
+            output("Choose a <span class='command-color2'>ritual</span> or a <span class='command-color3'>codex</span> to unveil its secrets.");
+            output("Invoke <span class='command-color1'>back</span> to retrace your steps through the vaults of lore.");
+            generateRandomFiles();
+            showDirectoryContents();
+        }
+    );
 
     document.addEventListener('contextmenu', (event) => {
         event.preventDefault();
     });
 
     window.onload = function() {
-        document.getElementById("terminal").focus();
+        // focus the hidden input (terminal focus alone doesn't open keyboard on iOS)
+        setTimeout(() => {
+            if (!isEnding) hiddenInput.focus();
+        }, 120);
     };
 
-    // catch-all for shutdownSequence removal of key handler - create placeholder if needed
-    function handleKeyDown(e){ /* placeholder to avoid missing reference if any code calls it */ }
-
+    // optional placeholder (kept safe)
+    function handleKeyDown(e){ /* placeholder */ }
 </script>
 
 </body>
