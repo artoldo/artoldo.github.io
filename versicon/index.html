@@ -2712,6 +2712,38 @@ window.addEventListener('load', () => {
   }
 });
 
+function scrollToEntryStable(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const doScroll = () => {
+    const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+
+  if (!window.visualViewport) {
+    requestAnimationFrame(() => requestAnimationFrame(doScroll));
+    return;
+  }
+
+  let lastH = visualViewport.height;
+  let tries = 0;
+
+  const tick = () => {
+    tries++;
+    const h = visualViewport.height;
+
+    if (Math.abs(h - lastH) < 0.5 || tries > 10) {
+      requestAnimationFrame(() => requestAnimationFrame(doScroll));
+      return;
+    }
+
+    lastH = h;
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
 
 function scrollToEntry(id) {
   const el = document.getElementById(id);
@@ -2733,7 +2765,7 @@ document.addEventListener('click', function(e) {
   // Update the URL hash (without the browser's default jump)
   history.pushState(null, "", "#" + id);
 
-  scrollToEntry(id);
+  scrollToEntryStable(id);
 });
 
 // --- END OF GLOBAL SCROLL ---
@@ -2814,6 +2846,39 @@ window.addEventListener('load', () => {
   }
 });
 
+function scrollToEntryStable(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const doScroll = () => {
+    const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+
+  if (!window.visualViewport) {
+    requestAnimationFrame(() => requestAnimationFrame(doScroll));
+    return;
+  }
+
+  let lastH = visualViewport.height;
+  let tries = 0;
+
+  const tick = () => {
+    tries++;
+    const h = visualViewport.height;
+
+    if (Math.abs(h - lastH) < 0.5 || tries > 10) {
+      requestAnimationFrame(() => requestAnimationFrame(doScroll));
+      return;
+    }
+
+    lastH = h;
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
+
 function scrollToEntry(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -2834,7 +2899,7 @@ document.addEventListener('click', function(e) {
   // Update the URL hash (without the browser's default jump)
   history.pushState(null, "", "#" + id);
 
-  scrollToEntry(id);
+  scrollToEntryStable(id);
 });
 
 // --- END OF GLOBAL SCROLL ---
