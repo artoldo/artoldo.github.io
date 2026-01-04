@@ -2719,20 +2719,61 @@ function scrollToEntry(id) {
   window.scrollTo({ top: top, behavior: 'smooth' });
 }
 
-document.addEventListener('click', function(e) {
-  const link = e.target.closest('a[href^="#"]');
-  if (!link) return;
+// Prevent browsers from re-applying anchor scroll
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  const id = link.getAttribute('href').substring(1);
+function setHashWithoutJump(id) {
+  const y = window.scrollY;
+  const root = document.documentElement;
+  const prev = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  history.replaceState(null, '', `#${id}`);
+  window.scrollTo(0, y);
+  root.style.scrollBehavior = prev;
+}
+
+function scrollToAnchor(id, { smooth }) {
   const el = document.getElementById(id);
   if (!el) return;
 
+  const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+
+  if (smooth) {
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  } else {
+    window.scrollTo(0, y);
+  }
+
+  setTimeout(() => setHashWithoutJump(id), 0);
+}
+
+function isMobile() {
+  return matchMedia('(pointer: coarse)').matches ||
+         /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const id = link.getAttribute('href').slice(1);
+  if (!document.getElementById(id)) return;
+
   e.preventDefault();
 
-  // Update the URL hash (without the browser's default jump)
-  history.pushState(null, "", "#" + id);
+  const offcanvasEl = link.closest('.uk-offcanvas');
 
-  scrollToEntry(id);
+  // Smooth everywhere except mobile + offcanvas
+  const shouldSmooth = !(offcanvasEl && isMobile());
+
+  const go = () => scrollToAnchor(id, { smooth: shouldSmooth });
+
+  if (offcanvasEl && window.UIkit) {
+    UIkit.util.once(offcanvasEl, 'hidden', () => requestAnimationFrame(go));
+    UIkit.offcanvas(offcanvasEl).hide();
+  } else {
+    go();
+  }
 });
 
 // --- END OF GLOBAL SCROLL ---
@@ -2820,20 +2861,61 @@ function scrollToEntry(id) {
   window.scrollTo({ top: top, behavior: 'smooth' });
 }
 
-document.addEventListener('click', function(e) {
-  const link = e.target.closest('a[href^="#"]');
-  if (!link) return;
+// Prevent browsers from re-applying anchor scroll
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-  const id = link.getAttribute('href').substring(1);
+function setHashWithoutJump(id) {
+  const y = window.scrollY;
+  const root = document.documentElement;
+  const prev = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  history.replaceState(null, '', `#${id}`);
+  window.scrollTo(0, y);
+  root.style.scrollBehavior = prev;
+}
+
+function scrollToAnchor(id, { smooth }) {
   const el = document.getElementById(id);
   if (!el) return;
 
+  const y = el.getBoundingClientRect().top + window.pageYOffset - 120;
+
+  if (smooth) {
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  } else {
+    window.scrollTo(0, y);
+  }
+
+  setTimeout(() => setHashWithoutJump(id), 0);
+}
+
+function isMobile() {
+  return matchMedia('(pointer: coarse)').matches ||
+         /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const id = link.getAttribute('href').slice(1);
+  if (!document.getElementById(id)) return;
+
   e.preventDefault();
 
-  // Update the URL hash (without the browser's default jump)
-  history.pushState(null, "", "#" + id);
+  const offcanvasEl = link.closest('.uk-offcanvas');
 
-  scrollToEntry(id);
+  // Smooth everywhere except mobile + offcanvas
+  const shouldSmooth = !(offcanvasEl && isMobile());
+
+  const go = () => scrollToAnchor(id, { smooth: shouldSmooth });
+
+  if (offcanvasEl && window.UIkit) {
+    UIkit.util.once(offcanvasEl, 'hidden', () => requestAnimationFrame(go));
+    UIkit.offcanvas(offcanvasEl).hide();
+  } else {
+    go();
+  }
 });
 
 // --- END OF GLOBAL SCROLL ---
