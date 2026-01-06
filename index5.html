@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sacrisoft LEXI Cataloger™ — Live Edit IndeXer</title>
+  <link rel="stylesheet" href="https://artoldo.github.io/css/uikit.min.css">
+
+  <link id="google-font-link" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;700&display=swap" rel="stylesheet">
+  <style id="dynamic-font-style">:root{--lexi-font-family:'Spectral', serif;}</style>
+
+  <script src="https://artoldo.github.io/js/uikit.min.js"></script>
+  <script src="https://artoldo.github.io/js/uikit-icons.min.js"></script>
+  <style>
+.section {
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.editor-toolbar {
+  position: fixed;
+  top: 10px;
+  right: 24px;
+  z-index: 1000;
+  display: none;
+}
+.sticky-nav {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+.sticky-nav .uk-button {
+  min-width: 0;
+  flex-shrink: 1;
+  flex-grow: 1;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
+}
+.dropcap {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+.uk-notification-message {
+  min-width: 320px;
+  max-width: 90vw;
+  font-size: small;
+  background-color: #fff;
+  border-radius: 10px;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.uk-modal.uk-open .uk-button {
+  border-radius: 9999px !important;
+}
+.uk-modal-dialog {
+  border-radius: 16px !important;
+}
+input, select {
+  border-radius: 8px !important;
+}
+.language-chooser {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  z-index: 10;
+  background: rgba(255,255,255,0.96);
+  border-radius: 25px;
+}
+.language-chooser .uk-button {
+  margin: 0;
+}
+#language-chooser .uk-dropdown {
+    border-radius: 15px !important;
+    min-width: 260px;
+}
+[contenteditable="true"] {
+  outline: none;
+  border: 0px solid #ccc;
+  padding: 20px;
+  background: transparent;
+}
+.entry-content {
+  font-size: 1.18em;
+  line-height: 1.7;
+  font-family: system-ui, Arial, sans-serif;
+}
+.center-media {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0 24px 0;
+}
+.editor-rich-toolbar {
+  margin-bottom: 6px;
+  display: flex;
+  gap: 0.5em;
+}
+.editor-rich-toolbar button {
+  min-width: 32px;
+  min-height: 32px;
+}
+.edit-lang-add-select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 1rem;
+    line-height: 40px;
+    color: #666;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+}
+
+.edit-lang-add-select option:disabled {
+  color: #999;
+}
+
+.edit-lang-add-select:focus {
+    border-color: #000;
+    box-shadow: none;
+    outline: 0;
+    background: #fff;
+}
+.edit-lang-tabs .lang-tab-plus {
+  font-size: 22px;
+  font-weight: normal;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0.5em;
+  vertical-align: middle;
+}
+.edit-lang-tabs .lang-tab-plus:hover {
+  color: #111;
+}
+.add-lang-select-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.uk-tab>*>a {
+  font-size: 17px;
+}
+@media (max-width: 800px) {
+  .language-chooser {
+    position: fixed;
+    left: 0px;                   /* distance from the left edge */
+    top: 90%;                    /* start at 50% of viewport height */
+    transform: translateY(-50%) scale(0.8); /* center vertically & shrink */
+    transform-origin: center;    /* optional: center the scaling */
+    touch-action: manipulation;  /* mobile-friendly */
+  }
+}
+@media (max-width: 480px) {
+  .sticky-nav .uk-button { font-size: 20px; padding: 0px 0px; }
+}
+
+
+/* Google Font */
+
+body {
+    font-family: var(--lexi-font-family, 'Spectral', serif);
+}
+.entry-content {
+    font-family: var(--lexi-font-family, 'Spectral', serif);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--lexi-font-family, 'Spectral', serif);
+}
+
+/* Input placeholder (Google font search) */
+#gf-family-input::placeholder {
+  color: #666;
+  opacity: 1; /* Firefox */
+}
+
+/* Select placeholder (preset dropdown) */
+#gf-family-select option:disabled {
+  color: #999;
+}
+
+/* Make the editor panel scrollable */
+.editor-pane {
+  max-height: 60vh;      /* adjust */
+  overflow: auto;
+  padding-top: 0 !important;
+}
+
+/* Sticky rich toolbar */
+.editor-rich-toolbar{
+  position: sticky;
+  top: 0;
+  z-index: 999;               /* higher than content */
+  margin: 0 !important;       /* kill any gap */
+  padding: 6px 0;             /* keep your spacing here */
+  background: rgba(255,255,255,0.85); /* or transparent if you want */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.editor-pane [id^="editor-area-"]{
+  margin-top: 6px;     /* space below toolbar */
+}
+
+/* --- Bottom full-width navbar (override) --- */
+.sticky-nav{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  transform: none;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 0px solid #e5e5e5;
+}
+.sticky-nav > .uk-button-group{
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+.language-chooser{
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+  background: transparent;
+}
+body{
+  padding-bottom: 80px; /* prevent content under the fixed bottom bar */
+}
+
+
+/* ========================================================================
+   Base
+ ========================================================================== */
+/*
+
+html {
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.5;
+
+  -webkit-text-size-adjust: 100%;
+
+  background: #fff;
+  color: #000;
+}
+
+body {
+  margin: 0;
+}
+
+/* ========================================================================
+   Links
+ ========================================================================== */
+
+
+a, .uk-link {
+color: #333333;
+text-decoration: underline;
+cursor: pointer;
+}
+
+.uk-link {
+  color: #333333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover,
+.uk-link:hover,
+.uk-link-toggle:hover .uk-link {
+  color: #333333;
+  text-decoration: none;
+}
+
+  color: #000;
+  text-decoration: none;
+}
+
+a.uk-link-heading:hover,
+.uk-link-heading a:hover,
+.uk-link-toggle:hover .uk-link-heading {
+  color: #333333;
+  text-decoration: none;
+}
+
+/* ========================================================================
+   Style modifiers
+ ========================================================================== */
+
+.uk-icon-button {
+  background: #333333;
+  color: #fff;
+}
+
+.uk-icon-button:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-icon-button:active,
+.uk-active > .uk-icon-button {
+  background-color: #333333;
+  color: #fff;
+}
+
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
+  outline: none;
+  background-color: #fff;
+  color: #000;
+  border-color: #333333;
+}
+
+.uk-radio:focus,
+.uk-checkbox:focus {
+  background-color: rgba(0, 0, 0, 0);
+  outline: none;
+  border-color: #333333;
+}
+
+.uk-radio:checked,
+.uk-checkbox:checked,
+.uk-checkbox:indeterminate {
+  background-color: #333333;
+  border-color: transparent;
+}
+
+.uk-radio:checked:focus,
+.uk-checkbox:checked:focus,
+.uk-checkbox:indeterminate:focus {
+  background-color: #333333;
+}
+
+.uk-radio:disabled,
+.uk-checkbox:disabled {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+.uk-light .uk-button-secondary, .uk-section-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-section-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-primary:not(.uk-preserve-color) .uk-button-secondary, .uk-tile-secondary:not(.uk-preserve-color) .uk-button-secondary, .uk-card-primary.uk-card-body .uk-button-secondary, .uk-card-primary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-card-secondary.uk-card-body .uk-button-secondary, .uk-card-secondary > :not([class*='uk-card-media']) .uk-button-secondary, .uk-overlay-primary .uk-button-secondary, .uk-offcanvas-bar .uk-button-secondary {
+background-color: #333333;
+color: #fff;
+}
+
+.uk-button-primary:hover {
+  background-color: #fff;
+  color: #333333;
+}
+
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+  background-color: #333333;
+  color: #fff;
+}
+
+.uk-button-primary {
+  background-color: #000000;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+.uk-button-primary:hover {
+  background-color: #333333;
+  color: #fff;
+}
+
+.uk-button-primary:active,
+.uk-button-primary.uk-active {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-button-secondary {
+  background-color: #333333;
+  color: #fff;
+}
+
+.uk-button-secondary:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.uk-button-secondary:active,
+.uk-button-secondary.uk-active {
+  background-color: #333333;
+  color: #fff;
+}
+
+.uk-button-danger {
+  background-color: transparent;
+  color: #333333;
+  border: 1px solid #333333;
+}
+
+.uk-button-danger:hover {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+.uk-button-danger:active,
+.uk-button-danger.uk-active {
+  background-color: transparent;
+  color: #333333;
+  border: 1px solid #333333;
+}
+
+.uk-progress::-webkit-progress-value {
+  background-color: #333333;
+  transition: width 0.6s ease;
+}
+.uk-progress::-moz-progress-bar {
+  background-color: #333333;
+  transition: width 0.6s ease;
+}
+
+.uk-section-primary {
+  background: #333333;
+}
+
+.uk-section-secondary {
+  background: #000;
+}
+
+.uk-tile-primary {
+  background-color: #333333;
+}
+
+.uk-card-badge {
+  background: #333333;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.uk-card-primary {
+  background-color: #333333;
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.uk-card-primary.uk-card-hover:hover {
+  background-color: #333333;
+  box-shadow: 0 14px 25px rgba(0, 0, 0, 0.16);
+}
+
+.uk-badge {
+  background: #333333;
+  color: #fff !important;
+  font-size: 11px;
+}
+
+.uk-label {
+  background: #333333;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.uk-navbar-nav > li > a {
+  padding: 0 0;
+  color: #333333;
+  text-transform: uppercase;
+  transition: 0.1s ease-in-out;
+  transition-property: color, background-color;
+}
+
+.uk-navbar-nav > li:hover > a,
+.uk-navbar-nav > li > a[aria-expanded="true"] {
+  color: #000;
+  text-decoration:underline;
+}
+
+.uk-navbar-nav > li > a:active {
+  color: #333333;
+}
+
+.uk-navbar-nav > li.uk-active > a {
+  color: #333333;
+  text-decoration:overline;
+}
+
+.uk-tab > * > a:hover {
+  color: #000;
+  text-decoration: none;
+}
+
+.uk-tab > .uk-active > a {
+  color: #333;
+  border-color: #333333;
+}
+
+.uk-background-default {
+  background-color: #fff;
+}
+.uk-background-muted {
+  background-color: #FFFFFF;
+}
+.uk-background-primary {
+  background-color: #333333;
+}
+.uk-background-secondary {
+  background-color: #000;
+}
+
+.uk-tooltip {
+  /* 1 */
+  display: none;
+  /* 2 */
+  position: absolute;
+  z-index: 1030;
+  --uk-position-offset: 10px;
+  --uk-position-viewport-offset: 10;
+  /* 3 */
+  top: 0;
+  /* 4 */
+  box-sizing: border-box;
+  max-width: 200px;
+  padding: 6px 12px;
+  /* 5 */
+  background: #000;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.uk-border-rounded {
+  border-radius: 15px;
+}
+
+/* ========================================================================
+   Lightbox
+ ========================================================================== */
+
+.uk-lightbox-button {
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 100%;
+  /* 1 */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.uk-lightbox-iframe {
+  width: 90%;
+  height: 90%;
+  border: 0px solid black;
+  border-radius: 0; /* Default: no rounding for Chrome, Brave, etc. */
+}
+
+/* Safari-only override */
+@supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
+  .uk-lightbox-iframe {
+    border-radius: 25px;
+  }
+}
+
+.uk-lightbox-toolbar {
+  padding: 5px 5px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+}
+.uk-lightbox-toolbar > * {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.uk-lightbox-toolbar-icon {
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  background: #333333;
+  color: white;
+  border-radius: 100%;
+  /* 1 */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* ========================================================================
+   Additional CSS:
+ ========================================================================== */
+
+html {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+button:focus,
+button:active {
+	-moz-outline: 0 !important;
+	-ms-outline:0 !important;
+	-o-outline: 0 !important;
+	-webkit-outline: 0 !important;
+}
+
+.uk-text-left-justify\@m {
+    text-align: left;
+  }
+
+  @media (min-width: 960px) {
+    .uk-text-left-justify\@m {
+      text-align: justify;
+    }
+  }
+
+/* Disable justification by default */
+  .uk-text-justify {
+    text-align: left !important;
+  }
+
+/* Enable justification from medium screens up (≥960px) */
+  @media (min-width: 960px) {
+    .uk-text-justify {
+      text-align: justify !important;
+    }
+  }
+
+/* --- Bottom full-width navbar (mobile default) --- */
+.sticky-nav{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  transform: none;
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 8px 12px;
+  box-sizing: border-box;
+
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 0px solid #e5e5e5;
+
+  /* helps when children have weird intrinsic heights */
+  min-height: 56px;
+}
+
+/* Center content inside */
+.sticky-nav > .uk-button-group{
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+/* Make sure every direct child aligns nicely */
+.sticky-nav > *{
+  align-self: center;
+}
+
+/* Language chooser wrapper */
+.language-chooser{
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* FORCE the actual control to match button height */
+.language-chooser select,
+.language-chooser .uk-select,
+.language-chooser .uk-button,
+.language-chooser .uk-input{
+  height: 40px;
+  line-height: 40px;
+  margin: 0 !important;
+}
+
+/* Prevent extra spacing from inner elements */
+.language-chooser *{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Prevent content under bar */
+body{
+  padding-bottom: 80px;
+}
+
+/* --- Desktop: half width & centered --- */
+@media (min-width: 768px){
+  .sticky-nav{
+    width: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+/* default */
+.sticky-nav {
+  background: #fff;
+}
+
+.sticky-nav a,
+.sticky-nav button {
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+.sticky-nav svg {
+  filter: invert(0);
+}
+
+/* hover */
+.sticky-nav a:hover,
+.sticky-nav button:hover {
+  background: #000;
+  color: #fff;
+}
+
+.sticky-nav a:hover svg,
+.sticky-nav button:hover svg {
+  filter: invert(0);
+}
+
+/* --- Language dropdown container (KEEP rounded grey border) --- */
+#language-chooser .uk-dropdown {
+  border: 1px solid #ccc;   /* keep grey border */
+  border-radius: 8px;         /* keep rounded corners */
+  box-shadow: none;           /* optional: remove heavy UIkit shadow */
+  background: #fff;
+}
+
+/* --- Dropdown items: remove borders --- */
+#language-chooser .uk-dropdown-nav > li > a {
+  border: 0;
+  background: transparent;
+  color: #000;
+  text-decoration: none;
+}
+
+/* --- Dropdown items: remove black hover --- */
+#language-chooser .uk-dropdown-nav > li > a:hover,
+#language-chooser .uk-dropdown-nav > li > a:focus {
+  background: transparent;   /* no black hover */
+  color: #000;
+  text-decoration: underline;
+}
+
+/* --- Remove divider lines between items (if any) --- */
+#language-chooser .uk-dropdown-nav > li + li {
+  border-top: 0;
+}
+
+/* Make edit modal a positioning context */
+#edit-modal .uk-modal-dialog {
+  position: relative;
+}
+
+/* Overlay that sits on top of the edit modal content */
+#link-overlay.link-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border-radius: 25px;
+  box-sizing: border-box;
+  z-index: 2000;
+}
+
+/* The small card in the middle */
+#link-overlay .link-overlay-card {
+  width: min(520px, 100%);
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Glossary links: underline only on hover */
+#glossary a,
+#glossary-list a {
+  text-decoration: none;
+}
+
+#glossary a:hover,
+#glossary-list a:hover {
+  text-decoration: underline;
+  text-decoration-color: #666;
+  text-underline-offset: 3px;
+}
+
+  </style>
+
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+</script>
+
+</head>
+<body>
+
+
+<div class="uk-container uk-text-center uk-padding-large">
+  <div class="uk-container uk-padding-small"></div>
+  <p class="uk-text-small" id="site-brand">Sacrisoft</p>
+  <img id="site-logo" src="./images/icon.png" width="70px" style="cursor: default;" title="">
+  <h1 id="site-h1">LEXI Cataloger™</h1>
+  <h2 id="site-h2">Live Edit IndeXer</h2>
+</div>
+<input id="logo-file" type="file" accept="image/*" style="display:none" />
+
+
+<div class="editor-toolbar uk-button-group" style="display: none;">
+  <button class="uk-button uk-button-default uk-border-pill uk-margin-right" id="font-btn" type="button">Font</button>
+  <button class="uk-button uk-button-secondary uk-border-pill uk-margin-right" id="add-btn" type="button">Add Entry</button>
+  <button class="uk-button uk-button-primary uk-border-pill" id="save-btn" type="button">Save</button>
+</div>
+
+<div class="sticky-nav">
+<div id="language-chooser" class="language-chooser">
+  <div class="uk-inline">
+    <button class="uk-button uk-button-default uk-border-pill" type="button" id="lang-btn-current" aria-haspopup="true">
+      <span uk-icon="icon: world" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M1,10.5 L19,10.5"></path><path fill="none" stroke="#000" d="M2.35,15.5 L17.65,15.5"></path><path fill="none" stroke="#000" d="M2.35,5.5 L17.523,5.5"></path><path fill="none" stroke="#000" d="M10,19.46 L9.98,19.46 C7.31,17.33 5.61,14.141 5.61,10.58 C5.61,7.02 7.33,3.83 10,1.7 C10.01,1.7 9.99,1.7 10,1.7 L10,1.7 C12.67,3.83 14.4,7.02 14.4,10.58 C14.4,14.141 12.67,17.33 10,19.46 L10,19.46 L10,19.46 L10,19.46 Z"></path><circle fill="none" stroke="#000" cx="10" cy="10.5" r="9"></circle></svg></span>
+      <span id="lang-btn-label">EN</span>
+      <span uk-icon="icon: triangle-down" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polygon points="5 7 15 7 10 12"></polygon></svg></span>
+    </button>
+    <div uk-dropdown="mode: click; pos: bottom-left; offset: 4" class="uk-drop uk-dropdown">
+      <ul class="uk-nav uk-dropdown-nav" id="main-lang-dropdown"><li><a href="#" onclick="setLanguage('EN');return false;">EN - English</a></li></ul>
+    </div>
+  </div>
+</div>
+  <div class="uk-button-group">
+  <button class="uk-button uk-button-secondary" uk-tooltip="Previous" onclick="scrollToPrev()" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
+      <span uk-icon="icon: chevron-up; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="4 13 10 7 16 13"></polyline></svg></span>
+    </button>
+    <button class="uk-button uk-button-secondary" uk-tooltip="Next" onclick="scrollToNext()">
+      <span uk-icon="icon: chevron-down; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="16 7 10 13 4 7"></polyline></svg></span>
+    </button>
+    <button class="uk-button uk-button-secondary" uk-tooltip="Random" onclick="scrollToRandom()">
+      <span uk-icon="icon: bolt; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><path d="M4.74,20 L7.73,12 L3,12 L15.43,1 L12.32,9 L17.02,9 L4.74,20 L4.74,20 L4.74,20 Z M9.18,11 L7.1,16.39 L14.47,10 L10.86,10 L12.99,4.67 L5.61,11 L9.18,11 L9.18,11 L9.18,11 Z"></path></svg></span>
+    </button>
+    <button class="uk-button uk-button-secondary" uk-tooltip="Copy Link" onclick="copyCurrentLink()">
+      <span uk-icon="icon: link; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span>
+    </button>
+    <button class="uk-button uk-button-secondary" uk-tooltip="Search" onclick="showSearchModal()">
+      <span uk-icon="icon: search; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="9" cy="9" r="7"></circle><path fill="none" stroke="#000" stroke-width="1.1" d="M14,14 L18,18 L14,14 Z"></path></svg></span>
+    </button>
+    <button class="uk-button uk-button-secondary" uk-tooltip="Index" onclick="UIkit.offcanvas('#glossary').show()" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+      <span uk-icon="icon: menu; ratio: 1.5" class="uk-icon"><svg width="30" height="30" viewBox="0 0 20 20"><rect width="16" height="1" x="2" y="4"></rect><rect width="16" height="1" x="2" y="9"></rect><rect width="16" height="1" x="2" y="14"></rect></svg></span>
+    </button>
+  </div>
+</div>
+<div id="glossary" uk-offcanvas="overlay: true" class="uk-offcanvas" style="" tabindex="-1">
+  <div class="uk-offcanvas-bar" role="dialog" aria-modal="true" style="">
+    <h3>Index</h3>
+    <div id="glossary-list"><div class="dropcap">1</div><div><a href="#b6c82ef2-0c36-48f3-aeef-63141ead222f">1. How to Enter Edit Mode</a></div><div class="dropcap">2</div><div><a href="#a490f44d-5800-42d9-bae8-8ad3b70f3c0b">2. Adding Text, Media, and Formatting</a></div><div class="dropcap">3</div><div><a href="#a9bf15e9-7dae-4b19-922c-8aa634a9dba8">3. Adding Multiple Languages</a></div><div class="dropcap">4</div><div><a href="#c1a3f02a-cc4a-4972-8be9-1b9fab1a4793">4. Navigating the Interface</a></div></div>
+  </div>
+</div>
+<div id="container"><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="b6c82ef2-0c36-48f3-aeef-63141ead222f" data-index="0">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">1. How to Enter Edit Mode</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(0)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content">Press&nbsp;<b>Ctrl + E</b>&nbsp;to toggle edit mode and reveal the editing toolbar.</div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="a490f44d-5800-42d9-bae8-8ad3b70f3c0b" data-index="1">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">2. Adding Text, Media, and Formatting</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(1)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content">Click&nbsp;<b>Add</b>&nbsp;or&nbsp;<b>Edit</b>&nbsp;to enter content. Paste or type text, insert&nbsp;<b>images&nbsp;</b>/&nbsp;<b>videos&nbsp;</b>/&nbsp;<b>website links</b>&nbsp;as&nbsp;<b>Lightbox&nbsp;</b>via Media URL, and use the toolbar to format text (<b>bold</b>,&nbsp;<i>italics</i>,&nbsp;<u>underline</u>). Choose text-alignment: left, center or right.</div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="a9bf15e9-7dae-4b19-922c-8aa634a9dba8" data-index="2">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">3. Adding Multiple Languages</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(2)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content">Click the&nbsp;<b>+</b>&nbsp;tab in the language bar to&nbsp;<b>add another language</b>, then enter your&nbsp;<b>translation</b>&nbsp;in the new editor tab.</div>
+      </div>
+    </div><div class="section uk-section uk-flex uk-flex-middle uk-flex-center" id="c1a3f02a-cc4a-4972-8be9-1b9fab1a4793" data-index="3">
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">4. Navigating the Interface</h2>
+          
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left" onclick="editEntryByIndex(3)" uk-tooltip="Edit Entry" style="margin-left:12px;">
+              <span uk-icon="icon: pencil" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" d="M17.25,6.01 L7.12,16.1 L3.82,17.2 L5.02,13.9 L15.12,3.88 C15.71,3.29 16.66,3.29 17.25,3.88 C17.83,4.47 17.83,5.42 17.25,6.01 L17.25,6.01 Z"></path><path fill="none" stroke="#000" d="M15.98,7.268 L13.851,5.148"></path></svg></span>
+            </button>
+          
+        </div>
+        
+        <div class="uk-margin entry-content">Use the arrow buttons for&nbsp;<b>next / previous entries</b>, the lightning for&nbsp;<b>random</b>, the link to copy a&nbsp;<b>direct URL</b>, the magnifier to&nbsp;<b>search</b>&nbsp;<b>entries</b>, and the menu for the&nbsp;<b>full glossary</b>.</div>
+      </div>
+    </div></div>
+<div id="edit-modal" uk-modal="" class="uk-modal" style="" tabindex="-1">
+  <div class="uk-modal-dialog uk-modal-body" role="dialog" aria-modal="true">
+    <h2 class="uk-modal-title">Edit Entry</h2>
+    <input class="uk-input uk-margin-small-bottom" id="edit-title" placeholder="Title">
+    <input class="uk-input uk-margin-small-bottom" id="edit-media" placeholder="Media URL">
+    <div id="edit-lang-add-container" class="uk-margin-small"></div>
+    <ul id="edit-lang-tabs" uk-tab="" class="edit-lang-tabs uk-tab" role="tablist"><li class="uk-active" role="presentation">
+      <a href="#" onclick="setEditLangTab(0); return false;" aria-selected="true" role="tab" id="uk-tab-127" aria-controls="uk-tab-128">
+        EN
+        
+      </a>
+    </li><li role="presentation">
+    <a href="#" onclick="showLangSelect=true;updateEditLangTabs();return false;" class="lang-tab-plus" uk-tooltip="Add language" aria-selected="false" tabindex="-1" role="tab">+</a>
+  </li></ul>
+    <ul id="edit-lang-switcher" class="uk-switcher uk-margin" role="presentation" style="touch-action: pan-y pinch-zoom;"><li class="uk-active" id="uk-tab-128" role="tabpanel" aria-labelledby="uk-tab-127">
+      
+  <div class="editor-rich-toolbar">
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bold ; pos: bottom" title="Bold" onclick="formatEditor('EN','bold')" aria-label="Bold">
+    <span uk-icon="bold" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M5,15.3 C5.66,15.3 5.9,15 5.9,14.53 L5.9,5.5 C5.9,4.92 5.56,4.7 5,4.7 L5,4 L8.95,4 C12.6,4 13.7,5.37 13.7,6.9 C13.7,7.87 13.14,9.17 10.86,9.59 L10.86,9.7 C13.25,9.86 14.29,11.28 14.3,12.54 C14.3,14.47 12.94,16 9,16 L5,16 L5,15.3 Z M9,9.3 C11.19,9.3 11.8,8.5 11.85,7 C11.85,5.65 11.3,4.8 9,4.8 L7.67,4.8 L7.67,9.3 L9,9.3 Z M9.185,15.22 C11.97,15 12.39,14 12.4,12.58 C12.4,11.15 11.39,10 9,10 L7.67,10 L7.67,15 L9.18,15 Z"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Italic ; pos: bottom" title="Italic" onclick="formatEditor('EN','italic')" aria-label="Italic">
+    <span uk-icon="italic" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12.63,5.48 L10.15,14.52 C10,15.08 10.37,15.25 11.92,15.3 L11.72,16 L6,16 L6.2,15.31 C7.78,15.26 8.19,15.09 8.34,14.53 L10.82,5.49 C10.97,4.92 10.63,4.76 9.09,4.71 L9.28,4 L15,4 L14.81,4.69 C13.23,4.75 12.78,4.91 12.63,5.48 L12.63,5.48 Z"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Underline ; pos: bottom" title="Underline" onclick="formatEditor('EN','underline')" aria-label="Underline">
+    <span uk-icon="minus" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="18" height="1" x="1" y="9"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bullet ; pos: bottom" onclick="formatEditor('EN','insertUnorderedList')" aria-label="Bullet" title="Bulleted List">
+    <span uk-icon="more-vertical" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="3" r="2"></circle><circle cx="10" cy="10" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Numbered List ; pos: bottom" onclick="formatEditor('EN','insertOrderedList')" aria-label="Numbered" title="Numbered List">
+    <span uk-icon="list" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="12" height="1" x="6" y="4"></rect><rect width="12" height="1" x="6" y="9"></rect><rect width="12" height="1" x="6" y="14"></rect><rect width="2" height="1" x="2" y="4"></rect><rect width="2" height="1" x="2" y="9"></rect><rect width="2" height="1" x="2" y="14"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Left ; pos: bottom" title="Align Left" onclick="formatEditor('EN','justifyLeft')" aria-label="Left">
+    <span uk-icon="chevron-double-left" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 14 6 10 10 6"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="14 14 10 10 14 6"></polyline></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Center ; pos: bottom" title="Align Center" onclick="formatEditor('EN','justifyCenter')" aria-label="Center">
+    <span uk-icon="table" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><rect width="18" height="1" x="1" y="3"></rect><rect width="18" height="1" x="1" y="7"></rect><rect width="18" height="1" x="1" y="11"></rect><rect width="18" height="1" x="1" y="15"></rect></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Right ; pos: bottom" title="Align Right" onclick="formatEditor('EN','justifyRight')" aria-label="Right">
+    <span uk-icon="chevron-double-right" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><polyline fill="none" stroke="#000" stroke-width="1.03" points="10 6 14 10 10 14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.03" points="6 6 10 10 6 14"></polyline></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Add Link ; pos: bottom" title="Add Link" onclick="insertLink('EN')" aria-label="Link">
+    <span uk-icon="link" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><path fill="none" stroke="#000" stroke-width="1.1" d="M10.625,12.375 L7.525,15.475 C6.825,16.175 5.925,16.175 5.225,15.475 L4.525,14.775 C3.825,14.074 3.825,13.175 4.525,12.475 L7.625,9.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M9.325,7.375 L12.425,4.275 C13.125,3.575 14.025,3.575 14.724,4.275 L15.425,4.975 C16.125,5.675 16.125,6.575 15.425,7.275 L12.325,10.375"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M7.925,11.875 L11.925,7.975"></path></svg></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Remove Link ; pos: bottom" title="Remove Link" onclick="removeLink('EN')" aria-label="Remove Link">
+    <span uk-icon="ban" class="uk-icon"><svg width="20" height="20" viewBox="0 0 20 20"><circle fill="none" stroke="#000" stroke-width="1.1" cx="10" cy="10" r="9"></circle><line fill="none" stroke="#000" stroke-width="1.1" x1="4" y1="3.5" x2="16" y2="16.5"></line></svg></span>
+  </button>
+  </div>
+      <div id="editor-area-EN" contenteditable="true" class="uk-margin" style="border:1px solid #ccc;min-height:80px;padding:1em;text-align:left;">Use the arrow buttons for&nbsp;<b>next / previous entries</b>, the lightning for&nbsp;<b>random</b>, the link to copy a&nbsp;<b>direct URL</b>, the magnifier to&nbsp;<b>search</b>&nbsp;<b>entries</b>, and the menu for the&nbsp;<b>full glossary</b>.</div>
+    </li></ul>
+
+<!-- Link Overlay (inside Edit Modal) -->
+<div id="link-overlay" class="link-overlay" hidden>
+  <div class="link-overlay-card">
+    <h3 class="uk-modal-title" style="margin:0 0 10px 0;">Insert Link</h3>
+
+    <div class="uk-margin-small">
+      <label class="uk-form-label" for="link-url">URL</label>
+      <input
+        id="link-url"
+        class="edit-lang-add-select"
+        type="url"
+        placeholder="https://example.com"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="uk-flex uk-flex-right uk-flex-middle" style="gap:8px;">
+      <button id="link-cancel-btn" class="uk-button uk-button-default uk-border-pill" type="button">Cancel</button>
+      <button id="link-insert-btn" class="uk-button uk-button-primary uk-border-pill" type="button">Insert</button>
+    </div>
+  </div>
+</div>
+
+ <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-large-top">
+  <div>
+    <button class="uk-button uk-button-danger uk-border-pill" id="delete-btn" type="button">Delete</button>
+  </div>
+  <div>
+    <button class="uk-button uk-button-default uk-modal-close uk-border-pill" type="button">Cancel</button>
+    <button class="uk-button uk-button-primary uk-border-pill" id="save-edit-btn" type="button">Save</button>
+  </div>
+  </div>
+ </div>
+</div>
+<div id="search-modal" uk-modal="" class="uk-modal">
+  <div class="uk-modal-dialog uk-modal-body" role="dialog" aria-modal="true">
+    <h3>Search</h3>
+    <input id="search-input" class="uk-input" type="text" placeholder="Type to search..." oninput="renderSearchResults()" autofocus="">
+    <ul id="search-results" class="uk-list uk-list-divider uk-margin"></ul>
+    <button class="uk-button uk-button-default uk-modal-close uk-border-pill uk-align-right">Close</button>
+  </div>
+</div>
+
+<!-- Google Fonts Modal -->
+<div id="font-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <h3 class="uk-modal-title">Google Fonts</h3>
+
+<div class="uk-margin-small">
+  <label class="uk-form-label" for="gf-family-select">Font family</label>
+
+  <div class="uk-form-controls">
+    <!-- Search / custom font -->
+    <input
+      id="gf-family-input"
+      class="edit-lang-add-select"
+      type="text"
+      placeholder="Type any Google Font name (e.g. Inter) ..."
+      autocomplete="off"
+    />
+
+    <!-- Native presets -->
+    <div style="height:8px;"></div>
+   <label class="uk-form-label" for="gf-family-select">Preset</label>
+    <select id="gf-family-select" class="edit-lang-add-select">
+      <option value="" disabled selected>… or choose a preset</option>
+      <option value="Spectral">Spectral</option>
+      <option value="Inter">Inter</option>
+      <option value="Roboto">Roboto</option>
+      <option value="Open Sans">Open Sans</option>
+      <option value="Lato">Lato</option>
+      <option value="Merriweather">Merriweather</option>
+      <option value="Roboto Slab">Roboto Slab</option>
+      <option value="Playfair Display">Playfair Display</option>
+      <option value="Source Sans 3">Source Sans 3</option>
+      <option value="Montserrat">Montserrat</option>
+    </select>
+  </div>
+</div>
+
+    <div class="uk-margin-small uk-padding-large">
+      <div id="gf-preview" class="uk-padding-small uk-background-muted uk-border-rounded" style="font-family: var(--lexi-font-family, 'Spectral', serif);">
+      </div>
+    </div>
+
+    <div class="uk-flex uk-flex-between uk-flex-middle uk-margin">
+      <button id="gf-reset" class="uk-button uk-button-default" type="button">Reset</button>
+      <div class="uk-flex uk-flex-right uk-flex-middle" style="gap:8px;">
+        <button id="gf-apply" class="uk-button uk-button-primary" type="button">Apply</button>
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_LANGS = [{"code":"AF","name":"Afrikaans"},{"code":"AM","name":"አማርኛ (Amharic)"},{"code":"AR","name":"العربية (Arabic)"},{"code":"AZ","name":"Azərbaycan (Azerbaijani)"},{"code":"BE","name":"Беларуская (Belarusian)"},{"code":"BG","name":"Български (Bulgarian)"},{"code":"BN","name":"বাংলা (Bengali)"},{"code":"BS","name":"Bosanski (Bosnian)"},{"code":"CA","name":"Català (Catalan)"},{"code":"CS","name":"Čeština (Czech)"},{"code":"CY","name":"Cymraeg (Welsh)"},{"code":"DA","name":"Dansk (Danish)"},{"code":"DE","name":"Deutsch (German)"},{"code":"EL","name":"Ελληνικά (Greek)"},{"code":"EN","name":"English"},{"code":"ES","name":"Español (Spanish)"},{"code":"ET","name":"Eesti (Estonian)"},{"code":"EU","name":"Euskara (Basque)"},{"code":"FA","name":"فارسی (Persian)"},{"code":"FI","name":"Suomi (Finnish)"},{"code":"FR","name":"Français (French)"},{"code":"GA","name":"Gaeilge (Irish)"},{"code":"GL","name":"Galego (Galician)"},{"code":"GU","name":"ગુજરાતી (Gujarati)"},{"code":"HE","name":"עברית (Hebrew)"},{"code":"HI","name":"हिन्दी (Hindi)"},{"code":"HR","name":"Hrvatski (Croatian)"},{"code":"HU","name":"Magyar (Hungarian)"},{"code":"HY","name":"Հայերեն (Armenian)"},{"code":"ID","name":"Bahasa Indonesia"},{"code":"IS","name":"Íslenska (Icelandic)"},{"code":"IT","name":"Italiano (Italian)"},{"code":"JA","name":"日本語 (Japanese)"},{"code":"KA","name":"ქართული (Georgian)"},{"code":"KK","name":"Қазақ тілі (Kazakh)"},{"code":"KM","name":"ភាសាខ្មែរ (Khmer)"},{"code":"KN","name":"ಕನ್ನಡ (Kannada)"},{"code":"KO","name":"한국어 (Korean)"},{"code":"KU","name":"Kurdî (Kurdish)"},{"code":"KY","name":"Кыргызча (Kyrgyz)"},{"code":"LA","name":"Latina (Latin)"},{"code":"LB","name":"Lëtzebuergesch (Luxembourgish)"},{"code":"LT","name":"Lietuvių (Lithuanian)"},{"code":"LV","name":"Latviešu (Latvian)"},{"code":"MK","name":"Македонски (Macedonian)"},{"code":"ML","name":"മലയാളം (Malayalam)"},{"code":"MN","name":"Монгол (Mongolian)"},{"code":"MR","name":"मराठी (Marathi)"},{"code":"MS","name":"Bahasa Melayu (Malay)"},{"code":"MT","name":"Malti (Maltese)"},{"code":"NE","name":"नेपाली (Nepali)"},{"code":"NL","name":"Nederlands (Dutch)"},{"code":"NO","name":"Norsk (Norwegian)"},{"code":"PA","name":"ਪੰਜਾਬੀ (Punjabi)"},{"code":"PL","name":"Polski (Polish)"},{"code":"PS","name":"پښتو (Pashto)"},{"code":"PT","name":"Português (Portuguese)"},{"code":"RO","name":"Română (Romanian)"},{"code":"RU","name":"Русский (Russian)"},{"code":"SI","name":"සිංහල (Sinhala)"},{"code":"SK","name":"Slovenčina (Slovak)"},{"code":"SL","name":"Slovenščina (Slovenian)"},{"code":"SQ","name":"Shqip (Albanian)"},{"code":"SR","name":"Српски (Serbian)"},{"code":"SV","name":"Svenska (Swedish)"},{"code":"SW","name":"Kiswahili (Swahili)"},{"code":"TA","name":"தமிழ் (Tamil)"},{"code":"TE","name":"తెలుగు (Telugu)"},{"code":"TH","name":"ไทย (Thai)"},{"code":"TR","name":"Türkçe (Turkish)"},{"code":"UK","name":"Українська (Ukrainian)"},{"code":"UR","name":"اردو (Urdu)"},{"code":"UZ","name":"Oʻzbek (Uzbek)"},{"code":"VI","name":"Tiếng Việt (Vietnamese)"},{"code":"ZH","name":"中文 (Chinese – Simplified)"},{"code":"ZH-TW","name":"中文 (Chinese – Traditional)"}];
+function generateId() {
+  return window.crypto && window.crypto.randomUUID
+    ? window.crypto.randomUUID()
+    : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+}
+let entries = [
+  {
+    "title": "1. How to Enter Edit Mode",
+    "content": {
+      "EN": "Press&nbsp;<b>Ctrl + E</b>&nbsp;to toggle edit mode and reveal the editing toolbar."
+    },
+    "media": "",
+    "id": "b6c82ef2-0c36-48f3-aeef-63141ead222f",
+    "langs": [
+      "EN"
+    ]
+  },
+  {
+    "title": "2. Adding Text, Media, and Formatting",
+    "content": {
+      "EN": "Click&nbsp;<b>Add</b>&nbsp;or&nbsp;<b>Edit</b>&nbsp;to enter content. Paste or type text, insert&nbsp;<b>images&nbsp;</b>/&nbsp;<b>videos&nbsp;</b>/&nbsp;<b>website links</b>&nbsp;as&nbsp;<b>Lightbox&nbsp;</b>via Media URL, and use the toolbar to format text (<b>bold</b>,&nbsp;<i>italics</i>,&nbsp;<u>underline</u>). Choose text-alignment: left, center or right."
+    },
+    "media": "",
+    "id": "a490f44d-5800-42d9-bae8-8ad3b70f3c0b",
+    "langs": [
+      "EN"
+    ]
+  },
+  {
+    "title": "3. Adding Multiple Languages",
+    "content": {
+      "EN": "Click the&nbsp;<b>+</b>&nbsp;tab in the language bar to&nbsp;<b>add another language</b>, then enter your&nbsp;<b>translation</b>&nbsp;in the new editor tab."
+    },
+    "media": "",
+    "id": "a9bf15e9-7dae-4b19-922c-8aa634a9dba8",
+    "langs": [
+      "EN"
+    ]
+  },
+  {
+    "title": "4. Navigating the Interface",
+    "content": {
+      "EN": "Use the arrow buttons for&nbsp;<b>next / previous entries</b>, the lightning for&nbsp;<b>random</b>, the link to copy a&nbsp;<b>direct URL</b>, the magnifier to&nbsp;<b>search</b>&nbsp;<b>entries</b>, and the menu for the&nbsp;<b>full glossary</b>."
+    },
+    "media": "",
+    "id": "c1a3f02a-cc4a-4972-8be9-1b9fab1a4793",
+    "langs": [
+      "EN"
+    ]
+  }
+];
+let editIndex = null;
+let isEditMode = false;
+let currentEditLanguages = ["EN"];
+let currentEditContent = {"EN":"Use the arrow buttons for&nbsp;<b>next / previous entries</b>, the lightning for&nbsp;<b>random</b>, the link to copy a&nbsp;<b>direct URL</b>, the magnifier to&nbsp;<b>search</b>&nbsp;<b>entries</b>, and the menu for the&nbsp;<b>full glossary</b>."};
+let tabRef = null;
+let lang = 'EN';
+let showLangSelect = false;
+
+// --- Header titles editing (only in edit mode; persists + exports) ---
+const BRAND_STORAGE_KEY = "lexi_brand_text";
+const H1_STORAGE_KEY = "lexi_h1_text";
+const H2_STORAGE_KEY = "lexi_h2_text";
+
+function setHeaderEditable(on) {
+  const brand = document.getElementById("site-brand");
+  const h1 = document.getElementById("site-h1");
+  const h2 = document.getElementById("site-h2");
+
+  [brand, h1, h2].forEach(el => {
+    if (!el) return;
+    el.setAttribute("contenteditable", on ? "true" : "false");
+    el.contentEditable = on ? "true" : "false";
+    el.style.outline = on ? "1px dashed #bbb" : "none";
+    el.style.padding = on ? "4px 8px" : "";
+    el.style.borderRadius = on ? "10px" : "";
+    el.style.cursor = on ? "text" : "default";
+  });
+}
+
+function loadHeaderTitles() {
+  // document-first: the HTML already contains the current brand/h1/h2
+}
+
+function loadHeaderTitles() {
+  // document-first: the HTML already contains the current brand/h1/h2
+}
+
+function bindHeaderTitlePersistence() {
+  // document-first: do not persist header titles to localStorage
+  // (export will bake the DOM values into the file)
+}
+
+// --- End header titles editing ---
+
+
+// --- Logo editing (only in edit mode; persists + exports) ---
+const LOGO_STORAGE_KEY = "lexi_logo_data";
+
+function setLogoEditable(on) {
+  const logo = document.getElementById("site-logo");
+  if (!logo) return;
+  logo.style.cursor = on ? "pointer" : "default";
+  logo.title = on ? "Click to upload logo" : "";
+}
+
+function loadLogo() {
+  // document-first: the HTML already contains the current logo src
+}
+
+function bindLogoUpload() {
+  const logo = document.getElementById("site-logo");
+  const file = document.getElementById("logo-file");
+  if (!logo || !file) return;
+
+  logo.addEventListener("click", () => {
+    if (!isEditMode) return;
+    file.value = "";
+    file.click();
+  });
+
+  file.addEventListener("change", () => {
+    const f = file.files && file.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      logo.src = dataUrl;
+    };
+    reader.readAsDataURL(f);
+  });
+}
+// --- End logo editing ---
+
+function allUsedLangs() {
+  const found = new Set();
+  entries.forEach(e => (e.langs || Object.keys(e.content || {})).forEach(l => found.add(l)));
+  return [...found];
+}
+function renderMainLangDropdown() {
+  const ul = document.getElementById('main-lang-dropdown');
+  ul.innerHTML = "";
+  let presentLangs = allUsedLangs().sort((a, b) => {
+    let la = (ALL_LANGS.find(l => l.code === a) || {name: a}).name;
+    let lb = (ALL_LANGS.find(l => l.code === b) || {name: b}).name;
+    return la.localeCompare(lb);
+  });
+  if (!presentLangs.includes(lang)) {
+    lang = presentLangs[0] || "";
+  }
+  presentLangs.forEach(code => {
+    let info = ALL_LANGS.find(l => l.code === code) || {code, name: code};
+    ul.innerHTML += `<li><a href="#" onclick="setLanguage('${code}');return false;">${code} - ${info.name}</a></li>`;
+  });
+  document.getElementById('lang-btn-label').textContent = lang || "";
+}
+function setLanguage(l) {
+  lang = l;
+  renderMainLangDropdown();
+  renderEntries();
+  const current = getCurrentSection();
+  if(current) {
+    const sec = document.getElementById(current.id);
+    if(sec) sec.scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+}
+function renderEntries() {
+  entries.sort((a, b) => a.title.localeCompare(b.title));
+  const container = document.getElementById('container');
+  container.innerHTML = '';
+  entries.forEach((entry, i) => {
+    const section = document.createElement('div');
+    section.className = 'section uk-section uk-flex uk-flex-middle uk-flex-center';
+    section.id = entry.id;
+    section.dataset.index = i;
+    let mediaElement = '';
+    if (entry.media) {
+      let url = entry.media;
+      let dataType = 'iframe';
+      let label = 'Media &nbsp;';
+      let icon = 'forward';
+        if (url.includes('youtube.com/watch?v=')) {
+    const id = url.split('v=')[1].split('&')[0];
+    url = `https://www.youtube.com/embed/${id}`;
+    label = 'Video &nbsp;'; icon = 'play';
+
+  } else if (url.includes('youtu.be/')) {
+    const id = url.split('youtu.be/')[1];
+    url = `https://www.youtube.com/embed/${id}`;
+    label = 'Video &nbsp;'; icon = 'play';
+
+  } else if (url.includes('vimeo.com/')) {
+    // Handle Vimeo URLs like https://vimeo.com/488098614
+    const match = url.match(/vimeo\.com\/(?:video\/|channels\/[^\/]+\/|ondemand\/[^\/]+\/|groups\/[^\/]+\/videos\/)?(\d+)/);
+    if (match && match[1]) {
+      const id = match[1];
+      url = `https://player.vimeo.com/video/${id}`;
+      label = 'Video &nbsp;';           // same label as YouTube
+      icon = 'play';
+    }
+
+  } else if (url.match(/\.(jpe?g|png|gif|webp|svg)$/i)) {
+    dataType = 'image'; label = 'Image'; icon = 'image';
+  }
+      mediaElement = `<div class="center-media" uk-lightbox>
+        <a href="${url}" data-type="${dataType}">
+          <button class="uk-button uk-button-default uk-border-pill" style="margin: 0 6px;">
+            <span uk-icon="icon: ${icon}"></span> ${label}
+          </button>
+        </a>
+      </div>`;
+    }
+    let displayContent = "";
+    if (typeof entry.content === "object" && (entry.langs && entry.langs.length)) {
+      displayContent = entry.content[lang] || entry.content[entry.langs[0]] || Object.values(entry.content).find(Boolean) || "";
+    } else {
+      displayContent = entry.content || "";
+    }
+    section.innerHTML = `
+      <div class="uk-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 class="uk-text-center" style="flex:1">${entry.title}</h2>
+          ${isEditMode ? `
+            <button class="uk-button uk-button-default uk-border-pill uk-margin-left"
+              onclick="editEntryByIndex(${i})"
+              uk-tooltip="Edit Entry"
+              style="margin-left:12px;">
+              <span uk-icon="icon: pencil"></span>
+            </button>
+          ` : ''}
+        </div>
+        ${mediaElement}
+        <div class="uk-margin entry-content">${displayContent}</div>
+      </div>
+    `;
+    container.appendChild(section);
+  });
+  renderGlossary();
+  renderMainLangDropdown();
+}
+function renderGlossary() {
+  const list = document.getElementById('glossary-list');
+  list.innerHTML = '';
+  const grouped = {};
+  entries.forEach(entry => {
+    const letter = entry.title.charAt(0).toUpperCase();
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push(entry);
+  });
+  Object.keys(grouped).sort().forEach(letter => {
+    list.innerHTML += `<div class="dropcap">${letter}</div>`;
+    grouped[letter].forEach(entry => {
+      list.innerHTML += `<div><a href="#${entry.id}">${entry.title}</a></div>`;
+    });
+  });
+}
+function cleanHTML(input) {
+  // Allow only b, strong, i, em, u, a, br, p (preserve paragraphs)
+  let div = document.createElement('div');
+  div.innerHTML = input;
+
+  function cleanNode(node) {
+    if (node.nodeType === 3) return node; // text
+    if (node.nodeType === 1 && node.tagName === 'BR') return node.cloneNode(); // <br>
+    if (node.nodeType === 1 && node.tagName === 'P') {
+      let p = document.createElement('p');
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) p.appendChild(cleaned);
+      });
+      return p;
+    }
+    if (node.nodeType !== 1) return null;
+    let allowed = ['B','STRONG','I','EM','U','A','BR','P'];
+    if (!allowed.includes(node.tagName)) {
+      let fragment = document.createDocumentFragment();
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) fragment.appendChild(cleaned);
+      });
+      return fragment;
+    } else {
+      let el = document.createElement(node.tagName);
+      if (node.tagName === "A") {
+        el.href = node.getAttribute('href') || '';
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener noreferrer");
+      }
+      Array.from(node.childNodes).forEach(child => {
+        let cleaned = cleanNode(child);
+        if (cleaned) el.appendChild(cleaned);
+      });
+      return el;
+    }
+  }
+  let cleaned = cleanNode(div);
+  let container = document.createElement("div");
+  container.appendChild(cleaned);
+  return container.innerHTML;
+}
+function renderEditToolbar(l) {
+  return `
+  <div class="editor-rich-toolbar">
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bold ; pos: bottom" title="Bold" onclick="formatEditor('${l}','bold')" aria-label="Bold">
+    <span uk-icon="bold"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Italic ; pos: bottom" title="Italic" onclick="formatEditor('${l}','italic')" aria-label="Italic">
+    <span uk-icon="italic"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Underline ; pos: bottom" title="Underline" onclick="formatEditor('${l}','underline')" aria-label="Underline">
+    <span uk-icon="minus"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Bullet ; pos: bottom" title="Bulleted List" onclick="formatEditor('${l}','insertUnorderedList')" aria-label="Bullet">
+    <span uk-icon="more-vertical"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Numbered List ; pos: bottom" title="Numbered List" onclick="formatEditor('${l}','insertOrderedList')" aria-label="Numbered">
+    <span uk-icon="list"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Left ; pos: bottom" title="Align Left" onclick="formatEditor('${l}','justifyLeft')" aria-label="Left">
+    <span uk-icon="chevron-double-left"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Center ; pos: bottom" title="Align Center" onclick="formatEditor('${l}','justifyCenter')" aria-label="Center">
+    <span uk-icon="table"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Align Right ; pos: bottom" title="Align Right" onclick="formatEditor('${l}','justifyRight')" aria-label="Right">
+    <span uk-icon="chevron-double-right"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Add Link ; pos: bottom" title="Add Link" onclick="insertLink('${l}')" aria-label="Link">
+    <span uk-icon="link"></span>
+  </button>
+  <button class="uk-button-default uk-border-rounded" uk-tooltip="Remove Link ; pos: bottom" title="Remove Link" onclick="removeLink('${l}')" aria-label="Remove Link">
+    <span uk-icon="ban"></span>
+  </button>
+  </div>`;
+}
+window.formatEditor = function(l, cmd) {
+  let editor = document.getElementById('editor-area-' + l);
+  editor.focus();
+  document.execCommand(cmd, false, null);
+  editor.focus();
+};
+// --- Add Link Overlay (inside Edit Modal) ---
+let linkOverlayLang = null;
+let linkOverlayRange = null;
+
+function saveSelectionRange() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+  return sel.getRangeAt(0).cloneRange();
+}
+
+function restoreSelectionRange(range) {
+  if (!range) return;
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function normalizeUrl(url) {
+  let u = String(url || "").trim();
+  if (!u) return "";
+  if (!/^https?:\/\//i.test(u) && !/^mailto:/i.test(u) && !/^tel:/i.test(u)) {
+    u = "https://" + u;
+  }
+  return u;
+}
+
+function showLinkOverlay() {
+  const overlay = document.getElementById("link-overlay");
+  if (!overlay) return;
+  overlay.hidden = false;
+}
+
+function hideLinkOverlay() {
+  const overlay = document.getElementById("link-overlay");
+  if (!overlay) return;
+  overlay.hidden = true;
+}
+
+window.insertLink = function(l) {
+  const editor = document.getElementById("editor-area-" + l);
+  if (!editor) return;
+
+  editor.focus();
+  linkOverlayRange = saveSelectionRange();
+  linkOverlayLang = l;
+
+  const input = document.getElementById("link-url");
+  if (input) input.value = "";
+
+  showLinkOverlay();
+  setTimeout(() => input && input.focus(), 50);
+};
+
+function bindLinkModal() {
+  const insertBtn = document.getElementById("link-insert-btn");
+  const cancelBtn = document.getElementById("link-cancel-btn");
+  const input = document.getElementById("link-url");
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      hideLinkOverlay();
+      linkOverlayLang = null;
+      linkOverlayRange = null;
+    });
+  }
+
+  const doInsert = () => {
+    const url = normalizeUrl(input ? input.value : "");
+    if (!url || !linkOverlayLang) return;
+
+    const editor = document.getElementById("editor-area-" + linkOverlayLang);
+    if (!editor) return;
+
+    editor.focus();
+    restoreSelectionRange(linkOverlayRange);
+    document.execCommand("createLink", false, url);
+
+    // normalize link attrs
+    setTimeout(() => {
+      editor.querySelectorAll("a[href]").forEach(a => {
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+        a.removeAttribute("style");
+      });
+    }, 1);
+
+    hideLinkOverlay();
+    linkOverlayLang = null;
+    linkOverlayRange = null;
+  };
+
+  if (insertBtn) insertBtn.addEventListener("click", doInsert);
+
+  if (input) {
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        doInsert();
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        hideLinkOverlay();
+      }
+    });
+  }
+}
+window.removeLink = function(l) {
+  let editor = document.getElementById('editor-area-' + l);
+  editor.focus();
+  document.execCommand("unlink", false, null);
+  editor.focus();
+};
+function renderAddLangSelect() {
+  const unused = ALL_LANGS.filter(l => !currentEditLanguages.includes(l.code)).sort((a,b)=>a.name.localeCompare(b.name));
+  if (!showLangSelect || unused.length == 0) return '';
+  let html = `<div class="add-lang-select-container"><select class="edit-lang-add-select" id="lang-select"><option value="">Select language...</option>`;
+  unused.forEach(l => {
+    html += `<option value="${l.code}">${l.code} - ${l.name}</option>`;
+  });
+  html += "</select></div>";
+  setTimeout(() => {
+    let select = document.getElementById("lang-select");
+    if (select) select.onchange = function() {
+      if (select.value) addLang(select.value);
+      showLangSelect = false;
+      updateEditLangTabs(currentEditLanguages.length-1);
+    };
+  }, 30);
+  return html;
+}
+function updateEditLangTabs(selectedIdx = 0) {
+  const tabs = document.getElementById('edit-lang-tabs');
+  const switcher = document.getElementById('edit-lang-switcher');
+  tabs.innerHTML = '';
+  switcher.innerHTML = '';
+  let canRemove = currentEditLanguages.length > 1;
+  if (currentEditLanguages.length === 0) {
+    currentEditLanguages = ["EN"];
+    currentEditContent = { EN: "" };
+  }
+  // Tabs
+  currentEditLanguages.forEach((l, idx) => {
+    tabs.innerHTML += `<li>
+      <a href="#" onclick="setEditLangTab(${idx}); return false;">
+        ${l}
+        ${canRemove ? `<span style="color:#a00;cursor:pointer;font-size:15px;padding-left:5px;" onclick="removeLang(event,'${l}')" uk-tooltip="Remove language">×</span>` : ''}
+      </a>
+    </li>`;
+  });
+  // Plus tab
+  tabs.innerHTML += `<li>
+    <a href="#" onclick="showLangSelect=true;updateEditLangTabs();return false;" class="lang-tab-plus" uk-tooltip="Add language">+</a>
+  </li>`;
+  // Editors
+  currentEditLanguages.forEach((l, idx) => {
+switcher.innerHTML += `<li>
+  <div class="editor-pane">
+    ${renderEditToolbar(l)}
+    <div id="editor-area-${l}" contenteditable="true" class="uk-margin"
+      style="border:1px solid #ccc;min-height:80px;padding:1em;text-align:left;"></div>
+  </div>
+</li>`;
+  });
+  // Language select
+  document.getElementById("edit-lang-add-container").innerHTML = renderAddLangSelect();
+  setTimeout(() => {
+    tabRef = UIkit.tab(tabs);
+    tabRef.show(selectedIdx);
+    currentEditLanguages.forEach((l, i) => {
+      let editor = document.getElementById('editor-area-' + l);
+      editor.innerHTML = currentEditContent[l] || "";
+      // PASTE listener
+      editor.onpaste = function(e) {
+        e.preventDefault();
+        let html = (e.clipboardData || window.clipboardData).getData('text/html');
+        let text = (e.clipboardData || window.clipboardData).getData('text');
+        if (html) {
+          let cleaned = cleanHTML(html);
+          document.execCommand("insertHTML", false, cleaned);
+        } else {
+          // Convert line breaks in plain text to <br>
+          if (text.indexOf('\n') > -1) {
+            cleaned = text.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('');
+            document.execCommand("insertHTML", false, cleaned);
+          } else {
+            document.execCommand("insertText", false, text);
+          }
+        }
+      };
+    });
+  }, 1);
+}
+function setEditLangTab(idx) { tabRef.show(idx); }
+function addLang(code) {
+  if (!currentEditLanguages.includes(code)) {
+    saveEditAreasContent();
+    currentEditLanguages.push(code);
+    currentEditContent[code] = "";
+    updateEditLangTabs(currentEditLanguages.length - 1);
+  }
+  showLangSelect = false;
+}
+function removeLang(e, code) {
+  e.stopPropagation();
+  if (currentEditLanguages.length <= 1) return;
+  saveEditAreasContent();
+  let idx = currentEditLanguages.indexOf(code);
+  currentEditLanguages = currentEditLanguages.filter(l => l !== code);
+  delete currentEditContent[code];
+  let nextIdx = Math.max(0, idx - 1);
+  updateEditLangTabs(nextIdx);
+}
+function saveEditAreasContent() {
+  currentEditLanguages.forEach(l => {
+    const val = document.getElementById('editor-area-' + l).innerHTML.trim();
+    currentEditContent[l] = val;
+  });
+}
+function addEntry() {
+  let langsAvailable = allUsedLangs();
+  let firstLang = langsAvailable.length ? langsAvailable[0] : "EN";
+  currentEditLanguages = [firstLang];
+  currentEditContent = {};
+  currentEditContent[firstLang] = "";
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = '';
+  document.getElementById('edit-media').value = '';
+  UIkit.modal('#edit-modal').show();
+  setTimeout(() => { document.getElementById('edit-title').focus(); }, 120);
+  editIndex = null; // Important for new entries
+}
+function editEntry() {
+  const section = getCurrentSection();
+  if (!section) return;
+  editIndex = Number(section.dataset.index);
+  const entry = entries[editIndex];
+  currentEditLanguages = entry.langs ? entry.langs.slice() : Object.keys(entry.content || {});
+  if(currentEditLanguages.length === 0) currentEditLanguages = ["EN"];
+  currentEditContent = {};
+  currentEditLanguages.forEach(l => {
+    currentEditContent[l] = (entry.content && entry.content[l]) || "";
+  });
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = entry.title;
+  document.getElementById('edit-media').value = entry.media || '';
+  UIkit.modal('#edit-modal').show();
+}
+function saveEdit() {
+  saveEditAreasContent();
+  const title = document.getElementById('edit-title').value.trim();
+  const media = document.getElementById('edit-media').value.trim();
+  const content = {};
+  currentEditLanguages.forEach(l => content[l] = currentEditContent[l] || "");
+  if (!title) return;
+  let newId = null;
+  if (editIndex === null) {
+    newId = generateId();
+    const entry = { title, content, media, id: newId, langs: currentEditLanguages.slice() };
+    entries.push(entry);
+  } else {
+    let oldEntry = entries[editIndex];
+    let cleanedContent = {};
+    currentEditLanguages.forEach(l => { cleanedContent[l] = content[l]; });
+    entries[editIndex] = { ...oldEntry, title, content: cleanedContent, media, langs: currentEditLanguages.slice() };
+    newId = oldEntry.id;
+  }
+  UIkit.modal('#edit-modal').hide();
+  renderEntries();
+  renderMainLangDropdown();
+  setTimeout(() => {
+    const el = document.getElementById(newId);
+    if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }, 200);
+}
+function editEntryByIndex(idx) {
+  editIndex = idx;
+  const entry = entries[editIndex];
+  currentEditLanguages = entry.langs ? entry.langs.slice() : Object.keys(entry.content || {});
+  if (currentEditLanguages.length === 0) currentEditLanguages = ["EN"];
+  currentEditContent = {};
+  currentEditLanguages.forEach(l => {
+    currentEditContent[l] = (entry.content && entry.content[l]) || "";
+  });
+  showLangSelect = false;
+  updateEditLangTabs();
+  document.getElementById('edit-title').value = entry.title;
+  document.getElementById('edit-media').value = entry.media || '';
+  UIkit.modal('#edit-modal').show();
+}
+window.editEntryByIndex = editEntryByIndex;
+function confirmDelete() {
+  const section = getCurrentSection();
+  if (!section) return;
+  const index = Number(section.dataset.index);
+  UIkit.modal.confirm('Delete this entry?').then(() => {
+    entries.splice(index, 1);
+    renderEntries();
+    renderMainLangDropdown();
+    UIkit.modal('#edit-modal').hide();
+  });
+}
+function getCurrentSection() {
+  const sections = document.querySelectorAll('.section');
+  let closest = null;
+  let minDiff = Infinity;
+  const scrollTop = window.scrollY;
+  sections.forEach(section => {
+    const diff = Math.abs(section.offsetTop - scrollTop);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = section;
+    }
+  });
+  return closest;
+}
+function scrollToNext() {
+  const current = getCurrentSection();
+  if (current && current.nextElementSibling) {
+    current.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function scrollToPrev() {
+  const current = getCurrentSection();
+  if (current && current.previousElementSibling) {
+    current.previousElementSibling.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+function scrollToRandom() {
+  if (!entries.length) return;
+  const rand = Math.floor(Math.random() * entries.length);
+  const section = document.getElementById(entries[rand].id);
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
+}
+function copyCurrentLink() {
+  const section = getCurrentSection();
+  if (!section) return;
+  const anchor = window.location.href.split('#')[0] + '#' + section.id;
+  navigator.clipboard.writeText(anchor).then(() => {
+    UIkit.notification(`Link copied: ${anchor}`, 'success');
+  }).catch(() => {
+    UIkit.notification("Failed to copy link", 'danger');
+  });
+}
+function rebindAllButtons() {
+  const fontBtn = document.getElementById('font-btn');
+  if (fontBtn) fontBtn.onclick = () => UIkit.modal('#font-modal').show();
+  document.getElementById('add-btn').onclick = addEntry;
+  document.getElementById('delete-btn').onclick = confirmDelete;
+  document.getElementById('save-btn').onclick = downloadHTML;
+  document.getElementById('save-edit-btn').onclick = saveEdit;
+}
+function showSearchModal() {
+  UIkit.modal('#search-modal').show();
+  setTimeout(() => {
+    document.getElementById('search-input').focus();
+    renderSearchResults();
+  }, 120);
+}
+function renderSearchResults() {
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  const ul = document.getElementById('search-results');
+  ul.innerHTML = '';
+  if (!query) return;
+  let results = entries.filter(entry => {
+    let titleMatch = entry.title.toLowerCase().includes(query);
+    let contentMatch = Object.values(entry.content || {}).some(
+      val => (val || '').toLowerCase().includes(query)
+    );
+    return titleMatch || contentMatch;
+  });
+  if (!results.length) {
+    ul.innerHTML = '<li class="uk-text-muted">No results.</li>';
+    return;
+  }
+  results.forEach(entry => {
+    ul.innerHTML += `<li><a href="#${entry.id}" onclick="jumpToEntry('${entry.id}');UIkit.modal('#search-modal').hide();">${entry.title}</a></li>`;
+  });
+}
+function jumpToEntry(id) {
+  const section = document.getElementById(id);
+  if (section) section.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+// --- START OF GLOBAL SCROLL ---
+window.addEventListener('load', () => {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+});
+
+function scrollToEntry(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+}
+
+document.addEventListener('click', function (e) {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const id = link.getAttribute('href').substring(1);
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  // If the click came from the glossary offcanvas on mobile:
+  // close it + jump instantly (no smooth scroll)
+  const inGlossary = link.closest('#glossary') || link.closest('#glossary-list');
+  if (isMobile && inGlossary) {
+    e.preventDefault();
+
+    // Close glossary (if UIkit exists)
+    try { UIkit.offcanvas('#glossary').hide(); } catch (err) {}
+
+    // Jump after the offcanvas starts closing
+    setTimeout(() => {
+      // Update hash (so the URL changes)
+      if (location.hash !== '#' + id) location.hash = id;
+
+      // Instant jump (no smooth behavior)
+      el.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 150);
+
+    return;
+  }
+
+  // Default behavior everywhere else: your smooth scroll
+  e.preventDefault();
+  scrollToEntry(id);
+});
+// --- END OF GLOBAL SCROLL ---
+
+
+// --- Google Fonts (Font modal) ---
+const GF_STORAGE_KEY = "lexi_google_font_family";
+const GF_DEFAULT_FAMILY = "Spectral";
+
+function gfBuildHref(family) {
+  const fam = String(family || "").trim();
+  const encoded = encodeURIComponent(fam).replace(/%20/g, "+");
+  return `https://fonts.googleapis.com/css2?family=${encoded}:wght@400;700&display=swap`;
+}
+
+function gfEnsureLink() {
+  let link = document.getElementById("google-font-link");
+  if (!link) {
+    link = document.createElement("link");
+    link.id = "google-font-link";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+  return link;
+}
+
+function gfEnsureStyleTag() {
+  let st = document.getElementById("dynamic-font-style");
+  if (!st) {
+    st = document.createElement("style");
+    st.id = "dynamic-font-style";
+    document.head.appendChild(st);
+  }
+  return st;
+}
+
+function gfSetFontVar(family) {
+  const fam = String(family || "").trim() || GF_DEFAULT_FAMILY;
+  const cssValue = `'${fam.replace(/'/g, "\\'")}', serif`;
+  document.documentElement.style.setProperty("--lexi-font-family", cssValue);
+  const st = gfEnsureStyleTag();
+  st.textContent = `:root{--lexi-font-family:${cssValue};}`;
+}
+
+function gfApply(family) {
+  const fam = String(family || "").trim();
+  if (!fam) return;
+
+  const link = gfEnsureLink();
+  link.href = gfBuildHref(fam);
+
+  gfSetFontVar(fam);
+
+  // Update modal preview immediately
+  const preview = document.getElementById("gf-preview");
+  if (preview) preview.style.fontFamily = `var(--lexi-font-family, 'Spectral', serif)`;
+}
+
+function gfReset() {
+  const link = gfEnsureLink();
+  link.href = gfBuildHref(GF_DEFAULT_FAMILY);
+  gfSetFontVar(GF_DEFAULT_FAMILY);
+
+  const preview = document.getElementById("gf-preview");
+  if (preview) preview.style.fontFamily = `var(--lexi-font-family, 'Spectral', serif)`;
+}
+
+function gfInitModal() {
+  const familyInput = document.getElementById("gf-family-input");   // text search
+  const familySelect = document.getElementById("gf-family-select"); // native presets
+  const applyBtn = document.getElementById("gf-apply");
+  const resetBtn = document.getElementById("gf-reset");
+  const preview = document.getElementById("gf-preview");
+
+  // Prevent double-binding if gfInitModal() is called multiple times
+  if (applyBtn && applyBtn.dataset.gfBound === "1") {
+    // Still refresh preview in case the font var changed
+    try {
+      const v = familyInput ? familyInput.value.trim() : "";
+      if (preview) {
+        preview.textContent = "";
+        preview.style.fontFamily = v
+          ? `'${v.replace(/'/g, "\\'")}', serif`
+          : `var(--lexi-font-family, 'Spectral', serif)`;
+      }
+    } catch (e) {}
+    return;
+  }
+  if (applyBtn) applyBtn.dataset.gfBound = "1";
+  if (resetBtn) resetBtn.dataset.gfBound = "1";
+  if (familyInput) familyInput.dataset.gfBound = "1";
+  if (familySelect) familySelect.dataset.gfBound = "1";
+
+  const readDocFontFamily = () => {
+    // Reads first family from --lexi-font-family, e.g. "'Inter', serif" -> "Inter"
+    try {
+      const raw = getComputedStyle(document.documentElement)
+        .getPropertyValue("--lexi-font-family")
+        .trim();
+      if (!raw) return "";
+      const first = raw.split(",")[0].trim().replace(/^['"]|['"]$/g, "");
+      return first;
+    } catch (e) {
+      return "";
+    }
+  };
+
+  // Initialize input: show actual font if NOT default, else keep placeholder
+  if (familyInput && !familyInput.value.trim()) {
+    const current = readDocFontFamily();
+    if (current && current !== GF_DEFAULT_FAMILY) {
+      familyInput.value = current;     // show actual font
+    } else {
+      familyInput.value = "";          // default => keep placeholder
+    }
+  }
+
+  const setPreviewText = () => {
+    const v = familyInput ? familyInput.value.trim() : "";
+    if (preview) {
+      preview.textContent = "";
+      preview.style.fontFamily = v
+        ? `'${v.replace(/'/g, "\\'")}', serif`
+        : `var(--lexi-font-family, 'Spectral', serif)`;
+    }
+  };
+
+  // Typing updates preview
+  if (familyInput) {
+    familyInput.addEventListener("input", setPreviewText);
+  }
+
+  // Choosing a preset copies into the text input + updates preview
+  if (familySelect && familyInput) {
+    familySelect.addEventListener("change", () => {
+      if (familySelect.value) {
+        familyInput.value = familySelect.value;
+        setPreviewText();
+      }
+    });
+  }
+
+  if (applyBtn) {
+    applyBtn.addEventListener("click", () => {
+      const fam = (familyInput ? familyInput.value : "").trim();
+      if (!fam) return;
+      gfApply(fam);
+      setPreviewText();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      gfReset();
+
+      // After reset, keep input empty (placeholder) and reset preset dropdown
+      if (familyInput) familyInput.value = "";
+      if (familySelect) familySelect.value = "";
+      setPreviewText();
+    });
+  }
+
+  // Initial preview render
+  setPreviewText();
+}
+
+// --- End Google Fonts ---
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  try { gfInitModal(); } catch(e) {}
+  bindLinkModal();
+  renderEntries();
+  setLanguage(lang);
+
+  isEditMode = false;
+  document.querySelector('.editor-toolbar').style.display = 'none';
+  rebindAllButtons();
+
+  bindLogoUpload();
+  setLogoEditable(false);
+
+  setHeaderEditable(false);
+
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+    isEditMode = !isEditMode;
+    document.querySelector('.editor-toolbar').style.display = isEditMode ? 'block' : 'none';
+    renderEntries();
+    setLogoEditable(isEditMode);
+    setHeaderEditable(isEditMode);
+    setHeaderEditable(isEditMode);
+  }
+});
+function downloadHTML() {
+  saveEditAreasContent && saveEditAreasContent();
+  const exportLogoSrc =
+  (document.getElementById('site-logo') ? document.getElementById('site-logo').src : '');
+  const exportHeaderState = {
+    brand: document.getElementById('site-brand') ? document.getElementById('site-brand').textContent : '',
+    h1: document.getElementById('site-h1') ? document.getElementById('site-h1').textContent : '',
+    h2: document.getElementById('site-h2') ? document.getElementById('site-h2').textContent : '',
+  };
+  const docType = '<!DOCTYPE html>';
+  let head = document.head.outerHTML;
+
+const escAttr = (s) =>
+  String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+const metaTitle = (exportHeaderState.h1 || "").trim();
+const metaDesc = (exportHeaderState.h2 || "").trim();
+const metaAuthor = (exportHeaderState.brand || "").trim();
+const faviconHref = (exportLogoSrc || "").trim();
+
+// Ensure <title> is correct
+if (metaTitle) {
+  head = head.replace(/<title[\s\S]*?<\/title>/i, `<title>${escAttr(metaTitle)}</title>`);
+}
+
+// Remove existing (avoid duplicates)
+head = head
+  .replace(/<meta\s+name=["']description["'][^>]*>\s*/gi, "")
+  .replace(/<meta\s+name=["']author["'][^>]*>\s*/gi, "")
+  .replace(/<link\s+rel=["']icon["'][^>]*>\s*/gi, "")
+  .replace(/<link\s+rel=["']shortcut icon["'][^>]*>\s*/gi, "");
+
+// Inject them before </head>
+const injected = [
+  metaDesc ? `<meta name="description" content="${escAttr(metaDesc)}">` : "",
+  metaAuthor ? `<meta name="author" content="${escAttr(metaAuthor)}">` : "",
+  faviconHref ? `<link rel="icon" href="${faviconHref}">` : "",
+].filter(Boolean).join("\n  ");
+
+if (injected) {
+  head = head.replace(/<\/head>/i, `  ${injected}\n</head>`);
+}
+  const bodyHtml = document.body.innerHTML.replace(/<script[\s\S]*?<\/script>/ig,'');
+  const entriesJSON = JSON.stringify(entries, null, 2).replace(/<\/script>/g, '<\\/script>');
+  const langVal = lang;
+  const logicScript = `<script>
+const ALL_LANGS = ${JSON.stringify(ALL_LANGS)};
+function generateId() {
+  return window.crypto && window.crypto.randomUUID
+    ? window.crypto.randomUUID()
+    : 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+}
+let entries = ${entriesJSON};
+let editIndex = null;
+let isEditMode = false;
+let currentEditLanguages = ${JSON.stringify(currentEditLanguages)};
+let currentEditContent = ${JSON.stringify(currentEditContent)};
+let tabRef = null;
+let lang = '${langVal}';
+let showLangSelect = false;
+
+// --- Header titles editing (only in edit mode; persists + exports) ---
+const BRAND_STORAGE_KEY = "lexi_brand_text";
+const H1_STORAGE_KEY = "lexi_h1_text";
+const H2_STORAGE_KEY = "lexi_h2_text";
+
+function setHeaderEditable(on) {
+  const brand = document.getElementById("site-brand");
+  const h1 = document.getElementById("site-h1");
+  const h2 = document.getElementById("site-h2");
+
+  [brand, h1, h2].forEach(el => {
+    if (!el) return;
+    el.setAttribute("contenteditable", on ? "true" : "false");
+    el.contentEditable = on ? "true" : "false";
+    el.style.outline = on ? "1px dashed #bbb" : "none";
+    el.style.padding = on ? "4px 8px" : "";
+    el.style.borderRadius = on ? "10px" : "";
+    el.style.cursor = on ? "text" : "default";
+  });
+}
+
+function loadHeaderTitles() {
+  // document-first: already in HTML
+}
+
+function bindHeaderTitlePersistence() {
+  // document-first: no localStorage
+}
+// --- End header titles editing ---
+
+
+// --- Logo editing (only in edit mode; persists + exports) ---
+const LOGO_STORAGE_KEY = "lexi_logo_data";
+
+function setLogoEditable(on) {
+  const logo = document.getElementById("site-logo");
+  if (!logo) return;
+  logo.style.cursor = on ? "pointer" : "default";
+  logo.title = on ? "Click to upload logo" : "";
+}
+
+function loadLogo() {
+  // document-first: already in HTML
+}
+
+function bindLogoUpload() {
+  const logo = document.getElementById("site-logo");
+  const file = document.getElementById("logo-file");
+  if (!logo || !file) return;
+
+  logo.addEventListener("click", () => {
+    if (!isEditMode) return;
+    file.value = "";
+    file.click();
+  });
+
+  file.addEventListener("change", () => {
+    const f = file.files && file.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+  const dataUrl = reader.result;
+  logo.src = dataUrl; // document-first
+};
+    reader.readAsDataURL(f);
+  });
+}
+// --- End logo editing ---
+
+${allUsedLangs.toString()}
+${renderMainLangDropdown.toString()}
+${setLanguage.toString()}
+${renderEntries.toString()}
+${renderGlossary.toString()}
+${cleanHTML.toString()}
+${saveSelectionRange.toString()}
+${restoreSelectionRange.toString()}
+${normalizeUrl.toString()}
+${showLinkOverlay.toString()}
+${hideLinkOverlay.toString()}
+window.insertLink = ${window.insertLink.toString()};
+${bindLinkModal.toString()}
+window.formatEditor = ${window.formatEditor.toString()};
+window.removeLink = ${window.removeLink.toString()};
+${renderEditToolbar.toString()}
+${renderAddLangSelect.toString()}
+${updateEditLangTabs.toString()}
+${setEditLangTab.toString()}
+${addLang.toString()}
+${removeLang.toString()}
+${saveEditAreasContent.toString()}
+${addEntry.toString()}
+${editEntry.toString()}
+${saveEdit.toString()}
+${editEntryByIndex.toString()}
+window.editEntryByIndex = editEntryByIndex;
+${confirmDelete.toString()}
+${getCurrentSection.toString()}
+${scrollToNext.toString()}
+${scrollToPrev.toString()}
+${scrollToRandom.toString()}
+${copyCurrentLink.toString()}
+${rebindAllButtons.toString()}
+${showSearchModal.toString()}
+${renderSearchResults.toString()}
+${jumpToEntry.toString()}
+
+// ---- Google Fonts functions (required in export) ----
+${gfBuildHref.toString()}
+${gfEnsureLink.toString()}
+${gfEnsureStyleTag.toString()}
+${gfSetFontVar.toString()}
+${gfApply.toString()}
+${gfReset.toString()}
+${gfInitModal.toString()}
+// ---- End Google Fonts ----
+
+// --- START OF GLOBAL SCROLL ---
+window.addEventListener('load', () => {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+});
+
+function scrollToEntry(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+}
+
+document.addEventListener('click', function (e) {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+
+  const id = link.getAttribute('href').substring(1);
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  // If the click came from the glossary offcanvas on mobile:
+  // close it + jump instantly (no smooth scroll)
+  const inGlossary = link.closest('#glossary') || link.closest('#glossary-list');
+  if (isMobile && inGlossary) {
+    e.preventDefault();
+
+    // Close glossary (if UIkit exists)
+    try { UIkit.offcanvas('#glossary').hide(); } catch (err) {}
+
+    // Jump after the offcanvas starts closing
+    setTimeout(() => {
+      // Update hash (so the URL changes)
+      if (location.hash !== '#' + id) location.hash = id;
+
+      // Instant jump (no smooth behavior)
+      el.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }, 150);
+
+    return;
+  }
+
+  // Default behavior everywhere else: your smooth scroll
+  e.preventDefault();
+  scrollToEntry(id);
+});
+// --- END OF GLOBAL SCROLL ---
+
+// --- Google Fonts (Font modal) ---
+const GF_STORAGE_KEY = "lexi_google_font_family";
+const GF_DEFAULT_FAMILY = "Spectral";
+
+function gfBuildHref(family) {
+  var fam = String(family || "").trim();
+  var encoded = encodeURIComponent(fam).replace(/%20/g, "+");
+  return "https://fonts.googleapis.com/css2?family=" + encoded + ":wght@400;700&display=swap";
+}
+
+function gfEnsureLink() {
+  var link = document.getElementById("google-font-link");
+  if (!link) {
+    link = document.createElement("link");
+    link.id = "google-font-link";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }
+  return link;
+}
+
+function gfEnsureStyleTag() {
+  var st = document.getElementById("dynamic-font-style");
+  if (!st) {
+    st = document.createElement("style");
+    st.id = "dynamic-font-style";
+    document.head.appendChild(st);
+  }
+  return st;
+}
+
+function gfSetFontVar(family) {
+  var fam = String(family || "").trim() || GF_DEFAULT_FAMILY;
+  var cssValue = "'" + fam.replace(/'/g, "\\'") + "', serif";
+  document.documentElement.style.setProperty("--lexi-font-family", cssValue);
+  var st = gfEnsureStyleTag();
+  st.textContent = ":root{--lexi-font-family:" + cssValue + ";}";
+}
+
+function gfApply(family) {
+  var fam = String(family || "").trim();
+  if (!fam) return;
+
+  var link = gfEnsureLink();
+  link.href = gfBuildHref(fam);
+
+  gfSetFontVar(fam);
+
+  var preview = document.getElementById("gf-preview");
+  if (preview) {
+    preview.style.fontFamily = "var(--lexi-font-family, 'Spectral', serif)";
+  }
+}
+
+function gfReset() {
+  var link = gfEnsureLink();
+  link.href = gfBuildHref(GF_DEFAULT_FAMILY);
+  gfSetFontVar(GF_DEFAULT_FAMILY);
+
+  var preview = document.getElementById("gf-preview");
+  if (preview) {
+    preview.style.fontFamily = "var(--lexi-font-family, 'Spectral', serif)";
+  }
+}
+
+function readDocFontFamily() {
+  var rootStyle = getComputedStyle(document.documentElement)
+    .getPropertyValue("--lexi-font-family") || "";
+  rootStyle = rootStyle.trim();
+  if (rootStyle) {
+    var m = rootStyle.match(/^'([^']+)'/);
+    if (m && m[1]) return m[1];
+  }
+  return GF_DEFAULT_FAMILY;
+}
+
+function gfInitModal() {
+  var familyInput = document.getElementById("gf-family-input");
+  var familySelect = document.getElementById("gf-family-select");
+  var preview = document.getElementById("gf-preview");
+  var applyBtn = document.getElementById("gf-apply");
+  var resetBtn = document.getElementById("gf-reset");
+
+  if (preview) {
+    preview.textContent = "The quick brown fox jumps over the lazy dog.";
+  }
+
+  if (familyInput && !familyInput.value.trim()) {
+    var current = readDocFontFamily();
+    if (current && current !== GF_DEFAULT_FAMILY) {
+      familyInput.value = current;
+    } else {
+      familyInput.value = "";
+    }
+  }
+
+  function setPreviewText() {
+    var v = familyInput ? familyInput.value.trim() : "";
+    if (preview) {
+      preview.textContent = "";
+      preview.style.fontFamily = v
+        ? "'" + v.replace(/'/g, "\\'") + "', serif"
+        : "var(--lexi-font-family, 'Spectral', serif)";
+    }
+  }
+
+  if (familyInput) {
+    familyInput.addEventListener("input", setPreviewText);
+  }
+
+  if (familySelect && familyInput) {
+    familySelect.addEventListener("change", function () {
+      if (familySelect.value) {
+        familyInput.value = familySelect.value;
+        setPreviewText();
+      }
+    });
+  }
+
+  if (applyBtn) {
+    applyBtn.addEventListener("click", function () {
+      var fam = (familyInput ? familyInput.value : "").trim();
+      if (!fam) return;
+      gfApply(fam);
+      setPreviewText();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function () {
+      gfReset();
+      if (familyInput) familyInput.value = "";
+      if (familySelect) familySelect.value = "";
+      setPreviewText();
+    });
+  }
+
+  setPreviewText();
+}
+// --- End Google Fonts ---
+
+document.addEventListener('DOMContentLoaded', function() {
+  gfInitModal();
+  bindLinkModal();
+  setHeaderEditable(false);
+  renderEntries();
+  setLanguage(lang);
+  isEditMode = false;
+  document.querySelector('.editor-toolbar').style.display = 'none';
+  rebindAllButtons();
+
+  bindLogoUpload();
+  setLogoEditable(false);
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+    isEditMode = !isEditMode;
+    document.querySelector('.editor-toolbar').style.display = isEditMode ? 'block' : 'none';
+    renderEntries();
+    setLogoEditable(isEditMode);
+    setHeaderEditable(isEditMode);
+  }
+});
+
+${downloadHTML.toString()}
+<\/script>`;
+  const externalDeps = `
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"><\\/script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"><\\/script>
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+<\/script>
+`;
+  const fullHTML = `${docType}
+<html lang="en">
+${head}
+<body>
+${bodyHtml}
+${logicScript}
+${externalDeps}
+</body>
+</html>`;
+  let exportedHTML = fullHTML;
+  try {
+    if (exportLogoSrc) {
+      exportedHTML = exportedHTML.replace(/<img([^>]*?)id="site-logo"([^>]*?)src="[^"]*"/, `<img$1id="site-logo"$2src="${exportLogoSrc}"`);
+    }
+    const esc = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if (exportHeaderState && exportHeaderState.brand) {
+      exportedHTML = exportedHTML.replace(/<p([^>]*?)id="site-brand"([^>]*?)>[\s\S]*?<\/p>/, `<p$1id="site-brand"$2>${esc(exportHeaderState.brand)}</p>`);
+    }
+    if (exportHeaderState && exportHeaderState.h1) {
+      exportedHTML = exportedHTML.replace(/<h1([^>]*?)id="site-h1"([^>]*?)>[\s\S]*?<\/h1>/, `<h1$1id="site-h1"$2>${esc(exportHeaderState.h1)}</h1>`);
+    }
+    if (exportHeaderState && exportHeaderState.h2) {
+      exportedHTML = exportedHTML.replace(/<h2([^>]*?)id="site-h2"([^>]*?)>[\s\S]*?<\/h2>/, `<h2$1id="site-h2"$2>${esc(exportHeaderState.h2)}</h2>`);
+    }
+  } catch(e) {}
+  const blob = new Blob([exportedHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"><\/script>
+<script>   
+    UIkit.mixin({
+        data: {
+            delayControls: 86400000
+        }
+    }, 'lightbox');
+</script>
+
+</body>
+</html>
