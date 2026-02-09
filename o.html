@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sacrisoft VITUREMA Studio™ – Video Tube Remix Machine</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://player.vimeo.com/api/player.js"></script>
 <style>
 /* ---------- Theme ---------- */
 :root{
@@ -582,53 +580,12 @@ document.addEventListener('DOMContentLoaded', updateCopyrightYear);
     function extractPlaylistId(url){ const m=(url||'').match(/[?&]list=([a-zA-Z0-9_-]+)/); return m?m[1]:null; }
     const isPlaylist = url => !!(url && url.includes('list='));
 
-    
-
-    // Vimeo supports:
-    // - https://vimeo.com/769844428
-    // - https://player.vimeo.com/video/769844428
-    // - Unlisted:
-    //    • https://vimeo.com/769844428/h1a2b3c4d5
-    //    • https://player.vimeo.com/video/769844428?h=1a2b3c4d5
-    function extractVimeoInfo(url){
-      if(!url) return { id:null, h:null };
-      let id=null, h=null;
-
-      // Best-effort URL parse (handles query params cleanly)
-      try{
-        const normalized = (/^https?:\/\//i.test(url) ? url : ('https://' + url.replace(/^\/\//,'')));
-        const u = new URL(normalized);
-
-        // ID can appear in pathname as /video/<id> or /<id>
-        const m1 = u.pathname.match(/\/(?:video\/)?(\d+)(?:\/([A-Za-z0-9]+))?\/?$/);
-        if(m1){
-          id = m1[1] || null;
-          if(m1[2]) h = m1[2];
-        }
-
-        // Unlisted hash sometimes provided as query param
-        const qh = u.searchParams.get('h');
-        if(qh) h = qh;
-      }catch(e){
-        // Fallback regex if URL() fails (e.g. missing scheme)
-        const m = (url||'').match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/([A-Za-z0-9]+))?/i);
-        if(m){ id = m[1] || null; h = m[2] || null; }
-        const q = (url||'').match(/[?&]h=([A-Za-z0-9]+)/i);
-        if(q) h = q[1];
-      }
-
-      return { id, h };
-    }
-function classify(url){
+    function classify(url){
       if(!url) return null;
       const u = url.split('#')[0];
       const s = u.toLowerCase();
       if(s.includes('youtube.com')||s.includes('youtu.be')) return {kind:'youtube', id:extractVideoId(url), pid:extractPlaylistId(url), isList:isPlaylist(url)};
-      if(s.includes('vimeo.com')) {
-        const info = extractVimeoInfo(url);
-        return {kind:'vimeo', id:info.id, h:info.h};
-      }
-if(/\.m3u8(\?|$)/i.test(s)) return {kind:'hls'};
+      if(/\.m3u8(\?|$)/i.test(s)) return {kind:'hls'};
       if(/\.(mp4|webm|mov|mkv)(\?|$)/i.test(s)) return {kind:'file'};
       if (/\.(mp3|m4a|aac|flac|wav|ogg|opus)(\?|$)/i.test(s)) return {kind:'audio'};
       return {kind:'unknown'};
@@ -641,8 +598,6 @@ if(/\.m3u8(\?|$)/i.test(s)) return {kind:'hls'};
     let localPrimaryEl=null; let localPrimaryList=[]; let localPrimaryIdx=0;
     let localOverlayEl=null; let localOverlayList=[]; let localOverlayIdx=0;
     let primaryYTPlayer=null; let overlayYTPlayer=null;
-    let primaryVimeoPlayer=null; let overlayVimeoPlayer=null;
-    let primaryVimeoPlaying=false; let overlayVimeoPlaying=false;
     let primaryHls=null; let overlayHls=null;
     let isLooping=false, isPlaying=false, seekInterval=null;
     let currentAudioTitle='-';
@@ -1315,13 +1270,8 @@ function buildAudio(aSpec){
 }
 
     function destroyVisualPlayers(){
-      try{ stopYTVisualSync(); }catch(_){}
-      window.primaryYTVisualIframe=null; window.overlayYTVisualIframe=null;
-
       if(primaryYTPlayer){ try{ primaryYTPlayer.destroy(); }catch(e){} primaryYTPlayer=null; }
       if(overlayYTPlayer){ try{ overlayYTPlayer.destroy(); }catch(e){} overlayYTPlayer=null; }
-    if(primaryVimeoPlayer){ try{ primaryVimeoPlayer.unload(); }catch(e){} primaryVimeoPlayer=null; primaryVimeoPlaying=false; }
-    if(overlayVimeoPlayer){ try{ overlayVimeoPlayer.unload(); }catch(e){} overlayVimeoPlayer=null; overlayVimeoPlaying=false; }
       if(primaryHls){ try{ primaryHls.destroy(); }catch(e){} primaryHls=null; }
       if(overlayHls){ try{ overlayHls.destroy(); }catch(e){} overlayHls=null; }
     }
@@ -1371,60 +1321,6 @@ function wirePlaylistAdvance(el, listRef, idxRefName, kind){
   el.addEventListener('loadeddata', ()=>{
     if (el.paused){ el.play().catch(()=>{}); }
   });
-}
-
-
-// --- YouTube visual iframe (prototype style) helpers ---
-// We keep a hidden YT.Player for control/playlist APIs, and a separate visible iframe for visuals.
-function makeYTVisualSrc({id, isList, listId, index=0}){
-  if(isList){
-    const li = listId || id;
-    const ix = Math.max(0, index|0);
-    // videoseries embed supports index=
-    return `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(li)}&index=${ix}&autoplay=1&mute=1&controls=0&loop=1&enablejsapi=1&playsinline=1&rel=0&modestbranding=1`;
-  }
-  const vid = id;
-  // loop requires playlist=vid
-  return `https://www.youtube.com/embed/${encodeURIComponent(vid)}?autoplay=1&mute=1&controls=0&loop=1&playlist=${encodeURIComponent(vid)}&enablejsapi=1&playsinline=1&rel=0&modestbranding=1`;
-}
-function ytIframeCmd(ifr, func, args=[]){
-  try{
-    if(!ifr || !ifr.contentWindow) return;
-    ifr.contentWindow.postMessage(JSON.stringify({
-      event:'command',
-      func,
-      args
-    }), '*');
-  }catch(_){}
-}
-let ytVisualSyncTimer=null;
-function startYTVisualSync(){
-  stopYTVisualSync();
-  ytVisualSyncTimer = setInterval(()=>{
-    try{
-      // Primary
-      const ifrP = window.primaryYTVisualIframe;
-      if(primaryYTPlayer && ifrP && primaryYTPlayer.getPlaylistIndex){
-        const idx = primaryYTPlayer.getPlaylistIndex();
-        if(Number.isFinite(idx) && idx>=0 && window._ytVisualPrimaryIdx!==idx){
-          window._ytVisualPrimaryIdx = idx;
-          ytIframeCmd(ifrP, 'playVideoAt', [idx]);
-        }
-      }
-      // Overlay
-      const ifrO = window.overlayYTVisualIframe;
-      if(overlayYTPlayer && ifrO && overlayYTPlayer.getPlaylistIndex){
-        const idx = overlayYTPlayer.getPlaylistIndex();
-        if(Number.isFinite(idx) && idx>=0 && window._ytVisualOverlayIdx!==idx){
-          window._ytVisualOverlayIdx = idx;
-          ytIframeCmd(ifrO, 'playVideoAt', [idx]);
-        }
-      }
-    }catch(_){}
-  }, 500);
-}
-function stopYTVisualSync(){
-  if(ytVisualSyncTimer){ clearInterval(ytVisualSyncTimer); ytVisualSyncTimer=null; }
 }
 
 // --- Full-cover for <iframe> players (YouTube) just like object-fit:cover ---
@@ -1713,102 +1609,39 @@ function buildVisuals(vSpec, oSpec){
     }
     wirePlaylistAdvance(localPrimaryEl, [{ url:$('videoUrl').value.trim() }], 'localPrimaryIdx', 'video');
     attachPlayPauseLabelHandlersFor(localPrimaryEl);
-  
-} else if (vSpec && vSpec.kind==='youtube'){
-  // HYBRID: hidden YT.Player for control + visible iframe for visuals (keeps thumbnails/items logic)
-  const vId = vSpec.isList ? vSpec.pid : vSpec.id;
-  if (vId){
-    // Create / reuse hidden control player host
-    let host = document.getElementById('ytPrimaryCoreHost');
-    if(!host){
-      host = document.createElement('div');
-      host.id = 'ytPrimaryCoreHost';
-      host.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;';
-      $('playerVideo').appendChild(host);
-    }
-
-    // Create visible iframe for visuals
-    const ifr = document.createElement('iframe');
-    
-    ifr.referrerPolicy = 'origin-when-cross-origin';ifr.className = 'bg';
-    ifr.style.cssText = 'position:absolute;inset:0;border:0;';
-    ifr.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-    ifr.setAttribute('allowfullscreen','');
-    ifr.style.pointerEvents='none';
-
-    // playlist vs single src
-    ifr.src = makeYTVisualSrc({ id: (vSpec.isList ? null : vId), isList: !!vSpec.isList, listId: (vSpec.isList ? vId : null), index: 0 });
-    c.appendChild(ifr);
-    ensureCover(ifr);
-    window.primaryYTVisualIframe = ifr;
-    window._ytVisualPrimaryIdx = 0;
-
-    // Build / reuse core YT.Player (this is what Items/Next/Thumbs use)
-    if(primaryYTPlayer){
-      try{
-        vSpec.isList ? primaryYTPlayer.loadPlaylist({ list: vId, index: 0 }) : primaryYTPlayer.loadVideoById(vId);
-      }catch(_){}
-    } else {
+  } else if (vSpec && vSpec.kind==='youtube'){
+    const vId = vSpec.isList ? vSpec.pid : vSpec.id;
+    if (vId){
+      const host = document.createElement('div'); 
+      host.style.cssText='position:absolute;inset:0;';
+      host.className='bg'; 
+      c.appendChild(host);
       primaryYTPlayer = new YT.Player(host, {
-        height:'1', width:'1',
-        playerVars: vSpec.isList
-          ? { listType:'playlist', list:vId, autoplay:1, mute:1, controls:0 }
+        height:'390', width:'640',
+        playerVars: vSpec.isList 
+          ? { listType:'playlist', list:vId, autoplay:1, mute:1, controls:0 } 
           : { autoplay:1, mute:1, controls:0, loop:1, playlist:vId },
         events: {
-          onReady: ev => { try{ ev.target.mute(); ev.target.playVideo(); }catch(_){ } applyFilters(); queueRecordCheck(); startYTVisualSync(); },
-          onStateChange: e => {
-            updatePlayVisualsLabel();
-            queueRecordCheck();
-            // keep visual iframe in sync with playlist index
-            try{
-              if(vSpec.isList && window.primaryYTVisualIframe && primaryYTPlayer.getPlaylistIndex){
-                const idx = primaryYTPlayer.getPlaylistIndex();
-                if(Number.isFinite(idx) && idx>=0){ ytIframeCmd(window.primaryYTVisualIframe,'playVideoAt',[idx]); window._ytVisualPrimaryIdx=idx; }
-              }
-            }catch(_){}
-            if (e && e.data === YT.PlayerState.PLAYING) refreshItemsIfOpen('video');
+          onReady: ev => { 
+            const ifr = ev.target.getIframe(); 
+            if (ifr){ 
+              ifr.className='bg'; 
+              ifr.style.pointerEvents='none'; 
+              ensureCover(ifr); 
+            } 
+            applyFilters(); 
+            queueRecordCheck(); 
+          },
+          onStateChange: e => { 
+            updatePlayVisualsLabel(); 
+            queueRecordCheck(); 
+            if (e && e.data === YT.PlayerState.PLAYING) refreshItemsIfOpen('video'); 
           }
         }
       });
-    }
-
-    applyFilters();
-    queueRecordCheck();
-    startYTVisualSync();
-  } else {
-    alert('Invalid primary video URL');
-  }
-
-} else if (vSpec && vSpec.kind==='vimeo'){
-
-    const vId = vSpec.id;
-    if (vId){
-      const ifr = document.createElement('iframe'); 
-      
-    ifr.referrerPolicy = 'origin-when-cross-origin';ifr.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;';
-      ifr.className='bg';
-      c.appendChild(ifr);
-
-      ifr.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-      ifr.setAttribute('allowfullscreen','');
-      const vh = vSpec.h ? `h=${encodeURIComponent(vSpec.h)}&` : '';
-      ifr.src = `https://player.vimeo.com/video/${vId}?${vh}background=1&autoplay=1&muted=1&loop=1&controls=0&title=0&byline=0&portrait=0`;
-
-      ifr.style.pointerEvents='none';
-      ensureCover(ifr);
-      applyFilters();
-
-      if(!hasVimeoSDK()) { alert('Vimeo SDK failed to load. Check network/CSP.'); return; }
-      primaryVimeoPlayer = new Vimeo.Player(ifr);
-      primaryVimeoPlayer.on('play',  ()=>{ primaryVimeoPlaying=true;  updatePlayVisualsLabel(); });
-      primaryVimeoPlayer.on('pause', ()=>{ primaryVimeoPlaying=false; updatePlayVisualsLabel(); });
-      primaryVimeoPlayer.on('ended', ()=>{ primaryVimeoPlaying=false; updatePlayVisualsLabel(); });
-
-      queueRecordCheck();
     } else { 
       alert('Invalid primary video URL'); 
     }
-
   }
 
   // ---------- OVERLAY: local list > direct MP4/HLS > YouTube ----------
@@ -1828,102 +1661,40 @@ function buildVisuals(vSpec, oSpec){
     wirePlaylistAdvance(localOverlayEl, [{ url:$('overlayUrl').value.trim() }], 'localOverlayIdx', 'overlay');
     localOverlayEl.style.mixBlendMode = 'screen';
     attachPlayPauseLabelHandlersFor(localOverlayEl);
-  
-} else if (oSpec && oSpec.kind==='youtube'){
-  // HYBRID: hidden YT.Player for control + visible iframe for overlay visuals
-  const oId = oSpec.isList ? oSpec.pid : oSpec.id;
-  if (oId){
-    // Hidden core host
-    let host = document.getElementById('ytOverlayCoreHost');
-    if(!host){
-      host = document.createElement('div');
-      host.id = 'ytOverlayCoreHost';
-      host.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;';
-      $('playerVideo').appendChild(host);
-    }
-
-    // Visible iframe
-    const ifr = document.createElement('iframe');
-    
-    ifr.referrerPolicy = 'origin-when-cross-origin';ifr.className = 'bg overlay';
-    ifr.style.cssText = 'position:absolute;inset:0;border:0;';
-    ifr.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-    ifr.setAttribute('allowfullscreen','');
-    ifr.style.pointerEvents='none';
-    ifr.style.mixBlendMode='screen';
-    ifr.src = makeYTVisualSrc({ id: (oSpec.isList ? null : oId), isList: !!oSpec.isList, listId: (oSpec.isList ? oId : null), index: 0 });
-
-    c.appendChild(ifr);
-    ensureCover(ifr);
-    window.overlayYTVisualIframe = ifr;
-    window._ytVisualOverlayIdx = 0;
-
-    // Core YT.Player
-    if(overlayYTPlayer){
-      try{
-        oSpec.isList ? overlayYTPlayer.loadPlaylist({ list: oId, index: 0 }) : overlayYTPlayer.loadVideoById(oId);
-      }catch(_){}
-    } else {
+  } else if (oSpec && oSpec.kind==='youtube'){
+    const oId = oSpec.isList ? oSpec.pid : oSpec.id;
+    if (oId){
+      const host = document.createElement('div'); 
+      host.style.cssText='position:absolute;inset:0;';
+      host.className='bg overlay'; 
+      c.appendChild(host);
       overlayYTPlayer = new YT.Player(host, {
-        height:'1', width:'1',
-        playerVars: oSpec.isList
-          ? { listType:'playlist', list:oId, autoplay:1, mute:1, controls:0 }
+        height:'390', width:'640',
+        playerVars: oSpec.isList 
+          ? { listType:'playlist', list:oId, autoplay:1, mute:1, controls:0 } 
           : { autoplay:1, mute:1, controls:0, loop:1, playlist:oId },
         events: {
-          onReady: ev => { try{ ev.target.mute(); ev.target.playVideo(); }catch(_){ } applyFilters(); queueRecordCheck(); startYTVisualSync(); },
-          onStateChange: e => {
-            updatePlayVisualsLabel();
-            queueRecordCheck();
-            try{
-              if(oSpec.isList && window.overlayYTVisualIframe && overlayYTPlayer.getPlaylistIndex){
-                const idx = overlayYTPlayer.getPlaylistIndex();
-                if(Number.isFinite(idx) && idx>=0){ ytIframeCmd(window.overlayYTVisualIframe,'playVideoAt',[idx]); window._ytVisualOverlayIdx=idx; }
-              }
-            }catch(_){}
-            if (e && e.data === YT.PlayerState.PLAYING) refreshItemsIfOpen('overlay');
+          onReady: ev => { 
+            const ifr = ev.target.getIframe(); 
+            if (ifr){ 
+              ifr.className='bg overlay'; 
+              ifr.style.pointerEvents='none'; 
+              ensureCover(ifr); 
+              ifr.style.mixBlendMode='screen'; 
+            } 
+            applyFilters(); 
+            queueRecordCheck(); 
+          },
+          onStateChange: e => { 
+            updatePlayVisualsLabel(); 
+            queueRecordCheck(); 
+            if (e && e.data === YT.PlayerState.PLAYING) refreshItemsIfOpen('overlay'); 
           }
         }
       });
-    }
-
-    applyFilters();
-    queueRecordCheck();
-    startYTVisualSync();
-  } else {
-    alert('Invalid overlay video URL');
-  }
-
-} else if (oSpec && oSpec.kind==='vimeo'){
-
-    const oId = oSpec.id;
-    if (oId){
-      const ifr = document.createElement('iframe'); 
-      
-    ifr.referrerPolicy = 'origin-when-cross-origin';ifr.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;';
-      ifr.className='bg overlay';
-      c.appendChild(ifr);
-
-      ifr.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-      ifr.setAttribute('allowfullscreen','');
-      const oh = oSpec.h ? `h=${encodeURIComponent(oSpec.h)}&` : '';
-      ifr.src = `https://player.vimeo.com/video/${oId}?${oh}background=1&autoplay=1&muted=1&loop=1&controls=0&title=0&byline=0&portrait=0`;
-
-      ifr.style.pointerEvents='none';
-      ensureCover(ifr);
-      ifr.style.mixBlendMode='screen';
-      applyFilters();
-
-      if(!hasVimeoSDK()) { alert('Vimeo SDK failed to load. Check network/CSP.'); return; }
-      overlayVimeoPlayer = new Vimeo.Player(ifr);
-      overlayVimeoPlayer.on('play',  ()=>{ overlayVimeoPlaying=true;  updatePlayVisualsLabel(); });
-      overlayVimeoPlayer.on('pause', ()=>{ overlayVimeoPlaying=false; updatePlayVisualsLabel(); });
-      overlayVimeoPlayer.on('ended', ()=>{ overlayVimeoPlaying=false; updatePlayVisualsLabel(); });
-
-      queueRecordCheck();
     } else { 
       alert('Invalid overlay video URL'); 
     }
-
   }
 
   /* ---- Fallbacks: reinsert active webcams if no element was created ---- */
@@ -1964,7 +1735,6 @@ function buildVisuals(vSpec, oSpec){
       if(localPrimaryEl && !localPrimaryEl.paused) return true;
       if(localOverlayEl && !localOverlayEl.paused) return true;
       if(ytIsPlaying(primaryYTPlayer) || ytIsPlaying(overlayYTPlayer)) return true;
-      if(primaryVimeoPlaying || overlayVimeoPlaying) return true;
       return false;
     }
 
@@ -1980,7 +1750,7 @@ function queueRecordCheck(){
       let disabled=true, title='';
       if(status==='ok'){ disabled=false; title='Record Remix'; if(recordBadge) recordBadge.textContent='Recordable ✓'; }
       else if(status==='checking'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Checking…'; }
-      else if(status==='no-yt'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Not recordable (Embeds Disabled: YouTube/Vimeo sources cannot be recorded)'; }
+      else if(status==='no-yt'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Not recordable (YouTube Disabled: YouTube sources cannot be recorded)'; }
       else if(status==='cors-blocked'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Not recordable (CORS Disabled: Remote video is not CORS-enabled for recording)'; }
       else if(status==='no-visuals'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Waiting...'; }
       recordBtn.disabled = disabled;
@@ -2004,8 +1774,8 @@ function queueRecordCheck(){
     }
 
 function evaluateRecordability(){
-  // YouTube/Vimeo iframe visuals cannot be captured to canvas
-  if (window.primaryYTPlayer || window.overlayYTPlayer || primaryVimeoPlayer || overlayVimeoPlayer){
+  // YouTube visuals cannot be captured to canvas
+  if (window.primaryYTPlayer || window.overlayYTPlayer){
     setRecordStatus('no-yt'); return;
   }
 
@@ -2056,19 +1826,11 @@ function evaluateRecordabilityOnce(timeoutMs=2500, intervalMs=120){
         if(localOverlayEl && !localOverlayEl.paused) localOverlayEl.pause(); if(typeof localOverlayEl2!=='undefined' && localOverlayEl2 && !localOverlayEl2.paused) localOverlayEl2.pause();
         try{ if(primaryYTPlayer) primaryYTPlayer.pauseVideo(); }catch(e){}
         try{ if(overlayYTPlayer) overlayYTPlayer.pauseVideo(); }catch(e){}
-        try{ ytIframeCmd(window.primaryYTVisualIframe,'pauseVideo'); }catch(e){}
-        try{ ytIframeCmd(window.overlayYTVisualIframe,'pauseVideo'); }catch(e){}
-        try{ if(primaryVimeoPlayer) primaryVimeoPlayer.pause(); }catch(e){}
-        try{ if(overlayVimeoPlayer) overlayVimeoPlayer.pause(); }catch(e){}
       } else {
         if(localPrimaryEl) localPrimaryEl.play().catch(()=>{}); if(typeof localPrimaryEl2!=='undefined' && localPrimaryEl2) localPrimaryEl2.play().catch(()=>{});
         if(localOverlayEl) localOverlayEl.play().catch(()=>{}); if(typeof localOverlayEl2!=='undefined' && localOverlayEl2) localOverlayEl2.play().catch(()=>{});
         try{ if(primaryYTPlayer) primaryYTPlayer.playVideo(); }catch(e){}
         try{ if(overlayYTPlayer) overlayYTPlayer.playVideo(); }catch(e){}
-        try{ ytIframeCmd(window.primaryYTVisualIframe,'playVideo'); }catch(e){}
-        try{ ytIframeCmd(window.overlayYTVisualIframe,'playVideo'); }catch(e){}
-        try{ if(primaryVimeoPlayer) primaryVimeoPlayer.play(); }catch(e){}
-        try{ if(overlayVimeoPlayer) overlayVimeoPlayer.play(); }catch(e){}
       }
       updatePlayVisualsLabel();
       queueRecordCheck();
@@ -2461,7 +2223,6 @@ document.getElementById('streamBtn')?.addEventListener('click', () => {
   // Minimal shell (no wildcard "*", fewer style recalcs)
   w.document.open();
   w.document.write(`<!doctype html><html><head>
-  <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="utf-8">
 <title>Stream – VITUREMA Studio™</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
