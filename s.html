@@ -117,11 +117,11 @@ body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,.5); z-
 #itemsOverlay.active, #itemsModal.active{ opacity:1; pointer-events:auto }
 .itemsGrid{ display:grid; grid-template-columns:1fr 1fr; gap:1rem }
 .section{ background:#171717; border-radius:12px; padding:.75rem }
-.section h4{ margin:.25rem 0 .5rem; opacity:.85 }
+.section h4{ margin:.25rem 0 .5rem; opacity:.85; text-align:center }
 .ytGrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:.6rem }
 .ytThumb{ background:#1a1a1a; border-radius:10px; overflow:hidden; cursor:pointer }
 .ytThumb img{ width:100%; display:block }
-.ytThumb .cap{ padding:.35rem .5rem; font-size:.85rem; opacity:.85 }
+.ytThumb .cap{ padding:.35rem .5rem; font-size:.85rem; opacity:.85; text-align:center }
 .ytThumb.active{ outline:2px solid #7CFC8A }
 .localList{ display:flex; flex-direction:column; gap:.35rem }
 .localRow{ display:flex; align-items:center; gap:.5rem; background:#1a1a1a; padding:.4rem .55rem; border-radius:8px; cursor:pointer }
@@ -1059,10 +1059,20 @@ _micBtn?.addEventListener?.('click', toggleMic);
 /* ========== Stream availability (disable when YouTube present to avoid error 153) ========== */
 function hasYouTubeVisuals(){
   try{
-    if (window.primaryYTPlayer || window.overlayYTPlayer) return true;
-    const ifr = document.querySelector('#backgroundVideoContainer iframe');
-    const src = ifr?.getAttribute('src') || '';
-    return /youtube\.com|youtu\.be/i.test(src);
+    if (window.primaryYTPlayer || window.overlayYTPlayer || window.audioPlayer) return true;
+
+    const vSpec = classify(($('videoUrl')?.value||'').trim());
+    const oSpec = classify(($('overlayUrl')?.value||'').trim());
+    const aSpec = classify(($('audioUrl')?.value||'').trim());
+    const anySpec = [vSpec,oSpec,aSpec].filter(Boolean);
+    if (anySpec.some(s => s.kind==='youtube')) return true;
+
+    const ifrs = document.querySelectorAll('#backgroundVideoContainer iframe');
+    for (const ifr of ifrs){
+      const src = (ifr.getAttribute('src') || '').toLowerCase();
+      if (src.includes('youtube.com') || src.includes('youtube-nocookie.com') || src.includes('youtu.be')) return true;
+    }
+    return false;
   }catch(_){ return false; }
 }
 function updateStreamButtonState(){
@@ -1104,34 +1114,24 @@ function applyFilters(){
 
 function quickEmbedStatusFromInputs(){
       try{
+        const a = ($('audioUrl')?.value||'').trim();
         const v = ($('videoUrl')?.value||'').trim();
         const o = ($('overlayUrl')?.value||'').trim();
-        const a = ($('audioUrl')?.value||'').trim();
-
+        const aSpec = classify(a);
         const vSpec = classify(v);
         const oSpec = classify(o);
-        const aSpec = classify(a);
 
-        const hasYT = (vSpec && vSpec.kind==='youtube') ||
-                      (oSpec && oSpec.kind==='youtube') ||
-                      (aSpec && aSpec.kind==='youtube');
-
-        const hasVimeo = (vSpec && vSpec.kind==='vimeo') ||
-                         (oSpec && oSpec.kind==='vimeo') ||
-                         (aSpec && aSpec.kind==='vimeo');
+        const hasEmbed = (aSpec && (aSpec.kind==='youtube' || aSpec.kind==='vimeo')) ||
+                         (vSpec && (vSpec.kind==='youtube' || vSpec.kind==='vimeo')) ||
+                         (oSpec && (oSpec.kind==='youtube' || oSpec.kind==='vimeo'));
 
         const hasAnyVisual = !!v || !!o || (localPrimaryList?.length||0)>0 || (localOverlayList?.length||0)>0 || !!primaryCamStream || !!overlayCamStream;
-        const hasAnyAudio = !!a || (localAudioList?.length||0)>0;
+        const hasAnyAudio  = !!a || (localAudioList?.length||0)>0;
 
-        // Stream is disabled only when YouTube is present (avoids embed error 153 in popup)
-        try{ setStreamDisabled(!!hasYT); }catch(_){}
-
-        // Recording is not possible when any embed (YouTube OR Vimeo) is present
-        if (hasYT || hasVimeo){
+        if (hasEmbed){
           setRecordStatus('no-yt');
           return;
         }
-
         if (!hasAnyVisual && !hasAnyAudio){
           setRecordStatus('no-visuals');
           return;
@@ -1145,8 +1145,7 @@ function quickEmbedStatusFromInputs(){
 try{ quickEmbedStatusFromInputs(); }catch(_){ }
 
 // Update Stream availability as URLs change (so it's disabled immediately for YouTube)
-['videoUrl','overlayUrl'].forEach(id=>$(id)?.addEventListener('input', ()=>{ updateStreamAvailability(); quickEmbedStatusFromInputs(); }));
-
+['audioUrl','videoUrl','overlayUrl'].forEach(id=>$(id)?.addEventListener('input', ()=>{ try{ quickEmbedStatusFromInputs(); }catch(_){ } try{ updateStreamButtonState(); }catch(_){ } }));
 // keep original hook
 //
 ['videoUrl','overlayUrl'].forEach(id => $(id)?.addEventListener('input', updateStreamButtonState));
@@ -2420,6 +2419,76 @@ setTimeout(()=>{
     });
 
     /* ========== Reset button ========== */
+function clearAll(){
+  try{ setWakeWanted(false); }catch(_){}
+  try{ if (window.isRecording) stopRecording(); }catch(_){}
+
+  // Stop mic
+  try{ if (window.micStream) window.micStream.getTracks().forEach(t=>t.stop()); }catch(_){}
+  try{ window.micStream = null; window.micSource = null; }catch(_){}
+  try{ isMicEnabled = false; $('micRecBtn')?.classList.remove('recording'); }catch(_){}
+
+  // Stop webcams
+  try{ stopPrimaryCam?.(); $('primaryCamBtn')?.classList.remove('cam-active'); }catch(_){}
+  try{ stopOverlayCam?.(); $('overlayCamBtn')?.classList.remove('cam-active'); }catch(_){}
+
+  // Stop & destroy visual players
+  try{ destroyVisualPlayers(); }catch(_){}
+  try{ const c=$('backgroundVideoContainer'); if(c) c.innerHTML=''; }catch(_){}
+  window.localPrimaryEl = null; window.localPrimaryEl2 = null;
+  window.localOverlayEl = null; window.localOverlayEl2 = null;
+
+  // Stop audio players
+  try{
+    if (window.localAudioEl){ window.localAudioEl.pause(); window.localAudioEl.removeAttribute('src'); window.localAudioEl.load?.(); }
+  }catch(_){}
+  try{
+    if (window.audioPlayer && window.audioPlayer.destroy){
+      try{ window.audioPlayer.stopVideo?.(); }catch(_){}
+      window.audioPlayer.destroy();
+    }
+  }catch(_){}
+  window.audioPlayer = null;
+
+  // Clear lists + indices
+  localAudioList=[]; localAudioIdx=0; localAudioHandles=null;
+  localPrimaryList=[]; localPrimaryIdx=0; localPrimaryHandles=null;
+  localOverlayList=[]; localOverlayIdx=0; localOverlayHandles=null;
+
+  // Clear file inputs
+  try{ $('audioFiles').value=''; $('primaryFiles').value=''; $('overlayFiles').value=''; }catch(_){}
+  try{ $('restoreAudioFiles').value=''; $('restorePrimaryFiles').value=''; $('restoreOverlayFiles').value=''; }catch(_){}
+
+  // Clear URL inputs
+  $('audioUrl').value='';
+  $('videoUrl').value='';
+  $('overlayUrl').value='';
+
+  // Reset hints + dots
+  $('audioHint').textContent='';
+  $('videoHint').textContent='';
+  $('overlayHint').textContent='';
+  setDot($('audioDot'), false);
+  setDot($('videoDot'), false);
+  setDot($('overlayDot'), false);
+
+  // Reset UI state
+  hasBuiltOnce=false;
+  isPlaying=false;
+  currentAudioTitle='-';
+  $('songTitle').textContent='Title: -';
+  $('seekbar').value=0;
+  $('playPauseMusicBtn').textContent='Play Audio';
+  $('playVisualsBtn').textContent='Play Video';
+
+  try{ setRecordStatus('no-visuals'); }catch(_){}
+  try{ updateStreamButtonState(); }catch(_){}
+  updateButtons();
+  toast('Cleared');
+}
+$('resetBtn').addEventListener('click', clearAll);
+
+
     $('resetBtn').addEventListener('click', ()=>{ window.location.reload(); });
 
 /* ========== Fullscreen ========== */
