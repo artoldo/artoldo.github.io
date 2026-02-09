@@ -1103,22 +1103,44 @@ function applyFilters(){
 
 
 function quickEmbedStatusFromInputs(){
-  try{
-    const v = classify($('videoUrl').value.trim());
-    const o = classify($('overlayUrl').value.trim());
-    if ((v && (v.kind==='youtube' || v.kind==='vimeo')) || (o && (o.kind==='youtube' || o.kind==='vimeo'))){
-      setRecordStatus('no-yt');
-    } else {
-      // don't force ok; just leave as-is unless we currently show Waiting due to embeds
-      // but if there are local visuals/webcams, we can safely re-evaluate
-      if (window.localPrimaryEl || window.localOverlayEl || window.primaryCamStream || window.overlayCamStream){
-        evaluateRecordabilityOnce(1200, 120);
-      } else {
-        setRecordStatus('no-visuals');
+      try{
+        const v = ($('videoUrl')?.value||'').trim();
+        const o = ($('overlayUrl')?.value||'').trim();
+        const a = ($('audioUrl')?.value||'').trim();
+
+        const vSpec = classify(v);
+        const oSpec = classify(o);
+        const aSpec = classify(a);
+
+        const hasYT = (vSpec && vSpec.kind==='youtube') ||
+                      (oSpec && oSpec.kind==='youtube') ||
+                      (aSpec && aSpec.kind==='youtube');
+
+        const hasVimeo = (vSpec && vSpec.kind==='vimeo') ||
+                         (oSpec && oSpec.kind==='vimeo') ||
+                         (aSpec && aSpec.kind==='vimeo');
+
+        const hasAnyVisual = !!v || !!o || (localPrimaryList?.length||0)>0 || (localOverlayList?.length||0)>0 || !!primaryCamStream || !!overlayCamStream;
+        const hasAnyAudio = !!a || (localAudioList?.length||0)>0;
+
+        // Stream is disabled only when YouTube is present (avoids embed error 153 in popup)
+        try{ setStreamDisabled(!!hasYT); }catch(_){}
+
+        // Recording is not possible when any embed (YouTube OR Vimeo) is present
+        if (hasYT || hasVimeo){
+          setRecordStatus('no-yt');
+          return;
+        }
+
+        if (!hasAnyVisual && !hasAnyAudio){
+          setRecordStatus('no-visuals');
+          return;
+        }
+        setRecordStatus('ok');
+      }catch(e){
+        try{ setRecordStatus('no-visuals'); }catch(_){}
       }
     }
-  }catch(_){}
-}
 
 try{ quickEmbedStatusFromInputs(); }catch(_){ }
 
@@ -1913,11 +1935,26 @@ function queueRecordCheck(){
     function setRecordStatus(status){
       recStatus = status;
       let disabled=true, title='';
-      if(status==='ok'){ disabled=false; title='Record Remix'; if(recordBadge) recordBadge.textContent='Recordable ✓'; }
-      else if(status==='checking'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Checking…'; }
-      else if(status==='no-yt'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Not recordable (Embeds Disabled: YouTube/Vimeo sources cannot be recorded)'; }
-      else if(status==='cors-blocked'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Not recordable (CORS Disabled: Remote video is not CORS-enabled for recording)'; }
-      else if(status==='no-visuals'){ disabled=true; title=''; if(recordBadge) recordBadge.textContent='Waiting...'; }
+      // Always show a helpful badge message (never leave "Waiting..." visible when recordable)
+      if(status==='ok'){
+        disabled=false; title='Record Remix';
+        if(recordBadge) recordBadge.textContent='Recordable ✓';
+      } else if(status==='checking'){
+        disabled=true; title='';
+        if(recordBadge) recordBadge.textContent='Checking…';
+      } else if(status==='no-yt'){
+        disabled=true; title='';
+        if(recordBadge) recordBadge.textContent='Not recordable (YouTube/Vimeo)';
+      } else if(status==='cors-blocked'){
+        disabled=true; title='';
+        if(recordBadge) recordBadge.textContent='Not recordable (CORS)';
+      } else if(status==='no-visuals'){
+        disabled=true; title='';
+        if(recordBadge) recordBadge.textContent='Waiting…';
+      } else {
+        disabled=true; title='';
+        if(recordBadge) recordBadge.textContent='Waiting…';
+      }
       recordBtn.disabled = disabled;
       recordBtn.title = title;
     }
