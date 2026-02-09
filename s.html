@@ -78,7 +78,7 @@ video.bg, iframe.bg{
   position:absolute; inset:0; width:100vw; height:100vh; object-fit:cover; pointer-events:none;
   transition:filter .25s ease, opacity .25s ease;
 }
-video.overlay, iframe.overlay{ mix-blend-mode:screen }
+video.overlay, iframe.overlay{ mix-blend-mode:screen; z-index:5 }
 body::before{ content:""; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:-1 }
 
 /* ---------- Preset Drawer ---------- */
@@ -986,6 +986,7 @@ _micBtn?.addEventListener?.('click', toggleMic);
           $('audioHint').textContent = localAudioList.length ? `${localAudioList.length} audio file(s)` : '';
           setDot($('audioDot'), localAudioList.length>0 || !!$('audioUrl').value.trim());
           updateButtons();
+      updateStreamButtonState();
           return;
         }catch(e){}
       }
@@ -1000,6 +1001,7 @@ _micBtn?.addEventListener?.('click', toggleMic);
           $('videoHint').textContent = localPrimaryList.length ? `${localPrimaryList.length} primary video(s)` : '';
           setDot($('videoDot'), localPrimaryList.length>0 || !!$('videoUrl').value.trim());
           updateButtons();
+      updateStreamButtonState();
           return;
         }catch(e){}
       }
@@ -1014,6 +1016,7 @@ _micBtn?.addEventListener?.('click', toggleMic);
           $('overlayHint').textContent = localOverlayList.length ? `${localOverlayList.length} overlay video(s)` : '';
           setDot($('overlayDot'), localOverlayList.length>0 || !!$('overlayUrl').value.trim());
           updateButtons();
+      updateStreamButtonState();
           return;
         }catch(e){}
       }
@@ -1030,6 +1033,7 @@ _micBtn?.addEventListener?.('click', toggleMic);
       setDot($('videoDot'), localPrimaryList.length>0 || !!$('videoUrl').value.trim());
       setDot($('overlayDot'), localOverlayList.length>0 || !!$('overlayUrl').value.trim());
       updateButtons();
+      updateStreamButtonState();
     }));
 
     function anyAudio(){ return localAudioList.length>0 || !!$('audioUrl').value.trim(); }
@@ -1043,12 +1047,31 @@ _micBtn?.addEventListener?.('click', toggleMic);
       $('prevBtn').disabled = !anyAudio();
       $('nextBtn').disabled = !anyAudio();
       $('loopBtn').disabled = !anyAudio();
+      updateStreamButtonState();
       queueRecordCheck(); // deferred recordability check
     }
 
     function updatePlayVisualsLabel(){
       $('playVisualsBtn').textContent = isAnyVideoPlaying()? 'Pause Video' : 'Play Video';
     }
+
+
+/* ========== Stream availability (disable when YouTube present to avoid error 153) ========== */
+function hasYouTubeVisuals(){
+  try{
+    if (window.primaryYTPlayer || window.overlayYTPlayer) return true;
+    const ifr = document.querySelector('#backgroundVideoContainer iframe');
+    const src = ifr?.getAttribute('src') || '';
+    return /youtube\.com|youtu\.be/i.test(src);
+  }catch(_){ return false; }
+}
+function updateStreamButtonState(){
+  const b = document.getElementById('streamBtn');
+  if(!b) return;
+  const yt = hasYouTubeVisuals();
+  b.disabled = !!yt;
+  b.title = yt ? 'Stream disabled for YouTube sources (avoids YouTube error 153).' : '';
+}
 
 /* ========== Filters ========== */
 function applyFilters(){
@@ -1078,6 +1101,36 @@ function applyFilters(){
  'overlayOpacity']
 .forEach(id => $(id)?.addEventListener('input', applyFilters));
 
+
+function quickEmbedStatusFromInputs(){
+  try{
+    const v = classify($('videoUrl').value.trim());
+    const o = classify($('overlayUrl').value.trim());
+    if ((v && (v.kind==='youtube' || v.kind==='vimeo')) || (o && (o.kind==='youtube' || o.kind==='vimeo'))){
+      setRecordStatus('no-yt');
+    } else {
+      // don't force ok; just leave as-is unless we currently show Waiting due to embeds
+      // but if there are local visuals/webcams, we can safely re-evaluate
+      if (window.localPrimaryEl || window.localOverlayEl || window.primaryCamStream || window.overlayCamStream){
+        evaluateRecordabilityOnce(1200, 120);
+      } else {
+        setRecordStatus('no-visuals');
+      }
+    }
+  }catch(_){}
+}
+
+try{ quickEmbedStatusFromInputs(); }catch(_){ }
+
+// Update Stream availability as URLs change (so it's disabled immediately for YouTube)
+['videoUrl','overlayUrl'].forEach(id=>$(id)?.addEventListener('input', ()=>{ updateStreamAvailability(); quickEmbedStatusFromInputs(); }));
+
+// keep original hook
+//
+['videoUrl','overlayUrl'].forEach(id => $(id)?.addEventListener('input', updateStreamButtonState));
+document.addEventListener('DOMContentLoaded', updateStreamButtonState);
+
+
     /* ========== Build / Rebuild ========== */
     $('buildBtn').addEventListener('click', async ()=>{
       const aSpec = classify($('audioUrl').value.trim());
@@ -1090,6 +1143,7 @@ function applyFilters(){
       buildVisuals(vSpec, oSpec);
       hasBuiltOnce = true;
       updateButtons();
+      updateStreamButtonState();
       setTimeout(()=>{ updatePlayVisualsLabel(); $('playVisualsBtn').textContent='Pause Video'; }, 150);
       setTimeout(updatePlayVisualsLabel, 900);
       // evaluate recordability after initial build
@@ -1334,6 +1388,7 @@ function attachPlayPauseLabelHandlersFor(el){
     function makeVideoEl(className){
       const v = document.createElement('video');
       v.className = className;
+      try{ v.style.zIndex = (String(className).includes('overlay') ? '5' : '1'); }catch(_){ }
       v.muted = true; v.autoplay = true; v.playsInline = true;
       v.crossOrigin = 'anonymous'; // allow CORS-enabled drawing for recording
       return v;
@@ -1442,7 +1497,7 @@ function buildSeamlessLocal(list, className, kind){
       position:'absolute', inset:'0',
       width:'100vw', height:'100vh',
       objectFit:'cover', pointerEvents:'none',
-      zIndex:1
+      zIndex:(className.includes('overlay')?5:1)
     });
     c.appendChild(v);
   });
@@ -1728,6 +1783,7 @@ function buildVisuals(vSpec, oSpec){
   } else if (oSpec && (oSpec.kind==='file' || oSpec.kind==='hls')){
     localOverlayEl = makeVideoEl('bg overlay');
     c.appendChild(localOverlayEl);
+    try{ localOverlayEl.style.zIndex='5'; }catch(_){ }
     if (oSpec.kind==='hls') attachHls(localOverlayEl, $('overlayUrl').value.trim(), 'overlay');
     else { 
       localOverlayEl.src = $('overlayUrl').value.trim(); 
@@ -1741,7 +1797,8 @@ function buildVisuals(vSpec, oSpec){
     if (oId){
       const host = document.createElement('div'); 
       host.style.cssText='position:absolute;inset:0;';
-      host.className='bg overlay'; 
+      host.className='bg overlay';
+      host.style.zIndex='5'; 
       c.appendChild(host);
       overlayYTPlayer = new YT.Player(host, {
         height:'390', width:'640',
@@ -1752,7 +1809,8 @@ function buildVisuals(vSpec, oSpec){
           onReady: ev => { 
             const ifr = ev.target.getIframe(); 
             if (ifr){ 
-              ifr.className='bg overlay'; 
+              ifr.className='bg overlay';
+      ifr.style.zIndex='5'; 
               ifr.style.pointerEvents='none'; 
               ensureCover(ifr); 
               ifr.style.mixBlendMode='screen'; 
@@ -1777,6 +1835,7 @@ function buildVisuals(vSpec, oSpec){
       const ifr = document.createElement('iframe'); 
       ifr.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;';
       ifr.className='bg overlay';
+      ifr.style.zIndex='5';
       c.appendChild(ifr);
 
       ifr.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
@@ -1880,10 +1939,21 @@ function queueRecordCheck(){
     }
 
 function evaluateRecordability(){
-  // YouTube/Vimeo iframe visuals cannot be captured to canvas
-  if (window.primaryYTPlayer || window.overlayYTPlayer || primaryVimeoPlayer || overlayVimeoPlayer){
-    setRecordStatus('no-yt'); return;
-  }
+  // YouTube/Vimeo iframe visuals cannot be captured to canvas.
+  // Be robust: detect both SDK players AND raw iframes mounted in the visuals container.
+  try{
+    if (window.primaryYTPlayer || window.overlayYTPlayer || window.primaryVimeoPlayer || window.overlayVimeoPlayer || primaryVimeoPlayer || overlayVimeoPlayer){
+      setRecordStatus('no-yt'); return;
+    }
+    const ifrs = document.querySelectorAll('#backgroundVideoContainer iframe');
+    for (const ifr of ifrs){
+      const src = (ifr.getAttribute('src') || '').toLowerCase();
+      if (src.includes('youtube.com') || src.includes('youtube-nocookie.com') || src.includes('youtu.be') || src.includes('player.vimeo.com') || src.includes('vimeo.com')){
+        setRecordStatus('no-yt'); return;
+      }
+    }
+  }catch(_){}
+
 
   // Consider live webcams as visuals even with no local files/URLs
   const hasVisualEl = !!(window.localPrimaryEl || window.localOverlayEl);
@@ -1951,6 +2021,7 @@ function evaluateRecordabilityOnce(timeoutMs=2500, intervalMs=120){
       try{ audioPlayer.setVolume($('volume').value); }catch(_){}
       updateSongTitle(); startSeek();
       updateButtons();
+      updateStreamButtonState();
     }
     function onAudioStateChange(e){
       if(e.data===YT.PlayerState.PLAYING){ isPlaying=true; $('playPauseMusicBtn').textContent='Pause Audio'; updateSongTitle(); startSeek(); }
@@ -2197,6 +2268,7 @@ function refreshItemsIfOpen(kind){
       setDot($('videoDot'), localPrimaryList.length>0 || !!$('videoUrl').value.trim());
       setDot($('overlayDot'), localOverlayList.length>0 || !!$('overlayUrl').value.trim());
       updateButtons();
+      updateStreamButtonState();
     }
 
     async function tryLoadHandles(p){
@@ -2314,18 +2386,42 @@ setTimeout(()=>{
     $('resetBtn').addEventListener('click', ()=>{ window.location.reload(); });
 
 /* ========== Fullscreen ========== */
+let __fsWasPlaying = false;
+let __fsWasLocalPrimaryPlaying = false;
+let __fsWasLocalOverlayPlaying = false;
 $('fullscreenBtn').addEventListener('click', ()=>{
   setWakeWanted(true); // keep display awake while in fullscreen
+
+  // Remember state so we can resume local playback when exiting fullscreen
+  __fsWasPlaying = isAnyVideoPlaying();
+  __fsWasLocalPrimaryPlaying = !!(window.localPrimaryEl && !window.localPrimaryEl.paused);
+  __fsWasLocalOverlayPlaying = !!(window.localOverlayEl && !window.localOverlayEl.paused);
+
   const c = $('backgroundVideoContainer');
   if(c.requestFullscreen) c.requestFullscreen();
   else if(c.webkitRequestFullscreen) c.webkitRequestFullscreen();
   else if(c.msRequestFullscreen) c.msRequestFullscreen();
 });
 
+// Some browsers pause <video> when leaving fullscreen; resume only if it was playing before.
+document.addEventListener('fullscreenchange', ()=>{
+  if (document.fullscreenElement) return;
+  if (!__fsWasPlaying) return;
+  try{
+    if (__fsWasLocalPrimaryPlaying && window.localPrimaryEl?.paused) window.localPrimaryEl.play().catch(()=>{});
+    if (__fsWasLocalOverlayPlaying && window.localOverlayEl?.paused) window.localOverlayEl.play().catch(()=>{});
+  }catch(_){}
+});
+
+
 // --- Stream popup (live updates + filters, no observer, no wildcard CSS) ---
 document.getElementById('streamBtn')?.addEventListener('click', () => {
   const src = document.getElementById('backgroundVideoContainer');
   if (!src) return (window.toast?.('No visuals container found') || alert('No visuals container found'));
+
+// If we're using only local videos, we want them to keep playing after Stream closes.
+const __streamWasLocalPrimaryPlaying = !!(window.localPrimaryEl && !window.localPrimaryEl.paused);
+const __streamWasLocalOverlayPlaying = !!(window.localOverlayEl && !window.localOverlayEl.paused);
 
   const w = window.open('', 'VITUREMA_OUTPUT', 'popup=yes,width=1280,height=720');
   if (!w) return (window.toast?.('Popup blocked — allow popups') || alert('Popup blocked — allow popups'));
@@ -2345,6 +2441,10 @@ document.getElementById('streamBtn')?.addEventListener('click', () => {
   video,iframe{position:absolute;inset:0;width:100vw;height:100vh}
   video{object-fit:cover}
   iframe{pointer-events:none}
+
+  /* ensure overlays stay above primary, especially when primary is local videos with z-index */
+  #backgroundVideoContainer .bg{z-index:1}
+  #backgroundVideoContainer .overlay{z-index:5}
 </style>
 </head><body><div id="root"></div></body></html>`);
   w.document.close();
@@ -2403,6 +2503,12 @@ document.getElementById('streamBtn')?.addEventListener('click', () => {
         ph.replaceWith(back);
       }catch(_){}
       if (typeof orig$ === 'function') window.$ = orig$;
+
+// Resume local playback if it was playing when Stream was opened.
+try{
+  if (__streamWasLocalPrimaryPlaying) window.localPrimaryEl?.play?.().catch(()=>{});
+  if (__streamWasLocalOverlayPlaying) window.localOverlayEl?.play?.().catch(()=>{});
+}catch(_){}
       window.streamWin = null;
       w.removeEventListener('resize', cover);
     }, { once:true });
