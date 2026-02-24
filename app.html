@@ -5916,31 +5916,113 @@ function buildEditorDropNavbarHtml() {
 </nav>`;
 }
 
+
+function withBust(url){
+  const u = String(url || '').trim();
+  if (!u) return '';
+  return u + (u.includes('?') ? '&' : '?') + 't=' + Date.now();
+}
+
+/**
+ * Validate + normalize DropNavbar global JSON payload.
+ * Accepts either { dropnavbar:[...] } / { dropnavbar:{items:[...]} } or direct array / {items:[...]}.
+ * Returns {ok:true, items:[...]} or {ok:false, reason:"..."}.
+ */
+function normalizeAndValidateDropNavPayload(js){
+  const payload = (js && (js.dropnavbar ?? js)) || js;
+  const items = Array.isArray(payload) ? payload
+             : Array.isArray(payload?.items) ? payload.items
+             : null;
+
+  if (!Array.isArray(items)) return { ok:false, reason:'No items array found' };
+
+  const clean = [];
+  for (const it of items){
+    if (!it || typeof it !== 'object') continue;
+
+    // Allow common label fields
+    const label = (it.label ?? it.title ?? it.text);
+    if (typeof label !== 'string' || !label.trim()) continue;
+
+    // Optional href/url
+    const href = (it.href ?? it.url ?? '');
+    if (href && typeof href !== 'string') continue;
+
+    // Optional nested children/items
+    const children = (it.children ?? it.items ?? null);
+    if (children !== null && !Array.isArray(children)) continue;
+
+    clean.push({
+      ...it,
+      label: label.trim(),
+      href: href ? href.trim() : href
+    });
+  }
+
+  if (clean.length === 0) return { ok:false, reason:'No valid items after validation' };
+  return { ok:true, items: clean };
+}
+
+async function fetchDropNavGlobal(cfg, url){
+  const res = await fetch(withBust(url), { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+
+  let js;
+  try {
+    js = await res.json();
+  } catch {
+    throw new Error('Invalid JSON (parse failed)');
+  }
+
+  const v = normalizeAndValidateDropNavPayload(js);
+  if (!v.ok) throw new Error('Invalid menu payload: ' + v.reason);
+
+  // Only update after validation passes
+  cfg.items = v.items;
+  return true;
+}
+
 function updateDropNavbar() {
   document.body.setAttribute('data-dropnavbar-enabled', siteSettings?.dropnavbar?.enabled ? '1' : '0');
+
   // If configured, fetch DropNavbar menu globally (editor) and re-render.
   try{
     const cfg = siteSettings?.dropnavbar || {};
     const url = (cfg.useGlobalMenu ? (cfg.globalMenuUrl||'').trim() : '');
-    if (url && url !== cfg.__lastGlobalUrl) {
+    const now = Date.now();
+
+    // Auto refresh interval (ms). Keep modest to avoid hammering the server.
+    const intervalMs = 5 * 60 * 1000;
+
+    // Fetch when:
+    //  - URL is set AND global mode on
+    //  - not currently fetching
+    //  - and either: first time OR interval elapsed OR URL changed
+    const urlChanged = (url && url !== cfg.__lastGlobalUrl);
+    const dueByTime = (url && (!cfg.__lastFetchAt || (now - cfg.__lastFetchAt) > intervalMs));
+
+    if (url && (urlChanged || dueByTime) && !cfg.__fetching) {
+      cfg.__fetching = true;
       cfg.__lastGlobalUrl = url;
-      fetch(url, { cache: 'no-store' }).then(r=>r.json()).then(js=>{
-        const incoming = js.dropnavbar || js;
-        if (Array.isArray(incoming)) cfg.items = incoming;
-        else if (incoming && Array.isArray(incoming.items)) cfg.items = incoming.items;
-        // re-render after fetch
-        if (dropNavbarContainer) dropNavbarContainer.innerHTML = buildEditorDropNavbarHtml();
-        try{
-          const dropEl2 = document.getElementById('editor-dropnavbar');
-          if (dropEl2){
-            const toolbarEl2 = document.getElementById('main-navbar');
-            const dynNavEl2 = dynamicNavbarContainer ? dynamicNavbarContainer.querySelector('nav') : null;
-            const top2 = (toolbarEl2 ? toolbarEl2.offsetHeight : 0) + (dynNavEl2 ? dynNavEl2.offsetHeight : 0);
-            dropEl2.style.top = `${top2}px`;
-            initDropnavDragScroll(); initDropnavWheelScroll(); initDnPopoverMenus();
-          }
-        }catch(_){}
-      }).catch(err=>{ console.warn('DropNavbar global fetch failed', err); });
+
+      fetchDropNavGlobal(cfg, url)
+        .then(() => { cfg.__lastFetchAt = Date.now(); })
+        .catch(err => { console.warn('DropNavbar global fetch skipped:', err?.message || err); })
+        .finally(() => { cfg.__fetching = false; })
+        .finally(() => {
+          // Re-render after fetch attempt (uses old items if fetch failed)
+          if (dropNavbarContainer) dropNavbarContainer.innerHTML = buildEditorDropNavbarHtml();
+          try{
+            const dropEl2 = document.getElementById('editor-dropnavbar');
+            if (dropEl2){
+              const toolbarEl2 = document.getElementById('main-navbar');
+              const dynNavEl2 = dynamicNavbarContainer ? dynamicNavbarContainer.querySelector('nav') : null;
+              const top2 = (toolbarEl2 ? toolbarEl2.offsetHeight : 0) + (dynNavEl2 ? dynNavEl2.offsetHeight : 0);
+              dropEl2.style.top = `${top2}px`;
+              initDropnavDragScroll(); initDropnavWheelScroll(); initDnPopoverMenus();
+            }
+          }catch(_){} 
+        });
     }
   } catch(e){}
 
@@ -5956,11 +6038,30 @@ function updateDropNavbar() {
 
   const top = (toolbarEl ? toolbarEl.offsetHeight : 0) + (dynNavEl ? dynNavEl.offsetHeight : 0);
   dropEl.style.top = `${top}px`;
+
   // Make the parent row draggable-scrollable (mouse)
   initDropnavDragScroll();
   initDropnavWheelScroll();
   initDnPopoverMenus();
 }
+
+// Initialize auto-sync triggers once
+(function initDropNavbarAutoSync(){
+  if (window.__dropNavbarAutoSyncInit) return;
+  window.__dropNavbarAutoSyncInit = true;
+
+  // initial pull on load
+  window.addEventListener('load', () => { try { updateDropNavbar(); } catch(_){} });
+
+  // refresh when tab becomes active again
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) { try { updateDropNavbar(); } catch(_){} }
+  });
+
+  // background poll while open (same cadence as updateDropNavbar's dueByTime gate)
+  setInterval(() => { try { updateDropNavbar(); } catch(_){} }, 5 * 60 * 1000);
+})(); 
+
 
 // Recompute offset on resize (simple re-render)
 window.addEventListener('resize', updateDropNavbar);
