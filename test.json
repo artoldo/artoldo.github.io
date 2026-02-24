@@ -1,0 +1,73 @@
+{
+  "dropnavbar": {
+    "enabled": true,
+    "align": "center",
+    "bg": "#ffffff",
+    "text": "#000000",
+    "items": [
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": [
+          {
+            "title": "New Child",
+            "url": "#",
+            "newTab": false
+          },
+          {
+            "title": "New Child",
+            "url": "#",
+            "newTab": false
+          }
+        ]
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      },
+      {
+        "title": "New Parent",
+        "url": "#",
+        "children": []
+      }
+    ],
+    "useGlobalMenu": false,
+    "globalMenuUrl": ""
+  }
+}
