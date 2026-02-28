@@ -9,190 +9,208 @@
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 
-  <style>
-    :root{ --cursor-color:transparent; }
+<style>
+  :root{ --cursor-color:transparent; }
 
-    body { margin: 0; font-family: system-ui, sans-serif; overflow: hidden; background: #000; }
+  body { margin: 0; font-family: system-ui, sans-serif; overflow: hidden; background: #000; }
 
-    .a-enter-vr-button { display: none !important; }
+  .a-enter-vr-button { display: none !important; }
 
-    #dot {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--cursor-color);
-      z-index: 9999;
-      pointer-events: none;
+  #dot {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--cursor-color);
+    z-index: 9999;
+    pointer-events: none;
 
-      --dot-scale: 1;
-      transform: translate(-50%, -50%) scale(var(--dot-scale));
-      transform-origin: center center;
+    --dot-scale: 1;
+    transform: translate(-50%, -50%) scale(var(--dot-scale));
+    transform-origin: center center;
 
-      transition: transform 0.15s ease, background 0.18s ease, box-shadow 0.15s ease;
-    }
+    transition: transform 0.15s ease, background 0.18s ease, box-shadow 0.15s ease;
+  }
 
-    #dot.hover { transform: translate(-50%, -50%) scale(1.2); }
+  #dot.hover { transform: translate(-50%, -50%) scale(1.2); }
 
-    #ui {
-      position: fixed; top: 12px; left: 12px; z-index: 10;
-      background: rgba(255,255,255,.92);
-      padding: 10px 12px; border-radius: 12px;
-      display:flex; gap:10px; align-items: center; flex-wrap: wrap;
-      box-shadow: 0 10px 30px rgba(0,0,0,.15);
-    }
-    #ui small { opacity: .75; }
+  #ui {
+    position: fixed; top: 12px; left: 12px; z-index: 10;
+    background: rgba(255,255,255,.92);
+    padding: 10px 12px; border-radius: 12px;
+    display:flex; gap:10px; align-items: center; flex-wrap: wrap;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  }
+  #ui small { opacity: .75; }
 
-    /* LIGHTBOX OVERLAY */
-    #lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: rgba(0,0,0,.75);
+  /* LIGHTBOX OVERLAY */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,.75);
 
-      display: none;
-      align-items: center;
-      justify-content: center;
+    display: none;
+    align-items: center;
+    justify-content: center;
 
-      padding: 18px;
+    padding: 18px;
 
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      touch-action: pan-y;
-    }
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
 
+  #lightbox .panel {
+    position: relative;             /* NEW: establish stacking context */
+    z-index: 1;                      /* NEW */
+    width: min(980px, 100%);
+    background: #fff;
+    border-radius: 0px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+
+    /* NEW: vh fallback for older mobile */
+    max-height: calc(100vh - 36px);
+    max-height: calc(100dvh - 36px);
+
+    overflow: auto;
+  }
+
+  #lightbox .media {
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 420px;
+  }
+
+  #lightbox img,
+  #lightbox video {
+    max-width: 100%;
+
+    /* NEW: vh fallback for older mobile */
+    max-height: 70vh;
+    max-height: 70dvh;
+
+    height: auto;
+    display: block;
+  }
+
+  #lightbox .meta { padding: 16px; }
+  #lightbox .meta h2 { margin: 0 0 6px; }
+  #lightbox .meta p  { margin: 10px 0 0; line-height: 1.4; }
+
+  #lightbox .close {
+    position: absolute;              /* CHANGED: was fixed */
+    top: 18px;
+    right: 18px;
+    z-index: 10;                     /* NEW: above panel content */
+
+    width: 52px;
+    height: 52px;
+
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255,255,255,.95);
+    cursor: pointer;
+
+    padding: 0;
+    display: grid;
+    place-items: center;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+
+  #lightbox .close::before,
+  #lightbox .close::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 34px;
+    height: 4px;
+
+    background: #000;
+    border-radius: 3px;
+
+    transform-origin: center;
+  }
+
+  #lightbox .close::before { transform: translate(-50%, -50%) rotate(45deg); }
+  #lightbox .close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  @media (hover: hover) {
+    #lightbox .close:hover { background: rgba(0,0,0,.92); }
+    #lightbox .close:hover::before,
+    #lightbox .close:hover::after { background: #fff; }
+  }
+
+  #lightbox .close:focus-visible {
+    outline: 3px solid rgba(255,255,255,.9);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    #lightbox { padding: 12px; }
     #lightbox .panel {
-      width: min(980px, 100%);
-      background: #fff;
-      border-radius: 0px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      grid-template-columns: 1fr;
 
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-
-      max-height: calc(100dvh - 36px);
-      overflow: auto;
+      /* NEW: vh fallback for older mobile */
+      max-height: calc(100vh - 24px);
+      max-height: calc(100dvh - 24px);
     }
+    #lightbox .media { min-height: 220px; }
 
-    #lightbox .media {
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 420px;
+    #lightbox img, #lightbox video {
+      max-height: 45vh;              /* NEW fallback */
+      max-height: 45dvh;
     }
-
-    #lightbox img,
-    #lightbox video {
-      max-width: 100%;
-      max-height: 70dvh;
-      height: auto;
-      display: block;
-    }
-
-    #lightbox .meta { padding: 16px; }
-    #lightbox .meta h2 { margin: 0 0 6px; }
-    #lightbox .meta p  { margin: 10px 0 0; line-height: 1.4; }
 
     #lightbox .close {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-
-      width: 52px;
-      height: 52px;
-
-      border: 0;
-      border-radius: 999px;
-      background: rgba(255,255,255,.95);
-      cursor: pointer;
-
-      padding: 0;
-      display: grid;
-      place-items: center;
-
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      top: 12px;
+      right: 12px;
+      width: 50px;
+      height: 50px;
     }
+  }
 
-    #lightbox .close::before,
-    #lightbox .close::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 50%;
+  #fuseRing {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 42px;
+    height: 42px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
 
-      width: 34px;
-      height: 4px;
+    --p: 0;
 
-      background: #000;
-      border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  #fuseRing.active { opacity: 1; }
 
-      transform-origin: center;
-    }
-
-    #lightbox .close::before { transform: translate(-50%, -50%) rotate(45deg); }
-    #lightbox .close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
-
-    @media (hover: hover) {
-      #lightbox .close:hover { background: rgba(0,0,0,.92); }
-      #lightbox .close:hover::before,
-      #lightbox .close:hover::after { background: #fff; }
-    }
-
-    #lightbox .close:focus-visible {
-      outline: 3px solid rgba(255,255,255,.9);
-      outline-offset: 3px;
-    }
-
-    @media (max-width: 900px) {
-      #lightbox { padding: 12px; }
-      #lightbox .panel {
-        grid-template-columns: 1fr;
-        max-height: calc(100dvh - 24px);
-      }
-      #lightbox .media { min-height: 220px; }
-      #lightbox img, #lightbox video { max-height: 45dvh; }
-      #lightbox .close {
-        top: 12px;
-        right: 12px;
-        width: 50px;
-        height: 50px;
-      }
-    }
-
-    #fuseRing {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      width: 42px;
-      height: 42px;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 9999;
-
-      --p: 0;
-
-      opacity: 0;
-      transition: opacity 0.12s ease;
-    }
-    #fuseRing.active { opacity: 1; }
-
-    #fuseRing::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      background: conic-gradient(var(--cursor-color) calc(var(--p) * 1turn), rgba(0,255,255,0.18) 0);
-      -webkit-mask: radial-gradient(farthest-side, transparent 70%, #000 71%);
-              mask: radial-gradient(farthest-side, transparent 70%, #000 71%);
-      image-rendering: crisp-edges;
-      transform: translateZ(0);
-    }
-  </style>
+  #fuseRing::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background: conic-gradient(var(--cursor-color) calc(var(--p) * 1turn), rgba(0,255,255,0.18) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent 70%, #000 71%);
+            mask: radial-gradient(farthest-side, transparent 70%, #000 71%);
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+  }
+</style>
 
   <script>
     (function () {
@@ -278,9 +296,8 @@
   <div id="dot"></div>
   <div id="fuseRing" aria-hidden="true"></div>
 
-  <div id="ui">
+  <div id="ui" style="display:none;">
     <input id="file" type="file" accept="application/json" />
-    <small>Load exhibit.json exported from creator.html</small>
   </div>
 
   <div id="lightbox" role="dialog" aria-modal="true">
