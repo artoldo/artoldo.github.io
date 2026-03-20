@@ -1,0 +1,663 @@
+{
+  "branding": {
+    "title": "IMOEA",
+    "subtitle": "Prototype",
+    "logo": "data:image/png;base64,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",
+    "robotsIndexFollow": false,
+    "exportShowEventSearch": true
+  },
+  "markerIcon": "data:image/png;base64,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",
+  "markerIconMeta": {
+    "w": 100,
+    "h": 117
+  },
+  "events": [
+    {
+      "name": "ARS ELECTRONICA",
+      "description": "Since 1979, Ars Electronica has sought out interlinkages and congruities, causes and effects on the nexus of art, technology and society. The ideas circulating here are innovative, radical, eccentric in the best sense of that term. They influence our everyday life—our lifestyle, our way of life, every single day.\n\nThe Festival as proving ground, the Prix as competition honoring excellence, the Center as a year-‘round setting for presentation & interaction, and the Futurelab and Ars Electronica Solutions as as in-house R&D facility extend their feelers throughout the realms of science and research, art and technology. Ars Electronica’s divisions inspire one another and put futuristic visions to the test in a unique, creative feedback loop. It’s an integrated organism continuously reinventing itself.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Festival"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Linz",
+        "country": "Austria",
+        "house_number": ""
+      },
+      "lat": 48.305908,
+      "lng": 14.286198,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "CHRONIQUES",
+      "description": "CHRONIQUES – Resource center for artistic creation in the digital environment. \nConceived in the contrast and diversity of a dual identity between Marseille and Aix-en-Provence, CHRONIQUES is now a recognized international artistic event, but also a human organization whose obsession has remained unchanged for more than 20 years: the search for new aesthetics and imaginaries that shed light on the ambivalence of our relationship with technology. In 2024, CHRONIQUES was designated by the Ministry of Culture as the “Regional Center for Artistic Creation in the Digital Environment” for the PACA region. CHRONIQUES organizes the Biennale des Imaginaires Numériques (Digital Imagination Biennial), as well as public events (exhibitions, meetings, mediation activities) and training activities to decipher the inner workings of digital society. Finally, CHRONIQUES is also a platform for the production of original works, as well as for networking and mutual support around the production, distribution, and recognition of hybrid and digital arts.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Biennale"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Marsiglia",
+        "country": "Francia",
+        "house_number": ""
+      },
+      "lat": 43.296174,
+      "lng": 5.369953,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "CIKE",
+      "description": "CIKE is an independent organization established by the City of Košice to utilize the creative cross-sector collaboration among art, culture, science, and creative businesses, through use of digital technologies, for improving the quality of life in the city.\n\nCIKE implements urban transformation led by art and culture.\n\nCIKE operates at the intersection of open innovation, media art, new technologies, business capacity building, research, education, and citizens engagement to deliver solutions, co-designed and co-owned by all, for building resilient, sustainable, inclusive, open, and democratic communities.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Košice",
+        "country": "Slovacchia",
+        "house_number": ""
+      },
+      "lat": 48.717227,
+      "lng": 21.249677,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "GNRATION",
+      "description": "Located in Braga, a UNESCO Creative City for the Media Arts, and running since 2013, gnration is one of the leading Portuguese institutions working in the intersection between contemporary music, art and technology. gnration develops regular work in the programming of exhibitions, concerts/performances, artistic residencies and educational service directed towards a diverse audience. gnration has been commissioning new audiovisual works from a wide range of contemporary artists, including Phill Niblock, Mark Fell, AGF, Florian Hecker, Jana Winderen and Jim O’Rourke.",
+      "category": "",
+      "tags": [
+        "Residency"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Braga",
+        "country": "Portogallo",
+        "house_number": ""
+      },
+      "lat": 41.551058,
+      "lng": -8.428005,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "IMAL",
+      "description": "iMAL is a cultural organisation, located in Molenbeek, Brussels, combining the roles of an Art Center and a Lab. It is a meeting place between different communities with a special attention to the local scene. iMAL's 25th anniversary marks the beginning of a broader reflection on resilience, resistance to the dominant definition of progress, and the responsibility of fostering solidarity.\n\niMAL supports artistic practices that critically engage with digital technologies. We propose a multi-voiced and transdisciplinary approach to contemporary issues through our program consisting of exhibitions, research and production residencies, reflection and training, and public engagement.\n\niMAL also has its own workshop, the iMAL Fablab, where residencies take place every year. The Fablab also has its own public access system, with the aim of making technology accessible to all without distinction.\n\nIn the coming years, iMAL will explore the degrowth of computation and aims to emphasize the importance of regenerative production ecosystems.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Bruxelles - Brussel",
+        "country": "Belgio",
+        "house_number": ""
+      },
+      "lat": 50.846737,
+      "lng": 4.352493,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "IMPAKT",
+      "description": "IMPAKT [Centre for Media Culture] presents critical and creative views on contemporary media culture and on innovative audio-visual arts in an interdisciplinary context.\n\nIMPAKT is a media arts organization based in Utrecht and founded in 1988. We present critical and creative views on contemporary media culture and arts, in an interdisciplinary context. Our aim is to identify urgent issues in our digital and transglobal culture, by focusing on the relationship between society, media, technology and arts. We examine issues around politics, science and popular culture from different angles. We aim to present creative and innovative approaches and stir debates with critical ideas on common beliefs in society at large as well as towards dominant perceptions in arts and academia.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Utrecht",
+        "country": "Paesi Bassi",
+        "house_number": ""
+      },
+      "lat": 52.090701,
+      "lng": 5.121563,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "KERSNIKOVA INSTITUTE",
+      "description": "Kersnikova Institute is a non-profit organisation and platform for the development, production, and presentation of contemporary investigative art projects and new models of non-formal learning. Kersnikova encapsulates an exhibition venue and three labs: Kapelica Gallery, the internationally renowned contemporary investigative art space, the hackerspace Rampa, where relations between art, technology, and society are being reconsidered, the inspirational wet-lab BioTehna, which focuses on the artistic investigation of living systems, and the Vivarium laboratory, where possible forms of coexistence among animals, fungi, plants, and robots are being explored. The artistic program of Kersnikova is a source for the investigative learning and mentorship program developed to instigate the potential within the youth.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "",
+        "country": "Slovenia",
+        "house_number": ""
+      },
+      "lat": 46.050027,
+      "lng": 14.506929,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "KONTEJNER",
+      "description": "KONTEJNER is engaged in curatorial work, organization of art festivals, public cultural events, artwork production, education, publishing and social theory. KONTEJNER´s main field of interest is progressive contemporary intermedia art, sound art and experimental music, with special emphasis on projects investigating the role and meaning of science, technology and the body in our society. KONTEJNER is focusing on relevant and current phenomena, especially within provocative, fascinating and intriguing subjects and topics, as well as those perceived by the society as taboos.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Città di Zagabria",
+        "country": "Croazia",
+        "house_number": ""
+      },
+      "lat": 45.813097,
+      "lng": 15.977279,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "LABoral",
+      "description": "LABoral is a multidisciplinary institution which produces, disseminates and fosters access to new forms of culture rooted in the creative use of information and communication technologies (ICT). LABoral has been working in crossovers between arts, science and technology since its creation in 2007. The hybrid nature of the institution is seen through its focus on production, a practice that involves an intense knowledge exchange amongst professionals from different disciplines with a common objective. In this context, the collaboration with all these professionals has always been a new challenge, due to the differences and similarities between practices. Thus, this experience is to be shared, agreed and formalized, with similar hybrid institutions through the production of various research projects and related activities.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Gijón / Xixón",
+        "country": "Spagna",
+        "house_number": ""
+      },
+      "lat": 43.544942,
+      "lng": -5.66275,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "MEET",
+      "description": "MEET is the Italian organization that supports digital culture and creative technology.\nMEET was born out of Meet the Media Guru with the fundamental support of Fondazione Cariplo. The first partner is the platform of thoughts, ideas and events focused on innovation and digital technology the art critic and digital culture expert Maria Grazia Mattei founded in 2005; the second partner is one of the world’s main philanthropic organizations which aim is to help organizations to better serve their community and give ideas a future.\nMEET delivers a massive plan of on life – on line and on site – activities that bring people to experience and embrace digital technology as a part of their daily life and a resource for their creativity.\nDesigned as a social-oriented institution, MEET collects, promotes and shares creative ideas and innovative projects to reflect on the digital transformation through the lens of culture and arts.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Milano",
+        "country": "Italia"
+      },
+      "lat": 45.464194,
+      "lng": 9.189635,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "NEME",
+      "description": "NeMe is a non profit, Cyprus registered cultural NGO founded in November 2004. NeMe focuses exclusively on non-commercial events that feature new technologies in context to emerging critical theory. We emphasise intergenerational contact within a multidisciplinary framework with the creation of extensive networks for collaboration and transnational mobility. NeMe presents events in its own space, the NeMe Arts Centre, as well as other spaces and communities in a variety of locations both in Cyprus and abroad. In addition, it hosts visiting artists and scholars at the NeMe Arts Centre as well as its Residency Space.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Limisso",
+        "country": "Cipro",
+        "house_number": ""
+      },
+      "lat": 34.68529,
+      "lng": 33.033266,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "ONASSIS FOUNDATION",
+      "description": "The Onassis Foundation is a member of the European Media Arts Platform since 2018, and currently supports media arts residencies through the Onassis AiR and Onassis ONX initiatives.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "105 57",
+        "city": "Atene",
+        "country": "Grecia",
+        "house_number": ""
+      },
+      "lat": 37.975565,
+      "lng": 23.734832,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "RIXC",
+      "description": "RIXC is the center for new media culture, art gallery and artist collective, that initiates projects in intersection of art, science and emerging technologies. RIXC's activities include: running an art gallery, production of artworks and innovative art, science and technology projects, organising of the annual RIXC Art Science festival, exhibitions, publishing of Acoustic Space journal series.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Organisation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Riga",
+        "country": "Lettonia",
+        "house_number": ""
+      },
+      "lat": 56.949398,
+      "lng": 24.105185,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "WERKLEITZ CENTRE FOR MEDIA ART",
+      "description": "Werkleitz facilitates the production and presentation of new media art projects encouraging social and artistic issues.\n\nWerkleitz produces film and media art festivals and other events in various formats, including the Werkleitz Festival, the Videorama - a monthly changing programme of film and video art in public space - and offers trainings and technical support (facilities) to artists and filmmakers, as well as residencies to international artists active in media and digital arts.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Festival"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "Halle",
+        "country": "Germania",
+        "house_number": ""
+      },
+      "lat": 51.482435,
+      "lng": 11.971298,
+      "datetime": null,
+      "year": null,
+      "media": []
+    },
+    {
+      "name": "WRO ART CENTER",
+      "description": "WRO Art Center was founded in 2008 by the WRO Center for Media Art Foundation, an independent organization dedicated to contemporary art at the intersection of culture and emerging media. Supported by the Wrocław Municipal Authorities, the Center is located at Widok 7 in Wrocław, in a unique building combining new architecture with a renovated historical site—the former Otto Stiebler Kaffee Rösterei, the first electric coffee-roasting plant in Europe.\n\nThe Center organizes exhibitions, screenings, lectures, workshops, and interdisciplinary projects in the field of contemporary art. Its activities address both professionals and a broad public, including children and young people, and aim to support artistic practice, education, and open international exchange through collaborations, archives, and residency programs.\n\nWRO Art Center is closely connected to the WRO Media Art Biennale, one of the world’s longest-running media art events. Originating in 1989 and held biennially since 1993, the Biennale has become a major international platform for audiovisual and electronic art, reaching its 21st edition in 2025.",
+      "category": "",
+      "tags": [
+        "Residency",
+        "Foundation"
+      ],
+      "address": {
+        "road": "",
+        "postcode": "",
+        "city": "",
+        "country": "Polonia",
+        "house_number": ""
+      },
+      "lat": 51.126311,
+      "lng": 16.978196,
+      "datetime": null,
+      "year": null,
+      "media": [
+        "https://wrocenter.pl"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": 3,
+      "to": 8,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 8,
+      "to": 1,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 1,
+      "to": 9,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 9,
+      "to": 6,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 7,
+      "to": 11,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 11,
+      "to": 10,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 10,
+      "to": 8,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 8,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 4,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 4,
+      "to": 8,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 8,
+      "to": 5,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 5,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 14,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 14,
+      "to": 5,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 5,
+      "to": 12,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 12,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 14,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 14,
+      "to": 12,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 12,
+      "to": 0,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 0,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 14,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 14,
+      "to": 2,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 2,
+      "to": 14,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 14,
+      "to": 0,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 0,
+      "to": 9,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 9,
+      "to": 12,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 12,
+      "to": 10,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 10,
+      "to": 2,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 2,
+      "to": 11,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 11,
+      "to": 0,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 0,
+      "to": 2,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 2,
+      "to": 0,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 0,
+      "to": 6,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 6,
+      "to": 0,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 0,
+      "to": 7,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 7,
+      "to": 2,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 2,
+      "to": 5,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 6,
+      "to": 4,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 4,
+      "to": 9,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 9,
+      "to": 4,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 4,
+      "to": 1,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 1,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 12,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 12,
+      "to": 2,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 2,
+      "to": 1,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 1,
+      "to": 11,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 11,
+      "to": 9,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 9,
+      "to": 12,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 12,
+      "to": 8,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 9,
+      "to": 13,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 13,
+      "to": 3,
+      "color": "#ffa500",
+      "type": "solid"
+    },
+    {
+      "from": 3,
+      "to": 1,
+      "color": "#ffa500",
+      "type": "solid"
+    }
+  ]
+}
