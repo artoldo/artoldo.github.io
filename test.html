@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Background Random Playlist</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden;
+    background: black;
+  }
+  #backgroundVideoContainer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+  }
+  iframe.backgroundVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    object-fit: cover;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="backgroundVideoContainer"></div>
+
+<script>
+  // --- Array of playlist IDs ---
+  const playlists = [
+    "PL_LVhuUg2LogDFHtNCRPRe8oBrXSBlBnD",
+    "PL_LVhuUg2LogRmcpEAkM4gSX-GSKvDWKE"
+    // add more playlist IDs here
+  ];
+
+  function getRandomPlaylist() {
+    return playlists[Math.floor(Math.random() * playlists.length)];
+  }
+
+  function makeEmbedSrc(playlistId) {
+    return `https://www.youtube.com/embed?listType=playlist&list=${playlistId}&autoplay=1&mute=1&controls=0&loop=1&playlist=${playlistId}`;
+  }
+
+  function embedBackgroundVideo() {
+    const playlistId = getRandomPlaylist();
+    const container = document.getElementById('backgroundVideoContainer');
+    container.innerHTML = `<iframe class="backgroundVideo" src="${makeEmbedSrc(playlistId)}" allow="autoplay; fullscreen"></iframe>`;
+  }
+
+  embedBackgroundVideo();
+</script>
+
+</body>
+</html>
