@@ -438,6 +438,11 @@ function checkInteractions(){
 function animate(){
   const now = performance.now();
 
+portals.forEach(p => {
+    const pos = p.el.object3D.position;
+    pos.y = 0.5 + Math.sin(performance.now() * p.hover) * 0.5;
+});
+
   // Floaters oscillate in Y
   floaters.forEach(f => {
     f.el.object3D.position.y = f.baseY + Math.sin(now * f.speed) * 10;
