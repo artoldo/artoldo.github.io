@@ -28,7 +28,7 @@ button{width:100%;margin-top:10px;padding:8px 0;font-size:14px;font-weight:bold;
 button:hover{background:linear-gradient(145deg,magenta,cyan);}
 .a-enter-vr-button { display: none !important; }
 #ui {
-  padding: 10px 10px 90px 10px; /* top 10px, right 10px, bottom 20px, left 10px */
+  padding: 60px 30px 90px 30px; /* top, right, bottom, left*/
   box-sizing: border-box;
 }
 </style>
@@ -122,7 +122,7 @@ const DISPLAY_NAMES={
   height:"City Speculation Grade",
   hue:"City Danger & Safety Grade",
   chaos:"System Turbulence & Stability",
-  portals:"System Permutativeness",
+  portals:"System Portals Permutativeness",
   floaters:"Novelty Creation & Productivity",
   floaterColor:"Conservation & Progress Tendency",
   cylinderAmount:"Machine Solidarity - A(I)gency Housing",
@@ -138,7 +138,7 @@ const DISPLAY_NAMES={
 // Build UI sliders + button
 function buildUI(){
   const ui=document.getElementById("ui");
-  ui.innerHTML="<br><br><b>Mutant City – System Settings</b><br>";
+  ui.innerHTML="<b>Mutant City – System Settings</b>";
 
 PARAMS.forEach(param=>{
   const label=document.createElement("label");
@@ -465,6 +465,180 @@ toggle.addEventListener('click', () => {
     icon.style.transform = 'rotate(0deg)';
   }
   icon.style.transition = 'transform 0.4s ease';
+});
+</script>
+
+<script>
+// --- CREATE BUTTON ---
+const randomBtn = document.createElement('div');
+randomBtn.innerHTML = '<span class="material-icons">recycling</span>';
+document.body.appendChild(randomBtn);
+
+// --- STYLE BUTTON ---
+Object.assign(randomBtn.style, {
+  position: 'fixed',
+  bottom: '20px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  zIndex: '1000',
+  width: '56px',
+  height: '56px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'rgba(0,0,0,0.6)',
+  color: 'white',
+  fontSize: '28px',
+  cursor: 'pointer',
+  backdropFilter: 'blur(6px)',
+  transition: 'transform 0.2s ease'
+});
+
+// --- ADD SHAKE KEYFRAMES ---
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes flashShake {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-10deg); }
+  50% { transform: translateX(-50%) rotate(10deg); }
+  75% { transform: translateX(-50%) rotate(-6deg); }
+  100% { transform: translateX(-50%) rotate(0deg); }
+}
+`;
+document.head.appendChild(style);
+
+// --- CLICK ACTION ---
+randomBtn.onclick = () => {
+  randomizeWorld();
+
+  // trigger shake
+  randomBtn.style.animation = 'flashShake 0.3s ease';
+  setTimeout(() => {
+    randomBtn.style.animation = '';
+  }, 300);
+};
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Create Speaker Button ---
+  const speakerBtn = document.createElement("button");
+  speakerBtn.id = "speakerToggle";
+  speakerBtn.style.position = "fixed";
+  speakerBtn.style.left = "12px";
+  speakerBtn.style.bottom = "12px";
+  speakerBtn.style.width = "44px";
+  speakerBtn.style.height = "44px";
+  speakerBtn.style.borderRadius = "50%";
+  speakerBtn.style.border = "none";
+  speakerBtn.style.background = "rgba(0,0,0,0.5)";
+  speakerBtn.style.display = "flex";
+  speakerBtn.style.alignItems = "center";
+  speakerBtn.style.justifyContent = "center";
+  speakerBtn.style.cursor = "pointer";
+  speakerBtn.style.zIndex = 1000;
+  speakerBtn.title = "Toggle Music";
+
+  // Material icons
+  const icon = document.createElement("span");
+  icon.className = "material-icons";
+  icon.textContent = "volume_off"; // start muted
+  icon.style.color = "white";
+  icon.style.fontSize = "28px";
+  speakerBtn.appendChild(icon);
+
+  document.body.appendChild(speakerBtn);
+
+  // --- Create Audio Player ---
+  const audioPlayer = document.createElement("audio");
+  audioPlayer.id = "backgroundAudio";
+  audioPlayer.style.display = "none";
+  document.body.appendChild(audioPlayer);
+
+  const playlist = [
+    { title: "Sundance", artist: "Tisch", src: "./assets/music/01.mp3" },
+    { title: "8 Bit Super Party", artist: "Tisch", src: "./assets/music/02.mp3" },
+    { title: "Flashback", artist: "Tisch", src: "./assets/music/03.mp3" },
+    { title: "Dancing Lights", artist: "Tisch", src: "./assets/music/04.mp3" },
+    { title: "Teddy Bear in Trance", artist: "Tisch", src: "./assets/music/05.mp3" },
+    { title: "Stranger", artist: "Tisch", src: "./assets/music/06.mp3" },
+    { title: "Time", artist: "Tisch", src: "./assets/music/07.mp3" },
+    { title: "Mystic Monsters", artist: "Tisch", src: "./assets/music/08.mp3" },
+    { title: "Hyper Horses", artist: "Tisch", src: "./assets/music/09.mp3" },
+    { title: "Escape", artist: "Tisch", src: "./assets/music/10.mp3" },
+    { title: "Invisible", artist: "Tisch", src: "./assets/music/11.mp3" }
+  ];
+
+  let currentIndex = Math.floor(Math.random() * playlist.length);
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const sourceNode = audioContext.createMediaElementSource(audioPlayer);
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 0.2; // initial volume
+  sourceNode.connect(gainNode).connect(audioContext.destination);
+
+  function loadTrack(index) {
+    const track = playlist[index];
+    audioPlayer.src = track.src;
+  }
+
+  function nextTrack() {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    loadTrack(currentIndex);
+    audioPlayer.play();
+  }
+
+  audioPlayer.addEventListener("ended", nextTrack);
+
+  // --- Toggle Music ---
+  let playing = false;
+  speakerBtn.addEventListener("click", () => {
+    if (audioContext.state === "suspended") audioContext.resume();
+
+    if (!playing) {
+      loadTrack(currentIndex);
+      audioPlayer.play();
+      icon.textContent = "volume_up";
+      playing = true;
+
+      // Optional: subtle shake animation
+      speakerBtn.animate([
+        { transform: 'rotate(0deg)' },
+        { transform: 'rotate(15deg)' },
+        { transform: 'rotate(-15deg)' },
+        { transform: 'rotate(0deg)' }
+      ], { duration: 300, iterations: 1 });
+    } else {
+      audioPlayer.pause();
+      icon.textContent = "volume_off";
+      playing = false;
+    }
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Top-Centered Image Link ---
+  const topLink = document.createElement("a");
+  topLink.href = "https://artoldo.com"; 
+  topLink.target = "_blank";
+  topLink.style.position = "fixed";
+  topLink.style.top = "12px";
+  topLink.style.left = "50%";
+  topLink.style.transform = "translateX(-50%)";
+  topLink.style.zIndex = 1000;
+  topLink.style.display = "inline-block";
+
+  const img = document.createElement("img");
+  img.src = "./assets/logo.svg";
+  img.alt = "Logo";
+  img.style.width = "140px";
+  img.style.height = "auto";
+  img.style.cursor = "pointer";
+
+  topLink.appendChild(img);
+  document.body.appendChild(topLink);
 });
 </script>
 
