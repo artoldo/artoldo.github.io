@@ -499,12 +499,7 @@ function bufferToWav(buffer){
 
 // live keyboard play (fixed)
 document.addEventListener("keydown", e=>{
-  // Space bar toggles play/pause
-  if (e.code === "Space" || e.key === " " || e.key === "Spacebar") {
-    e.preventDefault(); // Prevent page scroll
-    play.click();
-    return;
-  }
+
   const key = e.key.toLowerCase();
   if(key.length === 1 && key.match(/[a-z0-9 .,;!?]/)){
     playLetter(key);
