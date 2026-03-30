@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PONOMA – Poetic Noise Machine</title>
+<style>
+body{
+  background:#111;
+  color:white;
+  font-family:system-ui;
+  text-align:center;
+  margin:20px;
+}
+textarea{
+  width:95%;
+  max-width:600px;
+  height:100px;
+  padding:10px;
+  margin-bottom:15px;
+  font-size:16px;
+  background:#222;
+  color:white;
+  border:none;
+  border-radius:6px;
+  resize:none;
+  outline:none;
+}
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin-top:15px;
+}
+label{
+  font-size:12px;
+  display:flex;
+  flex-direction:column;
+}
+input, select{
+  padding:5px;
+  border-radius:6px;
+  border:none;
+  background:#222;
+  color:white;
+  outline:none;
+}
+button{
+  padding:10px 20px;
+  margin-top:15px;
+  font-size:16px;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+  outline:none;
+}
+#play{background:#0af;}
+#saveBtn,#loadBtn,#exportBtn{background:#222;margin-left:5px;margin-top:0;}
+.button-row{margin-top:10px; display:flex; justify-content:center; gap:5px; flex-wrap:wrap;}
+canvas{display:block;margin:15px auto; width:95%; max-width:600px; height:150px; background:#111;}
+.visualizer-wrapper{
+  position:relative;
+  width:95%;
+  max-width:600px;
+  margin:15px auto;
+}
+.visualizer-wrapper canvas{
+  display:block;
+  width:100%;
+  height:150px;
+  background:#111;
+}
+.visualizer-overlay{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:48px;
+  font-weight:700;
+  letter-spacing:6px;
+  color:rgba(255,255,255,0.08);
+  pointer-events:none;
+  user-select:none;
+}
+/* Switch style */
+.switch{position:relative;display:inline-block;width:50px;height:24px;}
+.switch input{display:none;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#555;border-radius:24px;transition:.3s;}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+.switch input:checked + .slider{background:#0af;}
+.switch input:checked + .slider:before{transform:translateX(26px);}
+
+/* Custom slider */
+input[type=range]{
+  -webkit-appearance:none;
+  width:100px;
+  height:6px;
+  background:#333;
+  border-radius:3px;
+  outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:16px;
+  height:16px;
+  background:#0af;
+  cursor:pointer;
+  border-radius:50%;
+  border:none;
+}
+input[type=range]::-moz-range-thumb{
+  width:16px;
+  height:16px;
+  background:#0af;
+  cursor:pointer;
+  border-radius:50%;
+  border:none;
+}
+
+*:focus{
+  outline:none;
+  box-shadow:none;
+}
+</style>
+</head>
+<body>
+
+<div class="button-row">
+<button id="saveBtn">Save</button>
+<button id="loadBtn">Load</button>
+<input type="file" id="fileInput" accept=".json" style="display:none;">
+<button id="exportBtn">Export</button>
+</div>
+
+<h2>Poetic Noise Machine</h2>
+
+<div class="visualizer-wrapper">
+  <canvas id="visualizer"></canvas>
+  <div class="visualizer-overlay">PONOMA</div>
+</div>
+
+<textarea id="text" placeholder="Type your text..."></textarea>
+
+<div class="controls">
+<label>Style
+<select id="style">
+<option value="musical">Musical</option>
+<option value="ambient">Ambient</option>
+<option value="glitch">Glitch</option>
+<option value="binaural">Binaural</option>
+</select></label>
+
+<label>Engine
+<select id="engine">
+<option value="osc">Oscillator</option>
+<option value="noise">Noise</option>
+<option value="hybrid">Hybrid</option>
+</select></label>
+
+<label>Amp FX
+<select id="amp">
+<option value="clean">Clean</option>
+<option value="echo">Echo</option>
+<option value="delay">Delay</option>
+<option value="reverb">Reverb</option>
+</select></label>
+
+<label>Filter Frequency
+<input type="range" id="filterFreq" min="50" max="3000" value="600"></label>
+
+<label>Drive
+<input type="range" id="drive" min="0" max="100" value="0"></label>
+
+<label>Attack
+<input type="range" id="attack" min="0.01" max="1" step="0.01" value="0.05"></label>
+
+<label>Release
+<input type="range" id="release" min="0.05" max="2" step="0.01" value="0.3"></label>
+
+<label>Volume
+<input type="range" id="volume" min="0" max="1" step="0.01" value="0.7"></label>
+
+<label>Stereo
+<input type="range" id="stereo" min="-1" max="1" step="0.01" value="0"></label>
+
+<label>Loop
+<div class="switch"><input type="checkbox" id="loop"><span class="slider"></span></div></label>
+</div>
+
+<button id="play">Play</button>
+
+<script>
+const ctx = new (window.AudioContext||window.webkitAudioContext)();
+const masterGain = ctx.createGain();
+masterGain.gain.value = 0.7;
+
+const stereoPanner = ctx.createStereoPanner();
+stereoPanner.pan.value = 0;
+
+masterGain.connect(stereoPanner);
+stereoPanner.connect(ctx.destination);
+
+let isPlaying=false;
+let loopTimeout=null;
+let scheduledEndTime=0;
+
+// visualizer
+const canvas = document.getElementById("visualizer");
+const cctx = canvas.getContext("2d");
+const analyser = ctx.createAnalyser();
+analyser.fftSize = 256;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+let currentAmpNode = null;
+function connectVisualizerToAmpNode(node) {
+  // Disconnect previous
+  try { analyser.disconnect(); } catch(e){}
+  if (currentAmpNode) {
+    try { currentAmpNode.disconnect(analyser); } catch(e){}
+  }
+  if (node) {
+    node.connect(analyser);
+    currentAmpNode = node;
+  }
+}
+function drawVisualizer(){
+  requestAnimationFrame(drawVisualizer);
+  analyser.getByteFrequencyData(dataArray);
+  cctx.fillStyle="#111";
+  cctx.fillRect(0,0,canvas.width,canvas.height);
+  const barWidth = (canvas.width / bufferLength);
+  let x=0;
+  for(let i=0;i<bufferLength;i++){
+    const barHeight=dataArray[i];
+    cctx.fillStyle=`hsl(${barHeight},100%,50%)`;
+    cctx.fillRect(x,canvas.height-barHeight/2,barWidth,barHeight/2);
+    x+=barWidth+1;
+  }
+}
+drawVisualizer();
+
+// helpers
+function createDistortion(amount, offlineCtx){
+  const ctxRef = offlineCtx||ctx;
+  const ws = ctxRef.createWaveShaper();
+  const curve = new Float32Array(44100);
+  for(let i=0;i<44100;i++){
+    const x=i*2/44100-1;
+    curve[i]=(1+amount)*x/(1+amount*Math.abs(x));
+  }
+  ws.curve=curve; return ws;
+}
+
+function createNoise(offlineCtx){
+  const ctxRef = offlineCtx||ctx;
+  const buffer = ctxRef.createBuffer(1, ctxRef.sampleRate, ctxRef.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++){data[i]=Math.random()*2-1;}
+  const src = ctxRef.createBufferSource(); src.buffer = buffer; return src;
+}
+
+// Rewritten createAmpFX to properly connect FX nodes for offline rendering (WAV export)
+function createAmpFX(type, offlineCtx){
+  const ctxRef = offlineCtx || ctx;
+  // Clean: just a gain node
+  if(type==="clean") return ctxRef.createGain();
+
+  // Echo/Delay: delay + feedback
+  if(type==="echo"||type==="delay"){
+    const delay = ctxRef.createDelay();
+    delay.delayTime.value = type==="echo"?0.3:0.15;
+    const fb = ctxRef.createGain(); fb.gain.value = 0.4;
+    // Feedback loop
+    delay.connect(fb).connect(delay);
+
+    // For offline rendering, connect delay node to destination so output is rendered
+    if(offlineCtx) {
+      delay.connect(ctxRef.destination);
+    } else {
+      // For live, connect to nothing here; caller connects to masterGain and visualizer
+    }
+    return delay;
+  }
+
+  // Reverb: convolver with noise impulse
+  if(type==="reverb"){
+    const convolver = ctxRef.createConvolver();
+    const buffer = ctxRef.createBuffer(2, ctxRef.sampleRate*2, ctxRef.sampleRate);
+    for(let c=0;c<2;c++){
+      const d=buffer.getChannelData(c);
+      for(let i=0;i<d.length;i++){ d[i] = (Math.random()*2-1)*(1-i/d.length); }
+    }
+    convolver.buffer = buffer;
+    // For offline rendering, connect to destination so output is rendered
+    if(offlineCtx) {
+      convolver.connect(ctxRef.destination);
+    } else {
+      // For live, connect to nothing here; caller connects to masterGain and visualizer
+    }
+    return convolver;
+  }
+}
+
+// play typed text
+function playText(){
+  const t=document.getElementById("text").value;
+  if(!t) return;
+  const styleValue=document.getElementById("style").value;
+  const engineValue=document.getElementById("engine").value;
+  const ampValue=document.getElementById("amp").value;
+  const filterValue=parseFloat(document.getElementById("filterFreq").value);
+  const driveValue=parseFloat(document.getElementById("drive").value);
+  const attackValue=parseFloat(document.getElementById("attack").value);
+  const releaseValue=parseFloat(document.getElementById("release").value);
+
+  const ampNode = createAmpFX(ampValue);
+  // Connect ampNode to masterGain for output, and to analyser for visualizer
+  ampNode.connect(masterGain);
+  connectVisualizerToAmpNode(ampNode);
+
+  let time = ctx.currentTime;
+  const step = 0.15;
+
+  for(let char of t){
+    const code = char.charCodeAt(0);
+    let freq = 200 + (code*10)%800;
+    if(styleValue==="musical"){const scale=[261,293,329,349,392,440,493]; freq=scale[code%scale.length];}
+    if(styleValue==="ambient") freq=100+(code%200);
+    if(styleValue==="glitch") freq=100+Math.random()*2000;
+    if(styleValue==="binaural") freq=200;
+
+    let source;
+    if(engineValue==="noise"){source=createNoise();}
+    else{const osc=ctx.createOscillator(); osc.type=["sine","triangle","square","sawtooth"][code%4]; osc.frequency.value=freq; source=osc;}
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.setValueAtTime(0,time);
+    gainNode.gain.linearRampToValueAtTime(0.4,time+attackValue);
+    gainNode.gain.linearRampToValueAtTime(0,time+attackValue+releaseValue);
+
+    const filterNode = ctx.createBiquadFilter();
+    filterNode.type="lowpass"; filterNode.frequency.value=filterValue;
+
+    const distortionNode = createDistortion(driveValue);
+
+    source.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+
+    if(styleValue==="binaural"){
+      const right=ctx.createOscillator(); right.frequency.value=freq+8;
+      right.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+      right.start(time); right.stop(time+attackValue+releaseValue);
+    }
+
+    source.start(time); source.stop(time+attackValue+releaseValue);
+    time += step;
+  }
+
+  scheduledEndTime=time;
+  scheduleEndCheck();
+}
+
+function scheduleEndCheck(){
+  const remaining = scheduledEndTime - ctx.currentTime;
+  if(remaining<=0){if(loop.checked){playText();} else{stopPlayback();}}
+  else{loopTimeout=setTimeout(scheduleEndCheck, remaining*1000);}
+}
+
+function stopPlayback(){clearTimeout(loopTimeout); isPlaying=false; play.innerText="Play";}
+
+// play/pause
+play.onclick=()=>{if(!isPlaying){playText(); isPlaying=true; play.innerText="Pause";} else{stopPlayback();}};
+
+// live parameter updates
+document.querySelectorAll("input,select").forEach(el=>{
+  el.addEventListener("input",()=>{if(isPlaying){clearTimeout(loopTimeout);playText();}});
+});
+
+volume.addEventListener("input", ()=>{
+  masterGain.gain.value = parseFloat(volume.value);
+});
+
+stereo.addEventListener("input", ()=>{
+  stereoPanner.pan.value = parseFloat(stereo.value);
+});
+
+// save/load
+saveBtn.onclick=()=>{
+  const s={text:text.value,style:style.value,engine:engine.value,amp:amp.value,
+           filterFreq:filterFreq.value,drive:drive.value,attack:attack.value,release:release.value,loop:loop.checked};
+  const b=new Blob([JSON.stringify(s,null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(b); const a=document.createElement("a"); a.href=u; a.download="textsynth-settings.json"; a.click();
+};
+loadBtn.onclick=()=>{fileInput.click();}
+fileInput.addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(ev){ const s=JSON.parse(ev.target.result);
+    text.value=s.text; style.value=s.style; engine.value=s.engine; amp.value=s.amp;
+    filterFreq.value=s.filterFreq; drive.value=s.drive;
+    attack.value=s.attack; release.value=s.release; loop.checked=s.loop;
+  }; r.readAsText(f);
+});
+
+// full FX export
+exportBtn.onclick = async () => {
+  const t = text.value; if (!t) return;
+  const styleValue = document.getElementById("style").value;
+  const engineValue = document.getElementById("engine").value;
+  const ampValue = document.getElementById("amp").value;
+  const filterValue = parseFloat(filterFreq.value);
+  const driveValue = parseFloat(drive.value);
+  const attackValue = parseFloat(attack.value);
+  const releaseValue = parseFloat(release.value);
+  const step = 0.15;
+  const duration = Math.ceil(t.length * step + 1);
+
+  const offline = new OfflineAudioContext(2, 44100 * duration, 44100);
+  // Add a master gain for fade-in/fade-out
+  const masterFadeGain = offline.createGain();
+  masterFadeGain.gain.value = 1;
+  masterFadeGain.connect(offline.destination);
+
+  const ampNode = createAmpFX(ampValue, offline);
+  // Connect ampNode to masterFadeGain for offline rendering (not to offline.destination directly)
+  ampNode.connect(masterFadeGain);
+
+  let time = 0;
+  for (let char of t) {
+    const code = char.charCodeAt(0);
+    let freq = 200 + (code * 10) % 800;
+    if (styleValue === "musical") { const scale = [261, 293, 329, 349, 392, 440, 493]; freq = scale[code % scale.length]; }
+    if (styleValue === "ambient") freq = 100 + (code % 200);
+    if (styleValue === "glitch") freq = 100 + Math.random() * 2000;
+    if (styleValue === "binaural") freq = 200;
+
+    let source;
+    if (engineValue === "noise") { source = createNoise(offline); }
+    else { const osc = offline.createOscillator(); osc.type = ["sine", "triangle", "square", "sawtooth"][code % 4]; osc.frequency.value = freq; source = osc; }
+
+    const gainNode = offline.createGain();
+    gainNode.gain.setValueAtTime(0, time);
+    gainNode.gain.linearRampToValueAtTime(0.4, time + attackValue);
+    gainNode.gain.linearRampToValueAtTime(0, time + attackValue + releaseValue);
+
+    const filterNode = offline.createBiquadFilter();
+    filterNode.type = "lowpass"; filterNode.frequency.value = filterValue;
+
+    const distortionNode = createDistortion(driveValue, offline);
+
+    source.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+
+    if (styleValue === "binaural") {
+      const right = offline.createOscillator(); right.frequency.value = freq + 8;
+      right.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+      right.start(time); right.stop(time + attackValue + releaseValue);
+    }
+
+    source.start(time); source.stop(time + attackValue + releaseValue);
+    time += step;
+  }
+
+  // Fade-in and fade-out using linear ramp on masterFadeGain
+  const fadeDur = 0.05;
+  const totalDur = duration;
+  masterFadeGain.gain.setValueAtTime(0, 0);
+  masterFadeGain.gain.linearRampToValueAtTime(1, fadeDur);
+  masterFadeGain.gain.setValueAtTime(1, totalDur - fadeDur);
+  masterFadeGain.gain.linearRampToValueAtTime(0, totalDur);
+
+  const rendered = await offline.startRendering();
+  const wavBlob = bufferToWav(rendered);
+  const url = URL.createObjectURL(wavBlob);
+  const a = document.createElement("a"); a.href = url; a.download = "ponoma.wav"; a.click();
+};
+
+function bufferToWav(buffer){
+  const numOfChan = buffer.numberOfChannels;
+  const length = buffer.length*numOfChan*2+44;
+  const bufferArray = new ArrayBuffer(length);
+  const view = new DataView(bufferArray);
+  let offset=0;
+  function writeString(str){for(let i=0;i<str.length;i++){view.setUint8(offset++,str.charCodeAt(i));}}
+  writeString('RIFF'); view.setUint32(offset,36+buffer.length*2,true); offset+=4;
+  writeString('WAVE'); writeString('fmt '); view.setUint32(offset,16,true); offset+=4;
+  view.setUint16(offset,1,true); offset+=2; view.setUint16(offset,numOfChan,true); offset+=2;
+  view.setUint32(offset,buffer.sampleRate,true); offset+=4;
+  view.setUint32(offset,buffer.sampleRate*2*numOfChan,true); offset+=4;
+  view.setUint16(offset,numOfChan*2,true); offset+=2; view.setUint16(offset,16,true); offset+=2;
+  writeString('data'); view.setUint32(offset,buffer.length*2*numOfChan,true); offset+=4;
+  const channels=[]; for(let i=0;i<numOfChan;i++){channels.push(buffer.getChannelData(i));}
+  let sample=0; while(sample<buffer.length){for(let i=0;i<numOfChan;i++){
+    const s=Math.max(-1,Math.min(1,channels[i][sample])); view.setInt16(offset,s<0?s*0x8000:s*0x7FFF,true); offset+=2;} sample++;}
+  return new Blob([view],{type:'audio/wav'});
+}
+
+// live keyboard play (fixed)
+document.addEventListener("keydown", e=>{
+  // Space bar toggles play/pause
+  if (e.code === "Space" || e.key === " " || e.key === "Spacebar") {
+    e.preventDefault(); // Prevent page scroll
+    play.click();
+    return;
+  }
+  const key = e.key.toLowerCase();
+  if(key.length === 1 && key.match(/[a-z0-9 .,;!?]/)){
+    playLetter(key);
+  }
+});
+
+function playLetter(char){
+  const styleValue = style.value;
+  const engineValue = engine.value;
+  const ampValue = amp.value;
+  const filterValue = parseFloat(filterFreq.value);
+  const driveValue = parseFloat(drive.value);
+  const attackValue = parseFloat(attack.value);
+  const releaseValue = parseFloat(release.value);
+
+  let freq = 200 + (char.charCodeAt(0)*10)%800;
+  if(styleValue==="musical"){const scale=[261,293,329,349,392,440,493]; freq=scale[char.charCodeAt(0)%scale.length];}
+  if(styleValue==="ambient") freq=100+(char.charCodeAt(0)%200);
+  if(styleValue==="glitch") freq=100+Math.random()*2000;
+  if(styleValue==="binaural") freq=200;
+
+  let source;
+  if(engineValue==="noise"){ source=createNoise(); }
+  else { const osc = ctx.createOscillator(); osc.type=["sine","triangle","square","sawtooth"][char.charCodeAt(0)%4]; osc.frequency.value=freq; source=osc; }
+
+  const gainNode = ctx.createGain();
+  gainNode.gain.setValueAtTime(0, ctx.currentTime);
+  gainNode.gain.linearRampToValueAtTime(0.4, ctx.currentTime + attackValue);
+  gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + attackValue + releaseValue);
+
+  const filterNode = ctx.createBiquadFilter();
+  filterNode.type="lowpass"; filterNode.frequency.value = filterValue;
+
+  const distortionNode = createDistortion(driveValue);
+
+  const ampNode = createAmpFX(ampValue);
+  ampNode.connect(masterGain);
+  connectVisualizerToAmpNode(ampNode);
+
+  source.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+
+  if(styleValue==="binaural"){
+    const right = ctx.createOscillator();
+    right.frequency.value = freq+8;
+    right.connect(gainNode).connect(filterNode).connect(distortionNode).connect(ampNode);
+    right.start(ctx.currentTime); right.stop(ctx.currentTime + attackValue + releaseValue);
+  }
+
+  source.start(ctx.currentTime); source.stop(ctx.currentTime + attackValue + releaseValue);
+}
+</script>
+</body>
+</html>
