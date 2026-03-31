@@ -482,7 +482,7 @@ toggle.addEventListener('click', () => {
 <script>
 // --- CREATE BUTTON ---
 const randomBtn = document.createElement('div');
-randomBtn.innerHTML = '<span class="material-icons" translate="no">recycling</span>';
+randomBtn.innerHTML = '<span class="material-icons" translate="no">rocket_launch</span>';
 document.body.appendChild(randomBtn);
 
 // --- STYLE BUTTON ---
@@ -653,6 +653,55 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(topLink);
 });
 </script>
+
+<script>
+      // Create overlay
+      const overlay = document.createElement('div');
+
+      Object.assign(overlay.style, {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        gap: '20px',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: '999',
+        opacity: '1',
+        transition: 'opacity 1s ease',
+        cursor: 'pointer'
+      });
+
+      // Create images
+      const img1 = document.createElement('img');
+      img1.src = './assets/pc.png';
+      img1.style.maxWidth = '250px';
+
+      const img2 = document.createElement('img');
+      img2.src = './assets/mobile.png';
+      img2.style.maxWidth = '250px';
+
+      // Append images
+      overlay.appendChild(img1);
+      overlay.appendChild(img2);
+
+      // Add to DOM
+      document.body.appendChild(overlay);
+
+      // Fade out function
+      function fadeOut() {
+        if (!overlay) return;
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 1000);
+      }
+
+      // Click to hide
+      overlay.addEventListener('click', fadeOut);
+
+      // Auto hide after 5 seconds
+      setTimeout(fadeOut, 5000);
+    </script>
 
 </body>
 </html>
