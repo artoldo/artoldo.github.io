@@ -655,53 +655,53 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-      // Create overlay
-      const overlay = document.createElement('div');
+  // Detect touch device
+  const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-      Object.assign(overlay.style, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: '999',
-        opacity: '1',
-        transition: 'opacity 1s ease',
-        cursor: 'pointer'
-      });
+  // Only run on desktop
+  if (!isTouchDevice) {
 
-      // Create images
-      const img1 = document.createElement('img');
-      img1.src = './assets/pc.png';
-      img1.style.maxWidth = '250px';
+    // Create overlay
+    const overlay = document.createElement('div');
 
-      const img2 = document.createElement('img');
-      img2.src = './assets/mobile.png';
-      img2.style.maxWidth = '250px';
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: '999',
+      opacity: '1',
+      transition: 'opacity 1s ease',
+      cursor: 'pointer'
+    });
 
-      // Append images
-      overlay.appendChild(img1);
-      overlay.appendChild(img2);
+    // Create single image
+    const img = document.createElement('img');
+    img.src = './assets/pc.png';
+    img.style.maxWidth = '250px';
 
-      // Add to DOM
-      document.body.appendChild(overlay);
+    // Append image
+    overlay.appendChild(img);
 
-      // Fade out function
-      function fadeOut() {
-        if (!overlay) return;
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.remove(), 1000);
-      }
+    // Add to DOM
+    document.body.appendChild(overlay);
 
-      // Click to hide
-      overlay.addEventListener('click', fadeOut);
+    // Fade out
+    function fadeOut() {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 1000);
+    }
 
-      // Auto hide after 5 seconds
-      setTimeout(fadeOut, 5000);
-    </script>
+    // Click to hide
+    overlay.addEventListener('click', fadeOut);
+
+    // Auto hide after 10 seconds
+    setTimeout(fadeOut, 10000);
+  }
+</script>
 
 </body>
 </html>
