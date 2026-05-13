@@ -1,4 +1,4 @@
-<!-- Version: 3.6.8 | Last Update: 2026-05-13 | Author: ARTOLDO collective | © All rights reserved -->
+<!-- Version: 3.6.8 | Last Update: 2026-03-28 | Author: ARTOLDO collective | © All rights reserved -->
 
 <!DOCTYPE html>
 <html>
@@ -6,14 +6,14 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mutanicity</title>
+<title>Mutant City – Prototype – ARTOLDO collective</title>
 <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
 body {margin:0; overflow:hidden; font-family:sans-serif; background:#000;}
-#fade{position:fixed;inset:0;background:transparent;opacity:0;pointer-events:none;transition:opacity .5s;z-index:1000;}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .5s;z-index:1000;}
 #hud{position:fixed;top:12px;left:12px;color:#fff;z-index:999;}
 #timer{position:fixed;top:60px;left:12px;color:#fff;z-index:999;}
 #score{position:fixed;top:84px;left:12px;color:#fff;z-index:999;}
@@ -53,13 +53,12 @@ button:hover{background:linear-gradient(145deg,magenta,cyan);}
 </div>
 <div id="timer">Time: <span id="timeLabel">0</span></div>
 <div id="score">Coins: <span id="scoreLabel">0</span></div>
-<div id="warning" style="position:fixed;top:200px;left:12px;color:#fff;z-index:999;font-weight:bold;opacity:0;transition:opacity .3s;">Not enough coins for portal</div>
 
 <div id="menuToggle"><span class="material-icons" translate="no">settings</span></div>
 <div id="ui"></div>
 
 <a-scene fog="type:linear;color:#88aaff;near:1;far:60">
-  <a-entity id="rig" position="0 2 0" movement-controls="speed:1.5" look-controls="pointerLockEnabled:true">
+  <a-entity id="rig" position="0 2 0" movement-controls="speed:1.5" look-controls="pointerLockEnabled:false">
     <a-entity camera></a-entity>
   </a-entity>
 
@@ -80,7 +79,6 @@ const levelLabel=document.getElementById('levelLabel');
 const branchLabel=document.getElementById('branchLabel');
 const timeLabel=document.getElementById('timeLabel');
 const scoreLabel=document.getElementById('scoreLabel');
-const warningLabel=document.getElementById('warning');
 const skyEl=document.getElementById('sky');
 const floorEl=document.getElementById('floor');
 const flyingBallsContainer=document.getElementById('flyingBalls');
@@ -117,10 +115,6 @@ function recenterWorld(){
 setInterval(recenterWorld, 500);
 
 let LEVEL=1, elapsedTime=0, SCORE=0, MUTATIONS=-2, BRANCHES=0;
-const PORTAL_COST = 50;
-let portalCooldown = false;
-const MAGNET_RADIUS = 8;
-const MAGNET_SPEED = 0.12;
 const portals=[], chunks={}, floaters=[], collectibles=[], flyingBalls=[];
 
 // Genome and variables
@@ -207,7 +201,8 @@ if(!fileInput){
         PARAMS.forEach(p=>{ if(p in data) genome[p]=parseFloat(data[p]); });
         // Update sliders to reflect loaded values
         PARAMS.forEach(p=>{
-          if(sliders[p]) sliders[p].value = genome[p];
+          const slider = document.querySelector(`input[type=range][value='${genome[p]}']`);
+          if(slider) slider.value = genome[p];
         });
         resetWorld();
       }catch(err){
@@ -410,93 +405,26 @@ function updateFloor(){
 setInterval(updateFloor,100);
 
 
-
-function showWarning(msg){
-  warningLabel.textContent = msg;
-  warningLabel.style.opacity = 1;
-  clearTimeout(showWarning.timeout);
-  showWarning.timeout = setTimeout(()=>{
-    warningLabel.style.opacity = 0;
-  }, 1800);
-}
-
 // ---------------- INTERACTIONS ----------------
 function checkInteractions(){
-  const p = rig.object3D.position;
-
-  // --- PORTALS ---
+  const p=rig.object3D.position;
   for(let i=0;i<portals.length;i++){
-    const portal = portals[i];
-
-    const dx = p.x - portal.x;
-    const dz = p.z - portal.z;
-    const dist = Math.sqrt(dx*dx + dz*dz);
-
-    if(dist < 2 && !portalCooldown){
-
-      // NOT ENOUGH MONEY
-      if(SCORE < PORTAL_COST){
-        showWarning(`Need ${PORTAL_COST} coins to use portal`);
-        portalCooldown = true;
-
-        setTimeout(()=>{
-          portalCooldown = false;
-        },1000);
-
-        return;
-      }
-
-      // PAY PORTAL COST
-      SCORE = SCORE - PORTAL_COST;
-      scoreLabel.textContent = SCORE;
-
-      portalCooldown = true;
-
-      LEVEL++;
-      fadeEl.style.opacity = 1;
-
+    const portal=portals[i];
+    const dx=p.x-portal.x; const dz=p.z-portal.z;
+    if(Math.sqrt(dx*dx+dz*dz)<2){
+      LEVEL++; fadeEl.style.opacity=1;
       randomizeWorld();
-
-      rig.object3D.position.set(0,2,0);
-
-      setTimeout(()=>{
-        fadeEl.style.opacity = 0;
-        portalCooldown = false;
-      },800);
-
-      return;
+      rig.setAttribute('position','0 2 0');
+      setTimeout(()=>fadeEl.style.opacity=0,300);
+      break;
     }
   }
-
-  // --- MAGNETIC COLLECTIBLES ---
   collectibles.forEach(c=>{
     if(c.collected) return;
-
-    const objPos = c.el.object3D.position;
-
-    const dx = p.x - objPos.x;
-    const dy = (p.y - 1) - objPos.y;
-    const dz = p.z - objPos.z;
-
-    const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-
-    // Magnet effect
-    if(dist < MAGNET_RADIUS && dist > 0.01){
-      objPos.x += (dx / dist) * MAGNET_SPEED;
-      objPos.y += (dy / dist) * MAGNET_SPEED;
-      objPos.z += (dz / dist) * MAGNET_SPEED;
-    }
-
-    // Collect
-    if(dist < 1.5){
-      c.collected = true;
-
-      if(c.el.parentNode){
-        c.el.parentNode.removeChild(c.el);
-      }
-
-      SCORE += 10;
-      scoreLabel.textContent = SCORE;
+    const dx=p.x-c.x; const dz=p.z-c.z;
+    if(Math.sqrt(dx*dx+dz*dz)<1.5){
+      c.collected=true; c.el.parentNode.removeChild(c.el);
+      SCORE+=10; scoreLabel.textContent=SCORE;
     }
   });
 }
@@ -770,8 +698,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Click to hide
     overlay.addEventListener('click', fadeOut);
 
-    // Auto hide after 5 seconds
-    setTimeout(fadeOut, 5000);
+    // Auto hide after 10 seconds
+    setTimeout(fadeOut, 10000);
   }
 </script>
 
