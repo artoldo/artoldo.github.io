@@ -432,7 +432,7 @@ if(Math.sqrt(dx*dx+dz*dz)<2){
 
   } else {
 
-document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to use the portal</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
+document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to unlock a new world</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
 
     // Small visual flash
     fadeEl.style.opacity = 0.3;
@@ -547,14 +547,13 @@ document.head.appendChild(style);
 // --- CLICK ACTION ---
 randomBtn.onclick = () => {
 
-  if(SCORE >= 50){
+  if (SCORE >= 50) {
 
     SCORE -= 50;
     scoreLabel.textContent = SCORE;
 
     randomizeWorld();
 
-    // shake animation
     randomBtn.style.animation = 'flashShake 0.3s ease';
 
     setTimeout(() => {
@@ -565,25 +564,7 @@ randomBtn.onclick = () => {
 
     document.body.insertAdjacentHTML(
       'beforeend',
-      `<div id="coinWarn" style="
-        position:fixed;
-        top:50%;
-        left:50%;
-        transform:translate(-50%,-50%);
-        background:rgba(255,255,255,.5);
-        color:#000;
-        padding:18px 24px;
-        border-radius:18px;
-        font-family:sans-serif;
-        font-size:clamp(14px,2vw,18px);
-        z-index:9999;
-        max-width:80vw;
-        text-align:center;
-        line-height:1.5;
-      ">
-You need <b>50 coins</b><br>
-to teleport to a new world
-      </div>`
+      `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;box-shadow:0 0 0 200vmax rgba(0,0,0,.4);">You need <b>50 coins</b><br>to teleport to a new world</div>`
     );
 
     setTimeout(() => {
@@ -591,6 +572,7 @@ to teleport to a new world
     }, 2000);
 
   }
+
 };
 </script>
 
