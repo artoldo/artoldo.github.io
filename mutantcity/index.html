@@ -411,34 +411,31 @@ function checkInteractions(){
   for(let i=0;i<portals.length;i++){
     const portal=portals[i];
     const dx=p.x-portal.x; const dz=p.z-portal.z;
+
 if(Math.sqrt(dx*dx+dz*dz)<2){
 
-  // Portal costs 10 coins
   if(SCORE >= 10){
 
     SCORE -= 10;
     scoreLabel.textContent = SCORE;
 
     LEVEL++;
+
     fadeEl.style.opacity = 1;
 
-    randomizeWorld();
+    setTimeout(() => {
+      randomizeWorld();
+      rig.setAttribute('position','0 2 0');
+    }, 150);
 
-    rig.setAttribute('position','0 2 0');
-
-    setTimeout(()=>{
+    setTimeout(() => {
       fadeEl.style.opacity = 0;
-    },300);
+    }, 300);
 
   } else {
 
-document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to use the portal</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
+    document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to use the portal</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
 
-    // Small visual flash
-    fadeEl.style.opacity = 0.3;
-    setTimeout(()=>{
-      fadeEl.style.opacity = 0;
-    },150);
   }
 
   break;
