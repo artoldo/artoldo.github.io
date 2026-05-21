@@ -432,7 +432,7 @@ if(Math.sqrt(dx*dx+dz*dz)<2){
 
   } else {
 
-document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to unlock a new world</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
+document.body.insertAdjacentHTML('beforeend', `<div id="coinWarn" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.5);color:#000;padding:18px 24px;border-radius:18px;font-family:sans-serif;font-size:clamp(16px,2vw,18px);z-index:9999;max-width:80vw;text-align:center;line-height:1.5;">You need <b>10 coins</b><br>to use the portal</div>`); setTimeout(()=>document.getElementById('coinWarn')?.remove(),2000);
 
     // Small visual flash
     fadeEl.style.opacity = 0.3;
@@ -569,7 +569,7 @@ randomBtn.onclick = () => {
 
     setTimeout(() => {
       document.getElementById('coinWarn')?.remove();
-    }, 2000);
+    }, 5000);
 
   }
 
