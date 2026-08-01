@@ -320,17 +320,37 @@ function makeChunk(x,z){
   }
 
   // Portals
-  if(rnd()<genome.portals){
-    const px=x*CHUNK_SIZE+(rnd()-0.5)*CHUNK_SIZE;
-    const pz=z*CHUNK_SIZE+(rnd()-0.5)*CHUNK_SIZE;
-    const portal=document.createElement('a-torus');
-    portal.setAttribute('position',`${px} 0.5 ${pz}`);
-    portal.setAttribute('radius',1.5); portal.setAttribute('radius-tubular',0.12);
-    portal.setAttribute('rotation','90 0 0');
-    portal.setAttribute('material',`color:hsl(${Math.random()*360},80%,60%);emissive:hsl(${Math.random()*360},80%,60%);transparent:true;opacity:0.5`);
-    world.appendChild(portal);
-    portals.push({el:portal, x:px, y:0.5, z:pz, hover:Math.random()*0.005});
-  }
+const portalCount = Math.max(1, Math.floor(genome.portals * 3));
+
+for(let i = 0; i < portalCount; i++){
+  const px = x * CHUNK_SIZE + (rnd() - 0.5) * CHUNK_SIZE;
+  const pz = z * CHUNK_SIZE + (rnd() - 0.5) * CHUNK_SIZE;
+
+  const portal = document.createElement('a-torus');
+
+  portal.setAttribute('position', `${px} 0.5 ${pz}`);
+  portal.setAttribute('radius', 1.5);
+  portal.setAttribute('radius-tubular', 0.12);
+  portal.setAttribute('rotation', '90 0 0');
+
+  portal.setAttribute(
+    'material',
+    `color:hsl(${Math.random()*360},80%,60%);
+     emissive:hsl(${Math.random()*360},80%,60%);
+     transparent:true;
+     opacity:0.5`
+  );
+
+  world.appendChild(portal);
+
+  portals.push({
+    el: portal,
+    x: px,
+    y: 0.5,
+    z: pz,
+    hover: Math.random() * 0.005
+  });
+}
 
   // Octagons (X-axis rotation)
   const octCount=Math.floor(1+genome.octagonAmount*3);
