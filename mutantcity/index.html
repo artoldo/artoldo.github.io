@@ -575,36 +575,56 @@ randomBtn.onclick = () => {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
   // --- Create Speaker Button ---
   const speakerBtn = document.createElement("button");
   speakerBtn.id = "speakerToggle";
-  speakerBtn.style.position = "fixed";
-  speakerBtn.style.left = "12px";
-  speakerBtn.style.bottom = "12px";
-  speakerBtn.style.width = "44px";
-  speakerBtn.style.height = "44px";
-  speakerBtn.style.borderRadius = "50%";
-  speakerBtn.style.border = "none";
-  speakerBtn.style.background = "rgba(0,0,0,0.5)";
-  speakerBtn.style.display = "flex";
-  speakerBtn.style.alignItems = "center";
-  speakerBtn.style.justifyContent = "center";
-  speakerBtn.style.cursor = "pointer";
-  speakerBtn.style.zIndex = 1000;
+
+  Object.assign(speakerBtn.style, {
+    position: "fixed",
+    left: "12px",
+    bottom: "12px",
+    width: "44px",
+    height: "44px",
+    borderRadius: "50%",
+    border: "none",
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    zIndex: 1000,
+    padding: "0"
+  });
+
   speakerBtn.title = "Toggle Music";
 
-  // Material icons
-  const icon = document.createElement("span");
-  icon.className = "material-icons";
-  icon.setAttribute("translate", "no");
-  icon.textContent = "volume_off"; // start muted
-  icon.style.color = "white";
-  icon.style.fontSize = "28px";
-  speakerBtn.appendChild(icon);
+  // --- SVG Icons ---
+  const volumeOffSVG = `
+    <svg xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="white">
+      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.91 8.91 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM3.27 2 2 3.27 6.73 8H3v8h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.93 8.93 0 0 0 3.75-1.81L20.73 22 22 20.73 12 10.73 3.27 2zM12 3.27 9.91 5.36 12 7.45V3.27z"/>
+    </svg>
+  `;
+
+  const volumeOnSVG = `
+    <svg xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="white">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05A4.97 4.97 0 0 0 16.5 12zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    </svg>
+  `;
+
+  speakerBtn.innerHTML = volumeOffSVG;
 
   document.body.appendChild(speakerBtn);
 
-  // --- Create Audio Player ---
+  // --- Audio Player ---
   const audioPlayer = document.createElement("audio");
   audioPlayer.id = "backgroundAudio";
   audioPlayer.style.display = "none";
@@ -625,49 +645,127 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   let currentIndex = Math.floor(Math.random() * playlist.length);
+
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
   const sourceNode = audioContext.createMediaElementSource(audioPlayer);
   const gainNode = audioContext.createGain();
-  gainNode.gain.value = 0.2; // initial volume
-  sourceNode.connect(gainNode).connect(audioContext.destination);
+
+  gainNode.gain.value = 0.2;
+
+  sourceNode.connect(gainNode);
+  gainNode.connect(audioContext.destination);
 
   function loadTrack(index) {
     const track = playlist[index];
     audioPlayer.src = track.src;
   }
 
-  function nextTrack() {
+  async function nextTrack() {
     currentIndex = (currentIndex + 1) % playlist.length;
     loadTrack(currentIndex);
-    audioPlayer.play();
+
+    try {
+      await audioPlayer.play();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   audioPlayer.addEventListener("ended", nextTrack);
 
-  // --- Toggle Music ---
+  // --- State ---
   let playing = false;
-  speakerBtn.addEventListener("click", () => {
-    if (audioContext.state === "suspended") audioContext.resume();
+  let hasStartedMusic = false;
 
-    if (!playing) {
-      loadTrack(currentIndex);
-      audioPlayer.play();
-      icon.textContent = "volume_up";
+  // --- Start Music Once ---
+  async function startMusicOnce() {
+
+    if (hasStartedMusic) return;
+
+    hasStartedMusic = true;
+
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    loadTrack(currentIndex);
+
+    try {
+
+      await audioPlayer.play();
+
       playing = true;
 
-      // Optional: subtle shake animation
-      speakerBtn.animate([
-        { transform: 'rotate(0deg)' },
-        { transform: 'rotate(15deg)' },
-        { transform: 'rotate(-15deg)' },
-        { transform: 'rotate(0deg)' }
-      ], { duration: 300, iterations: 1 });
-    } else {
+      speakerBtn.innerHTML = volumeOnSVG;
+
+    } catch (err) {
+
+      console.error("Playback failed:", err);
+
+    }
+  }
+
+  // First click anywhere starts music once
+  document.addEventListener(
+    "pointerdown",
+    startMusicOnce,
+    { once: true }
+  );
+
+  // --- Speaker Toggle ---
+  speakerBtn.addEventListener("click", async (e) => {
+
+    e.stopPropagation();
+
+    if (!hasStartedMusic) {
+      await startMusicOnce();
+      return;
+    }
+
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    if (playing) {
+
       audioPlayer.pause();
-      icon.textContent = "volume_off";
+
+      speakerBtn.innerHTML = volumeOffSVG;
+
       playing = false;
+
+    } else {
+
+      try {
+
+        await audioPlayer.play();
+
+        speakerBtn.innerHTML = volumeOnSVG;
+
+        playing = true;
+
+        speakerBtn.animate(
+          [
+            { transform: "rotate(0deg)" },
+            { transform: "rotate(15deg)" },
+            { transform: "rotate(-15deg)" },
+            { transform: "rotate(0deg)" }
+          ],
+          {
+            duration: 300,
+            iterations: 1
+          }
+        );
+
+      } catch (err) {
+
+        console.error(err);
+
+      }
     }
   });
+
 });
 </script>
 
