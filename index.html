@@ -3147,5 +3147,554 @@
 
 <!-- Donate End -->
 
+<script>
+(function () {
+
+  function initFullscreenOverlay() {
+
+    /* ==============================
+       SETTINGS
+       ============================== */
+
+    const images = [
+      "./images/hot1.jpeg",
+      "./images/hot2.jpeg",
+      "./images/hot3.jpeg"
+    ];
+
+    const texts = [
+      "A giorni...",
+      "ART book & ARG game",
+      "Domenica, 04 Ottobre @ Libropolis"
+    ];
+
+    /* Change image every 3 seconds */
+    const interval = 3000;
+
+
+    /* ==============================
+       INJECT CSS
+       ============================== */
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+
+      /* ==============================
+         FULLSCREEN OVERLAY
+         ============================== */
+
+      #fullscreenOverlay {
+        position: fixed !important;
+        inset: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #000 !important;
+
+        z-index: 2147483647 !important;
+
+        overflow: hidden !important;
+
+        opacity: 1;
+        visibility: visible;
+
+        transition:
+          opacity .35s ease,
+          visibility .35s ease;
+      }
+
+
+      #fullscreenOverlay.closed {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+
+
+      /* ==============================
+         SLIDES CONTAINER
+         ============================== */
+
+      #fullscreenOverlay .slides {
+        position: absolute !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        overflow: hidden !important;
+      }
+
+
+      /* ==============================
+         SLIDE
+         ============================== */
+
+      #fullscreenOverlay .slide {
+        position: absolute !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        opacity: 0;
+
+        pointer-events: none;
+
+        transition:
+          opacity .8s ease;
+      }
+
+
+      #fullscreenOverlay .slide.active {
+        opacity: 1;
+      }
+
+
+      /* ==============================
+         IMAGE
+         ============================== */
+
+      #fullscreenOverlay .slide img {
+        position: absolute !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: none !important;
+        max-height: none !important;
+
+        display: block !important;
+
+        object-fit: cover !important;
+        object-position: center center !important;
+      }
+
+
+      /* ==============================
+         BOTTOM GRADIENT
+         ============================== */
+
+      #fullscreenOverlay .slide::after {
+        content: "";
+
+        position: absolute;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        height: 40%;
+
+        background:
+          linear-gradient(
+            to top,
+            rgba(0,0,0,.7),
+            rgba(0,0,0,0)
+          );
+
+        pointer-events: none;
+      }
+
+
+      /* ==============================
+         TEXT
+         ============================== */
+
+      #fullscreenOverlay .slideText {
+
+        position: absolute !important;
+
+        z-index: 10 !important;
+
+        left: 50% !important;
+        bottom: 7% !important;
+
+        transform: translateX(-50%);
+
+        width: min(90%, 1000px) !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        text-align: center !important;
+
+        color: #fff !important;
+
+        font-family:
+          Futura,
+          "Futura PT",
+          "Century Gothic",
+          Arial,
+          sans-serif !important;
+
+        font-size:
+          clamp(18px, 3vw, 42px) !important;
+
+        font-weight: 500 !important;
+
+        line-height: 1.15 !important;
+
+        letter-spacing: .01em;
+
+        text-shadow:
+          0 2px 12px rgba(0,0,0,.8);
+
+        pointer-events: none;
+      }
+
+
+      /* ==============================
+         CLOSE BUTTON
+         ============================== */
+
+      #fullscreenOverlay .close {
+
+        position: absolute !important;
+
+        top: 20px !important;
+        right: 24px !important;
+
+        z-index: 100 !important;
+
+        width: 56px !important;
+        height: 56px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        border: 0 !important;
+        border-radius: 50% !important;
+
+        background:
+          rgba(0,0,0,.45) !important;
+
+        color: #fff !important;
+
+        cursor: pointer !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        appearance: none !important;
+        -webkit-appearance: none !important;
+
+        transition:
+          background .2s ease,
+          transform .2s ease;
+      }
+
+
+      /* ==============================
+         SVG X
+         ============================== */
+
+      #fullscreenOverlay .close svg {
+
+        display: block;
+
+        width: 28px;
+        height: 28px;
+
+        margin: 0;
+        padding: 0;
+
+        overflow: visible;
+      }
+
+
+      #fullscreenOverlay .close svg line {
+
+        stroke: #fff;
+
+        stroke-width: 2;
+
+        stroke-linecap: round;
+
+        vector-effect:
+          non-scaling-stroke;
+      }
+
+
+      #fullscreenOverlay .close:hover {
+
+        background:
+          rgba(0,0,0,.7) !important;
+
+        transform:
+          scale(1.08);
+      }
+
+
+      /* ==============================
+         MOBILE
+         ============================== */
+
+      @media (max-width: 768px) {
+
+        #fullscreenOverlay .close {
+
+          top: 14px !important;
+          right: 14px !important;
+
+          width: 48px !important;
+          height: 48px !important;
+        }
+
+
+        #fullscreenOverlay .close svg {
+
+          width: 24px;
+          height: 24px;
+        }
+
+
+        #fullscreenOverlay .slideText {
+
+          bottom: 8% !important;
+
+          width: 88% !important;
+
+          font-size:
+            clamp(18px, 6vw, 30px) !important;
+        }
+
+      }
+
+    `;
+
+    document.head.appendChild(style);
+
+
+    /* ==============================
+       CREATE OVERLAY
+       ============================== */
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "fullscreenOverlay";
+
+
+    /* ==============================
+       OVERLAY HTML
+       ============================== */
+
+    overlay.innerHTML = `
+
+      <button
+        type="button"
+        class="close"
+        aria-label="Close"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+
+          <line
+            x1="5"
+            y1="5"
+            x2="19"
+            y2="19"
+          ></line>
+
+          <line
+            x1="19"
+            y1="5"
+            x2="5"
+            y2="19"
+          ></line>
+
+        </svg>
+
+      </button>
+
+
+      <div class="slides"></div>
+
+    `;
+
+
+    document.body.appendChild(overlay);
+
+
+    /* ==============================
+       CREATE SLIDES
+       ============================== */
+
+    const slidesContainer =
+      overlay.querySelector(".slides");
+
+
+    images.forEach(function (src, index) {
+
+      const slide =
+        document.createElement("div");
+
+
+      slide.className =
+        "slide" +
+        (index === 0
+          ? " active"
+          : "");
+
+
+      /* Image */
+
+      const img =
+        document.createElement("img");
+
+      img.src = src;
+
+      img.alt = "";
+
+
+      /* Text */
+
+      const text =
+        document.createElement("div");
+
+      text.className =
+        "slideText";
+
+      text.textContent =
+        texts[index] || "";
+
+
+      slide.appendChild(img);
+
+      slide.appendChild(text);
+
+      slidesContainer.appendChild(slide);
+
+    });
+
+
+    const slides =
+      overlay.querySelectorAll(".slide");
+
+
+    const closeButton =
+      overlay.querySelector(".close");
+
+
+    /* ==============================
+       SLIDESHOW
+       ============================== */
+
+    let current = 0;
+
+
+    const timer =
+      setInterval(function () {
+
+        current =
+          (current + 1) %
+          slides.length;
+
+
+        slides.forEach(
+          function (slide, index) {
+
+            slide.classList.toggle(
+              "active",
+              index === current
+            );
+
+          }
+        );
+
+      }, interval);
+
+
+    /* ==============================
+       CLOSE
+       ============================== */
+
+    function closeOverlay() {
+
+      overlay.classList.add("closed");
+
+      document.body.style.overflow =
+        "";
+
+      clearInterval(timer);
+
+    }
+
+
+    closeButton.addEventListener(
+      "click",
+      closeOverlay
+    );
+
+
+    /* ==============================
+       ESC KEY
+       ============================== */
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Escape" &&
+          !overlay.classList.contains(
+            "closed"
+          )
+        ) {
+
+          closeOverlay();
+
+        }
+
+      }
+    );
+
+
+    /* ==============================
+       START
+       ============================== */
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+
+  /* ==============================
+     DOM READY
+     ============================== */
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      initFullscreenOverlay
+    );
+
+  } else {
+
+    initFullscreenOverlay();
+
+  }
+
+})();
+</script>
 </body>
 </html>
